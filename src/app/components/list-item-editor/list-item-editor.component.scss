@@ -1,0 +1,26 @@
+:host {
+    display: block;
+    max-height: 80%;
+
+    ion-header {
+        ion-toolbar {
+            ion-title {
+                font-size: 1.2em;
+            }
+        }
+    }
+
+    ion-textarea {
+        --padding-top: 6px;
+        --padding-bottom: 6px;
+        min-height: 20px;
+
+        &.note {
+            --color: var(--ion-color-medium) !important;
+        }
+    }
+
+    ion-button {
+        margin-top: 20px;
+    }
+}

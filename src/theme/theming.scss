@@ -1,0 +1,130 @@
+html {
+    --ion-default-font: 'Roboto', Helvetica, Arial, sans-serif !important;
+}
+
+ion-list {
+    &.list-md {
+        background: var(--color-item-background);
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    ion-item {
+        --background: var(--color-item-background);
+        --color: var(--color-text);
+
+        ion-icon {
+            fill: var(--color-text-tint);
+        }
+
+        ion-reorder {
+            --color: var(--color-text-tint);
+        }
+    }
+}
+
+ion-button,
+ion-fab-button {
+    --background: var(--ion-color-secondary);
+    --color: var(--ion-color-secondary-contrast);
+}
+
+ion-fab {
+    margin: 20px;
+    fill: var(--ion-color-secondary-contrast);
+
+    ion-fab-button {
+        --box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2),
+            0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14),
+            0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
+
+        &.add {
+            --background: var(--ion-color-success-tint);
+
+            ion-icon {
+                color: var(--ion-color-success-contrast);
+            }
+        }
+    }
+
+    ion-fab-button[data-label] {
+        position: relative;
+    }
+
+    ion-fab-button[data-label]::after {
+        cursor: pointer;
+        content: attr(data-label);
+        position: absolute;
+        z-index: 20;
+        right: 50px;
+        bottom: 6px;
+        background-color: var(--color-popup-background);
+        padding: 5px 15px;
+        border-radius: 15px;
+        color: var(--color-text);
+        box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2),
+            0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14),
+            0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
+    }
+}
+
+ion-input,
+ion-textarea,
+ion-select {
+    --color: var(--color-text) !important;
+    --highlight-color-focused: var(--color-highlight) !important;
+    --highlight-color-valid: var(--color-control-border) !important;
+    --highlight-color-invalid: var(--color-control-border) !important;
+    --border-color: var(--color-control-border) !important;
+    color: var(--color);
+
+    &.ion-touched.ion-invalid:not(.has-focus) {
+        --border-color: var(--color-control-border);
+    }
+
+    &.ion-touched:not(.has-focus),
+    &.ion-invalid:not(.has-focus) {
+        --border-color: var(--color-control-border) !important;
+
+        .label-text-wrapper {
+            color: var(--color-text) !important;
+        }
+    }
+
+    &.has-focus {
+        --border-color: var(--color-highlight) !important;
+
+        .label-text-wrapper {
+            color: var(--color-highlight) !important;
+        }
+    }
+}
+
+ion-modal,
+ion-alert,
+ion-loading {
+    backdrop-filter: blur(6px);
+}
+
+ion-toolbar {
+    --background: var(--color-toolbar);
+    --color: var(--ion-color-primary-contrast);
+
+    ion-buttons {
+        ion-menu-button {
+            --color: var(--ion-color-primary-contrast);
+        }
+
+        ion-back-button {
+            --color: var(--ion-color-primary-contrast);
+        }
+    }
+}
+
+ion-header {
+    box-shadow: none !important;
+}
+
+ion-note {
+    --color: var(--ion-color-medium);
+}

@@ -1,0 +1,335 @@
+import { formatDate } from "@angular/common";
+import { Injectable, isDevMode } from "@angular/core";
+import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
+import { FileUtils } from "src/app/classes/utils/fileutils";
+import { StringUtils } from "../../classes/utils/stringutils";
+import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
+
+enum ELogType { Debug = 4, Notice = 3, Important = 2, Error = 1, }
+enum EAutoDelete { Never = 0, Day = 1, Week = 7, Month = 30, }
+
+@Injectable({
+    providedIn: "root",
+})
+export class LoggingService {
+    /** when to delete old logs */
+    public AutoDelete: EAutoDelete = EAutoDelete.Month;
+    /** path to store logs on device */
+    public static LogPath = "logs";
+    /** capacitor directory to store logs in */
+    public static LogDirectory = Directory.Data;
+    /** Log level */
+    public LogLevel = ELogType.Debug;
+    /** current logfile, messages are stored in */
+    private LogFile: string;
+    /** pending messages to be stored in the logfile */
+    private WriteToLogQueue: string[] = [];
+    /** pending messages queue is currently processed */
+    private LogfileProcessRunning = false;
+
+    constructor(private Preferences: PreferencesService) {
+        let date = formatDate(new Date(), "yyyy-MM-dd_HHmmss", "en");
+        this.LogFile = `${LoggingService.LogPath}/${date}.log`;
+        this.LogLevel = isDevMode() ? 4 : 2;
+    }
+
+    /**
+     * gets the representation of the log level as string
+     */
+    public get LogLevelShort(): string {
+        switch (this.LogLevel) {
+            case 4:
+                return "debug";
+            case 3:
+                return "verbose";
+            default:
+            case 2:
+                return "normal";
+            case 1:
+                return "error";
+        }
+    }
+
+    /**
+     * Initialize service
+     */
+    public async Initialize() {
+        this.LogLevel = await this.Preferences.Get<ELogType>(EPrefProperty.LogMode, this.LogLevel);
+        const autodelete = await this.Preferences.Get(EPrefProperty.LogsAutoDelete, this.AutoDelete);
+        await this.SetAutodelete(autodelete);
+    }
+
+    /**
+     * log an error message
+     * @param message message text
+     * @param obj additional objects
+     */
+    public Error(message: string, ...objs: any[]) {
+        this.WriteInLogfile(message, ELogType.Error, ...objs);
+        console.error(message, ...objs);
+    }
+
+    /**
+     * log an important message
+     * @param message message text
+     * @param obj additional objects
+     */
+    public Important(message: string, ...objs: any[]) {
+        if (this.LogLevel >= ELogType.Important) {
+            this.WriteInLogfile(message, ELogType.Important, ...objs);
+            console.warn(message, ...objs);
+        }
+    }
+
+    /**
+     * log an notice message
+     * @param message message text
+     * @param obj additional objects
+     */
+    public Notice(message: string, ...objs: any[]) {
+        if (this.LogLevel >= ELogType.Notice) {
+            this.WriteInLogfile(message, ELogType.Notice, ...objs);
+            console.info(message, ...objs);
+        }
+    }
+    /**
+         * log an debug message
+         * @param message message text
+         * @param obj additional objects
+         */
+    public Debug(message: string, ...objs: any[]) {
+        if (this.LogLevel >= ELogType.Debug) {
+            this.WriteInLogfile(message, ELogType.Debug, ...objs);
+            console.log(message, ...objs);
+        }
+    }
+
+    /**
+     * process the pending messages queue
+     */
+    private async ProcessQueue() {
+        if (this.LogfileProcessRunning) {
+            return;
+        }
+        this.LogfileProcessRunning = true;
+        if (this.WriteToLogQueue.length > 0) {
+            //Log-Datei erstellen, falls nicht vorhanden
+            if (!await FileUtils.FileExists(this.LogFile, LoggingService.LogDirectory)) {
+                let loglevel: string;
+                switch (this.LogLevel) {
+                    case ELogType.Error:
+                        loglevel = "only errors";
+                        break;
+                    case ELogType.Important:
+                        loglevel = "normal";
+                        break;
+                    case ELogType.Notice:
+                        loglevel = "verbose";
+                        break;
+                    default:
+                        loglevel = "debug";
+                        break;
+                }
+                try {
+                    const date = formatDate(new Date(), "yyyy-MM-ddTHH:mm:ss.SSS", "en");
+                    await Filesystem.writeFile({
+                        path: this.LogFile,
+                        data: `${date} Log-Level: ${loglevel}\n`,
+                        directory: LoggingService.LogDirectory,
+                        encoding: Encoding.UTF8,
+                        recursive: true,
+                    });
+                } catch (e) {
+                    console.error("Could not write log", e);
+                }
+            }
+
+            while (this.WriteToLogQueue.length > 0) {
+                const message = this.WriteToLogQueue.shift();
+                try {
+                    //In Log-Datei schreiben
+                    await Filesystem.appendFile({
+                        path: this.LogFile,
+                        data: message + "\n",
+                        directory: LoggingService.LogDirectory,
+                        encoding: Encoding.UTF8,
+                    });
+                } catch (e) {
+                    console.error("Could not write log", e);
+                }
+            }
+        }
+        this.LogfileProcessRunning = false;
+    }
+
+    /**
+     * writes a message to message queue
+     * @param message message text
+     * @param type message level
+     * @param objs additional objects
+     */
+    private WriteInLogfile(message: string, type: ELogType, ...objs: any[]) {
+        let date = formatDate(new Date(), "yyyy-MM-ddTHH:mm:ss.SSS", "en");
+        let prefix: string;
+        switch (type) {
+            case ELogType.Error:
+                prefix = "E";
+                break;
+            case ELogType.Important:
+                prefix = "I";
+                break;
+            case ELogType.Notice:
+                prefix = "N";
+                break;
+            default:
+                prefix = "D";
+                break;
+        }
+
+        message = `${date} (${prefix}): ${message}`;
+        if (objs.length > 0) {
+            objs.forEach(obj => {
+                if (obj) {
+                    if (obj instanceof Error) {
+                        message += "\nError: " + obj.name;
+                        message += "\nMessage: " + obj.message;
+                        if (obj.stack) {
+                            message += "\nStacktrace:\n" + obj.stack;
+                        }
+                    } else {
+                        message += "\n" + StringUtils.toString(obj);
+                    }
+                }
+            });
+        }
+
+        this.WriteToLogQueue.push(message);
+        this.ProcessQueue();
+    }
+
+    /**
+     * sets the loglevel from a string representation
+     * @param logging log level
+     */
+    public async SetLogLevel(logging: string) {
+        if (this.LogLevelShort != logging) {
+            switch (logging) {
+                case "debug":
+                    this.LogLevel = ELogType.Debug;
+                    break;
+                case "verbose":
+                    this.LogLevel = ELogType.Notice;
+                    break;
+                case "normal":
+                    this.LogLevel = ELogType.Important;
+                    break;
+                case "error":
+                    this.LogLevel = ELogType.Error;
+                    break;
+            }
+            this.Notice(`Changed logging to ${logging} (${this.LogLevel})`);
+            this.Preferences.Set(EPrefProperty.LogMode, this.LogLevel);
+        }
+    }
+
+    /**
+     * set the autodelete time periode and deletes old logfiles if needed
+     * @param autodelete new time periode
+     */
+    public async SetAutodelete(autodelete: EAutoDelete) {
+        if (this.AutoDelete != autodelete) {
+            this.AutoDelete = autodelete;
+            this.Notice(`Changed logging autodelete to ${autodelete} days`);
+            this.Preferences.Set(EPrefProperty.LogsAutoDelete, this.AutoDelete);
+            if (this.AutoDelete != EAutoDelete.Never) {
+                this.DeleteLogs(this.AutoDelete);
+            }
+        }
+    }
+
+    /**
+     * get a list of all logfiles on the device
+     * @returns array with all logfiles
+     */
+    public async ListLogfiles(): Promise<FileUtils.File[]> {
+        try {
+            let ret: FileUtils.File[] = [];
+            let files = (await Filesystem.readdir({ path: LoggingService.LogPath, directory: LoggingService.LogDirectory, })).files;
+            if (files) {
+                files.sort((a, b) => a.mtime < b.mtime ? 1 : b.mtime < a.mtime ? -1 : 0);
+                await Promise.all(files.map(async (file) => {
+                    if (file.type == "file") {
+                        let logfile = await FileUtils.GetFileStat(file.uri);
+                        if (logfile) {
+                            ret.push(logfile);
+                        }
+                    }
+                }));
+            }
+            return ret;
+        } catch (e) {
+            let logfile = await FileUtils.GetFileStat(
+                this.LogFile,
+                LoggingService.LogDirectory
+            );
+            if (logfile) {
+                return [logfile];
+            }
+            return [];
+        }
+    }
+
+    /**
+     * gehts a specific logfile with content
+     * @param name filename of the logfile
+     * @returns File object
+     */
+    public async GetLogfile(name?: string): Promise<FileUtils.File> {
+        if (name == undefined) {
+            name = this.LogFile;
+        } else {
+            name = `${LoggingService.LogPath}/${name}`;
+        }
+
+        let file = await FileUtils.GetFile(name, LoggingService.LogDirectory);
+
+        if (!file.Exists) {
+            file.Content = "";
+        }
+
+        return file;
+    }
+
+    /**
+     * deletes old logs
+     * @param older_then delete only logs that are older the a particular number of days. < 0 meens delete all, 0 = don't delete logs
+     */
+    public async DeleteLogs(older_then: number): Promise<number> {
+        let delete_before_ts: number | undefined;
+        if (older_then < 0) {
+            //Alle Logs löschen
+            delete_before_ts = undefined;
+        } else if (older_then == 0) {
+            //Keine Logs löschen
+            return 0;
+        } else {
+            delete_before_ts = Date.now() - older_then * 60 * 60 * 24 * 1000;
+        }
+        let count = await FileUtils.EmptyDir(LoggingService.LogPath, LoggingService.LogDirectory, delete_before_ts);
+        if (count > 0) {
+            this.Notice(`Removed ${count} old logfile(s)`);
+        }
+        return count;
+    }
+
+    /**
+     * get the number of all logfiles on the device
+     * @returns number of all logsfiles
+     */
+    public async LogfilesCount(): Promise<number> {
+        return FileUtils.GetFilesCount(
+            LoggingService.LogPath,
+            LoggingService.LogDirectory
+        );
+    }
+}

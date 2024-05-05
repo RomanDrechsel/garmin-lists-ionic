@@ -1,0 +1,24 @@
+<app-main-toolbar back="/settings/logging">{{'page_settings_showlogs.page_title'|translate}}</app-main-toolbar>
+
+<ion-content>
+    <ion-select [label]="'page_settings_showlogs.logfile'|translate" label-placement="stacked" value="{{currentLogfile?.Filename}}" interface="popover" (ionChange)="onChangeLogfile($event)">
+        <ion-select-option *ngFor="let file of availableLogfiles" value="{{file.Filename}}" (selected)="currentLogfile?.Path == file.Path">
+            {{file.Filename}}
+        </ion-select-option>
+    </ion-select>
+    <div id="logtext">{{currentLogfile?.Content}}</div>
+
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+        <ion-fab-button [disabled]="!currentLogfile || !currentLogfile.Exists">
+            <ion-icon src="./assets/icons/list_menu.svg"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-list side="top">
+            <ion-fab-button [attr.data-label]="'page_settings_showlogs.btn_save'|translate" (click)="onSave()" [disabled]="!currentLogfile || !currentLogfile.Exists">
+                <ion-icon src="./assets/icons/store.svg"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button [attr.data-label]="'page_settings_showlogs.btn_delete'|translate" (click)="onDelete()" [disabled]="!currentLogfile || !currentLogfile.Exists">
+                <ion-icon src="./assets/icons/trash.svg"></ion-icon>
+            </ion-fab-button>
+        </ion-fab-list>
+    </ion-fab>
+</ion-content>

@@ -1,0 +1,25 @@
+ion-list {
+    ion-item {
+        &:not(:first-of-type) {
+            margin-top: 40px;
+        }
+
+        .info {
+            font-size: 0.9em;
+            color: var(--ion-color-medium);
+            white-space: pre-line;
+            width: 100%;
+        }
+
+        .buttons {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+        }
+    }
+
+    .request-messages {
+        max-width: 55px;
+        margin-inline: 10px;
+    }
+}

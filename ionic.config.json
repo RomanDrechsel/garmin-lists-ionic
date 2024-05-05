@@ -1,0 +1,7 @@
+{
+  "name": "listmanager",
+  "integrations": {
+      "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

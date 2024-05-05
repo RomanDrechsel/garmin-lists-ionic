@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Listen</string>
+    <string name="app_name_debug">Listen Debug</string>
+    <string name="admob_app_id">ca-app-pub-4693945059643494~4603335580</string>
+</resources>

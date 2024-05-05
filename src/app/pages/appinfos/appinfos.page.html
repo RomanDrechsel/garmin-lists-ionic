@@ -1,0 +1,26 @@
+<app-main-toolbar back="/lists">{{'page_appinfos.page_title'|translate}}</app-main-toolbar>
+
+<ion-content>
+    <ion-list>
+        <ion-item class="ion-align-items-start" lines="full">
+            <ion-label class="ion-float-start withgrid" translate>page_appinfos.package</ion-label>
+            <ion-grid class="value">
+                <ion-row>
+                    <ion-col class="ion-text-end colspan" offset="2">{{BundleId}}</ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-end" translate>page_appinfos.version</ion-col>
+                    <ion-col class="ion-text-end">{{Appversion}}</ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-end" translate>page_appinfos.build</ion-col>
+                    <ion-col class="ion-text-end">{{Build}}</ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-end" translate>page_appinfos.platform</ion-col>
+                    <ion-col class="ion-text-end">{{Platform}}</ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+    </ion-list>
+</ion-content>

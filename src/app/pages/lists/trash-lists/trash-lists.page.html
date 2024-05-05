@@ -1,0 +1,39 @@
+<app-main-toolbar back="/lists">{{'page_trash.page_title'|translate}}</app-main-toolbar>
+
+<ion-content>
+    <div *ngIf="Lists.length > 0; else empty">
+        <ion-list #listsContainer>
+            <ion-item-sliding *ngFor="let list of Lists">
+                <ion-item-options side="start" (ionSwipe)="onSwipeRight(list)">
+                    <ion-item-option color="danger" expandable="true" (click)="deleteList(list)">
+                        <ion-icon slot="start" src="./assets/icons/trash_solid.svg"></ion-icon>
+                        {{'page_trash.erase'|translate}}
+                    </ion-item-option>
+                </ion-item-options>
+                <ion-item lines="full">
+                    <div class="details">
+                        <div class="listname">{{list.Name}}</div>
+                        <ion-note color="medium" class="date">{{DeletedString(list)}}</ion-note>
+                    </div>
+                    <div class="itemcount" slot="end">{{list.ItemsCount}}</div>
+                </ion-item>
+                <ion-item-options side="end" (ionSwipe)="onSwipeLeft(list)">
+                    <ion-item-option color="secondary" expandable="true" (click)="restoreList(list)">
+                        <ion-icon slot="end" src="./assets/icons/undo.svg"></ion-icon>
+                        {{'page_trash.restore'|translate}}
+                    </ion-item-option>
+                </ion-item-options>
+            </ion-item-sliding>
+        </ion-list>
+    </div>
+    <ng-template #empty>
+        <app-page-empty>
+            <div slot="image">
+                <ion-icon src="./assets/icons/menu/trash.svg"></ion-icon>
+            </div>
+            <div slot="text">
+                <ion-text>{{'page_trash.empty'|translate}}</ion-text>
+            </div>
+        </app-page-empty>
+    </ng-template>
+</ion-content>
