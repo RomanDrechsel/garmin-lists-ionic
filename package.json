@@ -45,13 +45,13 @@
     "zone.js": "~0.14.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^17.0.0",
-    "@angular-eslint/builder": "^17.0.0",
-    "@angular-eslint/eslint-plugin": "^17.0.0",
-    "@angular-eslint/eslint-plugin-template": "^17.0.0",
-    "@angular-eslint/schematics": "^17.0.0",
-    "@angular-eslint/template-parser": "^17.0.0",
-    "@angular/cli": "^17.0.0",
+    "@angular-devkit/build-angular": "17.3.7",
+    "@angular-eslint/builder": "17.4.0",
+    "@angular-eslint/eslint-plugin": "17.4.0",
+    "@angular-eslint/eslint-plugin-template": "17.4.0",
+    "@angular-eslint/schematics": "17.4.0",
+    "@angular-eslint/template-parser": "17.4.0",
+    "@angular/cli": "17.3.7",
     "@angular/compiler-cli": "^17.0.2",
     "@angular/language-service": "^17.0.2",
     "@capacitor/cli": "5.7.5",
@@ -80,5 +80,6 @@
     "Edge >=79",
     "Safari >=14",
     "iOS >=14"
-  ]
+  ],
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

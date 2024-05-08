@@ -5,6 +5,6 @@ export const environment = {
     production: true
 };
 
-export const DebugDevices = function (service: ConnectIQService): ConnectIQDevice[] {
+export const DebugDevices = function(service: ConnectIQService): ConnectIQDevice[] {
     return [];
 };

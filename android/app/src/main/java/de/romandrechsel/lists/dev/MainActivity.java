@@ -3,6 +3,7 @@ package de.romandrechsel.lists.dev;
 import android.os.Bundle;
 
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.community.admob.AdMob;
 
 import de.romandrechsel.lists.garmin.ConnectIQPlugin;
 

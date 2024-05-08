@@ -6,6 +6,7 @@ import { StatusBar } from "@capacitor/status-bar";
 import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonNote, IonRouterOutlet, IonSplitPane, IonToggle, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { MenuItem, MenuItemAppInfos, MenuItemDevices, MenuItemLists, MenuItemListsTrash, MenuItemSettings } from "./classes/menu-items";
+import { AdmobService } from "./services/adverticing/admob.service";
 import { AppService } from "./services/app/app.service";
 import { ConnectIQService } from "./services/connectiq/connect-iq.service";
 import { EPrefProperty, PreferencesService } from "./services/storage/preferences.service";
@@ -43,6 +44,7 @@ export class AppComponent implements OnInit {
     private readonly Platform = inject(Platform);
     private readonly Preferences = inject(PreferencesService);
     private readonly App = inject(AppService);
+    private readonly Admob = inject(AdmobService);
 
     @ViewChild("router_outlet") private routerOutlet!: IonRouterOutlet;
 
@@ -70,6 +72,8 @@ export class AppComponent implements OnInit {
                 }
             }
         });
+
+        //this.Admob.ShowBanner();
     }
 
     public get menuSide() {

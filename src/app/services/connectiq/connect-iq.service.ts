@@ -99,7 +99,7 @@ export class ConnectIQService {
         const defaultTransmitDevice = await this.Preferences.Get<number>(EPrefProperty.AlwaysTransmitTo, -1);
         let devices: ConnectIQDevice[] = [];
 
-        if (Capacitor.isNativePlatform() && !this.isDebugMode) {
+        if (Capacitor.isNativePlatform()) {
             try {
                 const res = await ConnectIQ.GetDevices({ force_reload: force_load });
                 if (res && res.devices) {
@@ -121,7 +121,8 @@ export class ConnectIQService {
                 Logger.Error("Could not parse device infos");
             }
         }
-        else {
+
+        if (devices.length == 0) {
             devices = DebugDevices(this);
         }
 
