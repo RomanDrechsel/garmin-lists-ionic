@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from "@angular/router";
-import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTitle, IonToolbar, ItemReorderEventDetail } from '@ionic/angular/standalone';
+import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTitle, IonToolbar, ItemReorderEventDetail, NavController } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from "rxjs";
 import { MainToolbarComponent } from 'src/app/components/main-toolbar/main-toolbar.component';
@@ -50,9 +49,7 @@ export class ListsPage extends PageBase {
     private listsChangedSubscription?: Subscription;
     private disableClick = false;
 
-    constructor(private Router: Router) {
-        super();
-    }
+    private readonly NavController = inject(NavController);
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
@@ -80,17 +77,19 @@ export class ListsPage extends PageBase {
     }
 
     public async deleteList(list: List) {
-        if (await this.ListsService.DeleteList(list)) {
+        const res = await this.ListsService.DeleteList(list);
+        if (res === true) {
             this.Popups.Toast.Success("service-lists.delete_success");
+            this.listsContainer.closeSlidingItems();
         }
-        else {
+        else if (res === false) {
             this.Popups.Toast.Error("service-lists.delete_error");
+            this.listsContainer.closeSlidingItems();
         }
-        this.listsContainer.closeSlidingItems();
     }
 
     public async emptyList(list: List) {
-        if (await this.ListsService.EmptyList(list)) {
+        if (await this.ListsService.EmptyList(list) === true) {
             this.listsContainer.closeSlidingItems();
         }
     }
@@ -107,7 +106,7 @@ export class ListsPage extends PageBase {
 
     public gotoList(list: List) {
         if (!this.disableClick) {
-            this.Router.navigateByUrl(`/lists/items/${list.Uuid}`);
+            this.NavController.navigateForward(`/lists/items/${list.Uuid}`);
         }
     }
 
