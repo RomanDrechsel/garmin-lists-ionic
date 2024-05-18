@@ -5,5 +5,4 @@
     <string name="package_name">de.romandrechsel.lists.dev</string>
     <string name="custom_url_scheme">de.romandrechsel.lists.dev</string>
     <string name="app_name_debug">Lists Debug</string>
-    <string name="admob_app_id">ca-app-pub-4693945059643494~4603335580</string>
 </resources>

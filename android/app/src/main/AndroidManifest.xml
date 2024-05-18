@@ -4,7 +4,6 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
-
     <queries>
         <package android:name="com.garmin.android.apps.connectmobile" />
         <package android:name="com.garmin.android.connectiq" />
@@ -38,6 +37,7 @@
         </provider>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_app_id"/>
+            android:value="ca-app-pub-4693945059643494~4603335580"
+        />
     </application>
 </manifest>

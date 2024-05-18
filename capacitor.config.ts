@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
     appId: 'de.romandrechsel.lists.dev',
-    appName: 'Listen',
+    appName: 'Lists',
     webDir: 'www/browser',
     server: {
         androidScheme: 'https'

@@ -5,6 +5,7 @@ import { Device } from "@capacitor/device";
 import { Platform } from '@ionic/angular';
 import { StringUtils } from "../../classes/utils/stringutils";
 import { MainToolbarComponent } from "../../components/main-toolbar/main-toolbar.component";
+import { AdmobService } from "../adverticing/admob.service";
 import { ConnectIQService } from "../connectiq/connect-iq.service";
 import { ListsService } from "../lists/lists.service";
 import { Locale } from "../localization/locale";
@@ -32,6 +33,7 @@ export class AppService {
     public readonly ConnectIQ = inject(ConnectIQService);
     public readonly Platform = inject(Platform);
     public readonly Preferences = inject(PreferencesService);
+    public readonly Admob = inject(AdmobService);
 
     /** platform as short string (android, ios, web) */
     public static get AppPlatform(): string {
@@ -71,6 +73,8 @@ export class AppService {
 
         const debugmode = await this.Preferences.Get<boolean>(EPrefProperty.DebugDevices, isDevMode());
         await this.ConnectIQ.Initialize(debugmode);
+
+        //await this.Admob.Initialize();
     }
 
     /**
