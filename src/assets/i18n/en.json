@@ -206,7 +206,7 @@
         "instock_note": "How long should old lists or list items be kept in the trash?"
     },
     "page_appinfos": {
-        "page_title": "App infos",
+        "page_title": "App information",
         "package": "package:",
         "version": "version:",
         "build": "build:",

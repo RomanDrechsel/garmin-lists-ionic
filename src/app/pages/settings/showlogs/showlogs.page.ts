@@ -17,23 +17,7 @@ import { PageBase } from "../../page-base";
     templateUrl: "./showlogs.page.html",
     styleUrls: ["./showlogs.page.scss"],
     standalone: true,
-    imports: [
-        CommonModule,
-        FormsModule,
-        TranslateModule,
-        MainToolbarComponent,
-        IonIcon,
-        IonLabel,
-        IonFabButton,
-        IonFab,
-        IonFabList,
-        IonContent,
-        IonList,
-        IonItem,
-        IonSelect,
-        IonTextarea,
-        IonSelectOption,
-    ],
+    imports: [CommonModule, FormsModule, TranslateModule, MainToolbarComponent, IonIcon, IonLabel, IonFabButton, IonFab, IonFabList, IonContent, IonList, IonItem, IonSelect, IonTextarea, IonSelectOption],
 })
 export class ShowlogsPage extends PageBase {
     public currentLogfile?: FileUtils.File;
@@ -43,7 +27,6 @@ export class ShowlogsPage extends PageBase {
     private readonly ModaleCtrl = inject(ModalController);
     private readonly AppService = inject(AppService);
     private readonly NavController = inject(NavController);
-
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
@@ -68,10 +51,7 @@ export class ShowlogsPage extends PageBase {
 
     public async onDelete() {
         if (this.currentLogfile) {
-            const locale = this.Locale.getText(
-                ["yes", "no", "page_settings_showlogs.confirm_delete"],
-                { filename: this.currentLogfile.Filename }
-            );
+            const locale = this.Locale.getText(["yes", "no", "page_settings_showlogs.confirm_delete"], { filename: this.currentLogfile.Filename });
             await this.Popups.Alert.YesNo({
                 message: locale["page_settings_showlogs.confirm_delete"],
                 button_no: locale["no"],
@@ -96,16 +76,14 @@ export class ShowlogsPage extends PageBase {
                 title: locale["page_settings_showlogs.store_title"],
                 text: (locale[text_key] as string).replace("{{filename}}", this.currentLogfile.Filename),
                 button: locale["save"],
-                file: this.currentLogfile
+                file: this.currentLogfile,
             });
         }
     }
 
     private async loadLogfile(file: string | undefined = undefined) {
         this.availableLogfiles = await this.Logger.ListLogfiles();
-        this.availableLogfiles.sort((a, b) =>
-            a.Modified < b.Modified ? 1 : a.Modified < b.Modified ? -1 : 0
-        );
+        this.availableLogfiles.sort((a, b) => (a.Modified < b.Modified ? 1 : a.Modified < b.Modified ? -1 : 0));
 
         this.currentLogfile = await this.Logger.GetLogfile(file);
 

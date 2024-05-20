@@ -10,27 +10,15 @@ import { ConfigService } from "../services/storage/config.service";
 import { PreferencesService } from "../services/storage/preferences.service";
 
 export abstract class PageBase {
-    protected appComponent: AppComponent;
-    protected Popups: PopupsService;
-    protected Config: ConfigService;
-    protected ConnectIQ: ConnectIQService;
-    protected ListsService: ListsService;
-    protected Locale: LocalizationService;
-    protected Logger: LoggingService;
-    protected Preferences: PreferencesService;
-    protected cdr: ChangeDetectorRef;
-
-    constructor() {
-        this.appComponent = inject(AppComponent);
-        this.Popups = inject(PopupsService);
-        this.Config = inject(ConfigService);
-        this.ConnectIQ = inject(ConnectIQService);
-        this.ListsService = inject(ListsService);
-        this.Locale = inject(LocalizationService);
-        this.Logger = inject(LoggingService);
-        this.Preferences = inject(PreferencesService);
-        this.cdr = inject(ChangeDetectorRef);
-    }
+    protected appComponent = inject(AppComponent);
+    protected Popups = inject(PopupsService);
+    protected Config = inject(ConfigService);
+    protected ConnectIQ = inject(ConnectIQService);
+    protected ListsService = inject(ListsService);
+    protected Locale = inject(LocalizationService);
+    protected Logger = inject(LoggingService);
+    protected Preferences = inject(PreferencesService);
+    protected cdr = inject(ChangeDetectorRef);
 
     public async ionViewWillEnter() {
         this.Popups.Loading.Hide();
@@ -40,9 +28,9 @@ export abstract class PageBase {
         this.appComponent.setAppPages(this.ModifyMainMenu());
     }
 
-    public async ionViewWillLeave() { }
+    public async ionViewWillLeave() {}
 
-    public async ionViewDidLeave() { }
+    public async ionViewDidLeave() {}
 
     public ModifyMainMenu(): MenuItem[] {
         return [];

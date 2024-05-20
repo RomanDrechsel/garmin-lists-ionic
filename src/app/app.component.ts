@@ -73,7 +73,7 @@ export class AppComponent implements OnInit {
             }
         });
 
-        //this.Admob.ShowBanner();
+        await this.Admob.ShowBanner();
     }
 
     public get menuSide() {

@@ -1,9 +1,9 @@
 <app-main-toolbar back="/">{{'page_devices.page_title'|translate}}</app-main-toolbar>
-<ion-content>
+<ion-content class="advertice">
     <div>
         <ion-card>
             <ion-select [label]="'page_devices.known_devices'|translate" labelPlacement="stacked" interface="alert" fill="outline" [disabled]="Devices.length == 0" [color]="SelectedDevice?.State != 'Ready' ? 'medium' : undefined"
-                [okText]="'select'|translate" [cancelText]="'cancel'|translate" [value]=" SelectedDevice?.Identifier" (ionChange)="onDeviceChanged($event.detail.value)" [interfaceOptions]="{'cssClass': 'devices'}" #deviceSelect>
+                        [okText]="'select'|translate" [cancelText]="'cancel'|translate" [value]=" SelectedDevice?.Identifier" (ionChange)="onDeviceChanged($event.detail.value)" [interfaceOptions]="{'cssClass': 'devices'}" #deviceSelect>
                 <ion-select-option *ngFor="let device of Devices" [value]="device.Identifier" [ngClass]="{'disabled': device.State != 'Ready'}">{{device.Name}}</ion-select-option>
             </ion-select>
             <div class="deviceState" [ngClass]="{'error': SelectedDevice.Error}" *ngIf="SelectedDevice && SelectedDevice.State != 'Ready' && SelectedDevice.State != 'AppNotInstalled'">{{SelectedDevice.StateLocale}}

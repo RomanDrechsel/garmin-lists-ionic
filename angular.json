@@ -20,12 +20,11 @@
                     "options": {
                         "outputPath": "www",
                         "index": "src/index.html",
-                        "polyfills": [
-                            "src/polyfills.ts"
-                        ],
+                        "polyfills": ["src/polyfills.ts"],
                         "tsConfig": "tsconfig.app.json",
                         "inlineStyleLanguage": "scss",
-                        "assets": [{
+                        "assets": [
+                            {
                                 "glob": "**/*",
                                 "input": "src/assets",
                                 "output": "assets"
@@ -33,19 +32,14 @@
                             "src/config.json",
                             "src/manifest.webmanifest"
                         ],
-                        "styles": [
-                            "src/global.scss",
-                            "src/theme/variables.scss",
-                            "src/theme/variables_dark.scss",
-                            "src/theme/theming.scss",
-                            "src/theme/popups.scss"
-                        ],
+                        "styles": ["src/global.scss", "src/theme/variables.scss", "src/theme/variables_dark.scss", "src/theme/theming.scss", "src/theme/popups.scss"],
                         "scripts": [],
                         "browser": "src/main.ts"
                     },
                     "configurations": {
                         "production": {
-                            "budgets": [{
+                            "budgets": [
+                                {
                                     "type": "initial",
                                     "maximumWarning": "2mb",
                                     "maximumError": "5mb"
@@ -56,14 +50,16 @@
                                     "maximumError": "4kb"
                                 }
                             ],
-                            "fileReplacements": [{
-                                "replace": "src/environments/environment.ts",
-                                "with": "src/environments/environment.prod.ts"
-                            },
-                            {
-                                "replace": "src/app/services/lists/lists.service.screenshot.ts",
-                                "with": "src/empty.ts"
-                            }],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                },
+                                {
+                                    "replace": "src/app/services/lists/lists.service.screenshot.ts",
+                                    "with": "src/empty.ts"
+                                }
+                            ],
                             "outputHashing": "all",
                             "serviceWorker": "ngsw-config.json"
                         },
@@ -78,14 +74,42 @@
                             "extractLicenses": false,
                             "sourceMap": true,
                             "namedChunks": true,
-                            "fileReplacements": [{
-                                "replace": "src/environments/environment.ts",
-                                "with": "src/environments/environment.screenshots.ts"
-                            },
-                            {
-                                "replace": "src/app/services/lists/lists.service.ts",
-                                "with": "src/app/services/lists/lists.service.screenshot.ts"
-                            }]
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.screenshots.ts"
+                                },
+                                {
+                                    "replace": "src/app/services/lists/lists.service.ts",
+                                    "with": "src/app/services/lists/lists.service.screenshot.ts"
+                                }
+                            ]
+                        },
+                        "liveRelease": {
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "2mb",
+                                    "maximumError": "5mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "2kb",
+                                    "maximumError": "4kb"
+                                }
+                            ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.public.ts"
+                                },
+                                {
+                                    "replace": "src/app/services/lists/lists.service.screenshot.ts",
+                                    "with": "src/empty.ts"
+                                }
+                            ],
+                            "outputHashing": "all",
+                            "serviceWorker": "ngsw-config.json"
                         },
                         "ci": {
                             "progress": false
@@ -125,7 +149,8 @@
                         "tsConfig": "tsconfig.spec.json",
                         "karmaConfig": "karma.conf.js",
                         "inlineStyleLanguage": "scss",
-                        "assets": [{
+                        "assets": [
+                            {
                                 "glob": "**/*",
                                 "input": "src/assets",
                                 "output": "assets"
@@ -133,13 +158,7 @@
                             "src/config.json",
                             "src/manifest.webmanifest"
                         ],
-                        "styles": [
-                            "src/global.scss",
-                            "src/theme/variables.scss",
-                            "src/theme/variables_dark.scss",
-                            "src/theme/theming.scss",
-                            "src/theme/popups.scss"
-                        ],
+                        "styles": ["src/global.scss", "src/theme/variables.scss", "src/theme/variables_dark.scss", "src/theme/theming.scss", "src/theme/popups.scss"],
                         "scripts": []
                     },
                     "configurations": {
@@ -152,19 +171,14 @@
                 "lint": {
                     "builder": "@angular-eslint/builder:lint",
                     "options": {
-                        "lintFilePatterns": [
-                            "src/**/*.ts",
-                            "src/**/*.html"
-                        ]
+                        "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
                     }
                 }
             }
         }
     },
     "cli": {
-        "schematicCollections": [
-            "@ionic/angular-toolkit"
-        ],
+        "schematicCollections": ["@ionic/angular-toolkit"],
         "analytics": false
     },
     "schematics": {

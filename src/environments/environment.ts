@@ -6,7 +6,8 @@ import { ConnectIQDevice } from "../app/services/connectiq/connect-iq-device";
 import { ConnectIQService } from "../app/services/connectiq/connect-iq.service";
 
 export const environment = {
-    production: false
+    production: false,
+    publicRelease: false,
 };
 
 /*
@@ -18,10 +19,6 @@ export const environment = {
  */
 // import 'zone.js/plugins/zone-error';  // Included with Angular CLI.
 
-export const DebugDevices = function(service: ConnectIQService): ConnectIQDevice[] {
-    return [
-        ConnectIQDevice.FromEventArgs({ id: 123456789, name: "Webdummy No App", state: "AppNotInstalled" }, service),
-        ConnectIQDevice.FromEventArgs({ id: 234567890, name: "Webdummy", state: "Ready" }, service),
-        ConnectIQDevice.FromEventArgs({ id: 345678901, name: "Webdummy Invalid State", state: "InvalidState" }, service),
-    ];
+export const DebugDevices = function (service: ConnectIQService): ConnectIQDevice[] {
+    return [ConnectIQDevice.FromEventArgs({ id: 123456789, name: "Webdummy No App", state: "AppNotInstalled" }, service), ConnectIQDevice.FromEventArgs({ id: 234567890, name: "Webdummy", state: "Ready" }, service), ConnectIQDevice.FromEventArgs({ id: 345678901, name: "Webdummy Invalid State", state: "InvalidState" }, service)];
 };

@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from "@angular/common";
+import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, SelectCustomEvent } from '@ionic/angular/standalone';
+import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, SelectCustomEvent } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { FileUtils } from "../../../classes/utils/fileutils";
@@ -11,11 +11,11 @@ import { LoggingService } from "../../../services/logging/logging.service";
 import { PageBase } from "../../page-base";
 
 @Component({
-    selector: 'app-logging',
-    templateUrl: './logging.page.html',
-    styleUrls: ['./logging.page.scss'],
+    selector: "app-logging",
+    templateUrl: "./logging.page.html",
+    styleUrls: ["./logging.page.scss"],
     standalone: true,
-    imports: [IonIcon, IonLabel, IonCol, IonRow, IonGrid, IonText, IonList, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, IonButton, RouterLink, CommonModule, FormsModule, TranslateModule, MainToolbarComponent]
+    imports: [IonIcon, IonLabel, IonCol, IonRow, IonGrid, IonText, IonList, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, IonButton, RouterLink, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
 })
 export class LoggingPage extends PageBase {
     public LogsSize?: string;
@@ -55,20 +55,20 @@ export class LoggingPage extends PageBase {
             let text;
             if (count > 1) {
                 text = this.Locale.getText("page_settings_logs.deleteall_confirm", { count: count });
-            }
-            else {
+            } else {
                 text = this.Locale.getText("page_settings_logs.deleteall_confirm_single");
             }
-            if (await this.Popups.Alert.YesNo({
-                message: text,
-                button_yes: this.Locale.getText("yes"),
-                button_no: this.Locale.getText("no"),
-            })) {
+            if (
+                await this.Popups.Alert.YesNo({
+                    message: text,
+                    button_yes: this.Locale.getText("yes"),
+                    button_no: this.Locale.getText("no"),
+                })
+            ) {
                 const del = await this.Logger.DeleteLogs(-1);
                 if (del != 1) {
                     this.Popups.Toast.Success(this.Locale.getText("page_settings_logs.deleteall_done", { count: del }));
-                }
-                else {
+                } else {
                     this.Popups.Toast.Success(this.Locale.getText("page_settings_logs.deleteall_done_single"));
                 }
 
@@ -82,11 +82,9 @@ export class LoggingPage extends PageBase {
         this.Logfiles = size.files;
         if (size.size >= 0 && size.files >= 0) {
             this.LogsSize = this.Locale.getText("page_settings_logs.size", { files: size.files, size: FileUtils.File.FormatSize(size.size) });
-        }
-        else {
+        } else {
             this.LogsSize = undefined;
         }
         this.cdr.detectChanges();
     }
-
 }
