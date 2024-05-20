@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
-import { Component, ViewChild, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from "@angular/common";
+import { Component, ViewChild, inject } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonRow, IonText, IonTitle, IonToolbar, ItemReorderEventDetail } from '@ionic/angular/standalone';
+import { IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonRow, IonText, IonTitle, IonToolbar, ItemReorderEventDetail } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
@@ -15,41 +15,14 @@ import { Locale } from "../../../services/localization/locale";
 import { PageBase } from "../../page-base";
 
 @Component({
-    selector: 'app-list-items',
-    templateUrl: './list-items.page.html',
-    styleUrls: ['./list-items.page.scss'],
+    selector: "app-list-items",
+    templateUrl: "./list-items.page.html",
+    styleUrls: ["./list-items.page.scss"],
     standalone: true,
-    imports: [
-        IonCol,
-        IonRow,
-        IonImg,
-        IonGrid,
-        IonText,
-        IonFabButton,
-        IonFab,
-        IonReorder,
-        IonNote,
-        IonItem,
-        IonItemOptions,
-        IonItemSliding,
-        IonIcon,
-        IonItemOption,
-        IonReorderGroup,
-        IonList,
-        IonContent,
-        IonHeader,
-        IonTitle,
-        IonToolbar,
-        CommonModule,
-        FormsModule,
-        TranslateModule,
-        MainToolbarComponent,
-        PageAddNewComponent,
-        PageEmptyComponent,
-    ]
+    imports: [IonCol, IonRow, IonImg, IonGrid, IonText, IonFabButton, IonFab, IonReorder, IonNote, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent],
 })
 export class ListItemsPage extends PageBase {
-    @ViewChild('itemsContainer') private itemsContainer!: IonList;
+    @ViewChild("itemsContainer") private itemsContainer!: IonList;
 
     public List?: List | null = undefined;
     private disableClick = false;
@@ -74,8 +47,7 @@ export class ListItemsPage extends PageBase {
     public get PageTitle(): string {
         if (this.List === undefined) {
             return Locale.getText("page_listitems.loading");
-        }
-        else {
+        } else {
             return this.List?.Name ?? Locale.getText("page_listitems.page_title");
         }
     }
@@ -152,8 +124,7 @@ export class ListItemsPage extends PageBase {
                 menu.push(MenuItemEmptyList(() => this.EmptyList()));
             }
             return menu;
-        }
-        else {
+        } else {
             return [];
         }
     }

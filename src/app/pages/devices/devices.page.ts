@@ -15,7 +15,7 @@ import { PageBase } from "../page-base";
     styleUrls: ["./devices.page.scss"],
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonToggle, IonLabel, IonFabButton, IonIcon, IonFab, IonCol, IonRow, IonText, IonButton, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, MainToolbarComponent, TranslateModule,],
+    imports: [IonToggle, IonLabel, IonFabButton, IonIcon, IonFab, IonCol, IonRow, IonText, IonButton, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, MainToolbarComponent, TranslateModule],
 })
 export class DevicesPage extends PageBase {
     @ViewChild("deviceSelect") private deviceSelect!: IonSelect;
@@ -49,7 +49,7 @@ export class DevicesPage extends PageBase {
             await this.loadDevices();
         });
 
-        this.stateListener = this.ConnectIQ.onDeviceChanged$.subscribe((device) => {
+        this.stateListener = this.ConnectIQ.onDeviceChanged$.subscribe(device => {
             if (device) {
                 if (device?.Identifier == this.SelectedDevice?.Identifier) {
                     this.SelectedDevice = device;
@@ -97,8 +97,7 @@ export class DevicesPage extends PageBase {
         if (this.SelectedDevice) {
             if (is_on) {
                 this.ConnectIQ.AlwaysTransmitToDevice = this.SelectedDevice;
-            }
-            else {
+            } else {
                 this.ConnectIQ.AlwaysTransmitToDevice = undefined;
             }
         }
