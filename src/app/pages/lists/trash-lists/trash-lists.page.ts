@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
-import { IonContent, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from '@ionic/angular/standalone';
+import { CommonModule } from "@angular/common";
+import { Component, ViewChild } from "@angular/core";
+import { IonContent, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MenuItem, MenuItemEmptyListTrash } from "../../../classes/menu-items";
@@ -11,28 +11,14 @@ import { List } from "../../../services/lists/list";
 import { PageBase } from "../../page-base";
 
 @Component({
-    selector: 'app-trash-lists',
-    templateUrl: './trash-lists.page.html',
-    styleUrls: ['./trash-lists.page.scss'],
+    selector: "app-trash-lists",
+    templateUrl: "./trash-lists.page.html",
+    styleUrls: ["./trash-lists.page.scss"],
     standalone: true,
-    imports: [
-        IonContent,
-        IonText,
-        IonNote,
-        IonItem,
-        IonIcon,
-        IonItemOption,
-        IonItemOptions,
-        IonItemSliding,
-        IonList,
-        CommonModule,
-        TranslateModule,
-        MainToolbarComponent,
-        PageEmptyComponent,
-    ]
+    imports: [IonContent, IonText, IonNote, IonItem, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListsPage extends PageBase {
-    @ViewChild('listsContainer') private listsContainer!: IonList;
+    @ViewChild("listsContainer") private listsContainer!: IonList;
 
     public Lists: List[] = [];
     private trashChangedSubscription?: Subscription;
@@ -43,7 +29,7 @@ export class TrashListsPage extends PageBase {
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
-        this.trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => this.Lists = lists ?? []);
+        this.trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => (this.Lists = lists ?? []));
         this.Lists = await this.ListsService.GetTrash();
     }
 
@@ -55,8 +41,7 @@ export class TrashListsPage extends PageBase {
     public override ModifyMainMenu(): MenuItem[] {
         if (this.Lists.length > 0) {
             return [MenuItemEmptyListTrash(() => this.emptyTrash())];
-        }
-        else {
+        } else {
             return [];
         }
     }
@@ -87,8 +72,7 @@ export class TrashListsPage extends PageBase {
     public DeletedString(list: List): string {
         if (list.Deleted) {
             return this.Locale.getText("page_trash.deleted", { date: DateUtils.formatDate(list.Deleted) });
-        }
-        else {
+        } else {
             return "";
         }
     }

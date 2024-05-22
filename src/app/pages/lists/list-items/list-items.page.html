@@ -1,65 +1,63 @@
 <app-main-toolbar back="/lists">{{PageTitle}}</app-main-toolbar>
 
-<ion-content>
-    <div *ngIf="List !== null; else error">
-        <div *ngIf="List && List.Items.length > 0; else noItems">
-            <ion-list #itemsContainer>
-                <ion-reorder-group [disabled]="List.Items.length <= 1" (ionItemReorder)="handleReorder($any($event))">
-                    <ion-item-sliding *ngFor="let item of List.Items">
-                        <ion-item-options side="start" (ionSwipe)="onSwipeRight(item)">
-                            <ion-item-option color="danger" expandable="true" (click)="deleteItem(item)">
-                                <ion-icon slot="start" src="./assets/icons/trash_solid.svg"></ion-icon>
-                                {{'delete'|translate}}
-                            </ion-item-option>
-                        </ion-item-options>
-                        <ion-item lines="full" [button]="true" (click)="editItem(item)" [ngClass]="{'hidden': item.Hidden}">
-                            <div class="listpoint-indicator-wrapper" slot="start">
-                                <div class="listpoint-indicator"></div>
-                            </div>
-                            <div class="details">
-                                <div>
-                                    <ion-text class="item">{{item.Item}}</ion-text>
-                                </div>
-                                <div *ngIf="item.Note">
-                                    <ion-note color="medium" class="note">{{item.Note}}</ion-note>
-                                </div>
-                            </div>
-                            <ion-reorder slot="end"></ion-reorder>
-                        </ion-item>
-                        <ion-item-options side="end" (ionSwipe)="onSwipeLeft(item)">
-                            <ion-item-option color="secondary" expandable="true" (click)="hideItem(item)">
-                                <ion-icon slot="end" [src]="item.Hidden ? './assets/icons/eye.svg' : './assets/icons/eye_off.svg'"></ion-icon>
-                                {{(item.Hidden ? 'page_listitems.show' : 'page_listitems.hide')|translate}}
-                            </ion-item-option>
-                        </ion-item-options>
-                    </ion-item-sliding>
-                </ion-reorder-group>
-            </ion-list>
-        </div>
+<ion-content fixed-slot-placement="before" *ngIf="List !== null; else error">
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button class="add" (click)="addItem()" [ariaLabel]="'add'|translate">
+            <ion-icon src="./assets/icons/add.svg"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
 
-        <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-            <ion-fab-button class="add" (click)="addItem()" [ariaLabel]="'add'|translate">
-                <ion-icon src="./assets/icons/add.svg"></ion-icon>
-            </ion-fab-button>
-        </ion-fab>
-
-        <ng-template #noItems>
-            <app-page-add-new *ngIf="List">
-                {{'page_listitems.add_new_hint'|translate}}
-            </app-page-add-new>
-        </ng-template>
+    <div *ngIf="List && List.Items.length > 0; else noItems">
+        <ion-list #itemsContainer>
+            <ion-reorder-group [disabled]="List.Items.length <= 1" (ionItemReorder)="handleReorder($any($event))">
+                <ion-item-sliding *ngFor="let item of List.Items">
+                    <ion-item-options side="start" (ionSwipe)="onSwipeRight(item)">
+                        <ion-item-option color="danger" expandable="true" (click)="deleteItem(item)">
+                            <ion-icon slot="start" src="./assets/icons/trash_solid.svg"></ion-icon>
+                            {{'delete'|translate}}
+                        </ion-item-option>
+                    </ion-item-options>
+                    <ion-item lines="full" [button]="true" (click)="editItem(item)" [ngClass]="{'hidden': item.Hidden}">
+                        <div class="listpoint-indicator-wrapper" slot="start">
+                            <div class="listpoint-indicator"></div>
+                        </div>
+                        <div class="details">
+                            <div>
+                                <ion-text class="item">{{item.Item}}</ion-text>
+                            </div>
+                            <div *ngIf="item.Note">
+                                <ion-note color="medium" class="note">{{item.Note}}</ion-note>
+                            </div>
+                        </div>
+                        <ion-reorder slot="end"></ion-reorder>
+                    </ion-item>
+                    <ion-item-options side="end" (ionSwipe)="onSwipeLeft(item)">
+                        <ion-item-option color="secondary" expandable="true" (click)="hideItem(item)">
+                            <ion-icon slot="end" [src]="item.Hidden ? './assets/icons/eye.svg' : './assets/icons/eye_off.svg'"></ion-icon>
+                            {{(item.Hidden ? 'page_listitems.show' : 'page_listitems.hide')|translate}}
+                        </ion-item-option>
+                    </ion-item-options>
+                </ion-item-sliding>
+            </ion-reorder-group>
+        </ion-list>
     </div>
 
-    <ng-template #error>
-        <div class="nolist">
-            <app-page-empty>
-                <div slot="image">
-                    <ion-img src="./assets/icons/nolist.svg"></ion-img>
-                </div>
-                <div slot="text">
-                    <div [innerHTML]="'page_listitems.nolist'|translate"></div>
-                </div>
-            </app-page-empty>
-        </div>
+    <ng-template #noItems>
+        <app-page-add-new *ngIf="List">
+            {{'page_listitems.add_new_hint'|translate}}
+        </app-page-add-new>
     </ng-template>
 </ion-content>
+
+<ng-template #error>
+    <div class="nolist">
+        <app-page-empty>
+            <div slot="image">
+                <ion-img src="./assets/icons/nolist.svg"></ion-img>
+            </div>
+            <div slot="text">
+                <div [innerHTML]="'page_listitems.nolist'|translate"></div>
+            </div>
+        </app-page-empty>
+    </div>
+</ng-template>

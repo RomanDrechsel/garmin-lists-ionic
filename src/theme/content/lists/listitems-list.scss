@@ -1,7 +1,10 @@
 ion-list {
+    margin-bottom: 90px;
+
     ion-item {
         --padding-top: 6px;
         --padding-bottom: 6px;
+        --padding-start: 6px;
         --ripple-color: var(--ion-color-primary);
         --background-hover: var(--ion-color-primary);
         --background-hover-opacity: 0.1;
@@ -23,7 +26,7 @@ ion-list {
                 height: 6px;
                 border-radius: 100%;
                 position: absolute;
-                inset-inline-start: 12px;
+                inset-inline-start: 6px;
                 top: 20px;
             }
         }
@@ -45,7 +48,6 @@ ion-list {
         }
 
         &.hidden {
-
             .details .item,
             .details .note,
             .listpoint-indicator {

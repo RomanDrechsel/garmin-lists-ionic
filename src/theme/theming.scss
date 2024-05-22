@@ -1,5 +1,9 @@
 html {
-    --ion-default-font: 'Roboto', Helvetica, Arial, sans-serif !important;
+    --ion-default-font: "Roboto", Helvetica, Arial, sans-serif !important;
+}
+
+ion-app {
+    margin-bottom: 56px;
 }
 
 ion-list {
@@ -30,13 +34,10 @@ ion-fab-button {
 }
 
 ion-fab {
-    margin: 20px;
+    margin: 12px;
     fill: var(--ion-color-secondary-contrast);
-
     ion-fab-button {
-        --box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2),
-            0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14),
-            0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
+        --box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
 
         &.add {
             --background: var(--ion-color-success-tint);
@@ -62,9 +63,7 @@ ion-fab {
         padding: 5px 15px;
         border-radius: 15px;
         color: var(--color-text);
-        box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2),
-            0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14),
-            0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
+        box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
     }
 }
 

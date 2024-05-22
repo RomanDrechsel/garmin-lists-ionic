@@ -1,49 +1,24 @@
-import { CommonModule } from '@angular/common';
-import { Component, ViewChild, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTitle, IonToolbar, ItemReorderEventDetail, NavController } from '@ionic/angular/standalone';
-import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from "@angular/common";
+import { Component, ViewChild, inject } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTitle, IonToolbar, ItemReorderEventDetail, NavController } from "@ionic/angular/standalone";
+import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
-import { MainToolbarComponent } from 'src/app/components/main-toolbar/main-toolbar.component';
-import { List } from 'src/app/services/lists/list';
+import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
+import { List } from "src/app/services/lists/list";
 import { DateUtils } from "../../../classes/utils/dateutils";
 import { PageAddNewComponent } from "../../../components/page-add-new/page-add-new.component";
 import { PageBase } from "../../page-base";
 
 @Component({
-    selector: 'app-lists',
-    templateUrl: './lists.page.html',
-    styleUrls: ['./lists.page.scss'],
+    selector: "app-lists",
+    templateUrl: "./lists.page.html",
+    styleUrls: ["./lists.page.scss"],
     standalone: true,
-    imports: [
-        IonImg,
-        IonText,
-        IonInput,
-        IonNote,
-        IonItemOption,
-        IonItemOptions,
-        IonItemSliding,
-        IonIcon,
-        IonFabButton,
-        IonFab,
-        IonLabel,
-        IonItem,
-        IonReorder,
-        IonReorderGroup,
-        IonList,
-        IonContent,
-        IonHeader,
-        IonTitle,
-        IonToolbar,
-        MainToolbarComponent,
-        PageAddNewComponent,
-        CommonModule,
-        FormsModule,
-        TranslateModule
-    ]
+    imports: [IonImg, IonText, IonInput, IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonLabel, IonItem, IonReorder, IonReorderGroup, IonList, IonContent, IonHeader, IonTitle, IonToolbar, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule],
 })
 export class ListsPage extends PageBase {
-    @ViewChild('listsContainer') private listsContainer!: IonList;
+    @ViewChild("listsContainer") private listsContainer!: IonList;
 
     public Lists: List[] = [];
     private listsChangedSubscription?: Subscription;
@@ -81,15 +56,14 @@ export class ListsPage extends PageBase {
         if (res === true) {
             this.Popups.Toast.Success("service-lists.delete_success");
             this.listsContainer.closeSlidingItems();
-        }
-        else if (res === false) {
+        } else if (res === false) {
             this.Popups.Toast.Error("service-lists.delete_error");
             this.listsContainer.closeSlidingItems();
         }
     }
 
     public async emptyList(list: List) {
-        if (await this.ListsService.EmptyList(list) === true) {
+        if ((await this.ListsService.EmptyList(list)) === true) {
             this.listsContainer.closeSlidingItems();
         }
     }

@@ -74,7 +74,7 @@ export class AppService {
         const debugmode = await this.Preferences.Get<boolean>(EPrefProperty.DebugDevices, isDevMode());
         await this.ConnectIQ.Initialize(debugmode);
 
-        //await this.Admob.Initialize();
+        await this.Admob.Initialize();
     }
 
     /**

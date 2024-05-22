@@ -93,7 +93,7 @@
         "hide": "Hide",
         "show": "Show",
         "nolist": "Something went wrong :(<br /><br />The list can not be displayed.",
-        "add_new_hint": "Create a new items in the list."
+        "add_new_hint": "Create a new item in the list."
     },
     "page_trash": {
         "page_title": "Trash",
@@ -188,7 +188,7 @@
         "restore_list_note": "Request confirmation when restoring a list from the trash.",
         "restore_listitem": "Restore listitem",
         "restore_listitem_note": "Request confirmation when restoring a listitem from the trash.",
-        "undo_warning": "<strong>Warning: </strong> The action can not be undone!",
+        "undo_warning": "<br /><strong>Warning: </strong> The action can not be undone!",
         "transmit_list": "Transmit list",
         "transmit_list_note": "Request confirmation when transferring a list to a watch."
     },
@@ -196,7 +196,7 @@
         "page_title": "Trash",
         "use_trash": "Use trash",
         "use_trash_note": "Move lists to the trash when deleting instead of permanently removing them.",
-        "use_trash_listitem": "PUse trash for list items",
+        "use_trash_listitem": "Use trash for list items",
         "use_trash_listitem_note": "Move list items to the trash instead of permanently removing them.<br />A separate trash bin is used for each list.",
         "instock": "Keep list items in the trash",
         "instock_oneday": "one day",
@@ -206,10 +206,12 @@
         "instock_note": "How long should old lists or list items be kept in the trash?"
     },
     "page_appinfos": {
-        "page_title": "App infos",
-        "package": "package:",
+        "page_title": "App information",
+        "package": "Package:",
         "version": "version:",
         "build": "build:",
-        "platform": "platform:"
+        "platform": "platform:",
+        "database": "Database-size:",
+        "support": "I developed this app in my spare time and without financial ulterior motives.<br />It is and remains free and open source.<br /><br />If you like it and want to support me,<br />then why don't you buy me a coffee?"
     }
 }

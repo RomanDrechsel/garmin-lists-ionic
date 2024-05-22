@@ -1,7 +1,7 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonItem, IonList, IonNote, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar } from '@ionic/angular/standalone';
+import { CommonModule } from "@angular/common";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { IonContent, IonHeader, IonItem, IonList, IonNote, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { KeepInTrash } from "../../../services/lists/keep-in-trash";
@@ -9,12 +9,12 @@ import { EPrefProperty } from "../../../services/storage/preferences.service";
 import { PageBase } from "../../page-base";
 
 @Component({
-    selector: 'app-trash',
-    templateUrl: './trash-settings.page.html',
-    styleUrls: ['./trash-settings.page.scss'],
+    selector: "app-trash",
+    templateUrl: "./trash-settings.page.html",
+    styleUrls: ["./trash-settings.page.scss"],
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonNote, IonToggle, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent]
+    imports: [IonNote, IonToggle, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
 })
 export class TrashSettingsPage extends PageBase {
     private _useTrash: boolean = true;

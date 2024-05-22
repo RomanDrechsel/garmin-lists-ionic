@@ -1,6 +1,6 @@
 <app-main-toolbar back="/lists">{{'page_trashitem.page_title'|translate}}</app-main-toolbar>
 
-<ion-content>
+<ion-content class="advertice">
     <div *ngIf="List && List.TrashItems.length > 0; else empty">
         <ion-list #itemsContainer>
             <ion-item-sliding *ngFor="let item of List?.TrashItems">

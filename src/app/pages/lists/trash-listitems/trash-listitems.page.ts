@@ -1,7 +1,7 @@
-import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { CommonModule } from "@angular/common";
+import { Component, ViewChild, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { IonContent, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from '@ionic/angular/standalone';
+import { IonContent, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MenuItem, MenuItemEmptyListTrash } from "../../../classes/menu-items";
@@ -12,35 +12,19 @@ import { Listitem } from "../../../services/lists/listitem";
 import { PageBase } from "../../page-base";
 
 @Component({
-    selector: 'app-trash-listitems',
-    templateUrl: './trash-listitems.page.html',
-    styleUrls: ['./trash-listitems.page.scss'],
+    selector: "app-trash-listitems",
+    templateUrl: "./trash-listitems.page.html",
+    styleUrls: ["./trash-listitems.page.scss"],
     standalone: true,
-    imports: [IonImg,
-        IonText,
-        IonItem,
-        IonIcon,
-        IonItemOption,
-        IonItemOptions,
-        IonNote,
-        IonItemSliding,
-        IonList,
-        IonContent,
-        CommonModule,
-        TranslateModule,
-        MainToolbarComponent,
-        PageEmptyComponent,
-    ]
+    imports: [IonImg, IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListitemsPage extends PageBase {
-    @ViewChild('itemsContainer') private itemsContainer!: IonList;
+    @ViewChild("itemsContainer") private itemsContainer!: IonList;
     public List?: List;
 
     private itemsChangedSubscription?: Subscription;
 
-    constructor(private Route: ActivatedRoute) {
-        super();
-    }
+    private Route = inject(ActivatedRoute);
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
@@ -58,8 +42,7 @@ export class TrashListitemsPage extends PageBase {
     public override ModifyMainMenu(): MenuItem[] {
         if (this.List && this.List.TrashItems.length > 0) {
             return [MenuItemEmptyListTrash(() => this.emptyTrash())];
-        }
-        else {
+        } else {
             return [];
         }
     }
