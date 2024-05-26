@@ -11,7 +11,9 @@
         },
         "angular-page": {
             "skipChangeDetectionOnPush": true,
-            "skipNgOnInit": true
+            "skipNgOnInit": true,
+            "ngOnInit": false,
+            "eagerLoading": true
         },
         "angular-component": {
             "ngOnInit": false,

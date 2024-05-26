@@ -5,7 +5,7 @@ import { App } from "@capacitor/app";
 import { StatusBar } from "@capacitor/status-bar";
 import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonNote, IonRouterOutlet, IonSplitPane, IonToggle, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import { MenuItem, MenuItemAppInfos, MenuItemDevices, MenuItemLists, MenuItemListsTrash, MenuItemSettings } from "./classes/menu-items";
+import { MenuItem, MenuItemAppInfos, MenuItemDevices, MenuItemLists, MenuItemListsTrash, MenuItemPrivacy, MenuItemSettings } from "./classes/menu-items";
 import { AdmobService } from "./services/adverticing/admob.service";
 import { AppService } from "./services/app/app.service";
 import { ConnectIQService } from "./services/connectiq/connect-iq.service";
@@ -16,25 +16,7 @@ import { EPrefProperty, PreferencesService } from "./services/storage/preference
     templateUrl: "app.component.html",
     styleUrls: ["app.component.scss"],
     standalone: true,
-    imports: [
-        IonToggle,
-        IonFooter,
-        IonImg,
-        IonApp,
-        IonSplitPane,
-        IonMenu,
-        IonContent,
-        IonList,
-        IonNote,
-        IonItem,
-        IonIcon,
-        IonLabel,
-        IonRouterOutlet,
-        TranslateModule,
-        RouterLink,
-        RouterLinkActive,
-        CommonModule,
-    ],
+    imports: [IonToggle, IonFooter, IonImg, IonApp, IonSplitPane, IonMenu, IonContent, IonList, IonNote, IonItem, IonIcon, IonLabel, IonRouterOutlet, TranslateModule, RouterLink, RouterLinkActive, CommonModule],
 })
 export class AppComponent implements OnInit {
     public appPages: MenuItem[] = [];
@@ -52,7 +34,7 @@ export class AppComponent implements OnInit {
 
     constructor() {
         this.setAppPages();
-        this.systemPages = [MenuItemSettings(), MenuItemAppInfos()];
+        this.systemPages = [MenuItemSettings(), MenuItemAppInfos(), MenuItemPrivacy()];
     }
 
     public get isDevMode(): boolean {

@@ -1,14 +1,13 @@
-
-export const MenuItemLists = function(): MenuItem {
+export const MenuItemLists = function (): MenuItem {
     return {
         Id: "lists",
         Title: "mainmenu.lists",
         Icon: "./assets/icons/menu/lists.svg",
-        Url: "/lists"
+        Url: "/lists",
     };
 };
 
-export const MenuItemListsTrash = function(hide: boolean = false): MenuItem {
+export const MenuItemListsTrash = function (hide: boolean = false): MenuItem {
     return {
         Id: "trash",
         Title: "mainmenu.trash",
@@ -18,7 +17,7 @@ export const MenuItemListsTrash = function(hide: boolean = false): MenuItem {
     };
 };
 
-export const MenuItemListitemsTrash = function(list_uuid: string, hide: boolean = false): MenuItem {
+export const MenuItemListitemsTrash = function (list_uuid: string, hide: boolean = false): MenuItem {
     return {
         Id: "trash",
         Title: "mainmenu.trash",
@@ -28,48 +27,57 @@ export const MenuItemListitemsTrash = function(list_uuid: string, hide: boolean 
     };
 };
 
-export const MenuItemDevices = function(): MenuItem {
+export const MenuItemDevices = function (): MenuItem {
     return {
         Id: "devices",
         Title: "mainmenu.devices",
         Icon: "./assets/icons/menu/devices.svg",
-        Url: "/devices"
+        Url: "/devices",
     };
 };
 
-export const MenuItemSettings = function(): MenuItem {
+export const MenuItemSettings = function (): MenuItem {
     return {
         Id: "settings",
         Title: "mainmenu.settings",
         Icon: "./assets/icons/menu/settings.svg",
-        Url: "/settings"
+        Url: "/settings",
     };
 };
 
-export const MenuItemAppInfos = function(): MenuItem {
+export const MenuItemAppInfos = function (): MenuItem {
     return {
         Id: "appinfos",
         Title: "mainmenu.appinfos",
         Icon: "./assets/icons/menu/appinfos.svg",
-        Url: "/appinfos"
+        Url: "/appinfos",
     };
 };
 
-export const MenuItemEmptyList = function(onclick: () => Promise<boolean>): MenuItem {
+export const MenuItemPrivacy = function (): MenuItem {
+    return {
+        Id: "privacy",
+        Title: "mainmenu.privacy",
+        Icon: "./assets/icons/menu/privacy.svg",
+        Url: "/privacy-policy/privacy",
+    };
+};
+
+export const MenuItemEmptyList = function (onclick: () => Promise<boolean>): MenuItem {
     return {
         Id: "emptylist",
         Title: "page_listitems.menu_empty",
         Icon: "./assets/icons/menu/empty.svg",
-        onClick: onclick
+        onClick: onclick,
     };
 };
 
-export const MenuItemEmptyListTrash = function(onclick: () => Promise<boolean>): MenuItem {
+export const MenuItemEmptyListTrash = function (onclick: () => Promise<boolean>): MenuItem {
     return {
         Id: "emptytrash",
         Title: "mainmenu.empty_trash",
         Icon: "./assets/icons/menu/empty_trash.svg",
-        onClick: onclick
+        onClick: onclick,
     };
 };
 

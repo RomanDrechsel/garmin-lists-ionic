@@ -1,33 +1,23 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
-import { IonBackButton, IonButtons, IonHeader, IonMenuButton, IonProgressBar, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, inject } from "@angular/core";
+import { IonBackButton, IonButtons, IonHeader, IonMenuButton, IonProgressBar, IonTitle, IonToolbar } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { AppService } from "../../services/app/app.service";
 
 @Component({
-    selector: 'app-main-toolbar',
+    selector: "app-main-toolbar",
     standalone: true,
-    imports: [
-        IonProgressBar,
-        CommonModule,
-        TranslateModule,
-        IonToolbar,
-        IonButtons,
-        IonMenuButton,
-        IonBackButton,
-        IonTitle,
-        IonHeader
-    ],
-    templateUrl: './main-toolbar.component.html',
-    styleUrl: './main-toolbar.component.scss',
+    imports: [IonProgressBar, CommonModule, TranslateModule, IonToolbar, IonButtons, IonMenuButton, IonBackButton, IonTitle, IonHeader],
+    templateUrl: "./main-toolbar.component.html",
+    styleUrl: "./main-toolbar.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainToolbarComponent {
-    @Input('title') pageTitle: string = "";
-    @Input('back') backButton: string = "";
-    @Input('menu') menuButton: 'true' | 'false' = "true";
+    @Input("title") pageTitle: string = "";
+    @Input("back") backButton: string = "";
+    @Input("menu") menuButton: "true" | "false" = "true";
 
-    constructor(private readonly cdr: ChangeDetectorRef) { }
+    private readonly cdr = inject(ChangeDetectorRef);
 
     private _showProgressbar: boolean = false;
 

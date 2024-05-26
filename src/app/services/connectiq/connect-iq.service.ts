@@ -74,8 +74,10 @@ export class ConnectIQService {
             }
             if (!this._deviceListener) {
                 this._deviceListener = await this.addListener<DeviceEventArgs>("DEVICE", device => {
-                    this._devices.find(d => d.Identifier == device.id)?.Update(device);
-                    this.onDeviceChangedSubject.next(ConnectIQDevice.FromEventArgs(device, this));
+                    if (device) {
+                        this._devices.find(d => d.Identifier == device.id)?.Update(device);
+                        this.onDeviceChangedSubject.next(ConnectIQDevice.FromEventArgs(device, this));
+                    }
                 });
             }
             await ConnectIQ.Initialize({ live: !debug_devices });
@@ -109,8 +111,7 @@ export class ConnectIQService {
                             let device = this._devices.find(d2 => d2.Identifier == d.id);
                             if (device) {
                                 device.Update(d);
-                            }
-                            else {
+                            } else {
                                 device = ConnectIQDevice.FromEventArgs(d, this);
                             }
                             devices.push(device);
@@ -177,8 +178,7 @@ export class ConnectIQService {
             if (!device) {
                 if (this._alwaysTransmitToDevice) {
                     device = this._alwaysTransmitToDevice;
-                }
-                else if (this._devices.length == 1) {
+                } else if (this._devices.length == 1) {
                     device = this._devices[0];
                 }
             }
@@ -186,40 +186,34 @@ export class ConnectIQService {
             if (device && device.State == "Ready") {
                 const confirm = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmTransmitList, true);
                 const locale = this.Locale.getText(["service-connectiq.transmit_confirm", "yes", "no"], { device: device.Name });
-                if (!confirm || await this.Popups.Alert.YesNo({ message: locale["service-connectiq.transmit_confirm"], button_yes: locale["yes"], button_no: locale["no"] })) {
+                if (!confirm || (await this.Popups.Alert.YesNo({ message: locale["service-connectiq.transmit_confirm"], button_yes: locale["yes"], button_no: locale["no"] }))) {
                     const toast = await this.Popups.Toast.Notice("service-connectiq.transmit_process", Toast.DURATION_INFINITE);
                     AppService.AppToolbar.ShowProgressbar = true;
                     resp = await ConnectIQ.SendToDevice({ device_id: String(device.Identifier), data: list.toDeviceJson() });
                     toast.dismiss();
                     AppService.AppToolbar.ShowProgressbar = false;
-                }
-                else {
+                } else {
                     return true;
                 }
-            }
-            else {
+            } else {
                 redirect = true;
             }
-        }
-        else {
+        } else {
             redirect = true;
         }
 
         if (redirect && !force) {
             this.Router.navigate(["/devices"], { queryParams: { transmit: uuid } });
             return true;
-        }
-        else if (device) {
+        } else if (device) {
             if (resp && resp.success) {
                 this.Popups.Toast.Success("service-connectiq.transmit_success");
                 return true;
-            }
-            else {
+            } else {
                 this.Popups.Toast.Error("service-connectiq.transmit_error");
                 return false;
             }
-        }
-        else {
+        } else {
             this.Popups.Toast.Error("service-connectiq.transmit_error");
             Logger.Debug(`The list ${uuid} could not be transmitted: No device found`);
             return false;
