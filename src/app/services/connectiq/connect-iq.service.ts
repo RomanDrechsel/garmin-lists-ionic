@@ -2,11 +2,11 @@ import { Injectable, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { Capacitor, PluginListenerHandle } from "@capacitor/core";
 import { BehaviorSubject } from "rxjs";
-import { DeviceEventArgs } from "src/app/plugins/connectiq/EventArgs/device-event-args";
-import { LogEventArgs } from "src/app/plugins/connectiq/EventArgs/log-event-args";
+import { DeviceEventArgs } from "src/app/plugins/connectiq/event-args/device-event-args";
+import { LogEventArgs } from "src/app/plugins/connectiq/event-args/log-event-args";
 import { DebugDevices } from "../../../environments/environment";
-import { TransmitListEventArgs } from "../../plugins/connectiq/EventArgs/transmit-list-event-args";
 import ConnectIQ from "../../plugins/connectiq/connect-iq";
+import { TransmitListEventArgs } from "../../plugins/connectiq/event-args/transmit-list-event-args";
 import { AppService } from "../app/app.service";
 import { ListsService } from "../lists/lists.service";
 import { LocalizationService } from "../localization/localization.service";
@@ -188,10 +188,10 @@ export class ConnectIQService {
                 const locale = this.Locale.getText(["service-connectiq.transmit_confirm", "yes", "no"], { device: device.Name });
                 if (!confirm || (await this.Popups.Alert.YesNo({ message: locale["service-connectiq.transmit_confirm"], button_yes: locale["yes"], button_no: locale["no"] }))) {
                     const toast = await this.Popups.Toast.Notice("service-connectiq.transmit_process", Toast.DURATION_INFINITE);
-                    AppService.AppToolbar.ShowProgressbar = true;
+                    AppService.AppToolbar?.ToggleProgressbar(true);
                     resp = await ConnectIQ.SendToDevice({ device_id: String(device.Identifier), data: list.toDeviceJson() });
                     toast.dismiss();
-                    AppService.AppToolbar.ShowProgressbar = false;
+                    AppService.AppToolbar?.ToggleProgressbar(false);
                 } else {
                     return true;
                 }

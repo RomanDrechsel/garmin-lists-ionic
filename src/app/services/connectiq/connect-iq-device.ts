@@ -1,4 +1,4 @@
-import { DeviceEventArgs } from "src/app/plugins/connectiq/EventArgs/device-event-args";
+import { DeviceEventArgs } from "src/app/plugins/connectiq/event-args/device-event-args";
 import { Locale } from "../localization/locale";
 import { ConnectIQService } from "./connect-iq.service";
 

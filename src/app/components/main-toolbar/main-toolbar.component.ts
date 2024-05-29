@@ -1,8 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, inject } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild, inject } from "@angular/core";
 import { IonBackButton, IonButtons, IonHeader, IonMenuButton, IonProgressBar, IonTitle, IonToolbar } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import { AppService } from "../../services/app/app.service";
 
 @Component({
     selector: "app-main-toolbar",
@@ -14,25 +13,26 @@ import { AppService } from "../../services/app/app.service";
 })
 export class MainToolbarComponent {
     @Input("title") pageTitle: string = "";
-    @Input("back") backButton: string = "";
+    @Input("back") backButton?: string = undefined;
     @Input("menu") menuButton: "true" | "false" = "true";
+    @ViewChild("backbutton", { read: IonBackButton }) private backBtn?: IonBackButton;
 
     private readonly cdr = inject(ChangeDetectorRef);
 
     private _showProgressbar: boolean = false;
 
-    public get ShowProgressbar(): boolean {
+    public IsProgressbarShowing(): boolean {
         return this._showProgressbar;
     }
 
-    public set ShowProgressbar(v: boolean) {
+    public ToggleProgressbar(v: boolean) {
         if (this._showProgressbar != v) {
             this._showProgressbar = v;
             this.cdr.detectChanges();
         }
     }
 
-    public ngOnInit() {
-        AppService.AppToolbar = this;
+    public get BackLink(): string | undefined {
+        return this.backBtn?.defaultHref;
     }
 }

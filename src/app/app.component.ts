@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild, inject, isDevMode } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { App } from "@capacitor/app";
 import { StatusBar } from "@capacitor/status-bar";
-import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonNote, IonRouterOutlet, IonSplitPane, IonToggle, Platform } from "@ionic/angular/standalone";
+import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonNote, IonRouterOutlet, IonSplitPane, IonToggle, NavController, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { MenuItem, MenuItemAppInfos, MenuItemDevices, MenuItemLists, MenuItemListsTrash, MenuItemPrivacy, MenuItemSettings } from "./classes/menu-items";
 import { AdmobService } from "./services/adverticing/admob.service";
@@ -20,13 +20,14 @@ import { EPrefProperty, PreferencesService } from "./services/storage/preference
 })
 export class AppComponent implements OnInit {
     public appPages: MenuItem[] = [];
-    public systemPages: MenuItem[] = [];
+    public systemPages: MenuItem[] = [MenuItemSettings(), MenuItemAppInfos(), MenuItemPrivacy()];
 
     public readonly ConnectIQ = inject(ConnectIQService);
     private readonly Platform = inject(Platform);
     private readonly Preferences = inject(PreferencesService);
     private readonly App = inject(AppService);
     private readonly Admob = inject(AdmobService);
+    private readonly NavController = inject(NavController);
 
     @ViewChild("router_outlet") private routerOutlet!: IonRouterOutlet;
 
@@ -34,11 +35,14 @@ export class AppComponent implements OnInit {
 
     constructor() {
         this.setAppPages();
-        this.systemPages = [MenuItemSettings(), MenuItemAppInfos(), MenuItemPrivacy()];
     }
 
     public get isDevMode(): boolean {
         return isDevMode();
+    }
+
+    public get menuSide() {
+        return this.App.DeviceWidth < 1024 ? "end" : "start";
     }
 
     public async ngOnInit() {
@@ -47,19 +51,11 @@ export class AppComponent implements OnInit {
         }
 
         //exit app if back-stack is empty
-        this.Platform.backButton.subscribeWithPriority(-1, () => {
-            if (this.routerOutlet) {
-                if (!this.routerOutlet.canGoBack()) {
-                    App.exitApp();
-                }
-            }
+        this.Platform.backButton.subscribeWithPriority(-1, async () => {
+            await this.tapBackToExit();
         });
 
         await this.Admob.ShowBanner();
-    }
-
-    public get menuSide() {
-        return this.App.DeviceWidth < 1024 ? "end" : "start";
     }
 
     public async onMenuItemClick(item: MenuItem) {
@@ -89,5 +85,18 @@ export class AppComponent implements OnInit {
         menu = menu.filter(m => !m.Hide);
 
         this.appPages = menu;
+    }
+
+    private async tapBackToExit() {
+        if (this.routerOutlet) {
+            if (!this.routerOutlet.canGoBack()) {
+                const backlink = AppService.AppToolbar?.BackLink;
+                if (backlink) {
+                    this.NavController.navigateBack(backlink);
+                } else {
+                    await App.minimizeApp();
+                }
+            }
+        }
     }
 }
