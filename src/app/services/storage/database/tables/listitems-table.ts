@@ -11,11 +11,12 @@ export class ListitemsTable extends DatabaseTableBase {
      * @returns array of UpgradeStatements
      */
     public VersionUpgradeStatements(): UpgradeStatement[] {
-        let upgrades: UpgradeStatement[] = [{
-            toVersion: 1,
-            statements: [
-                `CREATE TABLE IF NOT EXISTS ${this.Tablename} (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+        let upgrades: UpgradeStatement[] = [
+            {
+                toVersion: 1,
+                statements: [
+                    `CREATE TABLE IF NOT EXISTS ${this.Tablename} (
+                    id y PRIMARY KEY AUTOINCREMENT,
                     list_uuid TEXT,
                     item TEXT NOT NULL,
                     note TEXT,
@@ -23,10 +24,11 @@ export class ListitemsTable extends DatabaseTableBase {
                     hidden INTEGER,
                     created INTEGER NOT NULL,
                     updated INTEGER);`,
-                `CREATE INDEX IF NOT EXISTS idx_list_uuid ON ${this.Tablename} (list_uuid);`,
-                `CREATE INDEX IF NOT EXISTS idx_order ON ${this.Tablename} ('order')`,
-                `CREATE INDEX IF NOT EXISTS idx_hidden ON ${this.Tablename} (hidden);`]
-        },
+                    `CREATE INDEX IF NOT EXISTS idx_list_uuid ON ${this.Tablename} (list_uuid);`,
+                    `CREATE INDEX IF NOT EXISTS idx_order ON ${this.Tablename} ('order')`,
+                    `CREATE INDEX IF NOT EXISTS idx_hidden ON ${this.Tablename} (hidden);`,
+                ],
+            },
         ];
 
         return upgrades;
@@ -42,12 +44,10 @@ export class ListitemsTable extends DatabaseTableBase {
         const result = await this.ReadQuery(query, [uuid]);
         if (result) {
             return result as ListitemModel[];
-        }
-        else if (result === false) {
+        } else if (result === false) {
             Logger.Error(`Could not read listitems for list ${uuid} from database in ${this.BackendIdentifier}`);
             return undefined;
-        }
-        else {
+        } else {
             return [];
         }
     }
@@ -77,10 +77,9 @@ export class ListitemsTable extends DatabaseTableBase {
      */
     public async RemoveItem(id: number): Promise<boolean> {
         const query = `DELETE FROM  ${this.Tablename} WHERE id=?`;
-        if (await this.WriteQuery(query, [id]) !== false) {
+        if ((await this.WriteQuery(query, [id])) !== false) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -92,10 +91,9 @@ export class ListitemsTable extends DatabaseTableBase {
      */
     public async RemoveList(list_uuid: string): Promise<boolean> {
         const query = `DELETE FROM  ${this.Tablename} WHERE list_uuid=?`;
-        if (await this.WriteQuery(query, [list_uuid]) !== false) {
+        if ((await this.WriteQuery(query, [list_uuid])) !== false) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -110,8 +108,7 @@ export class ListitemsTable extends DatabaseTableBase {
         const result = await this.ReadQuery(query, [list_uuid]);
         if (result && result.length > 0 && result[0].anz) {
             return parseInt(result[0].anz);
-        }
-        else {
+        } else {
             return 0;
         }
     }
@@ -121,10 +118,9 @@ export class ListitemsTable extends DatabaseTableBase {
      */
     public async Truncate(): Promise<boolean> {
         const query = `DELETE FROM ${this.Tablename}`;
-        if (await this.WriteQuery(query) !== false) {
+        if ((await this.WriteQuery(query)) !== false) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -154,4 +150,4 @@ export class ListitemsTable extends DatabaseTableBase {
 
         return del.length;
     }
-};
+}
