@@ -26,7 +26,8 @@
         "trash": "Trash",
         "devices": "Devices",
         "settings": "Settings",
-        "appinfos": "App infos",
+        "privacy": "Privacy policy",
+        "appinfos": "App information",
         "empty_trash": "Empty trash"
     },
     "service-lists": {
@@ -213,5 +214,15 @@
         "platform": "platform:",
         "database": "Database-size:",
         "support": "I developed this app in my spare time and without financial ulterior motives.<br />It is and remains free and open source.<br /><br />If you like it and want to support me,<br />then why don't you buy me a coffee?"
+    },
+    "page_privacy": {
+        "page_title": "Privacy",
+        "admob_consent": "Personalized ad",
+        "admob_consent_note": "Have personalized advertising displayed or revoke this.",
+        "policy": "Privacy policy",
+        "policy_note": "This statement explains what data is collected."
+    },
+    "page_policy": {
+        "page_title": "Privacy policy"
     }
 }
