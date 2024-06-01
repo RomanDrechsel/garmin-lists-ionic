@@ -1,0 +1,72 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ionic:build-sync-run",
+            "type": "shell",
+            "command": "npx ng build --configuration=${input:mode} && npx cap copy android && npx ionic cap run android --livereload --external --public-host=192.168.178.27 --target ${input:device}",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "isBackground": true
+        }
+    ],
+    "inputs": [
+        {
+            "id": "mode",
+            "type": "pickString",
+            "description": "Konfiguration: ",
+            "options": [
+                {
+                    "label": "Development",
+                    "value": "development"
+                },
+                {
+                    "label": "Produktion",
+                    "value": "production"
+                },
+                {
+                    "label": "Screenshots",
+                    "value": "screenshot"
+                },
+                {
+                    "label": "Live Release ",
+                    "value": "liveRelease"
+                },
+            ]
+        },
+        {
+            "id": "device",
+            "type": "pickString",
+            "description": "Liste aller Android Geräte: ",
+            "options": [
+                {
+                    "label": "Privates Handy",
+                    "value": "R5CW31K1TPT"
+                },
+                {
+                    "label": "Arbeits-Handy",
+                    "value": "3200132a4722b58d"
+                },
+                {
+                    "label": "Emulator Android 14",
+                    "value": "Android_14_-_Pixel_8_Pro"
+                },
+                {
+                    "label": "Emulator Android 12",
+                    "value": "Android_12_-_Pixel_6a"
+                },
+                {
+                    "label": "Emulator Android 10",
+                    "value": "Android_10_-_Pixel_4"
+                }
+            ]
+        },
+    ]
+}

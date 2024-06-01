@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { AdMob, AdMobBannerSize, AdmobConsentDebugGeography, AdmobConsentRequestOptions, AdmobConsentStatus, BannerAdOptions, BannerAdPluginEvents, BannerAdPosition, BannerAdSize } from "@capacitor-community/admob";
+import { AdMob, AdMobBannerSize, AdmobConsentDebugGeography, AdmobConsentInfo, AdmobConsentRequestOptions, AdmobConsentStatus, BannerAdOptions, BannerAdPluginEvents, BannerAdPosition, BannerAdSize } from "@capacitor-community/admob";
 import { Keyboard } from "@capacitor/keyboard";
 import { environment } from "../../../environments/environment";
 import { Logger } from "../logging/logger";
@@ -8,8 +8,10 @@ import { Logger } from "../logging/logger";
     providedIn: "root",
 })
 export class AdmobService {
+    /** is the banner currently shown */
     private _bannerIsShown: boolean = false;
 
+    /** last height of the banner in px */
     private _bannerHeight: number = 56;
 
     public async Initialize() {
@@ -18,26 +20,7 @@ export class AdmobService {
             testingDevices: ["edfcf89c-603c-45fa-a1c8-f77b771ee68c"],
         });
 
-        const authorizationStatus = await AdMob.trackingAuthorizationStatus();
-
-        Logger.Debug(`Admob tracking authorization status: ${authorizationStatus.status}`);
-        if (authorizationStatus.status === "notDetermined") {
-            await AdMob.requestTrackingAuthorization();
-        }
-
-        let options: AdmobConsentRequestOptions = {};
-        if (environment.publicRelease !== true) {
-            options = {
-                debugGeography: AdmobConsentDebugGeography.EEA,
-                testDeviceIdentifiers: ["edfcf89c-603c-45fa-a1c8-f77b771ee68c"],
-            };
-        }
-
-        const consentInfo = await AdMob.requestConsentInfo(options);
-        if (authorizationStatus.status === "authorized" && consentInfo.isConsentFormAvailable && consentInfo.status === AdmobConsentStatus.REQUIRED) {
-            const confirm = await AdMob.showConsentForm();
-            Logger.Debug(`Admob consent info: `, confirm.status);
-        }
+        await this.RequestConsent(false);
 
         AdMob.addListener(BannerAdPluginEvents.Loaded, () => {
             Logger.Debug(`Admob banner loaded`);
@@ -69,10 +52,13 @@ export class AdmobService {
             await this.HideBanner();
         });
         Keyboard.addListener("keyboardDidHide", async () => {
-            await this.ResumeBanner();
+            await this.resumeBanner();
         });
     }
 
+    /**
+     * Shows the Admob banner if it's not already shown.
+     */
     public async ShowBanner() {
         if (this._bannerIsShown === false) {
             const options: BannerAdOptions = {
@@ -81,12 +67,15 @@ export class AdmobService {
                 position: BannerAdPosition.BOTTOM_CENTER,
                 margin: 0,
                 isTesting: environment.publicRelease !== true,
-                // npa: true
+                //npa: true
             };
             await AdMob.showBanner(options);
         }
     }
 
+    /**
+     * Hides the Admob banner if it's currently shown.
+     */
     public async HideBanner() {
         if (this._bannerIsShown === true) {
             await AdMob.hideBanner();
@@ -94,11 +83,60 @@ export class AdmobService {
         this._bannerIsShown = false;
     }
 
-    private async ResumeBanner() {
+    /**
+     * Requests consent for personalized advertising.     *
+     * @param force_form If true, forces the consent form to be shown even if it's not required.
+     * @returns true if consent is obtained or not required, false otherwise.
+     */
+    public async RequestConsent(force_form: boolean = true): Promise<boolean> {
+        const authorizationStatus = (await AdMob.trackingAuthorizationStatus()).status;
+        Logger.Debug(`Admob tracking authorization status: ${authorizationStatus}`);
+
+        if (authorizationStatus === "notDetermined" || force_form) {
+            await AdMob.requestTrackingAuthorization();
+        }
+
+        if ((await AdMob.trackingAuthorizationStatus()).status == "authorized") {
+            const consentInfo = await this.getConsentStatus();
+            let status = consentInfo.status;
+            if (consentInfo.isConsentFormAvailable && (status === AdmobConsentStatus.REQUIRED || force_form)) {
+                status = (await AdMob.showConsentForm()).status;
+            }
+            Logger.Debug(`Admob consent status: ${status}`);
+            return status === AdmobConsentStatus.OBTAINED || status == AdmobConsentStatus.NOT_REQUIRED;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Retrieves the current consent status for personalized advertising.
+     *
+     * @returns  object containing the current consent status.
+     */
+    private async getConsentStatus(): Promise<AdmobConsentInfo> {
+        let options: AdmobConsentRequestOptions = {};
+        if (environment.publicRelease !== true) {
+            options = {
+                debugGeography: AdmobConsentDebugGeography.EEA,
+                testDeviceIdentifiers: ["edfcf89c-603c-45fa-a1c8-f77b771ee68c"],
+            };
+        }
+        const info = AdMob.requestConsentInfo(options);
+        console.log(info);
+        return info;
+    }
+
+    /** resumes the banner */
+    private async resumeBanner() {
         await AdMob.resumeBanner();
         this.resizeContainer(this._bannerHeight);
     }
 
+    /**
+     * resizes the space for the banner
+     * @param height banner height in px
+     */
     private resizeContainer(height: number) {
         const container = document.querySelector("ion-app") as HTMLElement;
         if (container) {

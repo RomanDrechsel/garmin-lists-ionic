@@ -1,0 +1,31 @@
+.privacy-policy {
+    font-size: 0.9em;
+    padding: 8px;
+
+    h2 {
+        margin: 32px 0 0 0;
+        font-weight: 900;
+        font-size: 1.5em;
+        line-height: 1.1em;
+
+        &:first-of-type {
+            margin-top: 6px;
+        }
+    }
+
+    p {
+        margin-block: 8px;
+    }
+
+    ul {
+        margin-block-start: 8px;
+        margin-block-end: 1em;
+        padding-inline-start: 20px;
+    }
+
+    .date {
+        text-align: right;
+        font-style: italic;
+        margin: 24px 16px;
+    }
+}

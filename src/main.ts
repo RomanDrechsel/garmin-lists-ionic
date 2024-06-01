@@ -1,13 +1,13 @@
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { HttpClient, provideHttpClient } from "@angular/common/http";
 import { APP_INITIALIZER, enableProdMode, importProvidersFrom, isDevMode } from "@angular/core";
 import { bootstrapApplication } from "@angular/platform-browser";
 import { RouteReuseStrategy, provideRouter } from "@angular/router";
 import { provideServiceWorker } from "@angular/service-worker";
 import { Capacitor } from "@capacitor/core";
-import { IonicRouteStrategy, provideIonicAngular, } from "@ionic/angular/standalone";
+import { IonicRouteStrategy, provideIonicAngular } from "@ionic/angular/standalone";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
-import { defineCustomElements as jeepSqlite } from 'jeep-sqlite/loader';
+import { defineCustomElements as jeepSqlite } from "jeep-sqlite/loader";
 import { PageTransitionAnimation } from "./app/animations/page-transition.animation";
 import { AppComponent } from "./app/app.component";
 import { routes } from "./app/app.routes";
@@ -28,7 +28,7 @@ if (environment.production) {
 
 if (Capacitor.getPlatform() === "web") {
     jeepSqlite(window);
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener("DOMContentLoaded", () => {
         const jeepEl = document.createElement("jeep-sqlite");
         document.body.appendChild(jeepEl);
     });
@@ -47,8 +47,8 @@ bootstrapApplication(AppComponent, {
             enabled: !isDevMode(),
             registrationStrategy: "registerWhenStable:30000",
         }),
+        provideHttpClient(),
         importProvidersFrom([
-            HttpClientModule,
             TranslateModule.forRoot({
                 defaultLanguage: "en",
                 loader: {
@@ -62,7 +62,7 @@ bootstrapApplication(AppComponent, {
             provide: APP_INITIALIZER,
             useFactory: initializeFactory,
             deps: [AppService],
-            multi: true
+            multi: true,
         },
     ],
-}).catch((err) => console.log(err));
+}).catch(err => console.log(err));

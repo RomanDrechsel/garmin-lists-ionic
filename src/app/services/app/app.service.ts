@@ -1,8 +1,8 @@
-import { Injectable, inject, isDevMode } from '@angular/core';
+import { Injectable, inject, isDevMode } from "@angular/core";
 import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
-import { Platform } from '@ionic/angular';
+import { Platform } from "@ionic/angular";
 import { StringUtils } from "../../classes/utils/stringutils";
 import { MainToolbarComponent } from "../../components/main-toolbar/main-toolbar.component";
 import { AdmobService } from "../adverticing/admob.service";
@@ -17,12 +17,12 @@ import { DatabaseService } from "../storage/database.service";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class AppService {
     /** object with app info */
     public static AppInfo: AppInfo;
-    public static AppToolbar: MainToolbarComponent;
+    public static AppToolbar?: MainToolbarComponent;
 
     public readonly loggerService = inject(LoggingService);
 
@@ -53,7 +53,7 @@ export class AppService {
     /** app running on a native device? */
     public static get isMobileApp(): boolean {
         const platform = AppService.AppPlatform;
-        return platform === 'ios' || platform === 'android';
+        return platform === "ios" || platform === "android";
     }
 
     /** app running on a webbrowser? */
@@ -95,7 +95,7 @@ export class AppService {
      * is the device in darkmode?
      */
     public static get Darkmode(): boolean {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        return window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
 
     /**
@@ -125,10 +125,10 @@ export class AppService {
 }
 
 export declare type AppInfo = {
-    AppName: string,
-    PackageName: string,
-    VersionString: string,
-    Build: number,
-    Platform: "android" | "ios" | "web",
+    AppName: string;
+    PackageName: string;
+    VersionString: string;
+    Build: number;
+    Platform: "android" | "ios" | "web";
     Identifier: string;
 };

@@ -1,26 +1,54 @@
 <app-main-toolbar back="/lists">{{'page_appinfos.page_title'|translate}}</app-main-toolbar>
 
-<ion-content class="advertice">
-    <ion-list>
-        <ion-item class="ion-align-items-start" lines="full">
-            <ion-label class="ion-float-start withgrid" translate>page_appinfos.package</ion-label>
-            <ion-grid class="value">
-                <ion-row>
-                    <ion-col class="ion-text-end colspan" offset="2">{{BundleId}}</ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col class="ion-text-end" translate>page_appinfos.version</ion-col>
-                    <ion-col class="ion-text-end">{{Appversion}}</ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col class="ion-text-end" translate>page_appinfos.build</ion-col>
-                    <ion-col class="ion-text-end">{{Build}}</ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col class="ion-text-end" translate>page_appinfos.platform</ion-col>
-                    <ion-col class="ion-text-end">{{Platform}}</ion-col>
-                </ion-row>
-            </ion-grid>
-        </ion-item>
-    </ion-list>
+<ion-content>
+    <div class="flex">
+        <div class="list">
+            <ion-list>
+                <ion-item class="ion-align-items-start" lines="full">
+                    <ion-grid>
+                        <ion-row>
+                            <ion-col>
+                                <ion-text>{{'page_appinfos.package'|translate}}</ion-text>
+                            </ion-col>
+                            <ion-col>
+                                <ion-grid class="value">
+                                    <ion-row>
+                                        <ion-col class="ion-text-end">{{BundleId}}</ion-col>
+                                    </ion-row>
+                                    <ion-row>
+                                        <ion-col class="ion-text-end">{{'page_appinfos.version'|translate}}</ion-col>
+                                        <ion-col class="ion-text-end">{{Appversion}}</ion-col>
+                                    </ion-row>
+                                    <ion-row>
+                                        <ion-col class="ion-text-end">{{'page_appinfos.build'|translate}}</ion-col>
+                                        <ion-col class="ion-text-end">{{Build}}</ion-col>
+                                    </ion-row>
+                                    <ion-row>
+                                        <ion-col class="ion-text-end">{{'page_appinfos.platform'|translate}}</ion-col>
+                                        <ion-col class="ion-text-end">{{Platform}}</ion-col>
+                                    </ion-row>
+                                </ion-grid>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-item>
+                <ion-item lines="full">
+                    <ion-grid>
+                        <ion-row>
+                            <ion-col>
+                                <ion-text>{{'page_appinfos.database'|translate}}</ion-text>
+                            </ion-col>
+                            <ion-col>
+                                <ion-note class="ion-text-end">{{DatabaseSize}}</ion-note>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-item>
+            </ion-list>
+        </div>
+        <div class="support">
+            <div [innerHTML]="'page_appinfos.support'|translate" class="ion-text-center"></div>
+            <ion-img [src]="isDarkmode ? './assets/img/bmc_dark.png' : './assets/img/bmc.png'" (click)="bmc()" />
+        </div>
+    </div>
 </ion-content>
