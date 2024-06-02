@@ -40,6 +40,7 @@ export class ListsPage extends PageBase {
     }
 
     public onSwipeRight(list: List) {
+        this.listsContainer.closeSlidingItems();
         this.deleteList(list);
     }
 
@@ -48,6 +49,7 @@ export class ListsPage extends PageBase {
     }
 
     public onSwipeLeft(list: List) {
+        this.listsContainer.closeSlidingItems();
         this.transmitList(list);
     }
 

@@ -10,23 +10,24 @@ export class ListitemsTrashTable extends ListitemsTable {
      * @returns array of UpgradeStatements
      */
     public override VersionUpgradeStatements(): UpgradeStatement[] {
-        let upgrades: UpgradeStatement[] = [{
-            toVersion: 3,
-            statements: [
-                `CREATE TABLE IF NOT EXISTS ${this.Tablename} (
-                    id INTEGER PRIMARY KEY,
-                    list_uuid TEXT,
-                    item TEXT NOT NULL,
-                    note TEXT,
-                    'order' INTEGER NOT NULL,
-                    hidden INTEGER,
-                    created INTEGER NOT NULL,
-                    updated INTEGER,
-                    deleted INTEGER NOT NULL);`,
-                `CREATE INDEX IF NOT EXISTS idx_list_uuid ON ${this.Tablename} (list_uuid);`,
-                `CREATE INDEX IF NOT EXISTS idx_deleted ON ${this.Tablename} (deleted);`
-            ]
-        },
+        let upgrades: UpgradeStatement[] = [
+            {
+                toVersion: 3,
+                statements: [
+                    `CREATE TABLE IF NOT EXISTS ${this.Tablename} (
+                        id INTEGER PRIMARY KEY,
+                        list_uuid TEXT,
+                        item TEXT NOT NULL,
+                        note TEXT,
+                        'order' INTEGER NOT NULL,
+                        hidden INTEGER,
+                        created INTEGER NOT NULL,
+                        updated INTEGER,
+                        deleted INTEGER NOT NULL);`,
+                    `CREATE INDEX IF NOT EXISTS idx_list_uuid ON ${this.Tablename} (list_uuid);`,
+                    `CREATE INDEX IF NOT EXISTS idx_deleted ON ${this.Tablename} (deleted);`,
+                ],
+            },
         ];
         return upgrades;
     }
@@ -55,18 +56,16 @@ export class ListitemsTrashTable extends ListitemsTable {
      */
     public async RemoveOldItems(seconds: number): Promise<number | false> {
         const query = `DELETE FROM ${this.Tablename} WHERE deleted < ?`;
-        const ts = Math.floor(Date.now()) - (seconds * 1000);
+        const ts = Math.floor(Date.now()) - seconds * 1000;
         const result = await this.ReadQuery(query, [ts]);
         if (result !== false) {
             const changes = await this.Changes();
             if (changes) {
                 return changes;
-            }
-            else {
+            } else {
                 return -1;
             }
-        }
-        else {
+        } else {
             return false;
         }
     }

@@ -19,6 +19,7 @@ export enum EPrefProperty {
     "TrashLists" = "LISTS_TrashLists",
     "TrashListitems" = "LISTS_TrashListitems",
     "TrashKeepinStock" = "LISTS_TrashKeepInStock",
+    "OpenAppOnTransmit" = "LISTS_OpenAppOnTransmit",
     "DebugDevices" = "LISTS_DebugDevices",
 }
 
@@ -26,7 +27,7 @@ export enum EPrefProperty {
     providedIn: "root",
 })
 export class PreferencesService {
-    private onPrefChangedSubject = new BehaviorSubject<{ prop: EPrefProperty; value: any; }>({ prop: EPrefProperty.LogMode, value: "" });
+    private onPrefChangedSubject = new BehaviorSubject<{ prop: EPrefProperty; value: any }>({ prop: EPrefProperty.LogMode, value: "" });
     public onPrefChanged$ = this.onPrefChangedSubject.asObservable();
 
     /**

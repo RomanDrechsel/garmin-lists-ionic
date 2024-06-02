@@ -1,12 +1,12 @@
 <app-main-toolbar>{{'page_lists.page_title'|translate}}</app-main-toolbar>
 
-<ion-content fixed-slot-placement="before" *ngIf="Lists.length > 0; else noLists">
+<ion-content fixed-slot-placement="before">
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
         <ion-fab-button class="add" [ariaLabel]="'add'|translate" (click)="addList()">
             <ion-icon src="./assets/icons/add.svg"></ion-icon>
         </ion-fab-button>
     </ion-fab>
-    <ion-list #listsContainer>
+    <ion-list #listsContainer *ngIf="Lists.length > 0; else noLists">
         <ion-reorder-group [disabled]="Lists.length <= 1" (ionItemReorder)="handleReorder($any($event))">
             <ion-item-sliding *ngFor="let list of Lists">
                 <ion-item-options side="start" (ionSwipe)="onSwipeRight(list)">
