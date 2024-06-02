@@ -13,19 +13,21 @@ export class ListsTable extends DatabaseTableBase {
      * @returns array of UpgradeStatements
      */
     public VersionUpgradeStatements(): UpgradeStatement[] {
-        let upgrades: UpgradeStatement[] = [{
-            toVersion: 1,
-            statements: [
-                `CREATE TABLE IF NOT EXISTS ${this.Tablename} (
-                    uuid TEXT PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    'order' INTEGER NOT NULL,
-                    created INTEGER NOT NULL,
-                    updated INTEGER);`,
-                `CREATE INDEX IF NOT EXISTS idx_uuid ON ${this.Tablename} (uuid);`,
-                `CREATE INDEX IF NOT EXISTS idx_order ON ${this.Tablename} ('order');`
-            ]
-        }];
+        let upgrades: UpgradeStatement[] = [
+            {
+                toVersion: 1,
+                statements: [
+                    `CREATE TABLE IF NOT EXISTS ${this.Tablename} (
+                        uuid TEXT PRIMARY KEY,
+                        name TEXT NOT NULL,
+                        'order' INTEGER NOT NULL,
+                        created INTEGER NOT NULL,
+                        updated INTEGER);`,
+                    `CREATE INDEX IF NOT EXISTS idx_uuid ON ${this.Tablename} (uuid);`,
+                    `CREATE INDEX IF NOT EXISTS idx_order ON ${this.Tablename} ('order');`,
+                ],
+            },
+        ];
         return upgrades;
     }
 
@@ -39,8 +41,7 @@ export class ListsTable extends DatabaseTableBase {
         const result = await this.ReadQuery(query);
         if (result !== undefined && result !== false) {
             return result as ListModel[];
-        }
-        else {
+        } else {
             if (result === false) {
                 Logger.Error(`Could not query lists from table ${this.BackendIdentifier}`);
             }
@@ -60,12 +61,10 @@ export class ListsTable extends DatabaseTableBase {
         if (result && result.length > 0) {
             let ret = result[0] as ListModel;
             return ret;
-        }
-        else {
+        } else {
             if (result === false) {
                 Logger.Error(`Could not read list ${uuid} from table ${this.BackendIdentifier}`);
-            }
-            else if (!check) {
+            } else if (!check) {
                 Logger.Error(`List ${uuid} not found in table ${this.BackendIdentifier}`);
             }
             return undefined;
@@ -81,8 +80,7 @@ export class ListsTable extends DatabaseTableBase {
         const result = await this.ReadQuery(query);
         if (result && result.length > 0 && result[0].num) {
             return parseInt(result[0].num);
-        }
-        else {
+        } else {
             return 0;
         }
     }
@@ -94,7 +92,7 @@ export class ListsTable extends DatabaseTableBase {
      */
     public async StoreList(list: ListModel): Promise<boolean> {
         const query = `INSERT OR REPLACE INTO ${this.Tablename} (uuid, name, 'order', created, updated) VALUES(?,?,?,?,?)`;
-        if (await this.WriteQuery(query, [list.uuid, list.name, list.order, list.created, list.updated]) !== false) {
+        if ((await this.WriteQuery(query, [list.uuid, list.name, list.order, list.created, list.updated])) !== false) {
             return true;
         }
         return false;
@@ -107,10 +105,9 @@ export class ListsTable extends DatabaseTableBase {
      */
     public async RemoveList(uuid: string): Promise<boolean> {
         const query = `DELETE FROM ${this.Tablename} WHERE uuid=?`;
-        if (await this.WriteQuery(query, [uuid]) !== false) {
+        if ((await this.WriteQuery(query, [uuid])) !== false) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -152,12 +149,10 @@ export class ListsTable extends DatabaseTableBase {
                     }
                 });
                 return uuids;
-            }
-            else {
+            } else {
                 return [];
             }
-        }
-        else {
+        } else {
             return undefined;
         }
     }

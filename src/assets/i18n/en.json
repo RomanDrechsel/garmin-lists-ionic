@@ -135,7 +135,9 @@
         "confirm": "Confirmation settings",
         "confirm_note": "Settings for requesting user confirmation",
         "trash": "Trash",
-        "trash_note": "Settings for usage of the trash"
+        "trash_note": "Settings for usage of the trash",
+        "openontransmit": "Start app after transferring a list",
+        "openontransmit_note": "Request on your device whether the app should be opened when you transfer a list."
     },
     "page_settings_logs": {
         "page_title": "Log settings",

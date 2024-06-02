@@ -10,6 +10,13 @@
             </ion-select>
         </ion-item>
 
+        <ion-item lines="full">
+            <ion-toggle label-placement="start" [checked]="OpenAppOnTransmit" (ionChange)="onOpenAppOnTransmitChanged($event.target.checked)">
+                <div class="text" [innerHTML]="'page_settings.openontransmit'|translate"></div>
+                <ion-note [innerHTML]="'page_settings.openontransmit_note'|translate"></ion-note>
+            </ion-toggle>
+        </ion-item>
+
         <!-- confirmations -->
         <ion-item [button]="true" routerDirection="forward" [routerLink]="['/settings/confirmations']" lines="full">
             <ion-label>

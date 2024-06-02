@@ -13,21 +13,23 @@ export class ListsTrashTable extends ListsTable {
      * @returns array of UpgradeStatements
      */
     public override VersionUpgradeStatements(): UpgradeStatement[] {
-        let upgrades: UpgradeStatement[] = [{
-            toVersion: 2,
-            statements: [
-                `CREATE TABLE IF NOT EXISTS ${this.Tablename} (
-                    uuid TEXT PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    'order' INTEGER NOT NULL,
-                    created INTEGER NOT NULL,
-                    updated INTEGER,
-                    deleted INTEGER NOT NULL);`,
-                `CREATE INDEX IF NOT EXISTS idx_uuid ON ${this.Tablename} (uuid);`,
-                `CREATE INDEX IF NOT EXISTS idx_order ON ${this.Tablename} ('order');`,
-                `CREATE INDEX IF NOT EXISTS idx_deleted ON ${this.Tablename} (deleted);`
-            ]
-        }];
+        let upgrades: UpgradeStatement[] = [
+            {
+                toVersion: 2,
+                statements: [
+                    `CREATE TABLE IF NOT EXISTS ${this.Tablename} (
+                        uuid TEXT PRIMARY KEY,
+                        name TEXT NOT NULL,
+                        'order' INTEGER NOT NULL,
+                        created INTEGER NOT NULL,
+                        updated INTEGER,
+                        deleted INTEGER NOT NULL);`,
+                    `CREATE INDEX IF NOT EXISTS idx_uuid ON ${this.Tablename} (uuid);`,
+                    `CREATE INDEX IF NOT EXISTS idx_order ON ${this.Tablename} ('order');`,
+                    `CREATE INDEX IF NOT EXISTS idx_deleted ON ${this.Tablename} (deleted);`,
+                ],
+            },
+        ];
         return upgrades;
     }
 
@@ -38,7 +40,7 @@ export class ListsTrashTable extends ListsTable {
      */
     public override async StoreList(list: ListModel): Promise<boolean> {
         const query = `INSERT OR REPLACE INTO ${this.Tablename} (uuid, name, 'order', created, updated, deleted) VALUES(?,?,?,?,?,?)`;
-        if (await this.WriteQuery(query, [list.uuid, list.name, list.order, list.created, list.updated, Date.now()]) !== false) {
+        if ((await this.WriteQuery(query, [list.uuid, list.name, list.order, list.created, list.updated, Date.now()])) !== false) {
             return true;
         }
         return false;
@@ -51,10 +53,9 @@ export class ListsTrashTable extends ListsTable {
      */
     public override async RemoveList(uuid: string): Promise<boolean> {
         const query = `DELETE FROM ${this.Tablename} WHERE uuid=?`;
-        if (await this.WriteQuery(query, [uuid]) !== false) {
+        if ((await this.WriteQuery(query, [uuid])) !== false) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -66,7 +67,7 @@ export class ListsTrashTable extends ListsTable {
      */
     public async GetOlderLists(seconds: number): Promise<string[]> {
         const query = `SELECT uuid FROM ${this.Tablename} WHERE deleted < ?`;
-        const ts = Math.floor(Date.now()) - (seconds * 1000);
+        const ts = Math.floor(Date.now()) - seconds * 1000;
         const result = await this.ReadQuery(query, [ts]);
 
         if (result && result.length > 0) {
@@ -77,8 +78,7 @@ export class ListsTrashTable extends ListsTable {
                 }
             });
             return uuids;
-        }
-        else {
+        } else {
             if (result === false) {
                 Logger.Error(`Could not fetch old lists from database ${this.BackendIdentifier}`);
             }
@@ -103,12 +103,10 @@ export class ListsTrashTable extends ListsTable {
                     }
                 });
                 return uuids;
-            }
-            else {
+            } else {
                 return [];
             }
-        }
-        else {
+        } else {
             Logger.Error(`Could not fetch entries that exceeds the limit of ${limit} in ${this.BackendIdentifier}`);
             return undefined;
         }

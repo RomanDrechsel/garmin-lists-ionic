@@ -30,11 +30,12 @@ export class AdmobService {
         AdMob.addListener(BannerAdPluginEvents.SizeChanged, (size: AdMobBannerSize) => {
             if (this._bannerHeight != size.height) {
                 Logger.Debug(`Admob banner size changed: `, size);
-                this.resizeContainer(size.height);
             }
             if (size.height != 0) {
                 this._bannerHeight = size.height;
             }
+            console.log("new height " + size.height);
+            this.resizeContainer(size.height);
         });
 
         AdMob.addListener(BannerAdPluginEvents.FailedToLoad, (error: any) => {
@@ -70,6 +71,7 @@ export class AdmobService {
                 //npa: true
             };
             await AdMob.showBanner(options);
+            console.log("show admob banner");
         }
     }
 
@@ -81,6 +83,7 @@ export class AdmobService {
             await AdMob.hideBanner();
         }
         this._bannerIsShown = false;
+        console.log("hide admob banner");
     }
 
     /**
@@ -130,6 +133,7 @@ export class AdmobService {
     /** resumes the banner */
     private async resumeBanner() {
         await AdMob.resumeBanner();
+        this._bannerIsShown = true;
         this.resizeContainer(this._bannerHeight);
     }
 
@@ -141,6 +145,7 @@ export class AdmobService {
         const container = document.querySelector("ion-app") as HTMLElement;
         if (container) {
             container.style.marginBottom = height + "px";
+            console.log(container.style.marginBottom, height);
         }
     }
 }

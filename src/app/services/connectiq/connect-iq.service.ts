@@ -159,6 +159,13 @@ export class ConnectIQService {
     }
 
     /**
+     * opens the app on the watch
+     */
+    public async openApp(device: ConnectIQDevice): Promise<void> {
+        await ConnectIQ.OpenApp({ device_id: String(device.Identifier) });
+    }
+
+    /**
      * transmit al list to a device
      * @param uuid unique id of the list
      * @param device device object
@@ -208,6 +215,9 @@ export class ConnectIQService {
         } else if (device) {
             if (resp && resp.success) {
                 this.Popups.Toast.Success("service-connectiq.transmit_success");
+                if (await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, true)) {
+                    await this.openApp(device);
+                }
                 return true;
             } else {
                 this.Popups.Toast.Error("service-connectiq.transmit_error");

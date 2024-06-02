@@ -133,7 +133,9 @@
         "confirm": "Bestätigungs-Einstellungen",
         "confirm_note": "Einstellungen zur Abfrage von Benutzerbestätigungen",
         "trash": "Papierkorb",
-        "trash_note": "Einstellungen zur Verwendung des Papierkorbs"
+        "trash_note": "Einstellungen zur Verwendung des Papierkorbs",
+        "openontransmit": "App beim Übertragen starten",
+        "openontransmit_note": "Auf deinem Gerät nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst."
     },
     "page_settings_logs": {
         "page_title": "Logging",
