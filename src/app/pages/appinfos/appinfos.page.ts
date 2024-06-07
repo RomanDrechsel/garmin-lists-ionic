@@ -7,6 +7,7 @@ import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { FileUtils } from "../../classes/utils/fileutils";
 import { AppService } from "../../services/app/app.service";
+import { GeoLocationService } from "../../services/geo/geo-location.service";
 import { DatabaseService } from "../../services/storage/database.service";
 import { PageBase } from "../page-base";
 
@@ -25,6 +26,8 @@ export class AppinfosPage extends PageBase {
     public DatabaseSize: string = "-";
 
     private readonly Database = inject(DatabaseService);
+
+    private readonly GeoLocation = inject(GeoLocationService);
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();

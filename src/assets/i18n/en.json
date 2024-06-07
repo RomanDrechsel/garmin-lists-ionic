@@ -28,7 +28,8 @@
         "settings": "Settings",
         "privacy": "Privacy policy",
         "appinfos": "App information",
-        "empty_trash": "Empty trash"
+        "empty_trash": "Empty trash",
+        "geofencing": "Geo fencing"
     },
     "service-lists": {
         "store_list_error": "The list could not be saved!",
@@ -96,6 +97,13 @@
         "nolist": "Something went wrong :(<br /><br />The list can not be displayed.",
         "add_new_hint": "Create a new item in the list."
     },
+    "page_geofencing": {
+        "page_title": "Geo fencing",
+        "active": "Enabled",
+        "active_note": "Geo fencing for list <strong>{{title}}</strong> is enabled.",
+        "inactive": "Disabled",
+        "inactive_note": "Geo fencing for list <strong>{{title}}</strong> is disabled."
+    },
     "page_trash": {
         "page_title": "Trash",
         "erase": "Erase",
@@ -137,7 +145,10 @@
         "trash": "Trash",
         "trash_note": "Settings for usage of the trash",
         "openontransmit": "Start app after transferring a list",
-        "openontransmit_note": "Request on your device whether the app should be opened when you transfer a list."
+        "openontransmit_note": "Request on your watch whether the app should be opened when you transfer a list.",
+        "geofencing": "Allow geo fencing",
+        "geofencing_note": "Allows you to specify a location for each list near which your watch will ask whether the app should be opened.",
+        "geofencing_warning": "<br /><strong>Warning:</strong> This can lead to increased battery drain on your smartphone!"
     },
     "page_settings_logs": {
         "page_title": "Log settings",

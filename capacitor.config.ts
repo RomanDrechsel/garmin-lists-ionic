@@ -1,11 +1,11 @@
-import { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-    appId: 'de.romandrechsel.lists.dev',
-    appName: 'Lists',
-    webDir: 'www/browser',
+    appId: "de.romandrechsel.lists.dev",
+    appName: "Lists",
+    webDir: "www/browser",
     server: {
-        androidScheme: 'https'
+        androidScheme: "https",
     },
     plugins: {
         SplashScreen: {
@@ -19,9 +19,12 @@ const config: CapacitorConfig = {
             splashFullScreen: true,
             splashImmersive: true,
             layoutName: "launch_screen",
-            useDialog: true
+            useDialog: true,
         },
-    }
+    },
+    android: {
+        useLegacyBridge: true,
+    },
 };
 
 export default config;

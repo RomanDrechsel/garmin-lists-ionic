@@ -1,4 +1,8 @@
-Feature: Geofencing - Open App and load list automaticly
+WIP: Geofencing - Open App and load list automaticly
+TODO: disabled menu items
+
+GeoLocation:
+https://github.com/capacitor-community/background-geolocation/tree/master
 
 
 ConnectIQ Documentation:

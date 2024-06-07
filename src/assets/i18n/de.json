@@ -27,7 +27,8 @@
         "settings": "Einstellungen",
         "privacy": "Datenschutz",
         "appinfos": "App Informationen",
-        "empty_trash": "Papierkorb leeren"
+        "empty_trash": "Papierkorb leeren",
+        "geofencing": "Geo-Fencing"
     },
     "service-lists": {
         "store_list_error": "Die Liste konnte nicht gespeichert werden!",
@@ -95,6 +96,13 @@
         "nolist": "Etwas ist schiefgelaufen :(<br /><br />Die Liste kann nicht angezeigt werden.",
         "add_new_hint": "Lege einen neuen Punkt in der Liste an."
     },
+    "page_geofencing": {
+        "page_title": "Geo-Fencing",
+        "active": "Aktiv",
+        "active_note": "Geo-fencing für die Liste {{title}} ist aktiv.",
+        "inactive": "Inaktiv",
+        "inactive_note": "Geo-fencing für die Liste {{title}} ist inaktiv."
+    },
     "page_trash": {
         "page_title": "Papierkorb",
         "erase": "Entfernen",
@@ -135,7 +143,10 @@
         "trash": "Papierkorb",
         "trash_note": "Einstellungen zur Verwendung des Papierkorbs",
         "openontransmit": "App beim Übertragen starten",
-        "openontransmit_note": "Auf deinem Gerät nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst."
+        "openontransmit_note": "Auf deinet Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst.",
+        "geofencing": "Geo-Fencing erlauben",
+        "geofencing_note": "Ermöglicht, für jede Liste einen Ort festzulegen, in dessen Nähe auf deiner Uhr nachgefragt wird ob die App geöffnet werden soll.",
+        "geofencing_warning": "<br /><strong>Achtung:</strong> Dies kann zu einer erhöhten Akku-Beanspruchung deines Smartphones führen!"
     },
     "page_settings_logs": {
         "page_title": "Logging",

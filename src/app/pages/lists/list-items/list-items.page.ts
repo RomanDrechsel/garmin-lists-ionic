@@ -6,12 +6,13 @@ import { IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, 
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
-import { MenuItem, MenuItemDevices, MenuItemEmptyList, MenuItemListitemsTrash } from "../../../classes/menu-items";
+import { MenuItem, MenuItemDevices, MenuItemEmptyList, MenuItemGeoFancing, MenuItemListitemsTrash } from "../../../classes/menu-items";
 import { PageAddNewComponent } from "../../../components/page-add-new/page-add-new.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { List } from "../../../services/lists/list";
 import { Listitem } from "../../../services/lists/listitem";
 import { Locale } from "../../../services/localization/locale";
+import { EPrefProperty } from "../../../services/storage/preferences.service";
 import { PageBase } from "../../page-base";
 
 @Component({
@@ -27,6 +28,7 @@ export class ListItemsPage extends PageBase {
     public List?: List | null = undefined;
     private disableClick = false;
     private itemsChangedSubscription?: Subscription;
+    private geofencing = false;
 
     private readonly Route = inject(ActivatedRoute);
 
@@ -37,6 +39,7 @@ export class ListItemsPage extends PageBase {
             this.List = await this.ListsService.GetList(listid);
             this.appComponent.setAppPages(this.ModifyMainMenu());
         }
+        this.geofencing = await this.Preferences.Get<boolean>(EPrefProperty.AllowGeoFencing, false);
     }
 
     public override async ionViewDidLeave() {
@@ -119,7 +122,12 @@ export class ListItemsPage extends PageBase {
                 return true;
             };
 
-            let menu = [menu_devices, MenuItemListitemsTrash(this.List.Uuid)];
+            let menu = [menu_devices];
+            if (this.geofencing) {
+                menu.push(MenuItemGeoFancing(this.List.Uuid));
+            }
+            menu.push(MenuItemListitemsTrash(this.List.Uuid));
+
             if (this.List.Items.length > 0) {
                 menu.push(MenuItemEmptyList(() => this.EmptyList()));
             }

@@ -19,6 +19,7 @@ import { PageBase } from "../../page-base";
 })
 export class SettingsPage extends PageBase {
     private _openAppOnTransfer: boolean = false;
+    private _geoFencing: boolean = false;
 
     public get OpenAppOnTransmit(): boolean {
         return this._openAppOnTransfer;
@@ -29,9 +30,19 @@ export class SettingsPage extends PageBase {
         this.Preferences.Set(EPrefProperty.OpenAppOnTransmit, v);
     }
 
+    public get GeoFencing(): boolean {
+        return this._geoFencing;
+    }
+
+    public set GeoFencing(v: boolean) {
+        this._geoFencing = v;
+        this.Preferences.Set(EPrefProperty.AllowGeoFencing, v);
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
         this._openAppOnTransfer = await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, true);
+        this._geoFencing = await this.Preferences.Get<boolean>(EPrefProperty.AllowGeoFencing, false);
         this.cdr.detectChanges();
     }
 
@@ -41,5 +52,9 @@ export class SettingsPage extends PageBase {
 
     public async onOpenAppOnTransmitChanged(checked: boolean) {
         this.OpenAppOnTransmit = checked;
+    }
+
+    public async onGeoFencingChanged(checked: boolean) {
+        this.GeoFencing = checked;
     }
 }
