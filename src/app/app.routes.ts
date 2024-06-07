@@ -15,6 +15,10 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/lists/list-items/list-items.page").then(m => m.ListItemsPage),
     },
     {
+        path: "lists/geofencing/:uuid",
+        loadComponent: () => import("./pages/lists/geo-fencing/geo-fencing.page").then(m => m.GeoFencingPage),
+    },
+    {
         path: "trash",
         loadComponent: () => import("./pages/lists/trash-lists/trash-lists.page").then(m => m.TrashListsPage),
     },

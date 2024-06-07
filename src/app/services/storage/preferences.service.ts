@@ -20,6 +20,7 @@ export enum EPrefProperty {
     "TrashListitems" = "LISTS_TrashListitems",
     "TrashKeepinStock" = "LISTS_TrashKeepInStock",
     "OpenAppOnTransmit" = "LISTS_OpenAppOnTransmit",
+    "AllowGeoFencing" = "LISTS_AllowGeoFencing",
     "DebugDevices" = "LISTS_DebugDevices",
 }
 

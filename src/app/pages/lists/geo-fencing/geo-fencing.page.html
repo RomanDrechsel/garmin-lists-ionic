@@ -1,0 +1,12 @@
+<app-main-toolbar back="/lists/{{List?.Uuid}}">{{'page_geofencing.page_title'|translate}}</app-main-toolbar>
+
+<ion-content>
+    <ion-header>
+        <ion-item lines="none">
+            <ion-toggle labelPlacement="start">
+                <div class="text" [innerHTML]="Status"></div>
+                <ion-note [innerHTML]="StatusNote"></ion-note>
+            </ion-toggle>
+        </ion-item>
+    </ion-header>
+</ion-content>

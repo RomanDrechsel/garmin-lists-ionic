@@ -81,6 +81,15 @@ export const MenuItemEmptyListTrash = function (onclick: () => Promise<boolean>)
     };
 };
 
+export const MenuItemGeoFancing = function (uuid: string): MenuItem {
+    return {
+        Id: "geofancing",
+        Title: "mainmenu.geofencing",
+        Icon: "./assets/icons/menu/geofencing.svg",
+        Url: `/lists/geofencing/${uuid}`,
+    };
+};
+
 export declare type MenuItem = {
     Id: string;
     Title: string;

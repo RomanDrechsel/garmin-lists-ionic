@@ -6,4 +6,10 @@
     <string name="custom_url_scheme">de.romandrechsel.lists.dev</string>
     <string name="app_name_debug">Lists Debug</string>
     <string name="admob_app_id">ca-app-pub-4693945059643494~4603335580</string>
+    <string name="capacitor_background_geolocation_notification_channel_name">
+        Background Tracking
+    </string>
+    <string name="capacitor_background_geolocation_notification_icon">
+        drawable/ic_tracking
+    </string>
 </resources>
