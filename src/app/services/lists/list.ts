@@ -12,18 +12,12 @@ export class List {
     private _items?: Listitem[];
     private _trashItems?: Listitem[];
     private _deleted?: number;
+    private _geofence?: ListFence;
+    private _geofenceEnabled: boolean = false;
 
     public Dirty: boolean = false;
 
-    private constructor(args: {
-        uuid: string,
-        name: string,
-        order: number,
-        created?: number,
-        updated?: number,
-        itemscount?: number,
-        deleted?: number,
-    }) {
+    private constructor(args: { uuid: string; name: string; order: number; created?: number; updated?: number; itemscount?: number; deleted?: number }) {
         this._name = args.name;
         this._order = args.order;
         this._uuid = args.uuid;
@@ -87,8 +81,7 @@ export class List {
     public get ItemsCount(): number {
         if (this._items && this._items.length > 0) {
             return this._items.length;
-        }
-        else {
+        } else {
             return this._itemsCount;
         }
     }
@@ -103,8 +96,7 @@ export class List {
     public get Items(): Listitem[] {
         if (this._items) {
             return this._items;
-        }
-        else {
+        } else {
             return [];
         }
     }
@@ -128,6 +120,33 @@ export class List {
         return this._deleted ?? 0;
     }
 
+    /** set the geofence */
+    public set GeoFence(fence: ListFence | undefined) {
+        if ((fence && !fence.equals(this.GeoFence)) || (!fence && this.GeoFence)) {
+            this._geofence = fence;
+            this.Dirty = true;
+            this._geofenceEnabled = fence != undefined;
+        }
+    }
+
+    /** get the geofence */
+    public get GeoFence(): ListFence | undefined {
+        return this._geofence;
+    }
+
+    /** set the geofence enabled state */
+    public set GeoFenceEnabled(enabled: boolean) {
+        if (this._geofenceEnabled != enabled) {
+            this._geofenceEnabled = enabled;
+            this.Dirty = true;
+        }
+    }
+
+    /** get the geofence enabled state */
+    public get GeoFenceEnabled(): boolean {
+        return this._geofenceEnabled;
+    }
+
     /**
      * adds a new item to the list
      * @param item item to add
@@ -137,8 +156,7 @@ export class List {
         item.Order = this.Items.length;
         if (!this._items) {
             this._items = [item];
-        }
-        else {
+        } else {
             this._items.push(item);
         }
         this._itemsCount = this._items.length;
@@ -191,8 +209,7 @@ export class List {
     public toBackend(force: boolean = false): ListModel | undefined {
         if (!this.Dirty && !force) {
             return undefined;
-        }
-        else {
+        } else {
             return {
                 uuid: this._uuid,
                 name: this._name,
@@ -222,7 +239,7 @@ export class List {
             if (!obj.hasOwnProperty(props[i])) {
                 Logger.Error(`List could not been read from database, property ${props[i]} not found}`);
                 return undefined;
-            };
+            }
         }
         const list = new List({
             uuid: obj.uuid,
@@ -231,7 +248,7 @@ export class List {
             order: obj.order,
             updated: obj.updated,
             itemscount: obj.itemscount,
-            deleted: obj.deleted
+            deleted: obj.deleted,
         });
         return list;
     }
@@ -241,9 +258,20 @@ export class List {
      * @param obj user input
      * @returns List object
      */
-    public static Create(obj: { name: string, uuid: string, order: number; }): List {
+    public static Create(obj: { name: string; uuid: string; order: number }): List {
         const list = new List(obj);
         list.Dirty = true;
         return list;
+    }
+}
+
+export class ListFence {
+    constructor(public Latitude: number, public Longitude: number, public Radius: number) {}
+
+    public equals(other: ListFence | undefined): boolean {
+        if (!other) {
+            return false;
+        }
+        return this.Latitude === other.Latitude && this.Longitude === other.Longitude && this.Radius === other.Radius;
     }
 }

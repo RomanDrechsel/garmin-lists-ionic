@@ -5,11 +5,11 @@ import { App } from "@capacitor/app";
 import { StatusBar } from "@capacitor/status-bar";
 import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonNote, IonRouterOutlet, IonSplitPane, IonToggle, NavController, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import { Subscription } from "rxjs";
 import { MenuItem, MenuItemAppInfos, MenuItemDevices, MenuItemLists, MenuItemListsTrash, MenuItemPrivacy, MenuItemSettings } from "./classes/menu-items";
 import { AdmobService } from "./services/adverticing/admob.service";
 import { AppService } from "./services/app/app.service";
 import { ConnectIQService } from "./services/connectiq/connect-iq.service";
+import { GeoLocationService } from "./services/geo/geo-location.service";
 import { EPrefProperty, PreferencesService } from "./services/storage/preferences.service";
 
 @Component({
@@ -22,14 +22,13 @@ import { EPrefProperty, PreferencesService } from "./services/storage/preference
 export class AppComponent implements OnInit {
     public appPages: MenuItem[] = [];
     public systemPages: MenuItem[] = [MenuItemSettings(), MenuItemAppInfos(), MenuItemPrivacy()];
-
-    private preferencesSubscription?: Subscription;
     private useTrash: boolean = true;
 
     public readonly ConnectIQ = inject(ConnectIQService);
     private readonly Platform = inject(Platform);
     private readonly Preferences = inject(PreferencesService);
     private readonly App = inject(AppService);
+    private readonly GeoLocation = inject(GeoLocationService);
     private readonly Admob = inject(AdmobService);
     private readonly NavController = inject(NavController);
 
@@ -55,7 +54,7 @@ export class AppComponent implements OnInit {
             await this.tapBackToExit();
         });
 
-        this.preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
+        this.Preferences.onPrefChanged$.subscribe(prop => {
             if (prop.prop == EPrefProperty.TrashLists) {
                 this.useTrash = prop.value as boolean;
                 this.setAppPages();
@@ -65,6 +64,7 @@ export class AppComponent implements OnInit {
         this.setAppPages();
 
         await this.Admob.ShowBanner();
+        await this.GeoLocation.GetCurrentLocation();
     }
 
     public async onMenuItemClick(item: MenuItem) {
