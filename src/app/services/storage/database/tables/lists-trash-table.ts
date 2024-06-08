@@ -111,4 +111,17 @@ export class ListsTrashTable extends ListsTable {
             return undefined;
         }
     }
+
+    /**
+     * get the number of lists in trash
+     * @returns number of lists in trash
+     */
+    public async Count(): Promise<number | undefined> {
+        const query = `SELECT COUNT(*) as 'count' FROM ${this.Tablename}`;
+        const result = await this.ReadQuery(query);
+        if (result && result.length > 0 && result[0].count) {
+            return parseInt(result[0].count);
+        }
+        return undefined;
+    }
 }

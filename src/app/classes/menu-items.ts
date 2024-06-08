@@ -4,26 +4,27 @@ export const MenuItemLists = function (): MenuItem {
         Title: "mainmenu.lists",
         Icon: "./assets/icons/menu/lists.svg",
         Url: "/lists",
+        Disabled: false,
     };
 };
 
-export const MenuItemListsTrash = function (hide: boolean = false): MenuItem {
+export const MenuItemListsTrash = function (disabled: boolean): MenuItem {
     return {
         Id: "trash",
         Title: "mainmenu.trash",
         Icon: "./assets/icons/menu/trash.svg",
         Url: "/trash",
-        Hide: hide,
+        Disabled: disabled,
     };
 };
 
-export const MenuItemListitemsTrash = function (list_uuid: string, hide: boolean = false): MenuItem {
+export const MenuItemListitemsTrash = function (list_uuid: string, disabled: boolean): MenuItem {
     return {
         Id: "trash",
         Title: "mainmenu.trash",
         Icon: "./assets/icons/menu/trash_items.svg",
         Url: `/trash/items/${list_uuid}`,
-        Hide: hide,
+        Disabled: disabled,
     };
 };
 
@@ -33,6 +34,7 @@ export const MenuItemDevices = function (): MenuItem {
         Title: "mainmenu.devices",
         Icon: "./assets/icons/menu/devices.svg",
         Url: "/devices",
+        Disabled: false,
     };
 };
 
@@ -42,6 +44,7 @@ export const MenuItemSettings = function (): MenuItem {
         Title: "mainmenu.settings",
         Icon: "./assets/icons/menu/settings.svg",
         Url: "/settings",
+        Disabled: false,
     };
 };
 
@@ -51,6 +54,7 @@ export const MenuItemAppInfos = function (): MenuItem {
         Title: "mainmenu.appinfos",
         Icon: "./assets/icons/menu/appinfos.svg",
         Url: "/appinfos",
+        Disabled: false,
     };
 };
 
@@ -60,15 +64,17 @@ export const MenuItemPrivacy = function (): MenuItem {
         Title: "mainmenu.privacy",
         Icon: "./assets/icons/menu/privacy.svg",
         Url: "/privacy-policy/privacy",
+        Disabled: false,
     };
 };
 
-export const MenuItemEmptyList = function (onclick: () => Promise<boolean>): MenuItem {
+export const MenuItemEmptyList = function (onclick: () => Promise<boolean>, disabled: boolean): MenuItem {
     return {
         Id: "emptylist",
         Title: "page_listitems.menu_empty",
         Icon: "./assets/icons/menu/empty.svg",
         onClick: onclick,
+        Disabled: disabled,
     };
 };
 
@@ -78,24 +84,26 @@ export const MenuItemEmptyListTrash = function (onclick: () => Promise<boolean>)
         Title: "mainmenu.empty_trash",
         Icon: "./assets/icons/menu/empty_trash.svg",
         onClick: onclick,
+        Disabled: false,
     };
 };
 
-export const MenuItemGeoFancing = function (uuid: string): MenuItem {
+export const MenuItemGeoFancing = function (uuid: string, disabled: boolean): MenuItem {
     return {
         Id: "geofancing",
         Title: "mainmenu.geofencing",
         Icon: "./assets/icons/menu/geofencing.svg",
         Url: `/lists/geofencing/${uuid}`,
+        Disabled: disabled,
     };
 };
 
 export declare type MenuItem = {
     Id: string;
     Title: string;
+    Disabled: boolean;
     Icon?: string;
     IconName?: string;
     Url?: string;
-    Hide?: boolean;
     onClick?: () => Promise<boolean>;
 };

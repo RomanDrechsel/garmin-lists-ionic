@@ -5,6 +5,7 @@ import { App } from "@capacitor/app";
 import { StatusBar } from "@capacitor/status-bar";
 import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonNote, IonRouterOutlet, IonSplitPane, IonToggle, NavController, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
+import { Subscription } from "rxjs";
 import { MenuItem, MenuItemAppInfos, MenuItemDevices, MenuItemLists, MenuItemListsTrash, MenuItemPrivacy, MenuItemSettings } from "./classes/menu-items";
 import { AdmobService } from "./services/adverticing/admob.service";
 import { AppService } from "./services/app/app.service";
@@ -22,6 +23,9 @@ export class AppComponent implements OnInit {
     public appPages: MenuItem[] = [];
     public systemPages: MenuItem[] = [MenuItemSettings(), MenuItemAppInfos(), MenuItemPrivacy()];
 
+    private preferencesSubscription?: Subscription;
+    private useTrash: boolean = true;
+
     public readonly ConnectIQ = inject(ConnectIQService);
     private readonly Platform = inject(Platform);
     private readonly Preferences = inject(PreferencesService);
@@ -32,10 +36,6 @@ export class AppComponent implements OnInit {
     @ViewChild("router_outlet") private routerOutlet!: IonRouterOutlet;
 
     @ViewChild("mainMenu") private MainMenu!: IonMenu;
-
-    constructor() {
-        this.setAppPages();
-    }
 
     public get isDevMode(): boolean {
         return isDevMode();
@@ -54,6 +54,15 @@ export class AppComponent implements OnInit {
         this.Platform.backButton.subscribeWithPriority(-1, async () => {
             await this.tapBackToExit();
         });
+
+        this.preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
+            if (prop.prop == EPrefProperty.TrashLists) {
+                this.useTrash = prop.value as boolean;
+                this.setAppPages();
+            }
+        });
+        this.useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true);
+        this.setAppPages();
 
         await this.Admob.ShowBanner();
     }
@@ -75,15 +84,12 @@ export class AppComponent implements OnInit {
     }
 
     public setAppPages(menu: MenuItem[] = []) {
-        const required = [MenuItemLists(), MenuItemDevices(), MenuItemListsTrash()];
+        const required = [MenuItemLists(), MenuItemDevices(), MenuItemListsTrash(!this.useTrash)];
         for (let i = required.length - 1; i >= 0; i--) {
             if (!menu?.find(m => m.Id == required[i].Id)) {
                 menu?.unshift(required[i]);
             }
         }
-
-        menu = menu.filter(m => !m.Hide);
-
         this.appPages = menu;
     }
 
