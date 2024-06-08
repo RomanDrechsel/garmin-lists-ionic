@@ -27,8 +27,9 @@ export class ListItemsPage extends PageBase {
 
     public List?: List | null = undefined;
     private disableClick = false;
-    private itemsChangedSubscription?: Subscription;
+    private preferencesSubscription?: Subscription;
     private geofencing = false;
+    private useTrash = true;
 
     private readonly Route = inject(ActivatedRoute);
 
@@ -40,11 +41,21 @@ export class ListItemsPage extends PageBase {
             this.appComponent.setAppPages(this.ModifyMainMenu());
         }
         this.geofencing = await this.Preferences.Get<boolean>(EPrefProperty.AllowGeoFencing, false);
+        this.useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true);
+        this.preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
+            if (prop.prop == EPrefProperty.AllowGeoFencing) {
+                this.geofencing = prop.value as boolean;
+                this.ModifyMainMenu();
+            } else if (prop.prop == EPrefProperty.TrashListitems) {
+                this.useTrash = prop.value as boolean;
+                this.ModifyMainMenu();
+            }
+        });
     }
 
     public override async ionViewDidLeave() {
         super.ionViewDidLeave();
-        this.itemsChangedSubscription?.unsubscribe();
+        this.preferencesSubscription?.unsubscribe();
     }
 
     public get PageTitle(): string {
@@ -123,14 +134,9 @@ export class ListItemsPage extends PageBase {
             };
 
             let menu = [menu_devices];
-            if (this.geofencing) {
-                menu.push(MenuItemGeoFancing(this.List.Uuid));
-            }
-            menu.push(MenuItemListitemsTrash(this.List.Uuid));
-
-            if (this.List.Items.length > 0) {
-                menu.push(MenuItemEmptyList(() => this.EmptyList()));
-            }
+            menu.push(MenuItemGeoFancing(this.List.Uuid, !this.geofencing));
+            menu.push(MenuItemListitemsTrash(this.List.Uuid, !this.useTrash));
+            menu.push(MenuItemEmptyList(() => this.EmptyList(), this.List.Items.length <= 0));
             return menu;
         } else {
             return [];

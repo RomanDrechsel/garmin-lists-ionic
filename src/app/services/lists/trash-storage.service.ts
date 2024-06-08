@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import { Logger } from "../logging/logger";
 import { DatabaseService } from "../storage/database.service";
 import { ListsTrashTable } from "../storage/database/tables/lists-trash-table";
@@ -6,14 +6,12 @@ import { List } from "./list";
 import { ListsStorageService } from "./lists-storage.service";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class TrashStorageService extends ListsStorageService {
     protected override Backend: ListsTrashTable;
 
-    constructor(
-        database: DatabaseService
-    ) {
+    constructor(database: DatabaseService) {
         super(database);
         this.Backend = database.MainDb.ListsTrash;
     }
@@ -33,7 +31,7 @@ export class TrashStorageService extends ListsStorageService {
             }
         });
 
-        return lists.sort((a, b) => a.Deleted < b.Deleted ? 1 : -1);
+        return lists.sort((a, b) => (a.Deleted < b.Deleted ? 1 : -1));
     }
 
     /**
@@ -47,13 +45,11 @@ export class TrashStorageService extends ListsStorageService {
             if (await this.Backend.StoreList(obj)) {
                 Logger.Debug(`Stored list ${list.toLog()} in backend ${this.Backend.BackendIdentifier} `);
                 return true;
-            }
-            else {
+            } else {
                 Logger.Error(`Could not store list ${list.toLog()} in backend ${this.Backend.BackendIdentifier}`);
                 return false;
             }
-        }
-        else {
+        } else {
             //nothing to do
             return true;
         }
@@ -84,9 +80,18 @@ export class TrashStorageService extends ListsStorageService {
         const uuids = await this.Backend.GetExcesses(limit);
         if (uuids) {
             return uuids;
-        }
-        else {
+        } else {
             return [];
+        }
+    }
+
+    public async Count(): Promise<number> {
+        const count = await this.Backend.Count();
+        if (count) {
+            return count;
+        } else {
+            Logger.Error(`Could not fetch trash count in backend ${this.Backend.BackendIdentifier}`);
+            return -1;
         }
     }
 }

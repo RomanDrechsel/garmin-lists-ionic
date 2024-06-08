@@ -1,9 +1,8 @@
 WIP: Geofencing - Open App and load list automaticly
-TODO: disabled menu items
+TODO: Lock items
 
 GeoLocation:
 https://github.com/capacitor-community/background-geolocation/tree/master
-
 
 ConnectIQ Documentation:
 https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/

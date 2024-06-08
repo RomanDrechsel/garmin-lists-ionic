@@ -6,7 +6,7 @@ import { Listitem } from "./listitem";
 import { ListitemsStorageService } from "./listitems-storage.service";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class TrashItemsStorageService extends ListitemsStorageService {
     protected override Backend: ListitemsTrashTable;
@@ -23,20 +23,18 @@ export class TrashItemsStorageService extends ListitemsStorageService {
      * @returns item successfully stored?
      */
     public override async StoreListitem(item: Listitem, list_uuid: string): Promise<boolean> {
-        const obj = item.toBackend(list_uuid, true);//always store them in trash database
+        const obj = item.toBackend(list_uuid, true); //always store them in trash database
         if (obj) {
             const id = await this.Backend.StoreItem(obj);
             if (id != undefined) {
                 item.Id = id;
                 Logger.Debug(`Stored listitem ${item.toLog()} in backend ${this.Backend.BackendIdentifier}`);
                 return true;
-            }
-            else {
+            } else {
                 Logger.Error(`Could not store listitem ${item.toLog()} in backend ${this.Backend.BackendIdentifier}`);
                 return false;
             }
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -53,9 +51,27 @@ export class TrashItemsStorageService extends ListitemsStorageService {
                 Logger.Notice(`Removed ${removed} old listitems from backend ${this.Backend.BackendIdentifier}`);
             }
             return true;
-        }
-        else {
+        } else {
             return false;
         }
+    }
+
+    /**
+     * Counts the number of listitems in the trash.
+     * @param uuid - Optional unique list id to filter the count.
+     * @returns The number of listitems in the trash. If an error occurs during the count operation, returns -1.
+     */
+    public async Count(uuid: string | undefined = undefined): Promise<number> {
+        const count = await this.Backend.Count(uuid);
+        if (count) {
+            return count;
+        } else {
+            Logger.Error(`Could not fetch items-trash count in backend ${this.Backend.BackendIdentifier}`);
+            return -1;
+        }
+    }
+
+    public async Empty(uuid: string | undefined = undefined): Promise<boolean> {
+        return await this.Backend.Empty(uuid);
     }
 }

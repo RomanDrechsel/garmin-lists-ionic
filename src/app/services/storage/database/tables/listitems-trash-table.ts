@@ -69,4 +69,51 @@ export class ListitemsTrashTable extends ListitemsTable {
             return false;
         }
     }
+
+    /**
+     * Counts the number of items in the trash table.
+     * If a list uuid is provided, it will only count items in the specified list.
+     *
+     * @param uuid - The uuid of the list to count items for. If not provided, it will count all items in the trash table.
+     * @returns A promise that resolves to the count of items or `undefined` if the query fails.
+     */
+    public async Count(uuid: string | undefined): Promise<number | undefined> {
+        let query;
+        let params: any[] = [];
+        if (uuid) {
+            query = `SELECT COUNT(*) AS 'count' FROM ${this.Tablename} WHERE list_uuid=?`;
+            params = [uuid];
+        } else {
+            query = `SELECT COUNT(*) AS 'count' FROM ${this.Tablename}`;
+        }
+        const result = await this.ReadQuery(query, params);
+        if (result && result.length > 0 && result[0].count) {
+            return parseInt(result[0].count);
+        } else {
+            return undefined;
+        }
+    }
+
+    /**
+     * Empties the trash table. If a list uuid is provided, it will only empty the specified list.
+     *
+     * @param uuid - The uuid of the list to empty. If not provided, it will empty all items in the trash table.
+     * @returns A promise that resolves to `true` if the operation was successful, or `false` otherwise.
+     */
+    public async Empty(uuid: string | undefined): Promise<boolean> {
+        let query;
+        let params: any[] = [];
+        if (uuid) {
+            query = `DELETE FROM ${this.Tablename} WHERE list_uuid=?`;
+            params = [uuid];
+        } else {
+            query = `DELETE FROM ${this.Tablename}`;
+        }
+        const result = await this.WriteQuery(query, params);
+        if (result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
