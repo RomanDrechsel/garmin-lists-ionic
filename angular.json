@@ -32,7 +32,7 @@
                             "src/config.json",
                             "src/manifest.webmanifest"
                         ],
-                        "styles": ["src/global.scss", "src/theme/variables.scss", "src/theme/variables_dark.scss", "src/theme/theming.scss", "src/theme/popups.scss"],
+                        "styles": ["src/global.scss", "src/theme/variables.scss", "src/theme/variables_dark.scss", "src/theme/theming.scss", "src/theme/popups.scss", "node_modules/leaflet/dist/leaflet.css", "node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css"],
                         "scripts": [],
                         "browser": "src/main.ts"
                     },

@@ -9,10 +9,10 @@ import { GeoLocation } from "./geo-location";
 })
 export class GeoLocationService {
     private _plugin = registerPlugin<BackgroundGeolocationPlugin>("BackgroundGeolocation");
+    private _currentLocation?: GeoLocation;
 
     public async GetCurrentLocation(timeout: number = 5000): Promise<GeoLocation | undefined> {
         return new Promise((resolve, reject) => {
-            let last_location: GeoLocation | undefined = undefined;
             const self = this;
             this._plugin
                 .addWatcher(
@@ -22,13 +22,14 @@ export class GeoLocationService {
                     },
                     function (location) {
                         if (location) {
-                            last_location = location as GeoLocation;
+                            self._currentLocation = location as GeoLocation;
                         }
                     },
                 )
                 .then(function (id) {
                     setTimeout(function () {
-                        resolve(last_location);
+                        Logger.Debug(`Current Geo-location is`, self._currentLocation);
+                        resolve(self._currentLocation);
                         self._plugin.removeWatcher({ id });
                     }, timeout);
                 })
@@ -37,5 +38,9 @@ export class GeoLocationService {
                     resolve(undefined);
                 });
         });
+    }
+
+    public getCurrentLocationSnapshot(): GeoLocation | undefined {
+        return this._currentLocation;
     }
 }

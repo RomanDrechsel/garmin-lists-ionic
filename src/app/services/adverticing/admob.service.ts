@@ -34,7 +34,6 @@ export class AdmobService {
             if (size.height != 0) {
                 this._bannerHeight = size.height;
             }
-            console.log("new height " + size.height);
             this.resizeContainer(size.height);
         });
 
@@ -145,7 +144,6 @@ export class AdmobService {
         const container = document.querySelector("ion-app") as HTMLElement;
         if (container) {
             container.style.marginBottom = height + "px";
-            console.log(container.style.marginBottom, height);
         }
     }
 }

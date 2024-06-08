@@ -99,9 +99,10 @@
     "page_geofencing": {
         "page_title": "Geo-Fencing",
         "active": "Aktiv",
-        "active_note": "Geo-fencing für die Liste {{title}} ist aktiv.",
+        "active_note": "Geo-Fencing für die Liste \"<strong>{{title}}</strong>\" ist aktiv.",
         "inactive": "Inaktiv",
-        "inactive_note": "Geo-fencing für die Liste {{title}} ist inaktiv."
+        "inactive_note": "Geo-Fencing für die Liste \"<strong>{{title}}</strong>\" ist inaktiv.",
+        "address": "Adresse suchen"
     },
     "page_trash": {
         "page_title": "Papierkorb",

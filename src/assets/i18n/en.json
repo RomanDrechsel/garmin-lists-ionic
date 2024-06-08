@@ -100,9 +100,10 @@
     "page_geofencing": {
         "page_title": "Geo fencing",
         "active": "Enabled",
-        "active_note": "Geo fencing for list <strong>{{title}}</strong> is enabled.",
+        "active_note": "Geo fencing for list \"<strong>{{title}}</strong>\" is enabled.",
         "inactive": "Disabled",
-        "inactive_note": "Geo fencing for list <strong>{{title}}</strong> is disabled."
+        "inactive_note": "Geo fencing for list \"<strong>{{title}}</strong>\" is disabled.",
+        "address": "Search adress"
     },
     "page_trash": {
         "page_title": "Trash",

@@ -131,7 +131,7 @@ export class ListsService {
         const listname = await ListEditor(this.modalCtrl);
         if (listname) {
             const list = List.Create({ name: listname, uuid: await this.createUuid(), order: (await this.GetLists()).length });
-            if (await this.storeList(list)) {
+            if (await this.StoreList(list)) {
                 //this.onListsDatasetChangedSubject.next(await this.GetLists());
                 Logger.Notice(`Created new list ${list.toLog()}`);
                 this.Router.navigateByUrl(`/lists/items/${list.Uuid}`);
@@ -149,7 +149,7 @@ export class ListsService {
         const listname = await ListEditor(this.modalCtrl, { listname: list.Name, purpose: "edit" });
         if (listname) {
             list.Name = listname;
-            if ((await this.storeList(list)) == false) {
+            if ((await this.StoreList(list)) == false) {
                 this.Popups.Toast.Error("service-lists.store_list_error");
             } else {
                 Logger.Notice(`Edited list ${list.toLog()}`);
@@ -207,7 +207,7 @@ export class ListsService {
             const item = Listitem.Create(obj);
             if ((await this.storeListitem(item, list)) !== false) {
                 list.AddItem(item);
-                await this.storeList(list); //store update-date
+                await this.StoreList(list); //store update-date
                 Logger.Notice(`Created new listitem ${item.toLog()}`);
                 return true;
             } else {
@@ -416,6 +416,20 @@ export class ListsService {
     }
 
     /**
+     * stores a list in backend up there are any changes
+     * @param list list to be stored
+     * @param force store the list, even if there are no changes
+     * @returns storage successful
+     */
+    public async StoreList(list: List, force: boolean = false): Promise<boolean> {
+        if (await this.Lists.StoreList(list, force)) {
+            return await this.Listitems.StoreList(list, force);
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * creates a unique list id
      * @returns unique id
      */
@@ -429,20 +443,6 @@ export class ListsService {
     }
 
     /**
-     * stores a list in backend up there are any changes
-     * @param list list to be stored
-     * @param force store the list, even if there are no changes
-     * @returns storage successful
-     */
-    private async storeList(list: List, force: boolean = false): Promise<boolean> {
-        if (await this.Lists.StoreList(list, force)) {
-            return await this.Listitems.StoreList(list, force);
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * stores a listitem in backend up there are any changes
      * @param item item to be stored
      * @param list list, the item is part of
@@ -453,7 +453,7 @@ export class ListsService {
         const res = await this.Listitems.StoreListitem(item, list.Uuid, force);
         if (res === true) {
             list.Updated = Date.now();
-            await this.storeList(list);
+            await this.StoreList(list);
             return true;
         } else if (res == false) {
             this.Popups.Toast.Error("service-lists.store_listitem_error");
@@ -533,7 +533,7 @@ export class ListsService {
             const list = lists[i];
             list.Order = order++;
             if (list.Dirty) {
-                await this.storeList(list);
+                await this.StoreList(list);
                 update = true;
             }
         }
@@ -563,7 +563,7 @@ export class ListsService {
 
         if (update) {
             list.Updated = Date.now();
-            this.storeList(list);
+            this.StoreList(list);
         }
 
         return list;
@@ -591,7 +591,7 @@ export class ListsService {
         if (await this.Listitems.RemoveList(list)) {
             const item_count = list.ItemsCount;
             list.DeleteAllItems();
-            await this.storeList(list);
+            await this.StoreList(list);
             this.Popups.Toast.Success("service-lists.empty_success");
             Logger.Notice(`Emptied list ${list.toLog()} with ${item_count} item(s)`);
             return true;
@@ -627,7 +627,7 @@ export class ListsService {
     private async restoreListFromTrash(list: List): Promise<boolean> {
         list.Order = await this.Lists.GetListsCount();
         list.Updated = Date.now();
-        if (await this.storeList(list, true)) {
+        if (await this.StoreList(list, true)) {
             const items = await this.TrashItems.GetItems(list);
             if (items) {
                 for (let i = 0; i < items.length; i++) {
