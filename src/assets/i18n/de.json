@@ -79,6 +79,9 @@
         "itemname": "Bezeichnung",
         "itemnote": "Notiz"
     },
+    "comp-map": {
+        "fence_desc": "Mein Ort"
+    },
     "page_lists": {
         "page_title": "Meine Listen",
         "empty": "Leeren",
@@ -102,7 +105,8 @@
         "active_note": "Geo-Fencing für die Liste \"<strong>{{title}}</strong>\" ist aktiv.",
         "inactive": "Inaktiv",
         "inactive_note": "Geo-Fencing für die Liste \"<strong>{{title}}</strong>\" ist inaktiv.",
-        "address": "Adresse suchen"
+        "address": "Adresse suchen",
+        "currentLocation": "Mein Standort"
     },
     "page_trash": {
         "page_title": "Papierkorb",

@@ -1,86 +1,73 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Input, OnInit, Output, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit, inject } from "@angular/core";
+import { IonSearchbar } from "@ionic/angular/standalone";
+import { TranslateModule } from "@ngx-translate/core";
 import * as L from "leaflet";
 import "leaflet-control-geocoder/dist/Control.Geocoder.js";
+import { GeoAddress } from "../../services/geo/geo-address";
+import { GeoFence } from "../../services/geo/geo-fence";
 import { GeoLocationService } from "../../services/geo/geo-location.service";
+import { LocalizationService } from "../../services/localization/localization.service";
 import { Logger } from "../../services/logging/logger";
 
 @Component({
     selector: "app-map",
     standalone: true,
-    imports: [CommonModule],
+    imports: [IonSearchbar, CommonModule, TranslateModule],
     templateUrl: "./map.component.html",
     styleUrl: "./map.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent implements OnInit {
-    @Input("location") public _location?: MapLocation;
-    @Output("selectedLocation") private _selectedLocation?: MapLocation;
+    private _selectedLocation?: GeoFence;
     private _map?: L.Map;
+    private _locationMarker?: L.Marker;
 
+    private readonly Locale = inject(LocalizationService);
     private readonly GeoService = inject(GeoLocationService);
 
     public async ngOnInit() {
-        if (!this._location) {
-            const location = await this.GeoService.GetCurrentLocation();
-            if (location) {
-                this._location = { lat: location?.latitude, lng: location?.longitude };
-            }
-        }
         await this.initMap();
     }
 
     private async initMap() {
-        if (this._location) {
-            this._map = new L.Map("map").setView([this._location.lat, this._location.lng], 13);
+        this._map = new L.Map("map");
 
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            }).addTo(this._map);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(this._map);
 
-            setTimeout(() => {
-                this._map?.invalidateSize();
-            }, 0);
+        setTimeout(() => {
+            this._map?.invalidateSize();
+        }, 0);
 
-            this.setMarker(this._location, "Hier");
+        this._map.on("click", (e: L.LeafletMouseEvent) => {
+            this._selectedLocation = new GeoFence(e.latlng.lat, e.latlng.lng, 100, this.Locale.getText("comp-map.fence_desc"));
+            this.setMarker(this._selectedLocation);
+            Logger.Debug(`Selected location on map: `, this._selectedLocation);
+        });
+    }
 
-            const geocoder = (L.Control as any)({
-                defaultMarkGeocode: false,
-            })
-                .on("markgeocode", (e: any) => {
-                    const bbox = e.geocode.bbox;
-                    const poly = L.polygon([
-                        [bbox.getSouthEast().lat, bbox.getSouthEast().lng],
-                        [bbox.getNorthEast().lat, bbox.getNorthEast().lng],
-                        [bbox.getNorthWest().lat, bbox.getNorthWest().lng],
-                        [bbox.getSouthWest().lat, bbox.getSouthWest().lng],
-                    ]);
-                    this._map!.fitBounds(poly.getBounds());
-                    this._map!.setView(e.geocode.center, 13);
-                    L.marker(e.geocode.center).addTo(this._map!).bindPopup(e.geocode.name).openPopup();
-                })
-                .addTo(this._map);
-
-            this._map.on("click", (e: L.LeafletMouseEvent) => {
-                this._selectedLocation = e.latlng;
-                Logger.Debug(`Selected location on map: `, this._selectedLocation);
-            });
+    public setMarker(addr: GeoAddress | GeoFence) {
+        if (this._map) {
+            const lat: number = addr instanceof GeoFence ? addr.Latitude : addr.lat;
+            const lng: number = addr instanceof GeoFence ? addr.Longitude : addr.lng;
+            const title: string = addr instanceof GeoFence ? addr.Description : addr.address;
+            this._map.setView([lat, lng], 20);
+            if (this._locationMarker) {
+                this._map.removeLayer(this._locationMarker);
+            }
+            this._locationMarker = L.marker([lat, lng], { icon: MapMarker }).addTo(this._map!).bindPopup(title).openPopup();
         }
     }
 
-    public setMarker(location: MapLocation, text: string) {
-        if (this._map) {
-            this._map.setView(location, 20);
-            L.marker([location.lat, location.lng], { icon: MapMarker }).addTo(this._map);
-            L.marker(location, { icon: MapMarker }).addTo(this._map!).bindPopup(text).openPopup();
+    public async searchAdress(target: HTMLIonSearchbarElement) {
+        const address = await this.GeoService.getCoodinates(target.value);
+        if (address && this._map) {
+            this.setMarker(address);
         }
     }
 }
-
-export declare type MapLocation = {
-    lat: number;
-    lng: number;
-};
 
 const MapMarker = L.icon({
     iconUrl: "./assets/icons/map/marker-icon.png",

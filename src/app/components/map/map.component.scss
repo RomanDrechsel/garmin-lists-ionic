@@ -1,8 +1,23 @@
 :host {
     display: block;
+    position: relative;
+
+    .header {
+        background-color: var(--ion-background-color);
+        padding: 6px;
+        left: 52px;
+        right: 12px;
+        top: 12px;
+        position: absolute;
+        z-index: 1000;
+        border-radius: 6px;
+
+        ion-searchbar {
+            min-height: 48px;
+        }
+    }
 
     #map {
         height: 100%;
-        width: 100%;
     }
 }

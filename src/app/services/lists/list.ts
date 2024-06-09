@@ -1,3 +1,4 @@
+import { GeoFence } from "../geo/geo-fence";
 import { Logger } from "../logging/logger";
 import { ListModel } from "../storage/database/models/list-model";
 import { Listitem } from "./listitem";
@@ -12,7 +13,7 @@ export class List {
     private _items?: Listitem[];
     private _trashItems?: Listitem[];
     private _deleted?: number;
-    private _geofence?: ListFence;
+    private _geofence?: GeoFence;
     private _geofenceEnabled: boolean = false;
 
     public Dirty: boolean = false;
@@ -121,7 +122,7 @@ export class List {
     }
 
     /** set the geofence */
-    public set GeoFence(fence: ListFence | undefined) {
+    public set GeoFence(fence: GeoFence | undefined) {
         if ((fence && !fence.equals(this.GeoFence)) || (!fence && this.GeoFence)) {
             this._geofence = fence;
             this.Dirty = true;
@@ -130,7 +131,7 @@ export class List {
     }
 
     /** get the geofence */
-    public get GeoFence(): ListFence | undefined {
+    public get GeoFence(): GeoFence | undefined {
         return this._geofence;
     }
 
@@ -262,16 +263,5 @@ export class List {
         const list = new List(obj);
         list.Dirty = true;
         return list;
-    }
-}
-
-export class ListFence {
-    constructor(public Latitude: number, public Longitude: number, public Radius: number) {}
-
-    public equals(other: ListFence | undefined): boolean {
-        if (!other) {
-            return false;
-        }
-        return this.Latitude === other.Latitude && this.Longitude === other.Longitude && this.Radius === other.Radius;
     }
 }
