@@ -4,24 +4,30 @@ ion-content {
     --padding-start: 0;
     --padding-top: 0;
 
-    ion-header {
-        ion-toggle {
-            .text {
-                font-size: 1.2em;
-                font-weight: bold;
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        .header {
+            padding: 12px 12px 12px 12px;
+
+            ion-toggle {
+                .text {
+                    font-size: 1.2em;
+                    font-weight: bold;
+                }
             }
         }
 
-        ion-input {
-            margin-block: 12px 6px;
-            min-height: 48px;
-            --padding-bottom: 0;
-            --padding-top: 0;
-        }
-    }
+        .map {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
 
-    app-map {
-        width: 100%;
-        height: 100%;
+            app-map {
+                flex: 1;
+            }
+        }
     }
 }

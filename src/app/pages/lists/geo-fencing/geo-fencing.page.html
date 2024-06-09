@@ -1,19 +1,17 @@
-<app-main-toolbar back="/lists/{{List?.Uuid}}">{{'page_geofencing.page_title'|translate}}</app-main-toolbar>
+<app-main-toolbar back="lists/items/{{List?.Uuid}}">{{'page_geofencing.page_title'|translate}}</app-main-toolbar>
 
 <ion-content>
-    <ion-header>
-        <ion-list>
-            <ion-item lines="none">
+    <div class="container">
+        <div class="header">
+            <div>
                 <ion-toggle labelPlacement="start" (ionChange)="onActiveChanged($event.target.checked)">
                     <div class="text" [innerHTML]="Status"></div>
                     <ion-note [innerHTML]="StatusNote"></ion-note>
                 </ion-toggle>
-            </ion-item>
-            <ion-item lines="none">
-                <ion-input fill="outline" labelPlacement="floating" [label]="'page_geofencing.address'|translate" [clearInput]="true" enterkeyhint="search"
-                           autocomplete="street-address|address-line1|address-line2|address-line3|address-level4|address-level3|address-level2|address-level1|country|country-name|postal-code"></ion-input>
-            </ion-item>
-        </ion-list>
-    </ion-header>
-    <app-map [location]=" GeoLocation" #map></app-map>
+            </div>
+        </div>
+        <div class="map">
+            <app-map #map></app-map>
+        </div>
+    </div>
 </ion-content>

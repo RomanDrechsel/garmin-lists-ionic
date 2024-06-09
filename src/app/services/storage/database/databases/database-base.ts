@@ -5,10 +5,10 @@ import { DatabaseService } from "../../database.service";
 import { DatabaseTableBase } from "../tables/database-table-base";
 
 export abstract class DatabaseBase {
-    public readonly abstract Name: string;
+    public abstract readonly Name: string;
     protected Db?: SQLiteDBConnection;
 
-    constructor(public Service: DatabaseService) { }
+    constructor(public Service: DatabaseService) {}
 
     public abstract GetAllTables(): DatabaseTableBase[];
 
@@ -26,18 +26,13 @@ export abstract class DatabaseBase {
                 const i = versions.findIndex(v => v.toVersion == el.toVersion);
                 if (i >= 0) {
                     versions[i].statements = versions[i].statements.concat(el.statements);
-                }
-                else {
+                } else {
                     versions.push(el);
                 }
             });
         }
-
-        console.log("Upgrades: ", versions);
-
         return versions;
     }
-
 
     /**
      * get the sqlite database connection object
@@ -56,19 +51,17 @@ export abstract class DatabaseBase {
      * @param args
      * @returns
      */
-    public async Query(args: { table?: DatabaseTableBase, query: string, values?: any[], store?: boolean; }): Promise<any[] | undefined | false> {
+    public async Query(args: { table?: DatabaseTableBase; query: string; values?: any[]; store?: boolean }): Promise<any[] | undefined | false> {
         try {
             const res = await (await this.getConnection()).query(args.query, args.values);
             if (args.store) {
                 await this.Store();
             }
             return res.values;
-        }
-        catch (error) {
+        } catch (error) {
             if (args.table) {
                 Logger.Error(`Could not query database ${this.Name}.${args.table.Tablename} with query "${args.query}": `, error);
-            }
-            else {
+            } else {
                 Logger.Error(`Could not query database ${this.Name} with query "${args.query}": `, error);
             }
             return false;

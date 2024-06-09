@@ -69,8 +69,12 @@ export class AdmobService {
                 isTesting: environment.publicRelease !== true,
                 //npa: true
             };
-            await AdMob.showBanner(options);
-            console.log("show admob banner");
+            try {
+                await AdMob.removeBanner();
+                await AdMob.showBanner(options);
+            } catch {
+                await AdMob.resumeBanner();
+            }
         }
     }
 
@@ -82,7 +86,6 @@ export class AdmobService {
             await AdMob.hideBanner();
         }
         this._bannerIsShown = false;
-        console.log("hide admob banner");
     }
 
     /**
@@ -124,9 +127,7 @@ export class AdmobService {
                 testDeviceIdentifiers: ["edfcf89c-603c-45fa-a1c8-f77b771ee68c"],
             };
         }
-        const info = AdMob.requestConsentInfo(options);
-        console.log(info);
-        return info;
+        return AdMob.requestConsentInfo(options);
     }
 
     /** resumes the banner */

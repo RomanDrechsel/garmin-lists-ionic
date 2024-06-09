@@ -5,8 +5,18 @@ import { FileUtils } from "src/app/classes/utils/fileutils";
 import { StringUtils } from "../../classes/utils/stringutils";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 
-enum ELogType { Debug = 4, Notice = 3, Important = 2, Error = 1, }
-enum EAutoDelete { Never = 0, Day = 1, Week = 7, Month = 30, }
+enum ELogType {
+    Debug = 4,
+    Notice = 3,
+    Important = 2,
+    Error = 1,
+}
+enum EAutoDelete {
+    Never = 0,
+    Day = 1,
+    Week = 7,
+    Month = 30,
+}
 
 @Injectable({
     providedIn: "root",
@@ -70,7 +80,7 @@ export class LoggingService {
     }
 
     /**
-     * log an important message
+     * log a important message
      * @param message message text
      * @param obj additional objects
      */
@@ -82,7 +92,7 @@ export class LoggingService {
     }
 
     /**
-     * log an notice message
+     * log a notice message
      * @param message message text
      * @param obj additional objects
      */
@@ -93,13 +103,24 @@ export class LoggingService {
         }
     }
     /**
-         * log an debug message
-         * @param message message text
-         * @param obj additional objects
-         */
+     * log a debug message
+     * @param message message text
+     * @param obj additional objects
+     */
     public Debug(message: string, ...objs: any[]) {
         if (this.LogLevel >= ELogType.Debug) {
             this.WriteInLogfile(message, ELogType.Debug, ...objs);
+            console.log(message, ...objs);
+        }
+    }
+
+    /**
+     * log a debug message
+     * @param message message text
+     * @param obj additional objects
+     */
+    public Console(message: string, ...objs: any[]) {
+        if (this.LogLevel >= ELogType.Debug && isDevMode()) {
             console.log(message, ...objs);
         }
     }
@@ -114,7 +135,7 @@ export class LoggingService {
         this.LogfileProcessRunning = true;
         if (this.WriteToLogQueue.length > 0) {
             //Log-Datei erstellen, falls nicht vorhanden
-            if (!await FileUtils.FileExists(this.LogFile, LoggingService.LogDirectory)) {
+            if (!(await FileUtils.FileExists(this.LogFile, LoggingService.LogDirectory))) {
                 let loglevel: string;
                 switch (this.LogLevel) {
                     case ELogType.Error:
@@ -254,24 +275,23 @@ export class LoggingService {
     public async ListLogfiles(): Promise<FileUtils.File[]> {
         try {
             let ret: FileUtils.File[] = [];
-            let files = (await Filesystem.readdir({ path: LoggingService.LogPath, directory: LoggingService.LogDirectory, })).files;
+            let files = (await Filesystem.readdir({ path: LoggingService.LogPath, directory: LoggingService.LogDirectory })).files;
             if (files) {
-                files.sort((a, b) => a.mtime < b.mtime ? 1 : b.mtime < a.mtime ? -1 : 0);
-                await Promise.all(files.map(async (file) => {
-                    if (file.type == "file") {
-                        let logfile = await FileUtils.GetFileStat(file.uri);
-                        if (logfile) {
-                            ret.push(logfile);
+                files.sort((a, b) => (a.mtime < b.mtime ? 1 : b.mtime < a.mtime ? -1 : 0));
+                await Promise.all(
+                    files.map(async file => {
+                        if (file.type == "file") {
+                            let logfile = await FileUtils.GetFileStat(file.uri);
+                            if (logfile) {
+                                ret.push(logfile);
+                            }
                         }
-                    }
-                }));
+                    }),
+                );
             }
             return ret;
         } catch (e) {
-            let logfile = await FileUtils.GetFileStat(
-                this.LogFile,
-                LoggingService.LogDirectory
-            );
+            let logfile = await FileUtils.GetFileStat(this.LogFile, LoggingService.LogDirectory);
             if (logfile) {
                 return [logfile];
             }
@@ -327,9 +347,6 @@ export class LoggingService {
      * @returns number of all logsfiles
      */
     public async LogfilesCount(): Promise<number> {
-        return FileUtils.GetFilesCount(
-            LoggingService.LogPath,
-            LoggingService.LogDirectory
-        );
+        return FileUtils.GetFilesCount(LoggingService.LogPath, LoggingService.LogDirectory);
     }
 }

@@ -80,6 +80,9 @@
         "itemname": "Description",
         "itemnote": "Note"
     },
+    "comp-map": {
+        "fence_desc": "My place"
+    },
     "page_lists": {
         "page_title": "My lists",
         "empty": "Empty",
@@ -103,7 +106,8 @@
         "active_note": "Geo fencing for list \"<strong>{{title}}</strong>\" is enabled.",
         "inactive": "Disabled",
         "inactive_note": "Geo fencing for list \"<strong>{{title}}</strong>\" is disabled.",
-        "address": "Search adress"
+        "address": "Search adress",
+        "currentLocation": "My location"
     },
     "page_trash": {
         "page_title": "Trash",

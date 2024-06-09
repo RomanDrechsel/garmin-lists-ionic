@@ -2,12 +2,12 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { IonContent, IonHeader, IonInput, IonItem, IonList, IonNote, IonToggle, IonToolbar } from "@ionic/angular/standalone";
+import { IonContent, IonHeader, IonInput, IonNote, IonSearchbar, IonToggle } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import * as L from "leaflet";
 import { StringUtils } from "../../../classes/utils/stringutils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
-import { MapComponent, MapLocation } from "../../../components/map/map.component";
+import { MapComponent } from "../../../components/map/map.component";
+import { GeoFence } from "../../../services/geo/geo-fence";
 import { GeoLocationService } from "../../../services/geo/geo-location.service";
 import { List } from "../../../services/lists/list";
 import { PageBase } from "../../page-base";
@@ -18,7 +18,7 @@ import { PageBase } from "../../page-base";
     styleUrls: ["./geo-fencing.page.scss"],
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonInput, IonList, IonNote, IonItem, IonToggle, IonHeader, IonToolbar, IonContent, MainToolbarComponent, MapComponent, CommonModule, FormsModule, TranslateModule],
+    imports: [IonSearchbar, IonInput, IonNote, IonToggle, IonHeader, IonContent, MainToolbarComponent, MapComponent, CommonModule, FormsModule, TranslateModule],
 })
 export class GeoFencingPage extends PageBase {
     private readonly Route = inject(ActivatedRoute);
@@ -26,19 +26,6 @@ export class GeoFencingPage extends PageBase {
     @ViewChild("map", { read: MapComponent }) private _map?: MapComponent;
 
     public List?: List | null = undefined;
-
-    public get GeoLocation(): MapLocation | undefined {
-        if (this.List?.GeoFence) {
-            return { lat: this.List.GeoFence.Latitude, lng: this.List.GeoFence.Longitude };
-        } else {
-            const location = this.GeoService.getCurrentLocationSnapshot();
-            if (location) {
-                return { lat: location.latitude, lng: location.longitude };
-            } else {
-                return undefined;
-            }
-        }
-    }
 
     public get Status(): string {
         if (this.List?.GeoFenceEnabled) {
@@ -65,6 +52,19 @@ export class GeoFencingPage extends PageBase {
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
             this.List = await this.ListsService.GetList(listid);
+            if (this._map) {
+                if (this.List?.GeoFence) {
+                    this._map?.setMarker(this.List.GeoFence);
+                } else {
+                    let location = this.GeoService.getCurrentLocationSnapshot();
+                    if (!location) {
+                        location = await this.GeoService.GetCurrentLocation();
+                    }
+                    if (location) {
+                        this._map?.setMarker(new GeoFence(location.Latitude, location.Longitude, 100, this.Locale.getText("page_geofencing.currentLocation")));
+                    }
+                }
+            }
             this.cdr.detectChanges();
         }
     }
@@ -74,20 +74,5 @@ export class GeoFencingPage extends PageBase {
             this.List.GeoFenceEnabled = checked;
             this.ListsService.StoreList(this.List);
         }
-    }
-
-    public geocodeAddress(address: string) {
-        if (!address || !this._map) {
-            return;
-        }
-
-        const geocoder = (L.Control as any).Geocoder.nominatim();
-        geocoder.geocode(address, (results: any) => {
-            if (results.length === 0) {
-                return;
-            }
-            const result = results[0];
-            this._map?.setMarker(result.center, result.name);
-        });
     }
 }

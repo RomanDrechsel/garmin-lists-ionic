@@ -1,4 +1,4 @@
-import { LoggingService } from 'src/app/services/logging/logging.service';
+import { LoggingService } from "src/app/services/logging/logging.service";
 
 export class Logger {
     private static Service: LoggingService;
@@ -46,5 +46,9 @@ export class Logger {
      */
     static Debug(message: string, ...obj: any[]) {
         Logger.Service.Debug(message, ...obj);
+    }
+
+    static Console(message: string, ...objs: any[]) {
+        Logger.Service.Console(message, ...objs);
     }
 }

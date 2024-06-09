@@ -27,6 +27,17 @@ ion-list {
     }
 }
 
+ion-searchbar {
+    border-radius: 4px;
+    border: 1px solid var(--color-control-border);
+    --box-shadow: none !important;
+    padding: 0 !important;
+
+    &.searchbar-has-focus {
+        border: 2px solid var(--ion-color-primary);
+    }
+}
+
 ion-button,
 ion-fab-button {
     --background: var(--ion-color-secondary);

@@ -45,10 +45,10 @@ export class ListItemsPage extends PageBase {
         this.preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
             if (prop.prop == EPrefProperty.AllowGeoFencing) {
                 this.geofencing = prop.value as boolean;
-                this.ModifyMainMenu();
+                this.appComponent.setAppPages(this.ModifyMainMenu());
             } else if (prop.prop == EPrefProperty.TrashListitems) {
                 this.useTrash = prop.value as boolean;
-                this.ModifyMainMenu();
+                this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
     }
