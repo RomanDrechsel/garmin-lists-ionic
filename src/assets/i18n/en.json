@@ -69,6 +69,10 @@
         "transmit_success": "The list has been transmitted successfully",
         "transmit_error": "The list could not be transmitted!"
     },
+    "service-geo": {
+        "fence_desc": "My place",
+        "currentLocation": "My location"
+    },
     "comp-listeditor": {
         "title_new": "Create new list",
         "title_edit": "Edit list",
@@ -80,8 +84,9 @@
         "itemname": "Description",
         "itemnote": "Note"
     },
-    "comp-map": {
-        "fence_desc": "My place"
+    "comp-markereditor": {
+        "title": "Edit place",
+        "description": "Description:"
     },
     "page_lists": {
         "page_title": "My lists",
@@ -106,8 +111,7 @@
         "active_note": "Geo fencing for list \"<strong>{{title}}</strong>\" is enabled.",
         "inactive": "Disabled",
         "inactive_note": "Geo fencing for list \"<strong>{{title}}</strong>\" is disabled.",
-        "address": "Search adress",
-        "currentLocation": "My location"
+        "address": "Search adress"
     },
     "page_trash": {
         "page_title": "Trash",

@@ -1,10 +1,23 @@
-export class GeoFence {
-    constructor(public Latitude: number, public Longitude: number, public Radius: number, public Description: string) {}
+import { GeoLocation } from "./geo-location";
 
-    public equals(other: GeoFence | undefined): boolean {
-        if (!other) {
+export class GeoFence extends GeoLocation {
+    public static readonly DEFAULT_RADIUS: number = 100;
+
+    public Radius: number;
+
+    constructor(lat: number, lng: number, address: string | undefined = undefined, radius: number) {
+        super(lat, lng, address);
+        this.Radius = radius;
+    }
+
+    public override equals(other: GeoLocation | undefined): boolean {
+        if (!super.equals(other)) {
             return false;
         }
-        return this.Latitude === other.Latitude && this.Longitude === other.Longitude && this.Radius === other.Radius && this.Description === other.Description;
+        if (other instanceof GeoFence) {
+            return this.Radius === other!.Radius;
+        }
+
+        return true;
     }
 }

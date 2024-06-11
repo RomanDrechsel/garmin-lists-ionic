@@ -1,14 +1,18 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, OnInit, inject } from "@angular/core";
-import { IonSearchbar } from "@ionic/angular/standalone";
+import { IonSearchbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import * as L from "leaflet";
 import "leaflet-control-geocoder/dist/Control.Geocoder.js";
-import { GeoAddress } from "../../services/geo/geo-address";
-import { GeoFence } from "../../services/geo/geo-fence";
-import { GeoLocationService } from "../../services/geo/geo-location.service";
-import { LocalizationService } from "../../services/localization/localization.service";
-import { Logger } from "../../services/logging/logger";
+import { BehaviorSubject } from "rxjs";
+import { GeoFence } from "../../../services/geo/geo-fence";
+import { GeoLocation } from "../../../services/geo/geo-location";
+import { GeoLocationService } from "../../../services/geo/geo-location.service";
+import { LocalizationService } from "../../../services/localization/localization.service";
+import { Logger } from "../../../services/logging/logger";
+import { MapMarkerEditor } from "../marker-editor/marker-editor.component";
+
+//TODO: address suggestions
 
 @Component({
     selector: "app-map",
@@ -23,8 +27,12 @@ export class MapComponent implements OnInit {
     private _map?: L.Map;
     private _locationMarker?: L.Marker;
 
+    private onLocationSelectedSubject = new BehaviorSubject<GeoFence | undefined>(undefined);
+    public onLocationSelected$ = this.onLocationSelectedSubject.asObservable();
+
     private readonly Locale = inject(LocalizationService);
     private readonly GeoService = inject(GeoLocationService);
+    private readonly ModalCtrl = inject(ModalController);
 
     public async ngOnInit() {
         await this.initMap();
@@ -42,22 +50,35 @@ export class MapComponent implements OnInit {
         }, 0);
 
         this._map.on("click", (e: L.LeafletMouseEvent) => {
-            this._selectedLocation = new GeoFence(e.latlng.lat, e.latlng.lng, 100, this.Locale.getText("comp-map.fence_desc"));
+            const address = this._selectedLocation ? this._selectedLocation.Label : this.Locale.getText("service-geo.fence_desc");
+            this._selectedLocation = new GeoFence(e.latlng.lat, e.latlng.lng, address, 100);
             this.setMarker(this._selectedLocation);
+            this.onLocationSelectedSubject.next(this._selectedLocation);
             Logger.Debug(`Selected location on map: `, this._selectedLocation);
         });
     }
 
-    public setMarker(addr: GeoAddress | GeoFence) {
+    public setMarker(addr: GeoLocation | GeoLocation) {
         if (this._map) {
-            const lat: number = addr instanceof GeoFence ? addr.Latitude : addr.lat;
-            const lng: number = addr instanceof GeoFence ? addr.Longitude : addr.lng;
-            const title: string = addr instanceof GeoFence ? addr.Description : addr.address;
-            this._map.setView([lat, lng], 20);
+            this._map.setView([addr.Latitude, addr.Longitude], 20);
+
             if (this._locationMarker) {
                 this._map.removeLayer(this._locationMarker);
             }
-            this._locationMarker = L.marker([lat, lng], { icon: MapMarker }).addTo(this._map!).bindPopup(title).openPopup();
+            this._locationMarker = L.marker([addr.Latitude, addr.Longitude], { icon: MapMarker }).addTo(this._map!).bindPopup(addr.Label).openPopup();
+            this._locationMarker.on("popupopen", e => {
+                const popup = e.popup;
+                const self = this;
+                popup.getElement()?.addEventListener("click", async event => {
+                    event.stopPropagation();
+                    const label = popup.getContent()?.toString();
+                    const newlabel = await MapMarkerEditor(self.ModalCtrl, { label: label });
+                    if (newlabel && newlabel != label && self._selectedLocation) {
+                        self._selectedLocation.Label = newlabel;
+                        this.onLocationSelectedSubject.next(this._selectedLocation);
+                    }
+                });
+            });
         }
     }
 

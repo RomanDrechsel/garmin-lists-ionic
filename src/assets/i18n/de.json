@@ -68,6 +68,10 @@
         "transmit_success": "Die Liste wurde erfolgreich übertragen",
         "transmit_error": "Die Liste konnte nicht übertragen werden!"
     },
+    "service-geo": {
+        "fence_desc": "Mein Ort",
+        "currentLocation": "Mein Standort"
+    },
     "comp-listeditor": {
         "title_new": "Neue Liste anlegen",
         "title_edit": "Liste bearbeiten",
@@ -79,8 +83,9 @@
         "itemname": "Bezeichnung",
         "itemnote": "Notiz"
     },
-    "comp-map": {
-        "fence_desc": "Mein Ort"
+    "comp-markereditor": {
+        "title": "Ort bearbeiten",
+        "description": "Bezeichnung:"
     },
     "page_lists": {
         "page_title": "Meine Listen",
@@ -105,8 +110,7 @@
         "active_note": "Geo-Fencing für die Liste \"<strong>{{title}}</strong>\" ist aktiv.",
         "inactive": "Inaktiv",
         "inactive_note": "Geo-Fencing für die Liste \"<strong>{{title}}</strong>\" ist inaktiv.",
-        "address": "Adresse suchen",
-        "currentLocation": "Mein Standort"
+        "address": "Adresse suchen"
     },
     "page_trash": {
         "page_title": "Papierkorb",
