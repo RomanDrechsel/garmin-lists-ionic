@@ -36,6 +36,27 @@ ion-searchbar {
     &.searchbar-has-focus {
         border: 2px solid var(--ion-color-primary);
     }
+
+    &.small {
+        min-height: 36px !important;
+        max-height: 36px;
+
+        .searchbar-input {
+            padding-inline: 1.7rem !important;
+            padding: 0.09rem;
+        }
+
+        ion-icon.searchbar-search-icon.sc-ion-searchbar-md {
+            top: 0.45rem;
+            left: 6px;
+            width: 1rem;
+            height: 1rem;
+        }
+
+        button.searchbar-clear-button.sc-ion-searchbar-md {
+            right: 6px;
+        }
+    }
 }
 
 ion-button,

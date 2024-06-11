@@ -4,9 +4,9 @@ import { registerPlugin } from "@capacitor/core";
 import { Geolocation } from "@capacitor/geolocation";
 import * as L from "leaflet";
 import { Subscription, interval } from "rxjs";
+import { Locale } from "../localization/locale";
 import { Logger } from "../logging/logger";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
-import { GeoAddress } from "./geo-address";
 import { GeoLocation } from "./geo-location";
 
 @Injectable({
@@ -49,7 +49,7 @@ export class GeoLocationService {
             return undefined;
         }
         const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: timeout, maximumAge: 10000 });
-        this._currentLocation = new GeoLocation(position);
+        this._currentLocation = new GeoLocation(position.coords.latitude, position.coords.longitude, Locale.getText("service-geo.currentLocation"));
         Logger.Console(`Current location is `, this._currentLocation);
         return this._currentLocation;
     }
@@ -58,12 +58,12 @@ export class GeoLocationService {
         return this._currentLocation;
     }
 
-    public async getCoodinates(address: string | null | undefined): Promise<GeoAddress | undefined> {
+    public async getCoodinates(address: string | null | undefined): Promise<GeoLocation | undefined> {
         if (!address) {
             return undefined;
         }
 
-        return new Promise<GeoAddress | undefined>((resolve, reject) => {
+        return new Promise<GeoLocation | undefined>((resolve, reject) => {
             const geocoder = (L.Control as any).Geocoder.nominatim();
             geocoder.geocode(address, (results: any) => {
                 if (results.length === 0) {
@@ -72,7 +72,7 @@ export class GeoLocationService {
                 }
                 const result = results[0];
                 if (result) {
-                    resolve({ lat: result.center.lat, lng: result.center.lng, address: result.name });
+                    resolve(new GeoLocation(result.center.lat, result.center.lng, result.name));
                 }
             });
         });

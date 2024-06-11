@@ -1,13 +1,14 @@
 :host {
     display: block;
     position: relative;
+    border-top: solid 1px var(--color-control-border);
 
-    .header {
+    .search {
         background-color: var(--ion-background-color);
         padding: 6px;
         left: 52px;
         right: 12px;
-        top: 12px;
+        top: 16px;
         position: absolute;
         z-index: 1000;
         border-radius: 6px;

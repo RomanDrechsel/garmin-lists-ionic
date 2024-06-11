@@ -1,13 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { IonContent, IonHeader, IonInput, IonNote, IonSearchbar, IonToggle } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { StringUtils } from "../../../classes/utils/stringutils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
-import { MapComponent } from "../../../components/map/map.component";
-import { GeoFence } from "../../../services/geo/geo-fence";
+import { MapComponent } from "../../../components/map/map/map.component";
+import { GeoLocation } from "../../../services/geo/geo-location";
 import { GeoLocationService } from "../../../services/geo/geo-location.service";
 import { List } from "../../../services/lists/list";
 import { PageBase } from "../../page-base";
@@ -20,7 +20,7 @@ import { PageBase } from "../../page-base";
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [IonSearchbar, IonInput, IonNote, IonToggle, IonHeader, IonContent, MainToolbarComponent, MapComponent, CommonModule, FormsModule, TranslateModule],
 })
-export class GeoFencingPage extends PageBase {
+export class GeoFencingPage extends PageBase implements OnInit {
     private readonly Route = inject(ActivatedRoute);
     private readonly GeoService = inject(GeoLocationService);
     @ViewChild("map", { read: MapComponent }) private _map?: MapComponent;
@@ -47,6 +47,12 @@ export class GeoFencingPage extends PageBase {
         }
     }
 
+    public ngOnInit(): void {
+        if (this._map) {
+            this._map.onLocationSelected$.subscribe();
+        }
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
         const listid = this.Route.snapshot.paramMap.get("uuid");
@@ -61,7 +67,7 @@ export class GeoFencingPage extends PageBase {
                         location = await this.GeoService.GetCurrentLocation();
                     }
                     if (location) {
-                        this._map?.setMarker(new GeoFence(location.Latitude, location.Longitude, 100, this.Locale.getText("page_geofencing.currentLocation")));
+                        this._map?.setMarker(new GeoLocation(location.Latitude, location.Longitude, this.Locale.getText("service-geo.currentLocation")));
                     }
                 }
             }
