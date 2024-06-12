@@ -21,4 +21,10 @@
     #map {
         height: 100%;
     }
+
+    &::ng-deep {
+        .leaflet-popup {
+            margin-bottom: -10px;
+        }
+    }
 }

@@ -58,27 +58,19 @@ export class MapComponent implements OnInit {
         });
     }
 
-    public setMarker(addr: GeoLocation | GeoLocation) {
+    public setMarker(addr: GeoLocation | undefined) {
         if (this._map) {
-            this._map.setView([addr.Latitude, addr.Longitude], 20);
-
             if (this._locationMarker) {
                 this._map.removeLayer(this._locationMarker);
+                this._locationMarker = undefined;
             }
-            this._locationMarker = L.marker([addr.Latitude, addr.Longitude], { icon: MapMarker }).addTo(this._map!).bindPopup(addr.Label).openPopup();
-            this._locationMarker.on("popupopen", e => {
-                const popup = e.popup;
-                const self = this;
-                popup.getElement()?.addEventListener("click", async event => {
-                    event.stopPropagation();
-                    const label = popup.getContent()?.toString();
-                    const newlabel = await MapMarkerEditor(self.ModalCtrl, { label: label });
-                    if (newlabel && newlabel != label && self._selectedLocation) {
-                        self._selectedLocation.Label = newlabel;
-                        this.onLocationSelectedSubject.next(this._selectedLocation);
-                    }
+            if (addr) {
+                this._map.setView([addr.Latitude, addr.Longitude], 20);
+                this._locationMarker = L.marker([addr.Latitude, addr.Longitude], { icon: MapMarker, riseOffset: -20 }).addTo(this._map!).bindPopup(addr.Label).openPopup();
+                this._locationMarker.on("click", async event => {
+                    await this.editLabel(addr.Label);
                 });
-            });
+            }
         }
     }
 
@@ -86,6 +78,17 @@ export class MapComponent implements OnInit {
         const address = await this.GeoService.getCoodinates(target.value);
         if (address && this._map) {
             this.setMarker(address);
+        }
+    }
+
+    private async editLabel(label: string | undefined) {
+        if (label) {
+            const newlabel = await MapMarkerEditor(this.ModalCtrl, { label: label });
+            if (newlabel && newlabel != label && this._selectedLocation) {
+                this._selectedLocation.Label = newlabel;
+                this.onLocationSelectedSubject.next(this._selectedLocation);
+            }
+            this.setMarker(this._selectedLocation);
         }
     }
 }
