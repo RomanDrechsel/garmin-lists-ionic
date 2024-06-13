@@ -95,6 +95,7 @@ export class GeoLocationService {
             this._timerSubscription = interval(this._timerInterval).subscribe(async () => {
                 await this.GetCurrentLocation(5000);
             });
+            await this.GetCurrentLocation(1000);
         }
     }
 

@@ -5,8 +5,11 @@ export class GeoFence extends GeoLocation {
 
     public Radius: number;
 
-    constructor(lat: number, lng: number, address: string | undefined = undefined, radius: number) {
-        super(lat, lng, address);
+    constructor(lat: number, lng: number, label: string | undefined = undefined, radius: number | undefined = undefined) {
+        super(lat, lng, label);
+        if (!radius) {
+            radius = GeoFence.DEFAULT_RADIUS;
+        }
         this.Radius = radius;
     }
 
