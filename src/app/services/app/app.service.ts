@@ -8,7 +8,7 @@ import { MainToolbarComponent } from "../../components/main-toolbar/main-toolbar
 import { AdmobService } from "../adverticing/admob.service";
 import { ConnectIQService } from "../connectiq/connect-iq.service";
 import { GeoLocationService } from "../geo/geo-location.service";
-import { ListsService } from "../lists/lists.service";
+import { ListsService } from "../lists/_lists.service";
 import { Locale } from "../localization/locale";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";

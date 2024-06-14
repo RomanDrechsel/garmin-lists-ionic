@@ -4,7 +4,7 @@ import { MenuItem } from "../classes/menu-items";
 import { MainToolbarComponent } from "../components/main-toolbar/main-toolbar.component";
 import { AppService } from "../services/app/app.service";
 import { ConnectIQService } from "../services/connectiq/connect-iq.service";
-import { ListsService } from "../services/lists/lists.service";
+import { ListsService } from "../services/lists/_lists.service";
 import { LocalizationService } from "../services/localization/localization.service";
 import { LoggingService } from "../services/logging/logging.service";
 import { PopupsService } from "../services/popups/popups.service";
