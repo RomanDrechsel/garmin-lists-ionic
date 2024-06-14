@@ -1,5 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, OnInit, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from "@angular/core";
+import { PluginListenerHandle } from "@capacitor/core";
+import { Keyboard } from "@capacitor/keyboard";
 import { IonSearchbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import * as L from "leaflet";
@@ -21,7 +23,7 @@ import { MapMarkerEditor } from "../marker-editor/marker-editor.component";
     styleUrl: "./map.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
     private _selectedLocation?: GeoFence;
     private _map?: L.Map;
     private _locationMarker?: L.Marker;
@@ -33,8 +35,20 @@ export class MapComponent implements OnInit {
     private readonly GeoService = inject(GeoLocationService);
     private readonly ModalCtrl = inject(ModalController);
 
+    private _keyboardListener?: PluginListenerHandle;
+
     public async ngOnInit() {
         await this.initMap();
+
+        this._keyboardListener = await Keyboard.addListener("keyboardDidHide", () => {
+            setTimeout(() => {
+                this._map?.invalidateSize();
+            }, 0);
+        });
+    }
+
+    public async ngOnDestroy() {
+        await this._keyboardListener?.remove();
     }
 
     private async initMap() {
@@ -71,11 +85,7 @@ export class MapComponent implements OnInit {
                 this._locationMarker = undefined;
             }
             if (addr) {
-                setTimeout(() => {
-                    this._map?.invalidateSize();
-                }, 0);
-                //TODO: invalidateSize on Keyboard events
-                this._map.setView(new L.LatLng(addr.Latitude, addr.Longitude), undefined, { animate: true, duration: 1000 });
+                this._map.setView(new L.LatLng(addr.Latitude, addr.Longitude), this._map.getZoom(), { animate: true, duration: 1 });
                 this._locationMarker = L.marker([addr.Latitude, addr.Longitude], { icon: MapMarker, riseOffset: -20 }).addTo(this._map!).bindPopup(addr.Label).openPopup();
                 this._locationMarker.on("click", async event => {
                     await this.editLabel(addr.Label);

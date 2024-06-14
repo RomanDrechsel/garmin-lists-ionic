@@ -208,6 +208,7 @@ export class List {
      * @returns object for backend storage, undefined if no changes
      */
     public toBackend(force: boolean = false): ListModel | undefined {
+        //TODO: Store Geofence in Backend
         if (!this.Dirty && !force) {
             return undefined;
         } else {
@@ -235,6 +236,7 @@ export class List {
      * @returns List object
      */
     public static fromBackend(obj: any): List | undefined {
+        //TODO: Restore Geofence from backend
         const props = ["uuid", "name", "created", "order"];
         for (let i = 0; i < props.length; i++) {
             if (!obj.hasOwnProperty(props[i])) {
