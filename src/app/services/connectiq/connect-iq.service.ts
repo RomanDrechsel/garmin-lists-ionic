@@ -8,7 +8,7 @@ import { DebugDevices } from "../../../environments/environment";
 import ConnectIQ from "../../plugins/connectiq/connect-iq";
 import { TransmitListEventArgs } from "../../plugins/connectiq/event-args/transmit-list-event-args";
 import { AppService } from "../app/app.service";
-import { ListsService } from "../lists/lists.service";
+import { ListsService } from "../lists/_lists.service";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { PopupsService } from "../popups/popups.service";
