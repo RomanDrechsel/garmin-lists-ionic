@@ -5,8 +5,6 @@ export class GeoLocation {
     public readonly Latitude: number;
     /** Longitude in degrees. */
     public readonly Longitude: number;
-    /** Vertical uncertainty in metres, with 68% confidence (or null). */
-    public readonly AltitudeAccuracy: number | null | undefined;
     /** address of the location, found by geocoder */
     public Label: string;
 

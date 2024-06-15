@@ -1,6 +1,5 @@
 import { ListItemEditorReturn } from "../../components/list-item-editor/list-item-editor.component";
 import { Logger } from "../logging/logger";
-import { ListitemModel } from "../storage/database/models/listitem-model";
 
 export class Listitem {
     private _databaseId?: number;
@@ -11,17 +10,9 @@ export class Listitem {
     private _note?: string;
     private _hidden: boolean = false;
 
-    public Dirty: boolean = false;
+    private _dirty: boolean = false;
 
-    private constructor(obj: {
-        id?: number,
-        item: string,
-        note?: string,
-        order: number,
-        hidden?: boolean,
-        created?: number,
-        updated?: number;
-    }) {
+    private constructor(obj: { id?: number; item: string; note?: string; order: number; hidden?: boolean; created?: number; updated?: number; dirty?: boolean }) {
         this._databaseId = obj.id;
         this._item = obj.item;
         this._note = obj.note;
@@ -29,6 +20,7 @@ export class Listitem {
         this._hidden = obj.hidden ?? false;
         this._created = obj.created ?? Date.now();
         this._updated = obj.updated ?? Date.now();
+        this._dirty = obj.dirty ?? false;
     }
 
     /** get unique id in backend */
@@ -50,7 +42,7 @@ export class Listitem {
     public set Order(order: number) {
         if (this._order != order) {
             this._order = order;
-            this.Dirty = true;
+            this._dirty = true;
         }
     }
 
@@ -73,7 +65,7 @@ export class Listitem {
     public set Updated(updated: number) {
         if (this._updated != updated) {
             this._updated = updated;
-            this.Dirty = true;
+            this._dirty = true;
         }
     }
 
@@ -86,7 +78,7 @@ export class Listitem {
     public set Item(item: string) {
         if (this._item != item) {
             this._item = item;
-            this.Dirty = true;
+            this._dirty = true;
         }
     }
 
@@ -99,7 +91,7 @@ export class Listitem {
     public set Note(note: string | undefined) {
         if (this._note != note) {
             this._note = note;
-            this.Dirty = true;
+            this._dirty = true;
         }
     }
 
@@ -112,8 +104,13 @@ export class Listitem {
     public set Hidden(hidden: boolean) {
         if (this._hidden != hidden) {
             this._hidden = hidden;
-            this.Dirty = true;
+            this._dirty = true;
         }
+    }
+
+    /** any changes since the last storage */
+    public get Dirty(): boolean {
+        return this._dirty;
     }
 
     /**
@@ -125,36 +122,29 @@ export class Listitem {
             return {
                 item: this._item,
                 note: this._note,
-                order: this._order
+                order: this._order,
             };
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     /**
      * create an object to store in backend, returns undefined if to changes on the list
-     * @param list_uuid unique identifier of the list, the item is part of
-     * @param force force to create an object, even if nothing changed
-     * @returns object for backend storage, undefined if no changes
+     * @returns object for backend storage
      */
-    public toBackend(list_uuid: string, force: boolean = false): ListitemModel | undefined {
-        if (!this.Dirty && !force) {
-            return undefined;
-        }
-        else {
-            return {
-                id: this._databaseId,
-                list_uuid: list_uuid,
-                item: this._item,
-                note: this._note,
-                order: this._order,
-                hidden: this._hidden ? 1 : 0,
-                created: this._created,
-                updated: this._updated
-            };
-        }
+    public toBackend(): ListitemModel {
+        this.Clean();
+
+        return {
+            id: this._databaseId,
+            item: this._item,
+            note: this._note,
+            order: this._order,
+            hidden: this._hidden,
+            created: this._created,
+            updated: this._updated,
+        };
     }
 
     /**
@@ -172,7 +162,14 @@ export class Listitem {
      * @returns
      */
     public toLog(): string {
-        return `id:${this.Id ?? '?'}`;
+        return `id:${this.Id ?? "?"}`;
+    }
+
+    /**
+     * the listitem is not longer dirty
+     */
+    public Clean() {
+        this._dirty = false;
     }
 
     /**
@@ -186,16 +183,17 @@ export class Listitem {
             if (!obj.hasOwnProperty(props[i])) {
                 Logger.Error(`Could not read listitem from database, property ${props[i]} not found}`);
                 return undefined;
-            };
+            }
         }
         return new Listitem({
             id: obj.id,
             item: obj.item,
             note: obj.note,
             order: obj.order,
-            hidden: obj.hidden == 1 ? true : false,
+            hidden: obj.hidden,
             created: obj.created,
             updated: obj.updated,
+            dirty: false,
         });
     }
 
@@ -208,10 +206,20 @@ export class Listitem {
         const item = new Listitem({
             item: obj.item,
             note: obj.note ?? undefined,
-            order: 0
+            order: 0,
+            dirty: true,
         });
 
-        item.Dirty = true;
         return item;
     }
 }
+
+export declare type ListitemModel = {
+    id?: number;
+    item: string;
+    note?: string;
+    order: number;
+    hidden: boolean;
+    created: number;
+    updated?: number;
+};
