@@ -1,7 +1,6 @@
-import { GeoFence } from "../geo/geo-fence";
+import { GeoFence, GeoFenceModel } from "../geo/geo-fence";
 import { Logger } from "../logging/logger";
-import { ListModel } from "../storage/database/models/list-model";
-import { Listitem } from "./listitem";
+import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
     private _uuid: string;
@@ -9,16 +8,14 @@ export class List {
     private _created: number;
     private _updated: number;
     private _order: number;
-    private _itemsCount: number = 0;
+    private _itemsCount?: number;
     private _items?: Listitem[];
-    private _trashItems?: Listitem[];
     private _deleted?: number;
     private _geofence?: GeoFence;
     private _geofenceEnabled: boolean = false;
+    private _dirty: boolean = false;
 
-    public Dirty: boolean = false;
-
-    private constructor(args: { uuid: string; name: string; order: number; created?: number; updated?: number; itemscount?: number; deleted?: number }) {
+    private constructor(args: { uuid: string; name: string; order: number; created?: number; updated?: number; itemscount?: number; deleted?: number; dirty?: boolean }) {
         this._name = args.name;
         this._order = args.order;
         this._uuid = args.uuid;
@@ -26,6 +23,7 @@ export class List {
         this._updated = args.updated ?? Date.now();
         this._itemsCount = args.itemscount ?? 0;
         this._deleted = args.deleted;
+        this._dirty = args.dirty ?? true;
     }
 
     /** get unique list id */
@@ -37,7 +35,7 @@ export class List {
     public set Name(name: string) {
         if (this._name != name) {
             this._name = name;
-            this.Dirty = true;
+            this._dirty = true;
             this._updated = Date.now();
         }
     }
@@ -56,7 +54,7 @@ export class List {
     public set Updated(updated: number) {
         if (this._updated != updated) {
             this._updated = updated;
-            this.Dirty = true;
+            this._dirty = true;
         }
     }
 
@@ -69,7 +67,7 @@ export class List {
     public set Order(order: number) {
         if (this._order != order) {
             this._order = order;
-            this.Dirty = true;
+            this._dirty = true;
         }
     }
 
@@ -80,10 +78,10 @@ export class List {
 
     /** get number of items of this list */
     public get ItemsCount(): number {
-        if (this._items && this._items.length > 0) {
+        if (this._items) {
             return this._items.length;
         } else {
-            return this._itemsCount;
+            return this._itemsCount ?? 0;
         }
     }
 
@@ -102,18 +100,12 @@ export class List {
         }
     }
 
-    /** set the list of items in list trash */
-    public set TrashItems(items: Listitem[]) {
-        this._trashItems = items;
-    }
-
-    public get TrashItems(): Listitem[] {
-        return this._trashItems ?? [];
-    }
-
     /** set the delete timestamp */
     public set Deleted(date: number) {
-        this._deleted = date;
+        if (this._deleted != date) {
+            this._dirty = true;
+            this._deleted = date;
+        }
     }
 
     /** get the deleted timestamp */
@@ -124,8 +116,8 @@ export class List {
     /** set the geofence */
     public set GeoFence(fence: GeoFence | undefined) {
         if ((fence && !fence.equals(this.GeoFence)) || (!fence && this.GeoFence)) {
+            this._dirty = true;
             this._geofence = fence;
-            this.Dirty = true;
             this._geofenceEnabled = fence != undefined;
         }
     }
@@ -139,13 +131,37 @@ export class List {
     public set GeoFenceEnabled(enabled: boolean) {
         if (this._geofenceEnabled != enabled) {
             this._geofenceEnabled = enabled;
-            this.Dirty = true;
+            this._dirty = true;
         }
     }
 
     /** get the geofence enabled state */
     public get GeoFenceEnabled(): boolean {
         return this._geofenceEnabled;
+    }
+
+    /** are only peek information loaded */
+    public get isPeek(): boolean {
+        return this.Items == undefined;
+    }
+
+    /**
+     * Is the list needed to be stored in backend?
+     */
+    public get Dirty(): boolean {
+        if (this._dirty == true) {
+            return true;
+        }
+
+        if (this._items) {
+            for (let i = 0; i < this._items.length; i++) {
+                if (this._items[i].Dirty) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -162,6 +178,7 @@ export class List {
         }
         this._itemsCount = this._items.length;
         this.Updated = Date.now();
+        this._dirty = true;
         return item;
     }
 
@@ -172,6 +189,7 @@ export class List {
     public RemoveItem(item: Listitem) {
         this._items = this.Items.filter(el => el != item);
         this._itemsCount = this._items.length;
+        this._dirty = true;
         this.Updated = Date.now();
     }
 
@@ -181,7 +199,28 @@ export class List {
     public DeleteAllItems() {
         this._items = undefined;
         this._itemsCount = 0;
+        this._dirty = true;
         this.Updated = Date.now();
+    }
+
+    /**
+     * the list is not longer dirty
+     */
+    public Clean() {
+        this._dirty = false;
+        this._items?.forEach(i => i.Clean());
+    }
+
+    /**
+     * get detailed information of another list, but not override peek details
+     * @param list the other list
+     */
+    public copyDetails(list: List | undefined) {
+        if (list && !list.isPeek) {
+            this.Items = list.Items;
+            this.GeoFence = list.GeoFence;
+            this.GeoFenceEnabled = list.GeoFenceEnabled;
+        }
     }
 
     /**
@@ -208,17 +247,33 @@ export class List {
      * @returns object for backend storage, undefined if no changes
      */
     public toBackend(force: boolean = false): ListModel | undefined {
-        //TODO: Store Geofence in Backend
         if (!this.Dirty && !force) {
             return undefined;
         } else {
-            return {
+            const ret: ListModel = {
                 uuid: this._uuid,
                 name: this._name,
+                items: [],
                 created: this._created,
-                updated: this._updated ?? null,
+                updated: this._updated ?? undefined,
+                geofence: undefined,
+                geofence_enabled: undefined,
                 order: this._order,
             };
+
+            if (this._items && this._items.length > 0) {
+                this._items.forEach(item => {
+                    ret.items.push(item.toBackend());
+                });
+            }
+
+            if (this._geofence) {
+                ret.geofence = this._geofence.toBackend();
+                ret.geofence_enabled = this._geofenceEnabled;
+            }
+
+            this.Clean();
+            return ret;
         }
     }
 
@@ -235,8 +290,7 @@ export class List {
      * @param obj backend object
      * @returns List object
      */
-    public static fromBackend(obj: any): List | undefined {
-        //TODO: Restore Geofence from backend
+    public static fromBackend(obj: any, only_peek: boolean = false): List | undefined {
         const props = ["uuid", "name", "created", "order"];
         for (let i = 0; i < props.length; i++) {
             if (!obj.hasOwnProperty(props[i])) {
@@ -250,9 +304,30 @@ export class List {
             created: obj.created,
             order: obj.order,
             updated: obj.updated,
-            itemscount: obj.itemscount,
+            itemscount: obj.items?.length ?? 0,
             deleted: obj.deleted,
         });
+
+        if (!only_peek) {
+            if (obj.items) {
+                let items: Listitem[] = [];
+                obj.items.forEach((el: any) => {
+                    const i = Listitem.fromBackend(el);
+                    if (i) {
+                        items.push(i);
+                    }
+                });
+                list.Items = items;
+            }
+            if (obj.geofence) {
+                list.GeoFence = GeoFence.fromBackend(obj.geofence);
+            }
+            if (list.GeoFence && obj.geofence_enabled) {
+                list.GeoFenceEnabled = obj.geofence_enabled;
+            }
+        }
+        list.Clean();
+
         return list;
     }
 
@@ -262,8 +337,18 @@ export class List {
      * @returns List object
      */
     public static Create(obj: { name: string; uuid: string; order: number }): List {
-        const list = new List(obj);
-        list.Dirty = true;
-        return list;
+        return new List(obj);
     }
 }
+
+export declare type ListModel = {
+    uuid: string;
+    name: string;
+    created: number;
+    order: number;
+    updated?: number;
+    deleted?: number;
+    items: ListitemModel[];
+    geofence?: GeoFenceModel;
+    geofence_enabled?: boolean;
+};

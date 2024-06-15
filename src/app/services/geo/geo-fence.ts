@@ -1,3 +1,5 @@
+import { Locale } from "../localization/locale";
+import { Logger } from "../logging/logger";
 import { GeoLocation } from "./geo-location";
 
 export class GeoFence extends GeoLocation {
@@ -23,4 +25,32 @@ export class GeoFence extends GeoLocation {
 
         return true;
     }
+
+    public toBackend(): GeoFenceModel {
+        return {
+            lat: this.Latitude,
+            lng: this.Longitude,
+            label: this.Label,
+            radius: this.Radius,
+        };
+    }
+
+    public static fromBackend(obj: any): GeoFence | undefined {
+        const props = ["lat", "lng"];
+        for (let i = 0; i < props.length; i++) {
+            if (!obj.hasOwnProperty(props[i])) {
+                Logger.Error(`Geofence could not been read from backend, property ${props[i]} not found}`);
+                return undefined;
+            }
+        }
+
+        return new GeoFence(obj.lat, obj.lng, obj.label ?? Locale.getText("service-geo.fence_desc"), obj.radius ?? GeoFence.DEFAULT_RADIUS);
+    }
 }
+
+export declare type GeoFenceModel = {
+    lat: number;
+    lng: number;
+    label: string;
+    radius: number;
+};
