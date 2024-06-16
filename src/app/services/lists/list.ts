@@ -189,6 +189,11 @@ export class List {
     public RemoveItem(item: Listitem) {
         this._items = this.Items.filter(el => el != item);
         this._itemsCount = this._items.length;
+
+        let order = 0;
+        this._items.forEach(i => {
+            i.Order = order++;
+        });
         this._dirty = true;
         this.Updated = Date.now();
     }
