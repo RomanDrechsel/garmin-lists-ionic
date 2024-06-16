@@ -46,7 +46,11 @@ export class ListsService {
     }
 
     public get onTrashDatasetChanged$(): Observable<List[]> {
-        return this.TrashProvider.TrashChangedSubject.asObservable();
+        return this.TrashProvider.TrashListsChangedSubject.asObservable();
+    }
+
+    public get onTrashItemsDatasetChanged$(): Observable<{ list: List; items: Listitem[] } | undefined> {
+        return this.TrashProvider.TrashListitemsChangedSubject.asObservable();
     }
 
     private set KeepInTrashStock(value: number | KeepInTrash.Enum) {
@@ -61,7 +65,7 @@ export class ListsService {
         } else {
             this._removeOldTrashEntriesTimer?.unsubscribe();
             this._removeOldTrashEntriesTimer = undefined;
-            this.TrashProvider.CheckLimit(KeepInTrash.StockSize);
+            this.TrashProvider.LimitEntryCount(KeepInTrash.StockSize(value));
         }
     }
 
@@ -227,12 +231,12 @@ export class ListsService {
     public async DeleteListitem(list: List, item: Listitem, force: boolean = false): Promise<boolean | undefined> {
         if (!force && (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmDeleteListitem, true))) {
             if (await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.delete_item_confirm", { name: StringUtils.shorten(item.Item, 40) }) })) {
-                return this.removeListitemFromStorage(list, item);
+                return this.removeListitem(list, item);
             } else {
                 return undefined;
             }
         } else {
-            return this.removeListitemFromStorage(list, item);
+            return this.removeListitem(list, item);
         }
     }
 
@@ -431,8 +435,19 @@ export class ListsService {
     }
 
     /**
+     * removes a list from the index and publish it with the signal
+     * @param list list to be removed
+     */
+    private removeListInIndex(list: List) {
+        if (this._listIndex.delete(list.Uuid)) {
+            let lists = Array.from(this._listIndex.values());
+            this.resetOrder(lists);
+        }
+    }
+
+    /**
      * orders the lists by 'Order' property and publish the list with the signal
-     * @param lists
+     * @param lists lists array to be ordered and set in Lists-signal
      */
     private orderLists(lists: List[]) {
         lists = lists.sort((a: List, b: List) => (a.Order > b.Order ? 1 : -1));
@@ -440,20 +455,83 @@ export class ListsService {
     }
 
     /**
+     * set the 'Order' property of all lists, as they are in the given list
+     * @param lists list to reset the 'Order' property
+     */
+    private async resetOrder(lists: List[]) {
+        let order = 0;
+        let changed = false;
+        for (let i = 0; i < lists.length; i++) {
+            const list = lists[i];
+            list.Order = order++;
+            if (list.Dirty) {
+                changed = true;
+                await this.StoreList(list);
+            }
+        }
+
+        if (changed) {
+            this.Lists.set(lists);
+        }
+    }
+
+    /**
      * move list to trash or removes it completely
-     * @param list
+     * @param list list to be removed
+     * @returns was the removal successful
      */
     private async removeList(list: List): Promise<boolean> {
         if (this._listIndex.has(list.Uuid)) {
             if (await this.ListsProvider.RemoveList(list)) {
                 if ((await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true)) == true) {
                     list.Deleted = Date.now();
-                    this.TrashProvider.StoreList(list);
+                    await this.TrashProvider.StoreList(list);
+                } else {
+                    await this.TrashProvider.EraseLists(list);
                 }
+
+                this.removeListInIndex(list);
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
-    private async removeOldTrashEntries(seconds: number) {}
+    /**
+     * deletes all listitems in the list
+     * @param list list to be emptied
+     * @returns was the list stored successful after emptying?
+     */
+    private async emptyList(list: List): Promise<boolean> {
+        if (list.Items.length > 0) {
+            //TODO: move listitems to trash...
+            list.Items = [];
+            if (await this.StoreList(list)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * removes a listitems from a list
+     * @param list list, the item should be removed
+     * @param item listitem to remove
+     * @returns was the list stored successful after removal?
+     */
+    private async removeListitem(list: List, item: Listitem): Promise<boolean> {
+        list.RemoveItem(item);
+        return await this.StoreList(list);
+    }
+
+    /**
+     * erases a listitem from trash
+     * @param list list, the item should be erased
+     * @param item listitem to be erased
+     * @returns was the erase successful
+     */
+    private async eraseListitemFromTrash(list: List, item: Listitem): Promise<boolean> {
+        return this.TrashProvider.EraseListitem(list, item);
+    }
 }

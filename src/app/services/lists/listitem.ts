@@ -9,10 +9,11 @@ export class Listitem {
     private _item: string;
     private _note?: string;
     private _hidden: boolean = false;
+    private _deleted?: number;
 
     private _dirty: boolean = false;
 
-    private constructor(obj: { id?: number; item: string; note?: string; order: number; hidden?: boolean; created?: number; updated?: number; dirty?: boolean }) {
+    private constructor(obj: { id?: number; item: string; note?: string; order: number; hidden?: boolean; created?: number; updated?: number; dirty?: boolean; deleted?: number }) {
         this._databaseId = obj.id;
         this._item = obj.item;
         this._note = obj.note;
@@ -21,6 +22,7 @@ export class Listitem {
         this._created = obj.created ?? Date.now();
         this._updated = obj.updated ?? Date.now();
         this._dirty = obj.dirty ?? false;
+        this._deleted = obj.deleted;
     }
 
     /** get unique id in backend */
@@ -108,6 +110,23 @@ export class Listitem {
         }
     }
 
+    /**
+     * get the date of deletion as unix timestamp in milliseconds
+     */
+    public get Deleted(): number | undefined {
+        return this._deleted;
+    }
+
+    /**
+     * set or remove the date of deletion as unix timestamp in milliseconds
+     */
+    public set Deleted(deleted: number | undefined) {
+        if (this._deleted != deleted) {
+            this._deleted = deleted;
+            this._dirty = true;
+        }
+    }
+
     /** any changes since the last storage */
     public get Dirty(): boolean {
         return this._dirty;
@@ -144,6 +163,7 @@ export class Listitem {
             hidden: this._hidden,
             created: this._created,
             updated: this._updated,
+            deleted: this._deleted,
         };
     }
 
@@ -193,6 +213,7 @@ export class Listitem {
             hidden: obj.hidden,
             created: obj.created,
             updated: obj.updated,
+            deleted: obj.deleted,
             dirty: false,
         });
     }
@@ -222,4 +243,5 @@ export declare type ListitemModel = {
     hidden: boolean;
     created: number;
     updated?: number;
+    deleted?: number;
 };
