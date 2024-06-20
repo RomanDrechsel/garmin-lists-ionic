@@ -261,11 +261,12 @@ export class ListsService {
     /**
      * prompts the user to empty the lists trash
      * @returns empty successfull, undefined if user canceled it
+     * @WIP: Arbeitsstand
      */
     public async EmptyTrash(force: boolean = false): Promise<boolean | undefined> {
         if (!force && (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true))) {
             let text;
-            const count = (await this.GetTrash()).length;
+            const count = await this.TrashProvider.Count();
             if (count == 1) {
                 text = this.Locale.getText("service-lists.empty_trash_confirm_single");
             } else {
@@ -533,5 +534,14 @@ export class ListsService {
      */
     private async eraseListitemFromTrash(list: List, item: Listitem): Promise<boolean> {
         return this.TrashProvider.EraseListitem(list, item);
+    }
+
+    /**
+     * empties the trash
+     * @returns was the erase successful
+     */
+    private async emptyTrash(): Promise<boolean> {
+        //WIP: Arbeitsstand
+        return this.TrashProvider.Empty();
     }
 }
