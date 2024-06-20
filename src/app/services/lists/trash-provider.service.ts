@@ -1,8 +1,10 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { FileUtils } from "../../classes/utils/fileutils";
+import { Logger } from "../logging/logger";
 import { List } from "./list";
 import { Listitem } from "./listitem";
+import { ListitemTrash } from "./listitem-trash";
 import { ListsProviderService } from "./lists-provider.service";
 
 @Injectable({
@@ -15,13 +17,33 @@ export class TrashProviderService extends ListsProviderService {
     public TrashListsChangedSubject = new BehaviorSubject<List[]>([]);
     public TrashListitemsChangedSubject = new BehaviorSubject<{ list: List; items: Listitem[] } | undefined>(undefined);
 
+    public async Count(): Promise<number> {
+        return (await this.GetLists()).length;
+    }
+
     /**
      * erases a listitem from trash
      * @param list list, the item should be erased
-     * @param item listitem to be erased
+     * @param trashitem listitem to be erased
      * @returns was the erase successful
      */
-    public async EraseListitem(list: List, item: Listitem): Promise<boolean> {}
+    public async EraseListitem(list: List, trashitem: Listitem): Promise<boolean> {
+        const trash = await this.getListitemTrash(list);
+        if (trash) {
+            const success = trash.RemoveItem(trashitem);
+            if (success) {
+                if (await trash.Store(this.Backend, this.StoragePathItems)) {
+                    Logger.Debug(`Removed listitem ${trashitem.toLog()} from trash of list ${list.toLog()}`);
+                    this.TrashListitemsChangedSubject.next({ list: list, items: trash.Listitems });
+                }
+            } else {
+                Logger.Error(`Could not remove listitem ${trashitem.toLog()} from trash of list ${list.toLog()}`);
+            }
+            return success;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * remove all lists from trash, that are older than a certain number of seconds
@@ -39,26 +61,11 @@ export class TrashProviderService extends ListsProviderService {
         for (let i = 0; i < listitemtrashfiles.length; i++) {
             const file = await FileUtils.GetFile(listitemtrashfiles[i].uri);
             if (file.Exists) {
-                const content = JSON.parse(file.Content!);
-                if (content.items && Array.isArray(content.items)) {
-                    const remove_indices: number[] = [];
-                    for (let j = 0; j < content.items.length; j++) {
-                        const item = Listitem.fromBackend(content.items[j]);
-                        if (!item || item.Deleted == undefined || item.Deleted < timestamp) {
-                            remove_indices.push(j);
-                        }
-                    }
-                    if (remove_indices.length > 0) {
-                        for (let j = remove_indices.length - 1; j >= 0; j--) {
-                            content.items.splice(remove_indices[j], 1);
-                        }
-                        if (content.items.length == 0) {
-                            //no more items in trash of this list -> remove the file
-                            await this.Backend.RemoveFilesByUri(file.Path);
-                        } else {
-                            //rewrite the file
-                            await this.Backend.StoreFile({ filename: file.Path, subpath: this.StoragePathItems, data: JSON.stringify(content) });
-                        }
+                const trash = ListitemTrash.fromBackend(file.Content);
+                if (trash) {
+                    const removed = trash.RemoveOlderThan(timestamp);
+                    if (removed != 0) {
+                        await trash.Store(this.Backend, this.StoragePathItems);
                     }
                 }
             }
@@ -69,7 +76,7 @@ export class TrashProviderService extends ListsProviderService {
      * removes the oldes entries in trash due to a certain number
      * @param maxcount maximum number of lists in trash
      */
-    public async LimitEntryCount(maxcount?: number) {
+    public async LimitEntryCount(maxcount?: number): Promise<void> {
         if (!maxcount) {
             return;
         }
@@ -78,31 +85,14 @@ export class TrashProviderService extends ListsProviderService {
             this.TrashListsChangedSubject.next(await this.GetLists());
         }
 
-        //WIP: delete old listitems, exceeding the limit for every trash-file
         const listitemtrashfiles = await this.Backend.GetAllFiles(this.StoragePathItems);
         for (let i = 0; i < listitemtrashfiles.length; i++) {
             const file = await FileUtils.GetFile(listitemtrashfiles[i].uri);
             if (file.Exists) {
-                const content = JSON.parse(file.Content!);
-                if (content.items && Array.isArray(content.items) && content.items.length > maxcount) {
-                    content.items = content.items.sort((a: any, b: any) => {
-                        if (a && a.deleted && b && b.deleted) {
-                            return a.deleted - b.deleted;
-                        } else {
-                            return 0;
-                        }
-                    });
-                    while (content.items.length > maxcount) {
-                        content.items.shift();
-                    }
-                }
-
-                if (content.items?.length == 0) {
-                    //no more items in trash of this list -> remove the file
-                    await this.Backend.RemoveFilesByUri(file.Path);
-                } else {
-                    //rewrite the file
-                    await this.Backend.StoreFile({ filename: file.Path, subpath: this.StoragePathItems, data: JSON.stringify(content) });
+                const trash = ListitemTrash.fromBackend(file.Content);
+                if (trash) {
+                    trash.RemoveOldestCount(trash.Listitems.length - maxcount);
+                    await trash.Store(this.Backend, this.StoragePathItems);
                 }
             }
         }
@@ -120,6 +110,21 @@ export class TrashProviderService extends ListsProviderService {
         const uuids = lists.map(list => list.Uuid);
         await this.Backend.RemoveFilesbyUuid(uuids, this.StoragePath);
         await this.Backend.RemoveFilesbyUuid(uuids, this.StoragePathItems);
+        this.TrashListsChangedSubject.next(await this.GetLists());
         return uuids.length;
+    }
+
+    /**
+     * creates a ListitemTrash object for a list uuid
+     * @param list list to get trash items from
+     * @returns ListitemTrash object or undefined if there are no items in list trash
+     */
+    private async getListitemTrash(list: List): Promise<ListitemTrash | undefined> {
+        const file = await this.Backend.GetFile(this.createFilenamePattern(list.Uuid));
+        if (file?.Exists) {
+            return ListitemTrash.fromBackend(JSON.parse(file!.Content!));
+        } else {
+            return undefined;
+        }
     }
 }

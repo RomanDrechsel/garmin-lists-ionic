@@ -108,7 +108,7 @@ export class ListsProviderService {
      * @param uuid Uuid for the pattern
      * @returns filename pattern
      */
-    private createFilenamePattern(uuid: string) {
+    protected createFilenamePattern(uuid: string) {
         return `^${uuid}-.*\\.json$`;
     }
 }

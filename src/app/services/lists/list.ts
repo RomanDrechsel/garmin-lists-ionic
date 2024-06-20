@@ -299,7 +299,7 @@ export class List {
         const props = ["uuid", "name", "created", "order"];
         for (let i = 0; i < props.length; i++) {
             if (!obj.hasOwnProperty(props[i])) {
-                Logger.Error(`List could not been read from database, property ${props[i]} not found}`);
+                Logger.Error(`List could not been read from backend, property ${props[i]} not found}`);
                 return undefined;
             }
         }
