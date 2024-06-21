@@ -93,6 +93,10 @@ export class ListitemTrash {
         return false;
     }
 
+    public async AddItems(items: Listitem[]) {
+        this._listitems = this._listitems.concat(items);
+    }
+
     /**
      * removes the oldest items in the trash
      * @param count number of items to remove

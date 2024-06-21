@@ -42,7 +42,7 @@ export class ListsProviderService {
      * @returns List object, if it was found, otherwise undefined
      */
     public async GetList(uuid: string): Promise<List | undefined> {
-        const file = await this.Backend.GetFile(this.createFilenamePattern(uuid));
+        const file = await this.Backend.GetFile(ListsProviderService.createFilenamePattern(uuid));
         if (file?.Exists) {
             return List.fromBackend(JSON.parse(file!.Content!));
         }
@@ -62,7 +62,7 @@ export class ListsProviderService {
         }
         const json = list.toBackend(force);
         if (json) {
-            const filename = this.createFilename(list);
+            const filename = ListsProviderService.createFilename(list);
             const uri = await this.Backend.StoreFile({ filename: filename, subpath: this.StoragePath, data: JSON.stringify(json) });
             if (uri) {
                 Logger.Debug(`Stored list ${list.toLog()} in backend '${uri}'`);
@@ -91,7 +91,15 @@ export class ListsProviderService {
      * @returns does a list with this Uuid exist
      */
     public async Exists(uuid: string): Promise<boolean> {
-        return this.Backend.FileExists(this.createFilenamePattern(uuid), this.StoragePath);
+        return this.Backend.FileExists(ListsProviderService.createFilenamePattern(uuid), this.StoragePath);
+    }
+
+    /**
+     * returns the number of lists
+     * @returns number of lists
+     */
+    public async Count(): Promise<number> {
+        return this.Backend.CountFiles(this.StoragePath);
     }
 
     /**
@@ -99,8 +107,8 @@ export class ListsProviderService {
      * @param list list to be stored
      * @returns filename for the list
      */
-    private createFilename(list: List): string {
-        return `${list.Uuid}-${StringUtils.FilesaveString(list.Name)}.json`;
+    public static createFilename(list: List): string {
+        return `${list.Uuid}-${StringUtils.shorten(StringUtils.FilesaveString(list.Name), 20)}.json`;
     }
 
     /**
@@ -108,7 +116,7 @@ export class ListsProviderService {
      * @param uuid Uuid for the pattern
      * @returns filename pattern
      */
-    protected createFilenamePattern(uuid: string) {
+    public static createFilenamePattern(uuid: string) {
         return `^${uuid}-.*\\.json$`;
     }
 }

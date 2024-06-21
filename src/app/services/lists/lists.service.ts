@@ -14,6 +14,7 @@ import { EPrefProperty, PreferencesService } from "../storage/preferences.servic
 import { KeepInTrash } from "./keep-in-trash";
 import { List } from "./list";
 import { Listitem } from "./listitem";
+import { ListitemsTrashProviderService } from "./listitems-trash-provider.service";
 import { ListsProviderService } from "./lists-provider.service";
 import { TrashProviderService } from "./trash-provider.service";
 
@@ -23,6 +24,7 @@ import { TrashProviderService } from "./trash-provider.service";
 export class ListsService {
     private readonly ListsProvider = inject(ListsProviderService);
     private readonly TrashProvider = inject(TrashProviderService);
+    private readonly TrashItemsProvider = inject(ListitemsTrashProviderService);
     private readonly Preferences = inject(PreferencesService);
     private readonly ModalCtrl = inject(ModalController);
     private readonly Popups = inject(PopupsService);
@@ -46,11 +48,11 @@ export class ListsService {
     }
 
     public get onTrashDatasetChanged$(): Observable<List[]> {
-        return this.TrashProvider.TrashListsChangedSubject.asObservable();
+        return this.TrashProvider.ListsDatasetChangedSubject.asObservable();
     }
 
     public get onTrashItemsDatasetChanged$(): Observable<{ list: List; items: Listitem[] } | undefined> {
-        return this.TrashProvider.TrashListitemsChangedSubject.asObservable();
+        return this.TrashItemsProvider.ListitemsDatasetChangedSubject.asObservable();
     }
 
     private set KeepInTrashStock(value: number | KeepInTrash.Enum) {
@@ -59,9 +61,9 @@ export class ListsService {
         if (KeepInTrash.StockPeriod(value)) {
             this._removeOldTrashEntriesTimer?.unsubscribe();
             this._removeOldTrashEntriesTimer = interval(value * 60 * 60 * 24).subscribe(() => {
-                this.TrashProvider.RemoveOldEntries(value * 60 * 60 * 24);
+                this.TrashProvider.RemoveOldEntries(value);
             });
-            this.TrashProvider.RemoveOldEntries(value * 60 * 60 * 24);
+            this.TrashProvider.RemoveOldEntries(value);
         } else {
             this._removeOldTrashEntriesTimer?.unsubscribe();
             this._removeOldTrashEntriesTimer = undefined;
@@ -190,7 +192,7 @@ export class ListsService {
             const item = Listitem.Create(obj);
             list.AddItem(item);
             if (await this.StoreList(list)) {
-                Logger.Notice(`Created new listitem ${item.toLog()}`);
+                Logger.Debug(`Created new listitem ${item.toLog()}`);
                 return true;
             } else {
                 return false;
@@ -211,7 +213,7 @@ export class ListsService {
         if (obj) {
             item.fromInput(obj);
             if (await this.StoreList(list)) {
-                Logger.Notice(`Edited listitem ${item.toLog()}`);
+                Logger.Debug(`Edited listitem ${item.toLog()}`);
                 return true;
             } else {
                 return false;
@@ -260,8 +262,8 @@ export class ListsService {
 
     /**
      * prompts the user to empty the lists trash
+     * @param force empty the trash without prompt
      * @returns empty successfull, undefined if user canceled it
-     * @WIP: Arbeitsstand
      */
     public async EmptyTrash(force: boolean = false): Promise<boolean | undefined> {
         if (!force && (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true))) {
@@ -274,12 +276,12 @@ export class ListsService {
             }
             text += this.Locale.getText("service-lists.undo_warning");
             if (await this.Popups.Alert.YesNo({ message: text })) {
-                return this.emptyTrash();
+                return (await this.emptyListsTrash()) > 0;
             } else {
                 return undefined;
             }
         } else {
-            return this.emptyTrash();
+            return (await this.emptyListsTrash()) > 0;
         }
     }
 
@@ -289,25 +291,23 @@ export class ListsService {
      * @returns removal successful? undefined if the user canceled it
      */
     public async EmptyListitemTrash(list: List): Promise<boolean | undefined> {
+        //WIP: Arbeitsstand
         if (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true)) {
             let text;
-            const full_list = await this.GetListItemsFromTrash(list.Uuid);
-            if (full_list) {
-                list.TrashItems = full_list.TrashItems;
-            }
-            if (list.TrashItems.length == 1) {
+            const count = await this.TrashProvider.CountItems(list);
+            if (count == 1) {
                 text = this.Locale.getText("service-lists.empty_trash_listitems_confirm_single", { name: list.Name });
             } else {
-                text = this.Locale.getText("service-lists.empty_trash_listitems_confirm", { name: list.Name, count: list.TrashItems.length });
+                text = this.Locale.getText("service-lists.empty_trash_listitems_confirm", { name: list.Name, count: count });
             }
             text += this.Locale.getText("service-lists.undo_warning");
             if (await this.Popups.Alert.YesNo({ message: text })) {
-                return this.emptyListitemTrash(list);
+                return this.TrashProvider.EraseListitem(list, undefined);
             } else {
                 return undefined;
             }
         } else {
-            return this.emptyListitemTrash(list);
+            return this.TrashProvider.EraseListitem(list, undefined);
         }
     }
 
@@ -418,7 +418,7 @@ export class ListsService {
      * @returns storage successful
      */
     public async StoreList(list: List, force: boolean = false): Promise<boolean> {
-        if (await this.ListsProvider.StoreList(list, force)) {
+        if ((await this.ListsProvider.StoreList(list, force)) !== false) {
             return true;
         } else {
             return false;
@@ -488,6 +488,7 @@ export class ListsService {
                     list.Deleted = Date.now();
                     await this.TrashProvider.StoreList(list);
                 } else {
+                    //also remove all listitems in trash for this list
                     await this.TrashProvider.EraseLists(list);
                 }
 
@@ -505,9 +506,16 @@ export class ListsService {
      */
     private async emptyList(list: List): Promise<boolean> {
         if (list.Items.length > 0) {
-            //TODO: move listitems to trash...
+            if ((await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) == true) {
+                const del = await this.TrashProvider.StoreListitems(list, list.Items);
+                if (!del) {
+                    Logger.Error(`Could not empty list ${list.toLog()} and move items to trash`);
+                    return false;
+                }
+            }
             list.Items = [];
             if (await this.StoreList(list)) {
+                this.Lists.set(this.Lists());
                 return true;
             }
         }
@@ -540,8 +548,12 @@ export class ListsService {
      * empties the trash
      * @returns was the erase successful
      */
-    private async emptyTrash(): Promise<boolean> {
-        //WIP: Arbeitsstand
-        return this.TrashProvider.Empty();
+    private async emptyListsTrash(): Promise<number> {
+        const del = await this.TrashProvider.EraseLists(await this.TrashProvider.GetLists());
+        if (del > 0) {
+            Logger.Notice(`Erased ${del} list(s) from trash`);
+        }
+
+        return del;
     }
 }

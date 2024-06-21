@@ -45,9 +45,19 @@ export class ListBackendService {
     }
 
     /**
+     * returns the number of files in the subfolder
+     * @param subpath subfolder, in which the files should be removed
+     * @returns number of files
+     */
+    public async CountFiles(subpath?: string): Promise<number> {
+        const allfiles = await this.GetAllFiles(subpath);
+        return allfiles.length;
+    }
+
+    /**
      * removes all list-files with the uuid in filename
      * @param uuids Unique identifier for which the files are to be removed
-     * @param subpath folder, in which the files should be removed
+     * @param subpath subfolder, in which the files should be removed
      * @param exclude exact filenames (not paths!), not to remove
      * @returns number of files deleted
      */
