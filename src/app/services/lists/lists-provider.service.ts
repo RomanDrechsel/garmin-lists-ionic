@@ -1,8 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { FileUtils } from "../../classes/utils/fileutils";
-import { StringUtils } from "../../classes/utils/stringutils";
-import { Logger } from "../logging/logger";
-import { ListBackendService } from "../storage/list-backend/list-backend.service";
+import { ListsBackendService } from "../storage/list-backend/lists-backend.service";
 import { List } from "./list";
 
 @Injectable({
@@ -10,26 +7,20 @@ import { List } from "./list";
 })
 export class ListsProviderService {
     protected StoragePath = "lists";
-    protected readonly Backend = inject(ListBackendService);
+    protected readonly Backend = inject(ListsBackendService);
 
     /**
      * read all lists from storage
      * @returns array of all lists
      */
     public async GetLists(): Promise<List[]> {
-        const allfiles = await this.Backend.GetAllFiles(this.StoragePath);
+        const models = await this.Backend.GetLists(this.StoragePath);
         let lists: List[] = [];
-        for (let i = 0; i < allfiles.length; i++) {
-            const file = allfiles[i];
-            const content = await FileUtils.GetFile(file.uri);
-            if (content?.Exists) {
-                const list = List.fromBackend(JSON.parse(content.Content!));
-                if (list) {
-                    lists.push(list);
-                }
-            } else {
-                await this.Backend.RemoveFilesByUri(file.uri);
-                Logger.Error(`Removed invalid list-file '${file.uri}' (${FileUtils.File.FormatSize(file.size)}) from storage`);
+        for (let i = 0; i < models.length; i++) {
+            const m = models[i];
+            const list = List.fromBackend(m);
+            if (list) {
+                lists.push(list);
             }
         }
 
@@ -42,9 +33,9 @@ export class ListsProviderService {
      * @returns List object, if it was found, otherwise undefined
      */
     public async GetList(uuid: string): Promise<List | undefined> {
-        const file = await this.Backend.GetFile(ListsProviderService.createFilenamePattern(uuid));
-        if (file?.Exists) {
-            return List.fromBackend(JSON.parse(file!.Content!));
+        const model = await this.Backend.GetList(uuid, this.StoragePath);
+        if (model) {
+            return List.fromBackend(model);
         }
         return undefined;
     }
@@ -60,20 +51,12 @@ export class ListsProviderService {
             const old = await this.GetList(list.Uuid);
             list.copyDetails(old);
         }
-        const json = list.toBackend(force);
-        if (json) {
-            const filename = ListsProviderService.createFilename(list);
-            const uri = await this.Backend.StoreFile({ filename: filename, subpath: this.StoragePath, data: JSON.stringify(json) });
-            if (uri) {
-                Logger.Debug(`Stored list ${list.toLog()} in backend '${uri}'`);
-                await this.Backend.RemoveFilesbyUuid(list.Uuid, this.StoragePath, [filename]);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return undefined;
+
+        const model = list.toBackend();
+        if (model) {
+            return await this.Backend.StoreList(model, this.StoragePath);
         }
+        return undefined;
     }
 
     /**
@@ -82,7 +65,7 @@ export class ListsProviderService {
      * @returns was the removal successful
      */
     public async RemoveList(list: List): Promise<boolean> {
-        return (await this.Backend.RemoveFilesbyUuid(list.Uuid, this.StoragePath)) > 0;
+        return (await this.Backend.RemoveLists(list.Uuid, this.StoragePath)) > 0;
     }
 
     /**
@@ -91,7 +74,7 @@ export class ListsProviderService {
      * @returns does a list with this Uuid exist
      */
     public async Exists(uuid: string): Promise<boolean> {
-        return this.Backend.FileExists(ListsProviderService.createFilenamePattern(uuid), this.StoragePath);
+        return this.Backend.ListExists(uuid, this.StoragePath);
     }
 
     /**
@@ -100,23 +83,5 @@ export class ListsProviderService {
      */
     public async Count(): Promise<number> {
         return this.Backend.CountFiles(this.StoragePath);
-    }
-
-    /**
-     * create filename for a list to store in backend
-     * @param list list to be stored
-     * @returns filename for the list
-     */
-    public static createFilename(list: List): string {
-        return `${list.Uuid}-${StringUtils.shorten(StringUtils.FilesaveString(list.Name), 20)}.json`;
-    }
-
-    /**
-     * creates a pattern to match the filename of a list by its uuid
-     * @param uuid Uuid for the pattern
-     * @returns filename pattern
-     */
-    public static createFilenamePattern(uuid: string) {
-        return `^${uuid}-.*\\.json$`;
     }
 }

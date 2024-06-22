@@ -67,7 +67,7 @@ export class ListsService {
         } else {
             this._removeOldTrashEntriesTimer?.unsubscribe();
             this._removeOldTrashEntriesTimer = undefined;
-            this.TrashProvider.LimitEntryCount(KeepInTrash.StockSize(value));
+            this.limitEntryCount(KeepInTrash.StockSize(value));
         }
     }
 
@@ -555,5 +555,12 @@ export class ListsService {
         }
 
         return del;
+    }
+
+    private async limitEntryCount(maxcount?: number) {
+        if (maxcount) {
+            await this.TrashProvider.LimitEntryCount(maxcount);
+            await this.TrashItemsProvider.LimitEntryCount(maxcount);
+        }
     }
 }
