@@ -2,7 +2,7 @@ import { ListItemEditorReturn } from "../../components/list-item-editor/list-ite
 import { Logger } from "../logging/logger";
 
 export class Listitem {
-    private _databaseId?: number;
+    private _backendId?: number;
     private _order: number;
     private _created: number;
     private _updated: number;
@@ -14,7 +14,7 @@ export class Listitem {
     private _dirty: boolean = false;
 
     private constructor(obj: { id?: number; item: string; note?: string; order: number; hidden?: boolean; created?: number; updated?: number; dirty?: boolean; deleted?: number }) {
-        this._databaseId = obj.id;
+        this._backendId = obj.id;
         this._item = obj.item;
         this._note = obj.note;
         this._order = obj.order;
@@ -27,12 +27,12 @@ export class Listitem {
 
     /** get unique id in backend */
     public get Id(): number | undefined {
-        return this._databaseId;
+        return this._backendId;
     }
 
     /** set the unique id for backend */
     public set Id(id: number) {
-        this._databaseId = id;
+        this._backendId = id;
     }
 
     /** get the order number */
@@ -156,7 +156,7 @@ export class Listitem {
         this.Clean();
 
         return {
-            id: this._databaseId,
+            id: this._backendId,
             item: this._item,
             note: this._note,
             order: this._order,
