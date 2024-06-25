@@ -7,8 +7,8 @@ import { Subscription } from "rxjs";
 import { MenuItem, MenuItemEmptyListTrash } from "../../../classes/menu-items";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
-import { List } from "../../../services/lists/list";
-import { Listitem } from "../../../services/lists/listitem";
+import { ListitemModel } from "../../../services/lists/listitem";
+import { ListitemTrashModel } from "../../../services/lists/listitems-trash-utils";
 import { PageBase } from "../../page-base";
 
 @Component({
@@ -20,7 +20,7 @@ import { PageBase } from "../../page-base";
 })
 export class TrashListitemsPage extends PageBase {
     @ViewChild("itemsContainer") private itemsContainer!: IonList;
-    public List?: List;
+    public Trash?: ListitemTrashModel;
 
     private itemsChangedSubscription?: Subscription;
 
@@ -30,7 +30,7 @@ export class TrashListitemsPage extends PageBase {
         await super.ionViewWillEnter();
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
-            this.List = await this.ListsService.GetListItemsFromTrash(listid);
+            this.Trash = await this.ListsService.GetListitemTrash(listid);
         }
     }
 
@@ -40,38 +40,38 @@ export class TrashListitemsPage extends PageBase {
     }
 
     public override ModifyMainMenu(): MenuItem[] {
-        if (this.List && this.List.TrashItems.length > 0) {
+        if (this.Trash && this.Trash.items.length > 0) {
             return [MenuItemEmptyListTrash(() => this.emptyTrash())];
         } else {
             return [];
         }
     }
 
-    public onSwipeRight(item: Listitem) {
+    public onSwipeRight(item: ListitemModel) {
         this.deleteItem(item);
     }
 
-    public onSwipeLeft(item: Listitem) {
+    public onSwipeLeft(item: ListitemModel) {
         this.restoreItem(item);
     }
 
-    public async deleteItem(item: Listitem) {
-        if (this.List) {
-            await this.ListsService.EraseListitemFromTrash(this.List, item);
+    public async deleteItem(item: ListitemModel) {
+        if (this.Trash) {
+            await this.ListsService.EraseListitemFromTrash(this.Trash, item);
         }
         this.itemsContainer.closeSlidingItems();
     }
 
-    public async restoreItem(item: Listitem) {
-        if (this.List) {
-            await this.ListsService.RestoreListitemFromTrash(this.List, item);
+    public async restoreItem(item: ListitemModel) {
+        if (this.Trash) {
+            await this.ListsService.RestoreListitemFromTrash(this.Trash, item);
         }
         this.itemsContainer.closeSlidingItems();
     }
 
     public async emptyTrash(): Promise<boolean> {
-        if (this.List) {
-            this.ListsService.EmptyListitemTrash(this.List);
+        if (this.Trash) {
+            this.ListsService.EmptyListitemTrash(this.Trash);
         }
         return true;
     }

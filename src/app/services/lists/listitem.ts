@@ -2,7 +2,7 @@ import { ListItemEditorReturn } from "../../components/list-item-editor/list-ite
 import { Logger } from "../logging/logger";
 
 export class Listitem {
-    private _backendId?: number;
+    private _uuid: string;
     private _order: number;
     private _created: number;
     private _updated: number;
@@ -10,11 +10,10 @@ export class Listitem {
     private _note?: string;
     private _hidden: boolean = false;
     private _deleted?: number;
-
     private _dirty: boolean = false;
 
-    private constructor(obj: { id?: number; item: string; note?: string; order: number; hidden?: boolean; created?: number; updated?: number; dirty?: boolean; deleted?: number }) {
-        this._backendId = obj.id;
+    private constructor(obj: ListitemModel) {
+        this._uuid = obj.uuid;
         this._item = obj.item;
         this._note = obj.note;
         this._order = obj.order;
@@ -26,13 +25,13 @@ export class Listitem {
     }
 
     /** get unique id in backend */
-    public get Id(): number | undefined {
-        return this._backendId;
+    public get Uuid(): string {
+        return this._uuid;
     }
 
     /** set the unique id for backend */
-    public set Id(id: number) {
-        this._backendId = id;
+    public set Uuid(uuid: string) {
+        this._uuid = uuid;
     }
 
     /** get the order number */
@@ -156,7 +155,7 @@ export class Listitem {
         this.Clean();
 
         return {
-            id: this._backendId,
+            uuid: this._uuid,
             item: this._item,
             note: this._note,
             order: this._order,
@@ -182,7 +181,7 @@ export class Listitem {
      * @returns
      */
     public toLog(): string {
-        return `id:${this.Id ?? "?"}`;
+        return `id:${this.Uuid ?? "?"}`;
     }
 
     /**
@@ -193,12 +192,24 @@ export class Listitem {
     }
 
     /**
+     * check if two listitems equals
+     * @param other the other listitem or undefined
+     * @returns are the objects equal
+     */
+    public equals(other: Listitem): boolean {
+        if (!other) {
+            return false;
+        }
+        return other.Uuid == this.Uuid;
+    }
+
+    /**
      * creates a listitem object from backend
      * @param obj backend object
      * @returns Listitem object
      */
     public static fromBackend(obj: any): Listitem | undefined {
-        const props = ["id", "item", "created", "order"];
+        const props = ["uuid", "item", "created", "order"];
         for (let i = 0; i < props.length; i++) {
             if (!obj.hasOwnProperty(props[i])) {
                 Logger.Error(`Could not read listitem from backend, property ${props[i]} not found}`);
@@ -206,7 +217,7 @@ export class Listitem {
             }
         }
         return new Listitem({
-            id: obj.id,
+            uuid: obj.uuid,
             item: obj.item,
             note: obj.note,
             order: obj.order,
@@ -218,30 +229,19 @@ export class Listitem {
         });
     }
 
-    /**
-     * creates a new Listitem object from user input
-     * @param obj user input
-     * @returns Listitem object
-     */
-    public static Create(obj: any): Listitem {
-        const item = new Listitem({
-            item: obj.item,
-            note: obj.note ?? undefined,
-            order: 0,
-            dirty: true,
-        });
-
-        return item;
+    public static Create(obj: ListitemModel): Listitem {
+        return new Listitem(obj);
     }
 }
 
 export declare type ListitemModel = {
-    id?: number;
+    uuid: string;
     item: string;
     note?: string;
     order: number;
-    hidden: boolean;
     created: number;
+    hidden?: boolean;
     updated?: number;
     deleted?: number;
+    dirty?: boolean;
 };

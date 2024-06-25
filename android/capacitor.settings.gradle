@@ -8,9 +8,6 @@ project(':capacitor-community-admob').projectDir = new File('../node_modules/@ca
 include ':capacitor-community-background-geolocation'
 project(':capacitor-community-background-geolocation').projectDir = new File('../node_modules/@capacitor-community/background-geolocation/android')
 
-include ':capacitor-community-sqlite'
-project(':capacitor-community-sqlite').projectDir = new File('../node_modules/@capacitor-community/sqlite/android')
-
 include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../node_modules/@capacitor/app/android')
 

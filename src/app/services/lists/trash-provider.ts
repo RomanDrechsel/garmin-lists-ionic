@@ -1,21 +1,16 @@
-import { Injectable, inject } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { Logger } from "../logging/logger";
+import { ListsBackendService } from "../storage/lists/lists-backend.service";
 import { List } from "./list";
-import { Listitem } from "./listitem";
-import { ListitemsTrashProviderService } from "./listitems-trash-provider.service";
-import { ListitemTrash } from "./listitems-trash-utils";
-import { ListsProviderService } from "./lists-provider.service";
+import { ListitemsTrashProvider } from "./listitems-trash-provider";
+import { ListsProvider } from "./lists-provider";
 
-@Injectable({
-    providedIn: "root",
-})
-export class TrashProviderService extends ListsProviderService {
+export class TrashProvider extends ListsProvider {
     protected override StoragePath = "trash";
 
-    public ListsDatasetChangedSubject = new BehaviorSubject<List[]>([]);
-
-    private ListitemsTrash = inject(ListitemsTrashProviderService);
+    public constructor(backend: ListsBackendService, private ListitemsTrash: ListitemsTrashProvider, private _datasetChangedSubject: BehaviorSubject<List[] | undefined>) {
+        super(backend);
+    }
 
     /**
      * remove all lists from trash, that are older than a certain number of seconds
@@ -29,7 +24,7 @@ export class TrashProviderService extends ListsProviderService {
                 //remove old listitems trashes from Backend
                 await this.ListitemsTrash.EraseLists(oldlists);
                 Logger.Notice(`Removed ${removed} old lists from trash, as if they are older than ${days} days`);
-                this.ListsDatasetChangedSubject.next(await this.GetLists());
+                this._datasetChangedSubject.next(await this.GetLists(true));
             }
         }
     }
@@ -55,10 +50,10 @@ export class TrashProviderService extends ListsProviderService {
             await this.ListitemsTrash.EraseLists(uuids);
             if (del == uuids.length) {
                 Logger.Notice(`Removed ${del} old lists from trash due to the limit of ${maxcount} lists`);
-                this.ListsDatasetChangedSubject.next(await this.GetLists());
+                this._datasetChangedSubject.next(await this.GetLists(true));
             } else if (del > 0) {
                 Logger.Error(`Removed ${del} old lists from trash due to the limit of ${maxcount} lists, but ${uuids.length - del} list(s) could not be removed`);
-                this.ListsDatasetChangedSubject.next(await this.GetLists());
+                this._datasetChangedSubject.next(await this.GetLists(true));
             } else {
                 Logger.Error(`Could not remove ${uuids.length} list(s) from trash due to the limit of ${maxcount} lists`, uuids);
             }
@@ -76,29 +71,18 @@ export class TrashProviderService extends ListsProviderService {
         }
         const uuids = lists.map(list => list.Uuid);
         await this.Backend.RemoveLists(uuids, this.StoragePath);
-        await this.Backend.RemoveLists(uuids, this.StoragePathItems);
-        this.ListsDatasetChangedSubject.next(await this.GetLists());
+        await this.ListitemsTrash.EraseLists(uuids);
+        this._datasetChangedSubject.next(await this.GetLists(true));
         return uuids.length;
     }
 
     /**
-     * stores one or more listitems in the trash of a list
-     * @param list the items are stored in the trash of this list
-     * @param items items to store in trash
-     * @param maxCount maximum number of listitems in the trash, if the number of items exceeds this number, the oldest items will be removed
-     * @returns was the storage successful?
+     * wipes all lists from trash
      */
-    public async StoreListitems(list: List, items: Listitem[], maxCount?: number): Promise<boolean> {
-        let trash = (await this.getListitemTrash(list)) ?? new ListitemTrash(list.Uuid);
-        items.forEach(i => {
-            i.Deleted = Date.now();
-        });
-        trash.AddItems(items);
-
-        if (maxCount && trash.Listitems.length > maxCount) {
-            trash.RemoveOldestCount(trash.Listitems.length - maxCount);
-        }
-
-        return await trash.Store(this.Backend, this.StoragePathItems);
+    public async WipeTrash(): Promise<number> {
+        const lists = await this.Backend.GetLists(this.StoragePath);
+        await this.Backend.WipeAll(this.StoragePath);
+        await this.ListitemsTrash.EraseLists(lists.map(l => l.uuid));
+        return lists.length;
     }
 }

@@ -23,10 +23,6 @@ export class TrashListsPage extends PageBase {
     public Lists: List[] = [];
     private trashChangedSubscription?: Subscription;
 
-    constructor() {
-        super();
-    }
-
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
         this.trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => (this.Lists = lists ?? []));
@@ -65,7 +61,7 @@ export class TrashListsPage extends PageBase {
     }
 
     public async emptyTrash(): Promise<boolean> {
-        await this.ListsService.EmptyTrash();
+        await this.ListsService.WipeTrash();
         return true;
     }
 

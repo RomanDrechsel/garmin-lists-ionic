@@ -7,9 +7,12 @@ export namespace ListitemTrashUtils {
      * @param item item to delete
      * @returns was the item found and deleted?
      */
-    export function RemoveItem(trash: ListitemTrashModel, item: ListitemModel): ListitemTrashModel {
+    export function RemoveItem(trash: ListitemTrashModel, item: string | ListitemModel): ListitemTrashModel {
+        if (typeof item !== "string") {
+            item = item.uuid;
+        }
         for (let i = 0; i < trash.items.length; i++) {
-            if (trash.items[i] == item) {
+            if (trash.items[i].uuid == item) {
                 trash.items.splice(i, 1);
                 break;
             }
@@ -61,6 +64,15 @@ export namespace ListitemTrashUtils {
             return (b.deleted ?? 0) - (a.deleted ?? 0);
         });
         return trash;
+    }
+
+    /**
+     * returns a string representation of the trash object for the log
+     * @param trash object to be represented
+     * @returns string representation of the object
+     */
+    export function toLog(trash: ListitemTrashModel): string {
+        return `uuid:${trash.uuid}`;
     }
 }
 

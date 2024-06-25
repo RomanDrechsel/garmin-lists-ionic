@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ViewChild, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonRow, IonText, IonTitle, IonToolbar, ItemReorderEventDetail } from "@ionic/angular/standalone";
@@ -20,6 +20,7 @@ import { PageBase } from "../../page-base";
     templateUrl: "./list-items.page.html",
     styleUrls: ["./list-items.page.scss"],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [IonCol, IonRow, IonImg, IonGrid, IonText, IonFabButton, IonFab, IonReorder, IonNote, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent],
 })
 export class ListItemsPage extends PageBase {
@@ -28,6 +29,7 @@ export class ListItemsPage extends PageBase {
     public List?: List | null = undefined;
     private disableClick = false;
     private preferencesSubscription?: Subscription;
+    private listSubscriptiion?: Subscription;
     private geofencing = false;
     private useTrash = true;
 
@@ -38,6 +40,9 @@ export class ListItemsPage extends PageBase {
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
             this.List = await this.ListsService.GetList(listid);
+            if (this.List) {
+                this.cdr.detectChanges();
+            }
             this.appComponent.setAppPages(this.ModifyMainMenu());
         }
         this.geofencing = await this.Preferences.Get<boolean>(EPrefProperty.AllowGeoFencing, false);
@@ -51,11 +56,20 @@ export class ListItemsPage extends PageBase {
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
+
+        this.listSubscriptiion = this.ListsService.onListChanged$.subscribe(async list => {
+            if (list && list.equals(this.List) && list.isPeek == false) {
+                this.List = list;
+                this.appComponent.setAppPages(this.ModifyMainMenu());
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     public override async ionViewDidLeave() {
         super.ionViewDidLeave();
         this.preferencesSubscription?.unsubscribe();
+        this.listSubscriptiion?.unsubscribe();
     }
 
     public get PageTitle(): string {
@@ -83,7 +97,6 @@ export class ListItemsPage extends PageBase {
     public async EmptyList(): Promise<boolean> {
         if (this.List) {
             const del = await this.ListsService.EmptyList(this.List);
-            this.appComponent.setAppPages(this.ModifyMainMenu());
             return del ?? false;
         }
         return false;
@@ -114,7 +127,7 @@ export class ListItemsPage extends PageBase {
 
     public async handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
         if (this.List) {
-            this.List = await this.ListsService.ReorderListitems(this.List, event.detail.complete(this.List.Items) as Listitem[]);
+            await this.ListsService.ReorderListitems(this.List, event.detail.complete(this.List.Items) as Listitem[]);
             this.disableClick = true;
             setTimeout(() => {
                 this.disableClick = false;
