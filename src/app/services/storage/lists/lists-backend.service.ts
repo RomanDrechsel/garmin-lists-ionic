@@ -169,15 +169,17 @@ export class ListsBackendService {
 
     /**
      * removes all listitems from list trashes
-     * @param uuids uuid(s) of the lists
+     * @param uuids trash objects
      * @param backend backend, in which the listitems should be removed
      * @returns was the removal of all listitems successful? undefined if there was nothing to remove
      */
-    public async RemoveListitemsTrash(uuids: string | string[], backend?: string): Promise<boolean | undefined> {
-        if (!Array.isArray(uuids)) {
-            uuids = [uuids];
+    public async RemoveAllListitems(trashes: ListitemTrashModel | ListitemTrashModel[], backend?: string): Promise<boolean | undefined> {
+        if (!Array.isArray(trashes)) {
+            trashes = [trashes];
         }
+        const uuids = trashes.map(t => t.uuid);
         const allfiles = await this.getAllFiles(backend, false);
+
         let del = 0;
         let error = 0;
         for (let i = 0; i < allfiles.length; i++) {
@@ -337,6 +339,16 @@ export class ListsBackendService {
         }
 
         return false;
+    }
+
+    /**
+     * Deletes all files in the specified backend.
+     * @param backend - The identifier of the backend
+     * @return the number of deleted files
+     */
+    public async WipeAll(backend?: string): Promise<number> {
+        const allfiles = await this.getAllFiles(backend, false);
+        return await this.removeFilesByUri(allfiles.map(f => f.Path));
     }
 
     /**

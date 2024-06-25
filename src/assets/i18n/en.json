@@ -58,8 +58,8 @@
         "restore_item_error": "The item could not be restored!",
         "empty_trash_confirm": "Do you really want to empty the trash and erase all {{count}} lists?",
         "empty_trash_confirm_single": "Do you really want to empty the trash and erase the list?",
-        "empty_trash_listitems_confirm": "Do you really want to empty the trash for the list <strong>{{name}}</strong>?",
-        "empty_trash_listitems_confirm_single": "Do you really want to empty the trash for the list <strong>{{name}}</strong> and delete the item?",
+        "empty_trash_listitems_confirm": "Do you really want to empty the trash for the list and delete all {{count}} items?",
+        "empty_trash_listitems_confirm_single": "Do you really want to empty the trash for the list and delete the item?",
         "empty_trash_success": "The trash is now empty.",
         "empry_trash_error": "The trash could not be emptied!"
     },

@@ -57,8 +57,8 @@
         "restore_item_error": "Der Punkt konnte nicht wiederhergestellt werden!",
         "empty_trash_confirm": "Möchstest du den Papierkorb leeren und die {{count}} Listen löschen?",
         "empty_trash_confirm_single": "Möchtest du den Papierkorb leeren und die Listen löschen?",
-        "empty_trash_listitems_confirm": "Möchtest du den Papierkorb der Liste <strong>{{name}}</strong> leeren und die {{count}} Punkte löschen?",
-        "empty_trash_listitems_confirm_single": "Möchtest du den Papierkorb der Liste <strong>{{name}}</strong> leeren und den Punkt löschen",
+        "empty_trash_listitems_confirm": "Möchtest du den Papierkorb der Liste leeren und die {{count}} Punkte löschen?",
+        "empty_trash_listitems_confirm_single": "Möchtest du den Papierkorb der Liste leeren und den Punkt löschen",
         "empty_trash_success": "Der Papierkorb wurde geleert.",
         "empry_trash_error": "Der Papierkorb konnte nicht geleert werden!"
     },

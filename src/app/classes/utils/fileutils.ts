@@ -134,7 +134,7 @@ export namespace FileUtils {
                 if (f.type != "file") {
                     continue;
                 }
-                if ((typeof args.pattern == "string" && f.name.includes(args.pattern)) || (args.pattern instanceof RegExp && args.pattern.test(f.name))) {
+                if (!args.pattern || (typeof args.pattern == "string" && f.name.includes(args.pattern)) || (args.pattern instanceof RegExp && args.pattern.test(f.name))) {
                     let file = await GetFileStat(f.uri);
                     if (args.with_data === true) {
                         file = await GetFile(file);

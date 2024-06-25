@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import { Logger } from "../logging/logger";
 import { DatabaseService } from "../storage/database.service";
 import { ListitemsTable } from "../storage/database/tables/listitems-table";
@@ -6,10 +6,9 @@ import { List } from "./list";
 import { Listitem } from "./listitem";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class ListitemsStorageService {
-
     protected Backend: ListitemsTable;
 
     constructor(database: DatabaseService) {
@@ -32,9 +31,8 @@ export class ListitemsStorageService {
                 }
             });
 
-            return items.sort((a, b) => a.Order > b.Order ? 1 : -1);
-        }
-        else {
+            return items.sort((a, b) => (a.Order > b.Order ? 1 : -1));
+        } else {
             Logger.Error(`Could not fetch listitems for list ${list.toLog()} from backend ${this.Backend.BackendIdentifier}`);
             return undefined;
         }
@@ -58,7 +56,7 @@ export class ListitemsStorageService {
     public async StoreList(list: List, force: boolean = false): Promise<boolean> {
         if (list.Items.length > 0) {
             for (let i = 0; i < list.Items.length; i++) {
-                if (await this.StoreListitem(list.Items[i], list.Uuid, force) === false) {
+                if ((await this.StoreListitem(list.Items[i], list.Uuid, force)) === false) {
                     Logger.Error(`Could not store listitems for list ${list.toLog()} in backend ${this.Backend.BackendIdentifier}`);
                     return false;
                 }
@@ -80,17 +78,15 @@ export class ListitemsStorageService {
         if (obj) {
             const id = await this.Backend.StoreItem(obj);
             if (id != undefined) {
-                item.Id = id;
+                item.Uuid = id;
                 item.Dirty = false;
                 Logger.Debug(`Stored listitem ${item.toLog()} in backend ${this.Backend.BackendIdentifier}`);
                 return true;
-            }
-            else {
+            } else {
                 Logger.Error(`Could not store listitem ${item.toLog()} in backend ${this.Backend.BackendIdentifier}`);
                 return false;
             }
-        }
-        else {
+        } else {
             return undefined;
         }
     }
@@ -107,8 +103,7 @@ export class ListitemsStorageService {
                 Logger.Debug(`Removed all ${removed} listitem(s) from list ${list.toLog()} from backend ${this.Backend.BackendIdentifier}`);
             }
             return true;
-        }
-        else {
+        } else {
             Logger.Error(`Could not remove all listitem(s) from list ${list.toLog()} from backend ${this.Backend.BackendIdentifier}`);
             return false;
         }
@@ -126,8 +121,7 @@ export class ListitemsStorageService {
                 Logger.Debug(`Removed all ${removed} listitem(s) from list uuid:${uuid} from backend ${this.Backend.BackendIdentifier}`);
             }
             return true;
-        }
-        else {
+        } else {
             Logger.Error(`Could not remove all listitem(s) from list uuid:${uuid} from backend ${this.Backend.BackendIdentifier}`);
             return false;
         }
@@ -139,17 +133,15 @@ export class ListitemsStorageService {
      * @returns item removed successful?
      */
     public async RemoveItem(item: Listitem): Promise<boolean> {
-        if (item.Id != undefined) {
-            if (await this.Backend.RemoveItem(item.Id)) {
+        if (item.Uuid != undefined) {
+            if (await this.Backend.RemoveItem(item.Uuid)) {
                 Logger.Debug(`Removed listitem ${item.toLog()} from backend ${this.Backend.BackendIdentifier}`);
                 return true;
-            }
-            else {
+            } else {
                 Logger.Error(`Could not remove listitem ${item.toLog()} from backend ${this.Backend.BackendIdentifier}`);
                 return false;
             }
-        }
-        else {
+        } else {
             return true;
         }
     }

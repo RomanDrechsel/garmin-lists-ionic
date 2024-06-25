@@ -6,9 +6,9 @@
             <ion-icon src="./assets/icons/add.svg"></ion-icon>
         </ion-fab-button>
     </ion-fab>
-    <ion-list #listsContainer *ngIf="Lists.length > 0; else noLists">
-        <ion-reorder-group [disabled]="Lists.length <= 1" (ionItemReorder)="handleReorder($any($event))">
-            <ion-item-sliding *ngFor="let list of Lists">
+    <ion-list #listsContainer *ngIf="Lists().length > 0; else noLists">
+        <ion-reorder-group [disabled]="Lists().length <= 1" (ionItemReorder)="handleReorder($any($event))">
+            <ion-item-sliding *ngFor="let list of Lists()">
                 <ion-item-options side="start" (ionSwipe)="onSwipeRight(list)">
                     <ion-item-option color="danger" (click)="emptyList(list)" *ngIf="list.ItemsCount > 0">
                         <ion-icon slot="start" src="./assets/icons/trash_bin_solid.svg"></ion-icon>

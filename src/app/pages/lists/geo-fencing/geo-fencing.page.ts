@@ -25,6 +25,7 @@ import { PageBase } from "../../page-base";
 export class GeoFencingPage extends PageBase {
     private readonly Route = inject(ActivatedRoute);
     private readonly GeoService = inject(GeoLocationService);
+
     @ViewChild("map", { read: MapComponent }) private _map?: MapComponent;
 
     private _selectFenceSubscription?: Subscription;

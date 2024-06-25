@@ -1,24 +1,21 @@
-import { Injectable, inject } from "@angular/core";
-import { ListsBackendService } from "../storage/list-backend/lists-backend.service";
+import { ListsBackendService } from "../storage/lists/lists-backend.service";
 import { List } from "./list";
 
-@Injectable({
-    providedIn: "root",
-})
-export class ListsProviderService {
+export class ListsProvider {
     protected StoragePath = "lists";
-    protected readonly Backend = inject(ListsBackendService);
+
+    public constructor(protected readonly Backend: ListsBackendService) {}
 
     /**
      * read all lists from storage
      * @returns array of all lists
      */
-    public async GetLists(): Promise<List[]> {
+    public async GetLists(peek: boolean): Promise<List[]> {
         const models = await this.Backend.GetLists(this.StoragePath);
         let lists: List[] = [];
         for (let i = 0; i < models.length; i++) {
             const m = models[i];
-            const list = List.fromBackend(m);
+            const list = List.fromBackend(m, peek);
             if (list) {
                 lists.push(list);
             }
@@ -35,7 +32,7 @@ export class ListsProviderService {
     public async GetList(uuid: string): Promise<List | undefined> {
         const model = await this.Backend.GetList(uuid, this.StoragePath);
         if (model) {
-            return List.fromBackend(model);
+            return List.fromBackend(model, false);
         }
         return undefined;
     }

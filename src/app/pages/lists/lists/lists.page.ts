@@ -1,9 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { Component, ViewChild, inject } from "@angular/core";
+import { Component, ViewChild, WritableSignal, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTitle, IonToolbar, ItemReorderEventDetail, NavController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import { Subscription } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { List } from "src/app/services/lists/list";
 import { DateUtils } from "../../../classes/utils/dateutils";
@@ -20,23 +19,14 @@ import { PageBase } from "../../page-base";
 export class ListsPage extends PageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;
 
-    public Lists: List[] = [];
-    private listsChangedSubscription?: Subscription;
+    public Lists: WritableSignal<List[]> = this.ListsService.Lists;
     private disableClick = false;
 
     private readonly NavController = inject(NavController);
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
-        this.listsChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => {
-            this.Lists = lists ?? [];
-        });
-        this.Lists = await this.ListsService.GetLists();
-    }
-
-    public override async ionViewDidLeave() {
-        super.ionViewDidLeave();
-        this.listsChangedSubscription?.unsubscribe();
+        this.ListsService.PurgeListDetails();
     }
 
     public onSwipeRight(list: List) {
@@ -45,7 +35,7 @@ export class ListsPage extends PageBase {
     }
 
     public async addList() {
-        this.ListsService.NewList();
+        await this.ListsService.NewList();
     }
 
     public onSwipeLeft(list: List) {
@@ -55,11 +45,7 @@ export class ListsPage extends PageBase {
 
     public async deleteList(list: List) {
         const res = await this.ListsService.DeleteList(list);
-        if (res === true) {
-            this.Popups.Toast.Success("service-lists.delete_success");
-            this.listsContainer.closeSlidingItems();
-        } else if (res === false) {
-            this.Popups.Toast.Error("service-lists.delete_error");
+        if (res !== undefined) {
             this.listsContainer.closeSlidingItems();
         }
     }
@@ -76,7 +62,7 @@ export class ListsPage extends PageBase {
     }
 
     public editList(event: MouseEvent, list: List) {
-        this.ListsService.EditList(list);
+        this.ListsService.RenameList(list);
         event.stopImmediatePropagation();
     }
 
@@ -87,7 +73,8 @@ export class ListsPage extends PageBase {
     }
 
     public async handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
-        this.Lists = await this.ListsService.ReorderLists(event.detail.complete(this.Lists));
+        const lists = event.detail.complete(this.Lists());
+        await this.ListsService.ReorderLists(lists);
         event.stopImmediatePropagation();
     }
 

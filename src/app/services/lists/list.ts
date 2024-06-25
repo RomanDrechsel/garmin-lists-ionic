@@ -15,15 +15,31 @@ export class List {
     private _geofenceEnabled: boolean = false;
     private _dirty: boolean = false;
 
-    private constructor(args: { uuid: string; name: string; order: number; created?: number; updated?: number; itemscount?: number; deleted?: number; dirty?: boolean }) {
-        this._name = args.name;
-        this._order = args.order;
-        this._uuid = args.uuid;
-        this._created = args.created ?? Date.now();
-        this._updated = args.updated ?? Date.now();
-        this._itemsCount = args.itemscount ?? 0;
-        this._deleted = args.deleted;
-        this._dirty = args.dirty ?? true;
+    public constructor(obj: ListModel, itemcount?: number) {
+        this._uuid = obj.uuid;
+        this._name = obj.name;
+        this._order = obj.order;
+        this._created = obj.created;
+        this._updated = obj.updated ?? Date.now();
+        this._items = undefined;
+        if (obj.items) {
+            let items: Listitem[] = [];
+            obj.items.forEach((el: ListitemModel) => {
+                const i = Listitem.fromBackend(el);
+                if (i) {
+                    items.push(i);
+                }
+            });
+            if (items.length > 0) {
+                this._items = items;
+            }
+        }
+        this._itemsCount = this._items?.length ?? itemcount;
+        this._deleted = obj.deleted;
+        this._geofence = obj.geofence ? GeoFence.fromBackend(obj.geofence) : undefined;
+        this._geofenceEnabled = (this._geofence && obj.geofence_enabled) ?? false;
+        this._deleted = obj.deleted;
+        this._dirty = true;
     }
 
     /** get unique list id */
@@ -86,9 +102,12 @@ export class List {
     }
 
     /** set the list of all items */
-    public set Items(items: Listitem[]) {
+    public set Items(items: Listitem[] | undefined) {
         this._items = items;
-        this._itemsCount = this._items.length;
+        if (this._items) {
+            this._itemsCount = this._items.length;
+        }
+        this._dirty = true;
     }
 
     /** get the list of all items */
@@ -142,7 +161,7 @@ export class List {
 
     /** are only peek information loaded */
     public get isPeek(): boolean {
-        return this.Items == undefined;
+        return this._items == undefined;
     }
 
     /**
@@ -187,7 +206,7 @@ export class List {
      * @param item item to remove
      */
     public RemoveItem(item: Listitem) {
-        this._items = this.Items.filter(el => el != item);
+        this._items = this.Items.filter(el => !el.equals(item));
         this._itemsCount = this._items.length;
 
         let order = 0;
@@ -223,8 +242,6 @@ export class List {
     public copyDetails(list: List | undefined) {
         if (list && !list.isPeek) {
             this.Items = list.Items;
-            this.GeoFence = list.GeoFence;
-            this.GeoFenceEnabled = list.GeoFenceEnabled;
         }
     }
 
@@ -268,7 +285,7 @@ export class List {
 
             if (this._items && this._items.length > 0) {
                 this._items.forEach(item => {
-                    ret.items.push(item.toBackend());
+                    ret.items!.push(item.toBackend());
                 });
             }
 
@@ -283,11 +300,33 @@ export class List {
     }
 
     /**
+     * purges all items from the list to save memory
+     */
+    public PurgeDetails() {
+        if (this._items !== undefined) {
+            this._itemsCount = this._items.length;
+            this._items = undefined;
+        }
+    }
+
+    /**
      * string to identify list in logfiles
      * @returns
      */
     public toLog(): string {
         return `uuid:${this.Uuid}`;
+    }
+
+    /**
+     * check if two list objects are equal
+     * @param other other list object or undefined
+     * @returns are the lists equal
+     */
+    public equals(other: List | null | undefined): boolean {
+        if (!other) {
+            return false;
+        }
+        return this.Uuid === other.Uuid;
     }
 
     /**
@@ -303,46 +342,30 @@ export class List {
                 return undefined;
             }
         }
-        const list = new List({
-            uuid: obj.uuid,
-            name: obj.name,
-            created: obj.created,
-            order: obj.order,
-            updated: obj.updated,
-            itemscount: obj.items?.length ?? 0,
-            deleted: obj.deleted,
-        });
 
-        if (!only_peek) {
-            if (obj.items) {
-                let items: Listitem[] = [];
-                obj.items.forEach((el: any) => {
-                    const i = Listitem.fromBackend(el);
-                    if (i) {
-                        items.push(i);
-                    }
-                });
-                list.Items = items;
-            }
-            if (obj.geofence) {
-                list.GeoFence = GeoFence.fromBackend(obj.geofence);
-            }
-            if (list.GeoFence && obj.geofence_enabled) {
-                list.GeoFenceEnabled = obj.geofence_enabled;
-            }
+        const itemscount = obj.items?.length ?? 0;
+        if (only_peek) {
+            //remove items from memory...
+            obj.items = undefined;
         }
+
+        const list = new List(
+            {
+                uuid: obj.uuid,
+                name: obj.name,
+                created: obj.created,
+                order: obj.order,
+                updated: obj.updated,
+                deleted: obj.deleted,
+                items: obj.items,
+                geofence: obj.geofence,
+                geofence_enabled: obj.geofence_enabled,
+            },
+            itemscount,
+        );
         list.Clean();
 
         return list;
-    }
-
-    /**
-     * creates a new List object from user input
-     * @param obj user input
-     * @returns List object
-     */
-    public static Create(obj: { name: string; uuid: string; order: number }): List {
-        return new List(obj);
     }
 }
 
@@ -353,7 +376,7 @@ export declare type ListModel = {
     order: number;
     updated?: number;
     deleted?: number;
-    items: ListitemModel[];
+    items?: ListitemModel[];
     geofence?: GeoFenceModel;
     geofence_enabled?: boolean;
 };

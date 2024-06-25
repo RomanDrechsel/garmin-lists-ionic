@@ -27,7 +27,7 @@ export class TrashItemsStorageService extends ListitemsStorageService {
         if (obj) {
             const id = await this.Backend.StoreItem(obj);
             if (id != undefined) {
-                item.Id = id;
+                item.Uuid = id;
                 Logger.Debug(`Stored listitem ${item.toLog()} in backend ${this.Backend.BackendIdentifier}`);
                 return true;
             } else {
