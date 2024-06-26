@@ -7,9 +7,23 @@ import { ListsProvider } from "./lists-provider";
 
 export class TrashProvider extends ListsProvider {
     protected override StoragePath = "trash";
+    private _maxEntryCount: number = -1;
 
     public constructor(backend: ListsBackendService, private ListitemsTrash: ListitemsTrashProvider, private _datasetChangedSubject: BehaviorSubject<List[] | undefined>) {
         super(backend);
+    }
+
+    /**
+     * keep a maximum number of lists in trash
+     */
+    public set MaxEntryCount(value: number | undefined) {
+        if (!value) {
+            value = -1;
+        }
+        if (this._maxEntryCount != value) {
+            this._maxEntryCount = value;
+            this.limitEntryCount(value);
+        }
     }
 
     /**
@@ -25,37 +39,6 @@ export class TrashProvider extends ListsProvider {
                 await this.ListitemsTrash.EraseLists(oldlists);
                 Logger.Notice(`Removed ${removed} old lists from trash, as if they are older than ${days} days`);
                 this._datasetChangedSubject.next(await this.GetLists(true));
-            }
-        }
-    }
-
-    /**
-     * removes the oldes entries in trash due to a certain number
-     * @param maxcount maximum number of lists in trash
-     */
-    public async LimitEntryCount(maxcount: number): Promise<void> {
-        let alllists = await this.Backend.GetLists(this.StoragePath);
-        if (alllists.length > maxcount) {
-            alllists = alllists.sort((a, b) => {
-                if (!a.deleted) {
-                    a.deleted = 0;
-                }
-                if (!b.deleted) {
-                    b.deleted = 0;
-                }
-                return b.deleted - a.deleted;
-            });
-            const uuids = alllists.splice(maxcount).map(l => l.uuid);
-            const del = await this.Backend.RemoveLists(uuids, this.StoragePath);
-            await this.ListitemsTrash.EraseLists(uuids);
-            if (del == uuids.length) {
-                Logger.Notice(`Removed ${del} old lists from trash due to the limit of ${maxcount} lists`);
-                this._datasetChangedSubject.next(await this.GetLists(true));
-            } else if (del > 0) {
-                Logger.Error(`Removed ${del} old lists from trash due to the limit of ${maxcount} lists, but ${uuids.length - del} list(s) could not be removed`);
-                this._datasetChangedSubject.next(await this.GetLists(true));
-            } else {
-                Logger.Error(`Could not remove ${uuids.length} list(s) from trash due to the limit of ${maxcount} lists`, uuids);
             }
         }
     }
@@ -84,5 +67,38 @@ export class TrashProvider extends ListsProvider {
         await this.Backend.WipeAll(this.StoragePath);
         await this.ListitemsTrash.EraseLists(lists.map(l => l.uuid));
         return lists.length;
+    }
+
+    /**
+     * removes the oldes entries in trash due to a certain number
+     * @param maxcount maximum number of lists in trash
+     */
+    private async limitEntryCount(maxcount: number): Promise<void> {
+        if (maxcount > 0) {
+            let alllists = await this.Backend.GetLists(this.StoragePath);
+            if (alllists.length > maxcount) {
+                alllists = alllists.sort((a, b) => {
+                    if (!a.deleted) {
+                        a.deleted = 0;
+                    }
+                    if (!b.deleted) {
+                        b.deleted = 0;
+                    }
+                    return b.deleted - a.deleted;
+                });
+                const uuids = alllists.splice(maxcount).map(l => l.uuid);
+                const del = await this.Backend.RemoveLists(uuids, this.StoragePath);
+                await this.ListitemsTrash.EraseLists(uuids);
+                if (del == uuids.length) {
+                    Logger.Notice(`Removed ${del} old lists from trash due to the limit of ${maxcount} lists`);
+                    this._datasetChangedSubject.next(await this.GetLists(true));
+                } else if (del > 0) {
+                    Logger.Error(`Removed ${del} old lists from trash due to the limit of ${maxcount} lists, but ${uuids.length - del} list(s) could not be removed`);
+                    this._datasetChangedSubject.next(await this.GetLists(true));
+                } else {
+                    Logger.Error(`Could not remove ${uuids.length} list(s) from trash due to the limit of ${maxcount} lists`, uuids);
+                }
+            }
+        }
     }
 }

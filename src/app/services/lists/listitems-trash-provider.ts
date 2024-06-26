@@ -7,16 +7,46 @@ import { ListitemTrashModel, ListitemTrashUtils } from "./listitems-trash-utils"
 export class ListitemsTrashProvider {
     private readonly StoragePath = "trash/items";
 
+    private _maxEntryCount: number = -1;
+
     public constructor(private readonly Backend: ListsBackendService, private readonly _datasetChangedSubject: BehaviorSubject<ListitemTrashModel | undefined>) {}
 
-    //WIP: limit Entry Count als property, um sie immer zu haben. ggf. bei Änderung items löschen...
-
-    public async StoreListitem(listId: string, item: Listitem): Promise<boolean> {
-        let trash = await this.Backend.GetListitemTrash(listId, this.StoragePath);
-        if (!trash) {
-            trash = { uuid: listId, items: [item.toBackend()] };
-        } else {
+    /**
+     * keep a maximum number of listitems in every list trash
+     */
+    public set MaxEntryCount(value: number | undefined) {
+        if (!value) {
+            value = -1;
         }
+        if (this._maxEntryCount != value) {
+            this._maxEntryCount = value;
+            this.limitEntryCount(value);
+        }
+    }
+
+    /**
+     * stores one or more listitems in the trash of the list
+     * @param listId Unique identifier of the list
+     * @param items listitem or array of listitems
+     * @returns was the storage successful?
+     */
+    public async StoreListitem(listId: string, items: Listitem | Listitem[]): Promise<boolean> {
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+
+        const trash = (await this.Backend.GetListitemTrash(listId, this.StoragePath)) ?? { uuid: listId, items: [] };
+        items.forEach(i => {
+            i.Deleted = Date.now();
+            trash.items.push(i.toBackend());
+        });
+
+        if (this._maxEntryCount > 0 && trash.items.length > this._maxEntryCount) {
+            ListitemTrashUtils.SortItems(trash);
+            trash.items = trash.items.slice(this._maxEntryCount);
+        }
+
+        return this.Store(trash);
     }
 
     /**
@@ -80,30 +110,6 @@ export class ListitemsTrashProvider {
     }
 
     /**
-     * limit the number of listitems in every list trash
-     * @param maxcount maximum number of entries in every trash
-     * @param trashes listitem trash or array of listitem trashes
-     */
-    public async LimitEntryCount(maxcount: number, trashes?: ListitemTrashModel | ListitemTrashModel[]): Promise<void> {
-        if (!trashes) {
-            trashes = await this.Backend.GetListitemsTrashes(this.StoragePath);
-        } else if (!Array.isArray(trashes)) {
-            trashes = [trashes];
-        }
-        for (let i = 0; i < trashes.length; i++) {
-            const trash = trashes[i];
-            if (trash.items.length > maxcount) {
-                const before = trash.items.length;
-                ListitemTrashUtils.SortItems(trash);
-                trash.items = trash.items.slice(maxcount);
-                if (await this.Store(trash)) {
-                    Logger.Debug(`Removed ${before - trash.items.length} listitem(s) from trash of list ${ListitemTrashUtils.toLog(trash)}`);
-                }
-            }
-        }
-    }
-
-    /**
      * returns the number of listitems in the trash of a list
      * @param uuid Unique identifier of the list
      * @returns number of items in the trash
@@ -124,6 +130,7 @@ export class ListitemsTrashProvider {
      */
     private async Store(trash: ListitemTrashModel): Promise<boolean> {
         let success = false;
+
         if (trash.items.length > 0) {
             //store in backend
             success = await this.Backend.StoreListitemTrash(trash, this.StoragePath);
@@ -136,5 +143,29 @@ export class ListitemsTrashProvider {
         }
 
         return success;
+    }
+
+    /**
+     * limit the number of listitems in every list trash
+     * @param maxcount maximum number of entries in every trash
+     * @param trashes listitem trash or array of listitem trashes
+     */
+    private async limitEntryCount(maxcount: number, trashes?: ListitemTrashModel | ListitemTrashModel[]): Promise<void> {
+        if (!trashes) {
+            trashes = await this.Backend.GetListitemsTrashes(this.StoragePath);
+        } else if (!Array.isArray(trashes)) {
+            trashes = [trashes];
+        }
+        for (let i = 0; i < trashes.length; i++) {
+            const trash = trashes[i];
+            if (trash.items.length > maxcount) {
+                const before = trash.items.length;
+                ListitemTrashUtils.SortItems(trash);
+                trash.items = trash.items.slice(maxcount);
+                if (await this.Store(trash)) {
+                    Logger.Debug(`Removed ${before - trash.items.length} listitem(s) from trash of list ${ListitemTrashUtils.toLog(trash)}`);
+                }
+            }
+        }
     }
 }
