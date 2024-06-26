@@ -75,10 +75,13 @@ export class ListsService {
                 this.TrashProvider.RemoveOldEntries(value);
             });
             this.TrashProvider.RemoveOldEntries(value);
+            this.TrashProvider.MaxEntryCount = undefined;
+            this.TrashItemsProvider.MaxEntryCount = undefined;
         } else {
             this._removeOldTrashEntriesTimer?.unsubscribe();
             this._removeOldTrashEntriesTimer = undefined;
-            this.limitEntryCount(KeepInTrash.StockSize(value));
+            this.TrashProvider.MaxEntryCount = KeepInTrash.StockSize(value);
+            this.TrashItemsProvider.MaxEntryCount = KeepInTrash.StockSize(value);
         }
     }
 
@@ -574,14 +577,14 @@ export class ListsService {
      * @returns was the list stored successful after emptying?
      */
     private async emptyList(list: List): Promise<boolean> {
+        //WIP: Testen, ob die Items im Trash gespeichert werden ...
         if (list.ItemsCount > 0) {
             if ((await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) == true) {
-                //TODO: move to trash
-                /*const del = await this.TrashProvider.StoreListitems(list, list.Items);
+                const del = await this.TrashItemsProvider.StoreListitem(list.Uuid, list.Items);
                 if (!del) {
                     Logger.Error(`Could not empty list ${list.toLog()} and move items to trash`);
                     return false;
-                }*/
+                }
             }
             list.Items = [];
             if (await this.StoreList(list)) {
@@ -604,7 +607,7 @@ export class ListsService {
      * @returns was the list stored successful after removal?
      */
     private async removeListitem(list: List, item: Listitem): Promise<boolean> {
-        if (!(await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) || (await this.TrashItemsProvider.StoreListitem(list, item))) {
+        if (!(await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) || (await this.TrashItemsProvider.StoreListitem(list.Uuid, item))) {
             list.RemoveItem(item);
             return await this.StoreList(list);
         } else {
@@ -642,13 +645,6 @@ export class ListsService {
      */
     private async emptyListitemTrash(trash: ListitemTrashModel): Promise<boolean> {
         return (await this.TrashItemsProvider.EraseListitemTrash(trash)) !== false;
-    }
-
-    private async limitEntryCount(maxcount?: number) {
-        if (maxcount) {
-            await this.TrashProvider.LimitEntryCount(maxcount);
-            await this.TrashItemsProvider.LimitEntryCount(maxcount);
-        }
     }
 
     /**
