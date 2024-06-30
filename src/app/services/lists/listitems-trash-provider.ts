@@ -86,12 +86,12 @@ export class ListitemsTrashProvider {
      * @param list list, to erase the listitems in trash
      * @returns was the deletion successful? undefined if there was no trash for this list
      */
-    public async EraseListitemTrash(trash: ListitemTrashModel): Promise<boolean | undefined> {
+    public async EraseListitemTrash(trash: ListitemTrashModel): Promise<boolean> {
         const success = await this.Backend.RemoveAllListitems(trash, this.StoragePath);
         if (success === true) {
             this._datasetChangedSubject.next(trash);
         }
-        return success;
+        return success !== false;
     }
 
     public async EraseLists(uuids: string | string[]): Promise<number> {

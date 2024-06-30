@@ -25,7 +25,10 @@ export class TrashListsPage extends PageBase {
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
-        this.trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => (this.Lists = lists ?? []));
+        this.trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => {
+            this.Lists = lists ?? [];
+            this.appComponent.setAppPages(this.ModifyMainMenu());
+        });
         this.Lists = await this.ListsService.GetTrash();
     }
 
@@ -35,11 +38,11 @@ export class TrashListsPage extends PageBase {
     }
 
     public override ModifyMainMenu(): MenuItem[] {
-        if (this.Lists.length > 0) {
-            return [MenuItemEmptyListTrash(() => this.emptyTrash())];
-        } else {
-            return [];
+        const empty = MenuItemEmptyListTrash(() => this.emptyTrash());
+        if (this.Lists.length <= 0) {
+            empty.Disabled = true;
         }
+        return [empty];
     }
 
     public async onSwipeRight(list: List) {
@@ -61,8 +64,7 @@ export class TrashListsPage extends PageBase {
     }
 
     public async emptyTrash(): Promise<boolean> {
-        await this.ListsService.WipeTrash();
-        return true;
+        return (await this.ListsService.WipeTrash()) !== false;
     }
 
     public DeletedString(list: List): string {

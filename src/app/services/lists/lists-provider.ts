@@ -49,7 +49,7 @@ export class ListsProvider {
             list.copyDetails(old);
         }
 
-        const model = list.toBackend();
+        const model = list.toBackend(force);
         if (model) {
             return await this.Backend.StoreList(model, this.StoragePath);
         }

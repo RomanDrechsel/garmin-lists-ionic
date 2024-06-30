@@ -71,7 +71,7 @@ export namespace ListitemTrashUtils {
      * @param trash object to be represented
      * @returns string representation of the object
      */
-    export function toLog(trash: ListitemTrashModel): string {
+    export function toLog(trash: ListitemTrashModel | ListitemModel): string {
         return `uuid:${trash.uuid}`;
     }
 }
