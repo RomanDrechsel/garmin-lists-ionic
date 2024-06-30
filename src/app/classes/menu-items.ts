@@ -68,23 +68,23 @@ export const MenuItemPrivacy = function (): MenuItem {
     };
 };
 
-export const MenuItemEmptyList = function (onclick: () => Promise<boolean>, disabled: boolean): MenuItem {
+export const MenuItemEmptyList = function (onclick?: () => Promise<boolean>, disabled?: boolean): MenuItem {
     return {
         Id: "emptylist",
         Title: "page_listitems.menu_empty",
         Icon: "./assets/icons/menu/empty.svg",
         onClick: onclick,
-        Disabled: disabled,
+        Disabled: disabled ?? false,
     };
 };
 
-export const MenuItemEmptyListTrash = function (onclick: () => Promise<boolean>): MenuItem {
+export const MenuItemEmptyListTrash = function (onclick?: () => Promise<boolean>, disabled?: boolean): MenuItem {
     return {
         Id: "emptytrash",
         Title: "mainmenu.empty_trash",
         Icon: "./assets/icons/menu/empty_trash.svg",
         onClick: onclick,
-        Disabled: false,
+        Disabled: disabled ?? false,
     };
 };
 

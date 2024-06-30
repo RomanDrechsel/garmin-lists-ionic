@@ -239,6 +239,9 @@
         "build": "Build:",
         "platform": "Platform:",
         "database": "Datenbank-Größe:",
+        "database_lists": "Listen:",
+        "database_trash": "Papierkorb:",
+        "database_logs": "Logs:",
         "support": "Ich habe die App in meiner Freizeit und ohne finanzielle Hintergedanken entwickelt.<br />Sie ist und bleibt kostenlos und OpenSource.<br /><br />Wenn sie Dir gefällt und du mich unterstützen möchtest,<br />warum kaufst du mir dann nicht einen Kaffee?"
     },
     "page_privacy": {

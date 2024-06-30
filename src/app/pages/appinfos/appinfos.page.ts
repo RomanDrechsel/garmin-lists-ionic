@@ -21,7 +21,8 @@ export class AppinfosPage extends PageBase {
     public Appversion: string = "";
     public Build: string = "";
     public Platform: string = "";
-    public DatabaseSize: string = "-";
+    public DatabaseSize: { lists: string; trash: string } = { lists: "-", trash: "-" };
+    public LogsSize: string = "-";
 
     private readonly GeoLocation = inject(GeoLocationService);
 
@@ -32,6 +33,7 @@ export class AppinfosPage extends PageBase {
         this.Appversion = AppService.AppInfo.VersionString;
         this.Build = String(AppService.AppInfo.Build);
         this.Platform = AppService.AppPlatformString;
+
         this.Logger.Important(`TODO: Database size`);
         /*const size = await this.Database.getDatabaseSize();
         if (size) {

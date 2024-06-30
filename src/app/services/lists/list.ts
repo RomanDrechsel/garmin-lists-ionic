@@ -188,7 +188,11 @@ export class List {
      * @param item item to add
      * @returns item that was added
      */
-    public AddItem(item: Listitem): Listitem {
+    public AddItem(item: Listitem | ListitemModel): Listitem {
+        if (!(item instanceof Listitem)) {
+            item = Listitem.Create(item);
+        }
+
         item.Order = this.Items.length;
         if (!this._items) {
             this._items = [item];
@@ -278,6 +282,7 @@ export class List {
                 items: [],
                 created: this._created,
                 updated: this._updated ?? undefined,
+                deleted: this._deleted ?? undefined,
                 geofence: undefined,
                 geofence_enabled: undefined,
                 order: this._order,

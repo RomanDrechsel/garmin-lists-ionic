@@ -3,7 +3,7 @@ import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
 import { FileUtils } from "../../../classes/utils/fileutils";
 import { StringUtils } from "../../../classes/utils/stringutils";
 import { ListModel } from "../../lists/list";
-import { ListitemTrashModel } from "../../lists/listitems-trash-utils";
+import { ListitemTrashModel, ListitemTrashUtils } from "../../lists/listitems-trash-utils";
 import { Logger } from "../../logging/logger";
 
 @Injectable({
@@ -30,7 +30,7 @@ export class ListsBackendService {
                 }
             } else {
                 await this.removeFilesByUri(file.Path);
-                Logger.Error(`Removed invalid list-file '${file.Path}' (${FileUtils.File.FormatSize(file.Size)}) from storage`);
+                Logger.Error(`Removed invalid list-file '${file.Path}' (${FileUtils.File.FormatSize(file.Size)}) from ${backend ?? ""} backend`);
             }
         }
 
@@ -84,7 +84,7 @@ export class ListsBackendService {
                 }
             } else {
                 await this.removeFilesByUri(file.Path);
-                Logger.Error(`Removed invalid listitem-trash-file '${file.Path}' (${FileUtils.File.FormatSize(file.Size)}) from storage`);
+                Logger.Error(`Removed invalid listitem-trash-file '${file.Path}' (${FileUtils.File.FormatSize(file.Size)}) from ${backend ?? ""} backend`);
             }
         }
         return trashes;
@@ -101,29 +101,34 @@ export class ListsBackendService {
         const path = backend ? StringUtils.concat([this.StorageRoot, backend], "/") : this.StorageRoot;
         const uri = StringUtils.concat([path, filename], "/");
         try {
-            await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(list), encoding: Encoding.UTF8, recursive: true });
+            const newuri = (await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(list), encoding: Encoding.UTF8, recursive: true })).uri;
+            if (newuri) {
+                await this.RemoveLists(list.uuid, backend, [filename]);
+            }
+
             return true;
         } catch (error) {
-            Logger.Error(`Could not store file ${uri} in list-backend`, error);
+            Logger.Error(`Could not store file ${uri} in ${backend ?? ""} backend`, error);
         }
         return false;
     }
 
     /**
      * stores a listitem trash file in backend
-     * @param list listitem trash model
+     * @param trash listitem trash model
      * @param backend backend identifier to store the listitem trash in
      * @returns was the storage successful?
      */
-    public async StoreListitemTrash(list: ListitemTrashModel, backend?: string): Promise<boolean> {
-        const filename = `${list.uuid}.json`;
+    public async StoreListitemTrash(trash: ListitemTrashModel, backend?: string): Promise<boolean> {
+        ListitemTrashUtils.SortItems(trash);
+        const filename = `${trash.uuid}.json`;
         const path = backend ? StringUtils.concat([this.StorageRoot, backend], "/") : this.StorageRoot;
         const uri = StringUtils.concat([path, filename], "/");
         try {
-            await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(list), encoding: Encoding.UTF8, recursive: true });
+            await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(trash), encoding: Encoding.UTF8, recursive: true });
             return true;
         } catch (error) {
-            Logger.Error(`Could not store file ${uri} in list-backend`, error);
+            Logger.Error(`Could not store file ${uri} in ${backend ?? ""} backend`, error);
         }
         return false;
     }
@@ -145,7 +150,7 @@ export class ListsBackendService {
      * @param exclude exact filenames (not paths!), not to remove
      * @returns number of files deleted
      */
-    public async RemoveLists(uuids: string | string[], backend?: string): Promise<number> {
+    public async RemoveLists(uuids: string | string[], backend?: string, exclude?: string[]): Promise<number> {
         if (!Array.isArray(uuids)) {
             uuids = [uuids];
         }
@@ -154,13 +159,13 @@ export class ListsBackendService {
         let del = 0;
         for (let i = 0; i < allfiles.length; i++) {
             const file = allfiles[i];
-            if (uuids.some(uuid => file.Filename.startsWith(uuid))) {
+            if (uuids.some(uuid => file.Filename.startsWith(uuid)) && !exclude?.some(e => file.Filename == e)) {
                 try {
                     await Filesystem.deleteFile({ path: file.Path });
-                    Logger.Debug(`Removed file ${file.Path} (${FileUtils.File.FormatSize(file.Size)}) from lists backend`);
+                    Logger.Debug(`Removed file ${file.Path} (${FileUtils.File.FormatSize(file.Size)}) from ${backend ?? ""} backend`);
                     del++;
                 } catch (error) {
-                    Logger.Error(`Could not remove file ${file.Path} (${FileUtils.File.FormatSize(file.Size)}) from lists backend`);
+                    Logger.Error(`Could not remove file ${file.Path} (${FileUtils.File.FormatSize(file.Size)}) from ${backend ?? ""} backend`);
                 }
             }
         }
@@ -186,10 +191,10 @@ export class ListsBackendService {
             const file = allfiles[i];
             if (uuids.some(uuid => file.Filename.startsWith(uuid))) {
                 if (await FileUtils.DeleteFile(file.Path)) {
-                    Logger.Debug(`Removed file ${file.Path} (${FileUtils.File.FormatSize(file.Size)}) from lists backend`);
+                    Logger.Debug(`Removed file ${file.Path} (${FileUtils.File.FormatSize(file.Size)}) from ${backend ?? ""} backend`);
                     del++;
                 } else {
-                    Logger.Error(`Could not remove file ${file.Path} (${FileUtils.File.FormatSize(file.Size)}) from lists backend`);
+                    Logger.Error(`Could not remove file ${file.Path} (${FileUtils.File.FormatSize(file.Size)}) from ${backend ?? ""} backend`);
                     error++;
                 }
             }
@@ -235,10 +240,10 @@ export class ListsBackendService {
             const file = uri[i];
             try {
                 await Filesystem.deleteFile({ path: file });
-                Logger.Debug(`Removed file ${file} from lists backend`);
+                Logger.Debug(`Removed file ${file} from backend`);
                 del++;
             } catch (error) {
-                Logger.Error(`Could not remove file ${file} from lists backend:`, error);
+                Logger.Error(`Could not remove file ${file} from backend:`, error);
             }
         }
 
@@ -265,61 +270,6 @@ export class ListsBackendService {
         }
 
         return uuids;
-    }
-
-    /**
-     * removes all files from the folder, that are older than a certain amount of seconds
-     * @param seconds minimum age of the files in seconds
-     * @param backend backend identifier, in which the files should be removed
-     * @returns number of deleted files
-     */
-    public async RemoveOldEntries(seconds: number, backend?: string): Promise<number> {
-        const allfiles = await this.getAllFiles(backend);
-        let deleted = 0;
-        for (let i = 0; i < allfiles.length; i++) {
-            const file = allfiles[i];
-            if (file.Modified < Date.now() - seconds * 1000) {
-                if (await this.removeFileByUri(file.Path)) {
-                    deleted++;
-                    Logger.Debug(`Removed old file '${file.Path}' from lists backend`);
-                }
-            }
-        }
-
-        if (deleted > 0) {
-            Logger.Debug(`Removed ${deleted} old file(s) from lists backend ${this.StorageDirectory}/${this.StorageRoot}/${backend ?? ""}`);
-        }
-
-        return deleted;
-    }
-
-    /**
-     * only keep the number of newest files in backend
-     * @param limit maximum number of files
-     * @param backend backend identifier, in which the files should be removed
-     * @returns number of deleted files
-     */
-    public async LimitEntriesCount(limit: number, backend?: string): Promise<number> {
-        let allfiles = await this.getAllFiles(backend);
-        let deleted = 0;
-        if (allfiles.length > limit) {
-            allfiles = allfiles.sort((a, b) => b.Modified - a.Modified);
-            while (allfiles.length > limit) {
-                const file = allfiles.pop();
-                if (file) {
-                    if (await this.removeFileByUri(file.Path)) {
-                        deleted++;
-                        Logger.Debug(`Removed old file '${file.Path}' from lists backend`);
-                    }
-                }
-            }
-        }
-
-        if (deleted > 0) {
-            Logger.Debug(`Removed ${deleted} old file(s) from list backend ${this.StorageDirectory}/${this.StorageRoot}/${backend ?? ""}`);
-        }
-
-        return deleted;
     }
 
     /**
@@ -367,21 +317,6 @@ export class ListsBackendService {
     }
 
     /**
-     * deletes a file from storage
-     * @param fileuri uri of the file
-     * @returns was the removal successfull?
-     */
-    private async removeFileByUri(fileuri: string): Promise<boolean> {
-        try {
-            await Filesystem.deleteFile({ path: fileuri });
-            return true;
-        } catch (error) {
-            Logger.Error(`Could not remove old file ${fileuri} from lists backend: `, error);
-        }
-        return false;
-    }
-
-    /**
      * create filename for a list to store in backend
      * @param list list to be stored
      * @returns filename for the list
@@ -393,10 +328,10 @@ export class ListsBackendService {
     /**
      * creates a pattern to match the filename of a list by its uuid
      * @param uuid Uuid for the pattern
-     * @returns filename pattern
+     * @returns filename pattern as string
      */
-    public static createFilenamePattern(uuid: string) {
-        return `^${uuid}-.*\\.json$`;
+    public static createFilenamePattern(uuid: string): string {
+        return `^${uuid}(\\.json$|-.*\\.json$)`;
     }
 
     /**

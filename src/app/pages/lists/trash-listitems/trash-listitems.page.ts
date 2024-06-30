@@ -40,11 +40,11 @@ export class TrashListitemsPage extends PageBase {
     }
 
     public override ModifyMainMenu(): MenuItem[] {
-        if (this.Trash && this.Trash.items.length > 0) {
-            return [MenuItemEmptyListTrash(() => this.emptyTrash())];
-        } else {
-            return [];
+        const empty = MenuItemEmptyListTrash(() => this.emptyTrash(), false);
+        if (this.Trash && this.Trash.items.length <= 0) {
+            empty.Disabled = true;
         }
+        return [empty];
     }
 
     public onSwipeRight(item: ListitemModel) {
