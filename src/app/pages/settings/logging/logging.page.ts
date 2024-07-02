@@ -7,7 +7,6 @@ import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { FileUtils } from "../../../classes/utils/fileutils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
-import { LoggingService } from "../../../services/logging/logging.service";
 import { PageBase } from "../../page-base";
 
 @Component({
@@ -78,7 +77,7 @@ export class LoggingPage extends PageBase {
     }
 
     private async requestLogsSize() {
-        const size = await FileUtils.GetDirStat(LoggingService.LogPath, LoggingService.LogDirectory);
+        const size = await this.Logger.GetLogSize();
         this.Logfiles = size.files;
         if (size.size >= 0 && size.files >= 0) {
             this.LogsSize = this.Locale.getText("page_settings_logs.size", { files: size.files, size: FileUtils.File.FormatSize(size.size) });

@@ -16,11 +16,20 @@ ion-content {
                     width: 100%;
                 }
 
+                ion-note,
                 ion-grid {
-                    padding: 0;
                     width: 100%;
                     font-size: 0.9em;
                     color: var(--ion-color-medium);
+                }
+
+                ion-note {
+                    display: block;
+                }
+
+                ion-grid {
+                    padding: 0;
+                    width: 100%;
 
                     ion-col {
                         &:first-of-type {
@@ -31,6 +40,8 @@ ion-content {
                             flex-grow: 3;
                             text-align: end;
                             max-width: 150px;
+                            min-width: 150px;
+                            padding-inline-end: 0;
                         }
                     }
                 }
