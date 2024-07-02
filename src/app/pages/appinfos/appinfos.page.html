@@ -7,10 +7,8 @@
                 <ion-item class="ion-align-items-start" lines="full">
                     <div>
                         <ion-text>{{'page_appinfos.package'|translate}}</ion-text>
+                        <ion-note class="ion-text-end">{{BundleId}}</ion-note>
                         <ion-grid>
-                            <ion-row>
-                                <ion-col class="ion-text-end">{{BundleId}}</ion-col>
-                            </ion-row>
                             <ion-row>
                                 <ion-col class="ion-text-end">{{'page_appinfos.version'|translate}}</ion-col>
                                 <ion-col class="ion-text-end">{{Appversion}}</ion-col>
@@ -24,7 +22,6 @@
                                 <ion-col class="ion-text-end">{{Platform}}</ion-col>
                             </ion-row>
                         </ion-grid>
-
                     </div>
                 </ion-item>
                 <ion-item lines="full">
@@ -32,22 +29,16 @@
                         <ion-text>{{'page_appinfos.database'|translate}}</ion-text>
                         <ion-grid>
                             <ion-row>
-                                <ion-col>
-                                    <ion-grid class="value">
-                                        <ion-row>
-                                            <ion-col class="ion-text-end">{{'page_appinfos.database_lists'|translate}}</ion-col>
-                                            <ion-col class="ion-text-end">{{DatabaseSize.lists}}</ion-col>
-                                        </ion-row>
-                                        <ion-row>
-                                            <ion-col class="ion-text-end">{{'page_appinfos.database_trash'|translate}}</ion-col>
-                                            <ion-col class="ion-text-end">{{DatabaseSize.trash}}</ion-col>
-                                        </ion-row>
-                                        <ion-row>
-                                            <ion-col class="ion-text-end">{{'page_appinfos.database_logs'|translate}}</ion-col>
-                                            <ion-col class="ion-text-end">{{LogsSize}}</ion-col>
-                                        </ion-row>
-                                    </ion-grid>
-                                </ion-col>
+                                <ion-col class="ion-text-end">{{'page_appinfos.database_lists'|translate}}</ion-col>
+                                <ion-col class="ion-text-end">{{DatabaseSize.lists}}</ion-col>
+                            </ion-row>
+                            <ion-row>
+                                <ion-col class="ion-text-end">{{'page_appinfos.database_trash'|translate}}</ion-col>
+                                <ion-col class="ion-text-end">{{DatabaseSize.trash}}</ion-col>
+                            </ion-row>
+                            <ion-row>
+                                <ion-col class="ion-text-end">{{'page_appinfos.database_logs'|translate}}</ion-col>
+                                <ion-col class="ion-text-end">{{LogsSize}}</ion-col>
                             </ion-row>
                         </ion-grid>
                     </div>
