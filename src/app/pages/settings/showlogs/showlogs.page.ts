@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Capacitor } from "@capacitor/core";
 import { SelectCustomEvent } from "@ionic/angular";
@@ -17,6 +17,7 @@ import { PageBase } from "../../page-base";
     templateUrl: "./showlogs.page.html",
     styleUrls: ["./showlogs.page.scss"],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, FormsModule, TranslateModule, MainToolbarComponent, IonIcon, IonLabel, IonFabButton, IonFab, IonFabList, IonContent, IonList, IonItem, IonSelect, IonTextarea, IonSelectOption],
 })
 export class ShowlogsPage extends PageBase {
@@ -81,14 +82,31 @@ export class ShowlogsPage extends PageBase {
         }
     }
 
-    private async loadLogfile(file: string | undefined = undefined) {
+    public formatLogfile(file?: FileUtils.File): string {
+        if (file) {
+            return `${file.Filename} (${FileUtils.File.FormatSize(file.Size)})`;
+        } else {
+            return "";
+        }
+    }
+
+    compareLogfiles(f1: FileUtils.File, f2: FileUtils.File) {
+        if (!f1 || !f2) {
+            return f1 === f2;
+        }
+
+        return f1.Path === f2.Path;
+    }
+
+    private async loadLogfile(file: FileUtils.File | undefined = undefined) {
         this.availableLogfiles = await this.Logger.ListLogfiles();
         this.availableLogfiles.sort((a, b) => (a.Modified < b.Modified ? 1 : a.Modified < b.Modified ? -1 : 0));
 
-        this.currentLogfile = await this.Logger.GetLogfile(file);
+        this.currentLogfile = await this.Logger.GetLogfile(file?.Filename);
 
         if (this.currentLogfile.Exists == false && this.availableLogfiles.length > 0) {
             this.currentLogfile = await this.Logger.GetLogfile(this.availableLogfiles[0].Filename);
         }
+        this.cdr.detectChanges();
     }
 }

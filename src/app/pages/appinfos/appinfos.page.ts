@@ -23,7 +23,8 @@ export class AppinfosPage extends PageBase {
     public Appversion: string = "";
     public Build: string = "";
     public Platform: string = "";
-    public DatabaseSize: { lists: string; trash: string } = { lists: "-", trash: "-" };
+    public DatabaseSizeLists: string = "-";
+    public DatabaseSizeTrash: string = "-";
     public LogsSize: string = "-";
     private timerSubscription?: Subscription;
 
@@ -34,10 +35,11 @@ export class AppinfosPage extends PageBase {
         this.Appversion = AppService.AppInfo.VersionString;
         this.Build = String(AppService.AppInfo.Build);
         this.Platform = AppService.AppPlatformString;
-        await this.requestDatabaseSize();
+
         this.timerSubscription = interval(5000).subscribe(() => {
             this.requestDatabaseSize();
         });
+        await this.requestDatabaseSize();
     }
 
     public override async ionViewWillLeave() {
@@ -55,7 +57,9 @@ export class AppinfosPage extends PageBase {
 
     private async requestDatabaseSize() {
         this.LogsSize = FileUtils.File.FormatSize((await this.Logger.GetLogSize()).size);
-        this.DatabaseSize = await this.ListsService.BackendSize();
+        const database = await this.ListsService.BackendSize();
+        this.DatabaseSizeLists = FileUtils.File.FormatSize(database.lists.size);
+        this.DatabaseSizeTrash = FileUtils.File.FormatSize(database.trash.size);
         this.cdr.detectChanges();
     }
 }

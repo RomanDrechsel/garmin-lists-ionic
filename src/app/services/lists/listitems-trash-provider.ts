@@ -124,6 +124,14 @@ export class ListitemsTrashProvider {
     }
 
     /**
+     * returns the total size of all files in the backend
+     * @returns size in bytes and number of entries
+     */
+    public async BackendSize(): Promise<{ size: number; files: number }> {
+        return this.Backend.GetSize(this.StoragePath);
+    }
+
+    /**
      * stores trash of listitems for a list in backend or removes it, if there are no more items in it
      * @param trash listitem trash object
      * @returns was the storage/removal successful?
