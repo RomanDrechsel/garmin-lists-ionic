@@ -486,6 +486,20 @@ export class ListsService {
     }
 
     /**
+     * return the size in bytes and number of files of the lists- and trash-backends
+     * @returns object with size of the lists and trashes
+     */
+    public async BackendSize(): Promise<{ lists: { size: number; files: number }; trash: { size: number; files: number } }> {
+        const lists = await this.ListsProvider.BackendSize();
+        const trash = await this.TrashProvider.BackendSize();
+        const itemtrash = await this.TrashItemsProvider.BackendSize();
+        trash.size += itemtrash.size;
+        trash.files += itemtrash.files;
+
+        return { lists: lists, trash: trash };
+    }
+
+    /**
      * publish changes in a list with the signal
      * @param list list to be changed
      */

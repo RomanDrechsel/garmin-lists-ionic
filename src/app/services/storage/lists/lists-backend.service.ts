@@ -317,6 +317,16 @@ export class ListsBackendService {
     }
 
     /**
+     * returns the number of files and total size in the backend
+     * @param backend backend identifier to be fetched
+     * @returns size in bytes and total number of files in the backend
+     */
+    public async GetSize(backend?: string): Promise<{ size: number; files: number }> {
+        const allfiles = await this.getAllFiles(backend, false);
+        return { size: allfiles.reduce((a, b) => a + b.Size, 0), files: allfiles.length };
+    }
+
+    /**
      * create filename for a list to store in backend
      * @param list list to be stored
      * @returns filename for the list

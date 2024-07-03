@@ -81,4 +81,12 @@ export class ListsProvider {
     public async Count(): Promise<number> {
         return this.Backend.CountFiles(this.StoragePath);
     }
+
+    /**
+     * returns the total size of all files in the backend
+     * @returns size in bytes and number of entries
+     */
+    public async BackendSize(): Promise<{ size: number; files: number }> {
+        return this.Backend.GetSize(this.StoragePath);
+    }
 }

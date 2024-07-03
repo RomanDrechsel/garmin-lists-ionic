@@ -5,6 +5,7 @@
         "christian-kohler.path-intellisense",
         "fivethree.vscode-ionic-snippets",
         "zjffun.snippetsmanager",
-        "ionic.ionic"
+        "ionic.ionic",
+        "mpotthoff.vscode-android-webview-debug"
     ]
 }
