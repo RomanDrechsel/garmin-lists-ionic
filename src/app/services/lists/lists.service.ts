@@ -472,7 +472,7 @@ export class ListsService {
     /**
      * wipes all listitem trashes of all lists
      */
-    public async WipeListitemTrash(): Promise<void> {
+    public async WipeListitemTrashes(): Promise<void> {
         await this.TrashItemsProvider.WipeTrashes();
     }
 
@@ -486,10 +486,26 @@ export class ListsService {
     }
 
     /**
+     * returns the number of lists in trash
+     * @returns number of lists in trash
+     */
+    public async GetTrashCount(): Promise<number> {
+        return this.TrashProvider.Count();
+    }
+
+    /**
+     * returns the number of lists with listitems in the trash
+     * @returns number of lists
+     */
+    public async GetItemsTrashCount(): Promise<number> {
+        return this.TrashItemsProvider.CountAll();
+    }
+
+    /**
      * return the size in bytes and number of files of the lists- and trash-backends
      * @returns object with size of the lists and trashes
      */
-    public async BackendSize(): Promise<{ lists: { size: number; files: number }; trash: { size: number; files: number } }> {
+    public async BackendSize(): Promise<{ lists: { size: number; files: number; }; trash: { size: number; files: number; }; }> {
         const lists = await this.ListsProvider.BackendSize();
         const trash = await this.TrashProvider.BackendSize();
         const itemtrash = await this.TrashItemsProvider.BackendSize();
@@ -641,6 +657,7 @@ export class ListsService {
         const del = await this.TrashProvider.WipeTrash();
         if (del > 0) {
             Logger.Notice(`Erased ${del} list(s) from trash`);
+
         }
 
         return del;
@@ -668,7 +685,7 @@ export class ListsService {
             list.Order = this.Lists().length;
 
             if (await this.ListsProvider.StoreList(list, true)) {
-                if (await this.TrashProvider.EraseLists(list.Uuid)) {
+                if (await this.TrashProvider.EraseLists(list.Uuid, false)) {
                     Logger.Notice(`Restored list ${list.toLog()} from trash`);
                 } else {
                     Logger.Error(`Restored list ${list.toLog()} from trash, but could not erase it from trash`);

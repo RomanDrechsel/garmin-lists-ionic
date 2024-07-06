@@ -106,11 +106,6 @@ export class ListsBackendService {
                 await this.RemoveLists(list.uuid, backend, [filename]);
             }
 
-            const newuri = (await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(list), encoding: Encoding.UTF8, recursive: true })).uri;
-            if (newuri) {
-                await this.RemoveLists(list.uuid, backend, [filename]);
-            }
-
             return true;
         } catch (error) {
             Logger.Error(`Could not store file ${uri} in ${backend ?? ""} backend`, error);
@@ -125,9 +120,6 @@ export class ListsBackendService {
      * @param backend backend identifier to store the listitem trash in
      * @returns was the storage successful?
      */
-    public async StoreListitemTrash(trash: ListitemTrashModel, backend?: string): Promise<boolean> {
-        ListitemTrashUtils.SortItems(trash);
-        const filename = `${trash.uuid}.json`;
     public async StoreListitemTrash(trash: ListitemTrashModel, backend?: string): Promise<boolean> {
         ListitemTrashUtils.SortItems(trash);
         const filename = `${trash.uuid}.json`;
@@ -161,7 +153,6 @@ export class ListsBackendService {
      * @returns number of files deleted
      */
     public async RemoveLists(uuids: string | string[], backend?: string, exclude?: string[]): Promise<number> {
-    public async RemoveLists(uuids: string | string[], backend?: string, exclude?: string[]): Promise<number> {
         if (!Array.isArray(uuids)) {
             uuids = [uuids];
         }
@@ -170,7 +161,6 @@ export class ListsBackendService {
         let del = 0;
         for (let i = 0; i < allfiles.length; i++) {
             const file = allfiles[i];
-            if (uuids.some(uuid => file.Filename.startsWith(uuid)) && !exclude?.some(e => file.Filename == e)) {
             if (uuids.some(uuid => file.Filename.startsWith(uuid)) && !exclude?.some(e => file.Filename == e)) {
                 try {
                     await Filesystem.deleteFile({ path: file.Path });
@@ -353,8 +343,6 @@ export class ListsBackendService {
      * @returns filename pattern as string
      * @returns filename pattern as string
      */
-    public static createFilenamePattern(uuid: string): string {
-        return `^${uuid}(\\.json$|-.*\\.json$)`;
     public static createFilenamePattern(uuid: string): string {
         return `^${uuid}(\\.json$|-.*\\.json$)`;
     }

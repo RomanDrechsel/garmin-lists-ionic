@@ -99,6 +99,7 @@ export class ShowlogsPage extends PageBase {
     }
 
     private async loadLogfile(file: FileUtils.File | undefined = undefined) {
+        //WIP: Limit max count
         this.availableLogfiles = await this.Logger.ListLogfiles();
         this.availableLogfiles.sort((a, b) => (a.Modified < b.Modified ? 1 : a.Modified < b.Modified ? -1 : 0));
 
