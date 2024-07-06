@@ -181,7 +181,8 @@
     },
     "page_settings_showlogs": {
         "page_title": "Logs",
-        "logfile": "Log-File",
+        "log_onemore": "One more log",
+        "log_more": "{{count}} more logs",
         "log_empty": "The log could not be loaded.",
         "btn_delete": "Delete log",
         "btn_save": "Store log",
