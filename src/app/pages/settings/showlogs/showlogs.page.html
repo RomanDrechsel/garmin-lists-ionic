@@ -1,9 +1,13 @@
 <app-main-toolbar back="/settings/logging">{{'page_settings_showlogs.page_title'|translate}}</app-main-toolbar>
 
 <ion-content>
-    <ion-select [label]="'page_settings_showlogs.logfile'|translate" label-placement="stacked" interface="popover" [value]="currentLogfile" [compareWith]="compareLogfiles" (ionChange)="onChangeLogfile($event)">
-        <ion-select-option *ngFor="let file of availableLogfiles" [value]="file" (selected)="currentLogfile?.Path == file.Path">{{formatLogfile(file)}}</ion-select-option>
-    </ion-select>
+    <div class="select">
+        <ion-icon src="./assets/icons/calendar.svg" class="calendar" (click)="openCalendar()"></ion-icon>
+        <ion-select label-placement="fixes" interface="popover" (ionChange)="onChangeLogfile($event)" #selectLogfiles>
+            <ion-select-option *ngFor="let file of availableLogfiles" [value]="file" (selected)="currentLogfile?.Path == file.uri">{{formatLogfile(file)}}</ion-select-option>
+            <ion-select-option *ngIf="availableLogfiles.length < totalLogfiles" [value]="null">{{ formatLogfile(null) }}</ion-select-option>
+        </ion-select>
+    </div>
     <div id="logtext">{{currentLogfile?.Content}}</div>
 
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">

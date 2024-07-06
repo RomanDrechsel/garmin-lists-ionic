@@ -1,6 +1,6 @@
 import { formatDate } from "@angular/common";
 import { Injectable, isDevMode } from "@angular/core";
-import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
+import { Directory, Encoding, FileInfo, Filesystem } from "@capacitor/filesystem";
 import { FileUtils } from "src/app/classes/utils/fileutils";
 import { StringUtils } from "../../classes/utils/stringutils";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
@@ -270,32 +270,32 @@ export class LoggingService {
 
     /**
      * get a list of all logfiles on the device
+     * @param maxcount maximum number of files
      * @returns array with all logfiles
      */
-    public async ListLogfiles(): Promise<FileUtils.File[]> {
+    public async ListLogfiles(maxcount?: number): Promise<{ totalcount: number, files: FileInfo[]; }> {
         try {
-            let ret: FileUtils.File[] = [];
+            let ret: FileInfo[] = [];
             let files = (await Filesystem.readdir({ path: LoggingService.LogPath, directory: LoggingService.LogDirectory })).files;
             if (files) {
-                files.sort((a, b) => (a.mtime < b.mtime ? 1 : b.mtime < a.mtime ? -1 : 0));
-                await Promise.all(
-                    files.map(async file => {
-                        if (file.type == "file") {
-                            let logfile = await FileUtils.GetFileStat(file.uri);
-                            if (logfile) {
-                                ret.push(logfile);
-                            }
-                        }
-                    }),
-                );
+                files.sort((a, b) => a.mtime - b.mtime);
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.type == "file") {
+                        ret.push(file);
+                    }
+                    if (maxcount && ret.length >= maxcount) {
+                        break;
+                    }
+                }
             }
-            return ret;
+            return { totalcount: files.length, files: ret };
         } catch (e) {
-            let logfile = await FileUtils.GetFileStat(this.LogFile, LoggingService.LogDirectory);
+            let logfile = await Filesystem.stat({ path: this.LogFile, directory: LoggingService.LogDirectory });
             if (logfile) {
-                return [logfile];
+                return { totalcount: 1, files: [logfile as FileInfo] };
             }
-            return [];
+            return { totalcount: 0, files: [] };
         }
     }
 
@@ -354,7 +354,7 @@ export class LoggingService {
      * get the size and file count of all logfiles on the device
      * @returns size in bytes and number of logfiles
      */
-    public async GetLogSize(): Promise<{ size: number; files: number }> {
+    public async GetLogSize(): Promise<{ size: number; files: number; }> {
         return FileUtils.GetDirStat(LoggingService.LogPath, LoggingService.LogDirectory);
     }
 }

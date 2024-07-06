@@ -1,7 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Capacitor } from "@capacitor/core";
+import { FileInfo } from "@capacitor/filesystem";
 import { SelectCustomEvent } from "@ionic/angular";
 import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTextarea, ModalController, NavController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
@@ -21,8 +22,10 @@ import { PageBase } from "../../page-base";
     imports: [CommonModule, FormsModule, TranslateModule, MainToolbarComponent, IonIcon, IonLabel, IonFabButton, IonFab, IonFabList, IonContent, IonList, IonItem, IonSelect, IonTextarea, IonSelectOption],
 })
 export class ShowlogsPage extends PageBase {
+    @ViewChild('selectLogfiles') private selectLogfiles?: IonSelect;
     public currentLogfile?: FileUtils.File;
-    public availableLogfiles: FileUtils.File[] = [];
+    public availableLogfiles: FileInfo[] = [];
+    public totalLogfiles: number = 0;
     private timerSubscription?: Subscription;
 
     private readonly ModaleCtrl = inject(ModalController);
@@ -82,32 +85,31 @@ export class ShowlogsPage extends PageBase {
         }
     }
 
-    public formatLogfile(file?: FileUtils.File): string {
+    public formatLogfile(file?: FileInfo | null): string {
         if (file) {
-            return `${file.Filename} (${FileUtils.File.FormatSize(file.Size)})`;
+            return `${file.name} (${FileUtils.File.FormatSize(file.size)})`;
         } else {
             return "";
         }
     }
 
-    compareLogfiles(f1: FileUtils.File, f2: FileUtils.File) {
-        if (!f1 || !f2) {
-            return f1 === f2;
-        }
+    public openCalendar() {
 
-        return f1.Path === f2.Path;
     }
 
-    private async loadLogfile(file: FileUtils.File | undefined = undefined) {
-        //WIP: Limit max count
-        this.availableLogfiles = await this.Logger.ListLogfiles();
-        this.availableLogfiles.sort((a, b) => (a.Modified < b.Modified ? 1 : a.Modified < b.Modified ? -1 : 0));
-
-        this.currentLogfile = await this.Logger.GetLogfile(file?.Filename);
+    private async loadLogfile(file: FileInfo | undefined = undefined) {
+        const logs = await this.Logger.ListLogfiles(20);
+        this.availableLogfiles = logs.files;
+        this.totalLogfiles = logs.totalcount;
+        this.currentLogfile = await this.Logger.GetLogfile(file?.name);
 
         if (this.currentLogfile.Exists == false && this.availableLogfiles.length > 0) {
-            this.currentLogfile = await this.Logger.GetLogfile(this.availableLogfiles[0].Filename);
+            this.currentLogfile = await this.Logger.GetLogfile(this.availableLogfiles[0].name);
         }
+        if (this.currentLogfile && this.selectLogfiles) {
+            this.selectLogfiles.label = this.currentLogfile?.Filename;
+        }
+
         this.cdr.detectChanges();
     }
 }
