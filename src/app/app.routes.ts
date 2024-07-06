@@ -51,7 +51,7 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/settings/trash-settings/trash-settings.page").then(m => m.TrashSettingsPage),
     },
     {
-        path: "appinfos",
+        path: "appinfo",
         loadComponent: () => import("./pages/appinfos/appinfos.page").then(m => m.AppinfosPage),
     },
     {

@@ -9,7 +9,7 @@ export class ListitemsTrashProvider {
 
     private _maxEntryCount: number = -1;
 
-    public constructor(private readonly Backend: ListsBackendService, private readonly _datasetChangedSubject: BehaviorSubject<ListitemTrashModel | undefined>) {}
+    public constructor(private readonly Backend: ListsBackendService, private readonly _datasetChangedSubject: BehaviorSubject<ListitemTrashModel | undefined>) { }
 
     /**
      * keep a maximum number of listitems in every list trash
@@ -89,7 +89,7 @@ export class ListitemsTrashProvider {
     public async EraseListitemTrash(trash: ListitemTrashModel): Promise<boolean> {
         const success = await this.Backend.RemoveAllListitems(trash, this.StoragePath);
         if (success === true) {
-            this._datasetChangedSubject.next(trash);
+            this._datasetChangedSubject.next(undefined);
         }
         return success !== false;
     }
@@ -124,10 +124,18 @@ export class ListitemsTrashProvider {
     }
 
     /**
+     * returns the number of trashes in the backend
+     * @returns number of trashes
+     */
+    public async CountAll(): Promise<number> {
+        return this.Backend.CountFiles(this.StoragePath);
+    }
+
+    /**
      * returns the total size of all files in the backend
      * @returns size in bytes and number of entries
      */
-    public async BackendSize(): Promise<{ size: number; files: number }> {
+    public async BackendSize(): Promise<{ size: number; files: number; }> {
         return this.Backend.GetSize(this.StoragePath);
     }
 

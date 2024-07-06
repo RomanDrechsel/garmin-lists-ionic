@@ -6,7 +6,7 @@ import { IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, 
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
-import { MenuItem, MenuItemDevices, MenuItemEmptyList, MenuItemGeoFancing, MenuItemListitemsTrash } from "../../../classes/menu-items";
+import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { PageAddNewComponent } from "../../../components/page-add-new/page-add-new.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { List } from "../../../services/lists/list";
@@ -24,7 +24,7 @@ import { PageBase } from "../../page-base";
     imports: [IonCol, IonRow, IonImg, IonGrid, IonText, IonFabButton, IonFab, IonReorder, IonNote, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent],
 })
 export class ListItemsPage extends PageBase {
-    @ViewChild("itemsContainer") private itemsContainer!: IonList;
+    @ViewChild("itemsContainer") private itemsContainer?: IonList;
 
     public List?: List | null = undefined;
     private disableClick = false;
@@ -108,14 +108,14 @@ export class ListItemsPage extends PageBase {
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         }
-        this.itemsContainer.closeSlidingItems();
+        this.itemsContainer?.closeSlidingItems();
     }
 
     public async hideItem(item: Listitem) {
         if (this.List) {
             await this.ListsService.ToggleHiddenListitem(this.List, item);
         }
-        this.itemsContainer.closeSlidingItems();
+        this.itemsContainer?.closeSlidingItems();
     }
 
     public async addItem() {
@@ -137,20 +137,13 @@ export class ListItemsPage extends PageBase {
 
     public override ModifyMainMenu(): MenuItem[] {
         if (this.List) {
-            //devices
-            const menu_devices = MenuItemDevices();
-            menu_devices.Title = this.Locale.getText("page_listitems.menu_devices");
-            menu_devices.Url += `/${this.List.Uuid}`;
-            menu_devices.onClick = async () => {
-                this.ConnectIQ.TransmitList(this.List!.Uuid);
-                return true;
-            };
-
-            let menu = [menu_devices];
-            menu.push(MenuItemGeoFancing(this.List.Uuid, !this.geofencing));
-            menu.push(MenuItemListitemsTrash(this.List.Uuid, !this.useTrash));
-            menu.push(MenuItemEmptyList(() => this.EmptyList(), this.List.Items.length <= 0));
-            return menu;
+            return [
+                MenuitemFactory(EMenuItemType.ListsTrash, { hidden: true }),
+                MenuitemFactory(EMenuItemType.Devices, { title_id: "page_listitems.menu_devices", url_addition: this.List.Uuid, onClick: async () => { this.ConnectIQ.TransmitList(this.List!.Uuid); return true; } }),
+                MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: this.List.Uuid, disabled: !this.useTrash }),
+                MenuitemFactory(EMenuItemType.GeoFencing, { url_addition: this.List.Uuid, disabled: !this.geofencing }),
+                MenuitemFactory(EMenuItemType.EmptyList, { onClick: () => this.EmptyList(), disabled: this.List.Items.length <= 0 }),
+            ];
         } else {
             return [];
         }

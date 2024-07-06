@@ -1,10 +1,10 @@
 import { CommonModule } from "@angular/common";
-import { Component, ViewChild, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { IonContent, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
-import { MenuItem, MenuItemEmptyListTrash } from "../../../classes/menu-items";
+import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { ListitemModel } from "../../../services/lists/listitem";
@@ -16,13 +16,14 @@ import { PageBase } from "../../page-base";
     templateUrl: "./trash-listitems.page.html",
     styleUrls: ["./trash-listitems.page.scss"],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [IonImg, IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListitemsPage extends PageBase {
     @ViewChild("itemsContainer") private itemsContainer!: IonList;
     public Trash?: ListitemTrashModel;
 
-    private itemsChangedSubscription?: Subscription;
+    private trashChangedSubscription?: Subscription;
 
     private Route = inject(ActivatedRoute);
 
@@ -31,20 +32,26 @@ export class TrashListitemsPage extends PageBase {
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
             this.Trash = await this.ListsService.GetListitemTrash(listid);
+            this.cdr.detectChanges();
         }
+
+        this.trashChangedSubscription = this.ListsService.onTrashItemsDatasetChanged$.subscribe(trash => {
+            this.Trash = trash;
+            this.cdr.detectChanges();
+            this.appComponent.setAppPages(this.ModifyMainMenu());
+        });
     }
 
     public override async ionViewDidLeave() {
         super.ionViewDidLeave();
-        this.itemsChangedSubscription?.unsubscribe();
+        this.trashChangedSubscription?.unsubscribe();
     }
 
     public override ModifyMainMenu(): MenuItem[] {
-        const empty = MenuItemEmptyListTrash(() => this.emptyTrash(), false);
-        if (this.Trash && this.Trash.items.length <= 0) {
-            empty.Disabled = true;
-        }
-        return [empty];
+        return [
+            MenuitemFactory(EMenuItemType.ListsTrash, { hidden: true }),
+            MenuitemFactory(EMenuItemType.EmptyItemTrash, { disabled: (this.Trash ? this.Trash?.items.length <= 0 : true), onClick: () => this.emptyTrash() }),
+        ];
     }
 
     public onSwipeRight(item: ListitemModel) {

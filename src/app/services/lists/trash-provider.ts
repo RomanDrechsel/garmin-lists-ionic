@@ -48,23 +48,27 @@ export class TrashProvider extends ListsProvider {
      * @param uuids list or array of lists to be removed
      * @returns how many lists where deleted?
      */
-    public async EraseLists(uuids: string | string[]): Promise<number> {
+    public async EraseLists(uuids: string | string[], erase_itemtrash: boolean = true): Promise<number> {
         if (!Array.isArray(uuids)) {
             uuids = [uuids];
         }
         const del = await this.Backend.RemoveLists(uuids, this.StoragePath);
-        await this.ListitemsTrash.EraseLists(uuids);
+        if (erase_itemtrash) {
+            await this.ListitemsTrash.EraseLists(uuids);
+        }
         this._datasetChangedSubject.next(await this.GetLists(true));
         return del;
     }
 
     /**
      * wipes all lists from trash
+     * @returns number of deleted lists
      */
     public async WipeTrash(): Promise<number> {
         const lists = await this.Backend.GetLists(this.StoragePath);
         await this.Backend.WipeAll(this.StoragePath);
         await this.ListitemsTrash.EraseLists(lists.map(l => l.uuid));
+        this._datasetChangedSubject.next(await this.GetLists(true));
         return lists.length;
     }
 

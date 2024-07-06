@@ -59,18 +59,14 @@ export class TrashSettingsPage extends PageBase {
 
     public async onUseTrashChanged(checked: boolean) {
         if (checked == false) {
-            const count = (await this.ListsService.GetTrash()).length;
-            if (count > 0) {
-                if (
-                    await this.Popups.Alert.YesNo({
-                        message: "page_settings_trash.confirm_cleartrash",
-                        button_yes: "page_settings_trash.confirm_cleartrash_ok",
-                        button_no: "page_settings_trash.confirm_cleartrash_cancel",
-                        translate: true,
-                    })
-                ) {
-                    await this.ListsService.WipeTrash(true);
-                }
+            const count = await this.ListsService.GetTrashCount();
+            if (count > 0 && await this.Popups.Alert.YesNo({
+                message: "page_settings_trash.confirm_cleartrash",
+                button_yes: "page_settings_trash.confirm_cleartrash_ok",
+                button_no: "page_settings_trash.confirm_cleartrash_cancel",
+                translate: true,
+            })) {
+                await this.ListsService.WipeTrash(true);
             }
         }
         this.UseTrash = checked;
@@ -78,15 +74,14 @@ export class TrashSettingsPage extends PageBase {
 
     public async onUseTrashListitemsChanged(checked: boolean) {
         if (checked == false) {
-            if (
-                await this.Popups.Alert.YesNo({
-                    message: "page_settings_trash.confirm_clearitemstrash",
-                    button_yes: "page_settings_trash.confirm_clearitemstrash_ok",
-                    button_no: "page_settings_trash.confirm_clearitemstrash_cancel",
-                    translate: true,
-                })
-            ) {
-                await this.ListsService.WipeListitemTrash();
+            const count = await this.ListsService.GetItemsTrashCount();
+            if (count > 0 && await this.Popups.Alert.YesNo({
+                message: "page_settings_trash.confirm_clearitemstrash",
+                button_yes: "page_settings_trash.confirm_clearitemstrash_ok",
+                button_no: "page_settings_trash.confirm_clearitemstrash_cancel",
+                translate: true,
+            })) {
+                await this.ListsService.WipeListitemTrashes();
             }
         }
         this.UseTrashListitems = checked;

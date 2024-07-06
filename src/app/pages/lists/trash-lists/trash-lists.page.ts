@@ -3,7 +3,7 @@ import { Component, ViewChild } from "@angular/core";
 import { IonContent, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
-import { MenuItem, MenuItemEmptyListTrash } from "../../../classes/menu-items";
+import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { DateUtils } from "../../../classes/utils/dateutils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
@@ -38,11 +38,9 @@ export class TrashListsPage extends PageBase {
     }
 
     public override ModifyMainMenu(): MenuItem[] {
-        const empty = MenuItemEmptyListTrash(() => this.emptyTrash());
-        if (this.Lists.length <= 0) {
-            empty.Disabled = true;
-        }
-        return [empty];
+        return [
+            MenuitemFactory(EMenuItemType.EmptyListTrash, { onClick: () => this.emptyTrash(), disabled: this.Lists.length <= 0 }),
+        ];
     }
 
     public async onSwipeRight(list: List) {

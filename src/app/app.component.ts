@@ -5,7 +5,7 @@ import { App } from "@capacitor/app";
 import { StatusBar } from "@capacitor/status-bar";
 import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonNote, IonRouterOutlet, IonSplitPane, IonToggle, NavController, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import { MenuItem, MenuItemAppInfos, MenuItemDevices, MenuItemLists, MenuItemListsTrash, MenuItemPrivacy, MenuItemSettings } from "./classes/menu-items";
+import { EMenuItemType, MenuItem, MenuitemFactory, MenuitemFactoryList } from "./classes/menu-items";
 import { AdmobService } from "./services/adverticing/admob.service";
 import { AppService } from "./services/app/app.service";
 import { ConnectIQService } from "./services/connectiq/connect-iq.service";
@@ -21,7 +21,7 @@ import { EPrefProperty, PreferencesService } from "./services/storage/preference
 })
 export class AppComponent implements OnInit {
     public appPages: MenuItem[] = [];
-    public systemPages: MenuItem[] = [MenuItemSettings(), MenuItemAppInfos(), MenuItemPrivacy()];
+    public systemPages: MenuItem[] = MenuitemFactoryList([EMenuItemType.Settings, EMenuItemType.AppInfo, EMenuItemType.Privacy]);
     private useTrash: boolean = true;
 
     public readonly ConnectIQ = inject(ConnectIQService);
@@ -83,12 +83,14 @@ export class AppComponent implements OnInit {
     }
 
     public setAppPages(menu: MenuItem[] = []) {
-        const required = [MenuItemLists(), MenuItemDevices(), MenuItemListsTrash(!this.useTrash)];
+        let required = MenuitemFactoryList([EMenuItemType.Lists, EMenuItemType.Devices]);
+        required.push(MenuitemFactory(EMenuItemType.ListsTrash, { disabled: !this.useTrash }));
         for (let i = required.length - 1; i >= 0; i--) {
             if (!menu?.find(m => m.Id == required[i].Id)) {
                 menu?.unshift(required[i]);
             }
         }
+        menu = menu.filter(m => m.Hidden !== true);
         this.appPages = menu;
     }
 
