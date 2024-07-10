@@ -87,6 +87,9 @@
         "title": "Ort bearbeiten",
         "description": "Bezeichnung:"
     },
+    "comp-datetime": {
+        "title": "Startzeit der Logfiles:"
+    },
     "page_lists": {
         "page_title": "Meine Listen",
         "empty": "Leeren",
@@ -152,7 +155,7 @@
         "trash": "Papierkorb",
         "trash_note": "Einstellungen zur Verwendung des Papierkorbs",
         "openontransmit": "App beim Übertragen starten",
-        "openontransmit_note": "Auf deinet Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst.",
+        "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst.",
         "geofencing": "Geo-Fencing erlauben",
         "geofencing_note": "Ermöglicht, für jede Liste einen Ort festzulegen, in dessen Nähe auf deiner Uhr nachgefragt wird ob die App geöffnet werden soll.",
         "geofencing_warning": "<br /><strong>Achtung:</strong> Dies kann zu einer erhöhten Akku-Beanspruchung deines Smartphones führen!"

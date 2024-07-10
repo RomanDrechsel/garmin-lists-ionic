@@ -3,9 +3,9 @@
 <ion-content>
     <ion-list>
         <ion-item lines="full">
-            <ion-select [label]="'page_settings.language'|translate" label-placement="stacked" value="{{Locale.currentLang}}" [okText]="'change'|translate" [cancelText]="'cancel'|translate" (ionChange)="onChangeLanguage($event)">
-                <ion-select-option *ngFor="let details of Locale.availableLangsDetails" value="{{details.short}}" (selected)="Locale.currentLang == details.short">
-                    {{details.long}}
+            <ion-select [label]="'page_settings.language'|translate" label-placement="stacked" value="{{Locale.CurrentLanguage.locale}}" [okText]="'change'|translate" [cancelText]="'cancel'|translate" (ionChange)="onChangeLanguage($event)">
+                <ion-select-option *ngFor="let details of Locale.availableTranslations" value="{{details.locale}}" (selected)="Locale.CurrentLanguage.locale == details.locale">
+                    {{details.name}}
                 </ion-select-option>
             </ion-select>
         </ion-item>

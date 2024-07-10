@@ -7,6 +7,6 @@ export const environment = {
     publicRelease: false,
 };
 
-export const DebugDevices = function (service: ConnectIQService): ConnectIQDevice[] {
-    return [ConnectIQDevice.FromEventArgs({ id: 123456789, name: Locale.currentLang() == "de" ? "Mandy's Uhr" : "Mandy's watch", state: "Ready" }, service)];
+export const DebugDevices = function(service: ConnectIQService): ConnectIQDevice[] {
+    return [ConnectIQDevice.FromEventArgs({ id: 123456789, name: Locale.currentLang().localeFile == "de" ? "Mandy's Uhr" : "Mandy's watch", state: "Ready" }, service)];
 };

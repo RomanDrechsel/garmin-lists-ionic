@@ -8,7 +8,7 @@ export const AppMetaData = async function(app: AppService) {
         LogMode: app.loggerService.LogLevelShort,
         Resolution: `${app.DeviceWidth}x${app.DeviceHeight}`,
         DeviceIdentifier: AppService.AppInfo.Identifier,
-        AppLanguage: app.Locale.currentLang,
+        AppLanguage: app.Locale.CurrentLanguage.locale,
         Device: appInfo
     };
 };
