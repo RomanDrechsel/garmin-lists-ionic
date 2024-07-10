@@ -1,8 +1,9 @@
 .select {
     position: sticky;
     top: 0;
-    border-bottom: solid 1px var(--color-border);
+    border-bottom: solid 1px var(--color-control-border);
     display: flex;
+    background: var(--color-control-background);
 
     ion-select {
         --padding-start: 6px;

@@ -10,6 +10,7 @@ import { Subscription, interval } from "rxjs";
 import { FileUtils } from "src/app/classes/utils/fileutils";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { AppMetaData } from "../../../classes/app-meta-data";
+import { SelectDatetime } from "../../../components/datetime/datetime.component";
 import { StoreFile } from "../../../components/store-file/store-file.component";
 import { AppService } from "../../../services/app/app.service";
 import { PageBase } from "../../page-base";
@@ -25,8 +26,9 @@ export class ShowlogsPage extends PageBase {
     @ViewChild('selectLogfiles') private selectLogfiles?: IonSelect;
     public currentLogfile?: FileUtils.File;
     public availableLogfiles: FileInfo[] = [];
-    public totalLogfiles: number = 0;
     private timerSubscription?: Subscription;
+
+    private selectedDate?: Date;
 
     private readonly ModaleCtrl = inject(ModalController);
     private readonly AppService = inject(AppService);
@@ -34,7 +36,7 @@ export class ShowlogsPage extends PageBase {
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
-        this.loadLogfile();
+        await this.selectLogDay(undefined);
     }
 
     public override async ionViewDidEnter() {
@@ -93,21 +95,37 @@ export class ShowlogsPage extends PageBase {
         }
     }
 
-    public openCalendar() {
-
+    public async openCalendar() {
+        const date = await SelectDatetime(this.ModaleCtrl, { preselect: this.selectedDate });
+        if (date) {
+            this.selectLogDay(date);
+        }
     }
 
-    private async loadLogfile(file: FileInfo | undefined = undefined) {
-        const logs = await this.Logger.ListLogfiles(20);
-        this.availableLogfiles = logs.files;
-        this.totalLogfiles = logs.totalcount;
-        this.currentLogfile = await this.Logger.GetLogfile(file?.name);
-
-        if (this.currentLogfile.Exists == false && this.availableLogfiles.length > 0) {
-            this.currentLogfile = await this.Logger.GetLogfile(this.availableLogfiles[0].name);
+    private async selectLogDay(date: Date | undefined) {
+        if (!date) {
+            date = new Date();
         }
-        if (this.currentLogfile && this.selectLogfiles) {
-            this.selectLogfiles.label = this.currentLogfile?.Filename;
+
+        this.selectedDate = date;
+        this.availableLogfiles = await this.Logger.ListLogfiles(new Date(date).setHours(0, 0, 0, 0), new Date(date).setHours(23, 59, 59, 999));
+        if (this.availableLogfiles.length > 0) {
+            this.loadLogfile(this.availableLogfiles[0]);
+        }
+        else {
+            this.loadLogfile(undefined);
+        }
+    }
+
+    private async loadLogfile(file: FileInfo | undefined) {
+        if (file) {
+            this.currentLogfile = await this.Logger.GetLogfile(file?.name);
+            if (this.currentLogfile && this.selectLogfiles) {
+                this.selectLogfiles.label = this.currentLogfile?.Filename;
+            }
+        }
+        else {
+            this.currentLogfile = undefined;
         }
 
         this.cdr.detectChanges();

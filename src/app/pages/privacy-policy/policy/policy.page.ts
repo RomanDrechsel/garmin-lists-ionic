@@ -23,8 +23,7 @@ export class PolicyPage extends PageBase {
     private readonly http = inject(HttpClient);
 
     public override async ionViewWillEnter() {
-        const language = this.Locale.currentLang;
-        switch (language) {
+        switch (this.Locale.CurrentLanguage.localeFile) {
             case "de":
                 this._policy.nativeElement.innerHTML = await firstValueFrom(this.http.get("./assets/i18n/privacy-policy/de.html", { responseType: "text" }));
                 break;

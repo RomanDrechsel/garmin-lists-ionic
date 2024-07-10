@@ -88,6 +88,9 @@
         "title": "Edit place",
         "description": "Description:"
     },
+    "comp-datetime": {
+        "title": "Log file start time:"
+    },
     "page_lists": {
         "page_title": "My lists",
         "empty": "Empty",

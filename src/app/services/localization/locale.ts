@@ -1,4 +1,4 @@
-import { LocalizationService } from "./localization.service";
+import { Culture, LocalizationService } from "./localization.service";
 
 export class Locale {
     private static Service: LocalizationService;
@@ -16,8 +16,8 @@ export class Locale {
      * get current language
      * @returns short language
      */
-    public static currentLang(): string {
-        return Locale.Service.currentLang;
+    public static currentLang(): Culture {
+        return Locale.Service.CurrentLanguage;
     }
 
     /**
