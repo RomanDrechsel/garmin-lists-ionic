@@ -3,12 +3,21 @@
 <ion-content>
     <div class="select">
         <ion-icon src="./assets/icons/calendar.svg" class="calendar" (click)="openCalendar()"></ion-icon>
-        <ion-select label-placement="fixes" interface="popover" (ionChange)="onChangeLogfile($event)" #selectLogfiles>
+        <ion-select label="" interface="action-sheet" [interfaceOptions]="{header: 'page_settings_showlogs.select_logs'|translate}" (ionChange)="onChangeLogfile($event)" #selectLogfiles>
             <ion-select-option *ngFor="let file of availableLogfiles" [value]="file" (selected)="currentLogfile?.Path == file.uri">{{formatLogfile(file)}}</ion-select-option>
         </ion-select>
     </div>
     <div id="logtext" *ngIf="currentLogfile; else nologfile">{{currentLogfile.Content}}</div>
-    <ng-template #nologfile>Kein Log an dem Tag...</ng-template>
+    <ng-template #nologfile>
+        <app-page-empty>
+            <div slot="image">
+                <ion-icon src="./assets/icons/file.svg"></ion-icon>
+            </div>
+            <div slot="text">
+                <ion-text>{{'page_settings_showlogs.no_log_note'|translate: {date: SelectedDayString} }}</ion-text>
+            </div>
+        </app-page-empty>
+    </ng-template>
 
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button [disabled]="!currentLogfile || !currentLogfile.Exists">

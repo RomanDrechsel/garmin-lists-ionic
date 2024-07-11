@@ -39,7 +39,7 @@ export class DatetimeComponent {
     }
 
     public get Preselect(): string | undefined {
-        return this.Params?.preselect?.toISOString();
+        return this.Params?.selectedDate?.toISOString();
     }
 
     public async selectToday() {
@@ -82,5 +82,7 @@ export const SelectDatetime = async function(modalController: ModalController, p
 };
 
 declare type EditorParams = {
-    preselect?: Date;
+    selectedDate?: Date;
+    minimumDate?: Date;
+    maximumDate?: Date;
 };

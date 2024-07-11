@@ -1,4 +1,6 @@
-<ion-datetime locale="{{LocaleString}}" [showDefaultButtons]="false" [firstDayOfWeek]="FirstDayOfWeek" presentation="date" [max]="Today" value="{{Preselect}}" [formatOptions]="{ date: { day: '2-digit', month: 'long' }}" (ionChange)="onChange($event.detail.value)" #datetime>
+<ion-datetime locale="{{LocaleString}}" [showDefaultButtons]="false" [firstDayOfWeek]="FirstDayOfWeek" presentation="date" [min]="Params?.minimumDate?.toISOString() ?? undefined" [max]="Params?.maximumDate?.toISOString() ?? undefined" value="{{Preselect}}"
+              [formatOptions]="{ date: { day: '2-digit', month: 'long' }}"
+              (ionChange)="onChange($event.detail.value)" #datetime>
     <span slot=" title">{{'comp-datetime.title'|translate}}</span>
     <ion-buttons slot="buttons">
         <ion-button color="primary" (click)="selectToday()">{{'date.today'|translate}}</ion-button>

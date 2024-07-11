@@ -11,7 +11,7 @@ enum ELogType {
     Important = 2,
     Error = 1,
 }
-enum EAutoDelete {
+export enum EAutoDelete {
     Never = 0,
     Day = 1,
     Week = 7,
