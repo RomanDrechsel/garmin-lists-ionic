@@ -193,7 +193,11 @@
         "store_text": "Die Log-Datei <strong>{{filename}}</strong> wird in <strong>DOCUMENTS</strong> auf Ihren Gerät gespeichert.",
         "store_text_web": "Die Log-Datei <strong>{{filename}}</strong> wird auf Ihrem Rechner gespeichert.",
         "store_success": "Das Log wurde gespeichert.",
-        "store_error": "Das Log konnte nicht gespeichert werden!"
+        "store_error": "Das Log konnte nicht gespeichert werden!",
+        "select_logs": "Log-Datei auswählen:",
+        "logfile": "Log Datei",
+        "no_log": "Keine Log-Dateien gefunden!",
+        "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden."
     },
     "page_settings_confirm": {
         "page_title": "Bestätigungen",

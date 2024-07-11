@@ -4,13 +4,14 @@ import { FormsModule } from "@angular/forms";
 import { Capacitor } from "@capacitor/core";
 import { FileInfo } from "@capacitor/filesystem";
 import { SelectCustomEvent } from "@ionic/angular";
-import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTextarea, ModalController, NavController } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonText, IonTextarea, ModalController, NavController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { FileUtils } from "src/app/classes/utils/fileutils";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { AppMetaData } from "../../../classes/app-meta-data";
 import { SelectDatetime } from "../../../components/datetime/datetime.component";
+import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { StoreFile } from "../../../components/store-file/store-file.component";
 import { AppService } from "../../../services/app/app.service";
 import { PageBase } from "../../page-base";
@@ -20,7 +21,7 @@ import { PageBase } from "../../page-base";
     styleUrls: ["./showlogs.page.scss"],
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, FormsModule, TranslateModule, MainToolbarComponent, IonIcon, IonLabel, IonFabButton, IonFab, IonFabList, IonContent, IonList, IonItem, IonSelect, IonTextarea, IonSelectOption],
+    imports: [PageEmptyComponent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, IonIcon, IonLabel, IonFabButton, IonFab, IonFabList, IonContent, IonList, IonItem, IonSelect, IonTextarea, IonSelectOption, IonText],
 })
 export class ShowlogsPage extends PageBase {
     @ViewChild('selectLogfiles') private selectLogfiles?: IonSelect;
@@ -34,6 +35,16 @@ export class ShowlogsPage extends PageBase {
     private readonly AppService = inject(AppService);
     private readonly NavController = inject(NavController);
 
+    public get SelectedDayString(): string | undefined {
+        return this.selectedDate?.toLocaleDateString(this.Locale.CurrentLanguage.locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    }
+
+    public get selectActionSheetOptions(): any {
+        return {
+            header: 'Logfiles',
+        };
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
         await this.selectLogDay(undefined);
@@ -42,7 +53,9 @@ export class ShowlogsPage extends PageBase {
     public override async ionViewDidEnter() {
         await super.ionViewDidEnter();
         this.timerSubscription = interval(5000).subscribe(async () => {
-            this.currentLogfile = await this.Logger.GetLogfile(this.currentLogfile?.Filename);
+            if (this.currentLogfile) {
+                this.currentLogfile = await this.Logger.GetLogfile(this.currentLogfile?.Filename);
+            }
         });
     }
 
@@ -96,7 +109,14 @@ export class ShowlogsPage extends PageBase {
     }
 
     public async openCalendar() {
-        const date = await SelectDatetime(this.ModaleCtrl, { preselect: this.selectedDate });
+        let minimumDate: Date | undefined = undefined;
+        console.log(this.Logger.AutoDelete);
+        if (this.Logger.AutoDelete > 0) {
+            minimumDate = new Date();
+            minimumDate.setDate(minimumDate.getDate() - this.Logger.AutoDelete);
+        };
+
+        const date = await SelectDatetime(this.ModaleCtrl, { selectedDate: this.selectedDate, maximumDate: new Date(), minimumDate: minimumDate });
         if (date) {
             this.selectLogDay(date);
         }
@@ -126,6 +146,9 @@ export class ShowlogsPage extends PageBase {
         }
         else {
             this.currentLogfile = undefined;
+            if (this.selectLogfiles) {
+                this.selectLogfiles.label = this.Locale.getText("page_settings_showlogs.no_log");
+            }
         }
 
         this.cdr.detectChanges();

@@ -195,7 +195,11 @@
         "store_text": "The logfile <strong>{{filename}}</strong> will be stored in <strong>DOCUMENTS</strong> on your device.",
         "store_text_web": "The logfile <strong>{{filename}}</strong> will be stored on your disk.",
         "store_success": "The log was stored.",
-        "store_error": "The log could not be stored!"
+        "store_error": "The log could not be stored!",
+        "select_logs": "Select log file:",
+        "logfile": "log file",
+        "no_log": "No log files found!",
+        "no_log_note": "No log files were found for {{date}}"
     },
     "page_settings_confirm": {
         "page_title": "Confirmations",
