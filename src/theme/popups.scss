@@ -88,3 +88,9 @@ ion-alert {
         color: var(--color-highlight) !important;
     }
 }
+
+/** */
+.select-action-sheet .action-sheet-container {
+    max-height: calc(70dvh - (var(--ion-safe-area-top, 0) + var(--ion-safe-area-bottom, 0)));
+    box-shadow: 0px -50px 50px 0px var(--color-menu-shadow);
+}

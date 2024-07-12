@@ -68,6 +68,7 @@ ion-fab-button {
 ion-fab {
     margin: 12px;
     fill: var(--ion-color-secondary-contrast);
+
     ion-fab-button {
         --box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
 
@@ -158,4 +159,13 @@ ion-header {
 
 ion-note {
     --color: var(--ion-color-medium);
+}
+
+ion-backdrop {
+    --background: var(--color-backdrop);
+    --backdrop-opacity: 0.5;
+}
+
+ion-action-sheet {
+    backdrop-filter: blur(2px);
 }

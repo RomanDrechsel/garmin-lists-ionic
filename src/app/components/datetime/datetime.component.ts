@@ -38,13 +38,10 @@ export class DatetimeComponent {
         return new Date().toISOString();
     }
 
-    public get Preselect(): string | undefined {
-        return this.Params?.selectedDate?.toISOString();
-    }
-
     public async selectToday() {
         if (this.datetime) {
             this.datetime.value = new Date().toISOString();
+            this.datetime.confirm();
         }
     }
 
@@ -85,4 +82,5 @@ declare type EditorParams = {
     selectedDate?: Date;
     minimumDate?: Date;
     maximumDate?: Date;
+    title?: string;
 };

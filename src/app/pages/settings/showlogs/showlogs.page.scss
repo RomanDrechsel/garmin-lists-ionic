@@ -1,15 +1,10 @@
 .select {
     position: sticky;
     top: 0;
+    width: 100%;
     border-bottom: solid 1px var(--color-control-border);
-    display: flex;
     background: var(--color-control-background);
-
-    ion-select {
-        --padding-start: 6px;
-        --padding-end: 6px;
-        --background: var(--color-control-background);
-    }
+    display: flex;
 
     ion-icon {
         margin: auto auto;
@@ -18,6 +13,17 @@
         height: 24px;
         position: relative;
         top: -1px;
+        flex-grow: 0;
+    }
+
+    ion-select {
+        --padding-start: 6px;
+        --padding-end: 6px;
+        --background: var(--color-control-background);
+
+        &::part(container) {
+            display: none;
+        }
     }
 }
 
