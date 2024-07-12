@@ -87,9 +87,6 @@
         "title": "Ort bearbeiten",
         "description": "Bezeichnung:"
     },
-    "comp-datetime": {
-        "title": "Startzeit der Logfiles:"
-    },
     "page_lists": {
         "page_title": "Meine Listen",
         "empty": "Leeren",
@@ -196,6 +193,7 @@
         "store_error": "Das Log konnte nicht gespeichert werden!",
         "select_logs": "Log-Datei auswählen:",
         "logfile": "Log Datei",
+        "select_logday_title": "Alle Log-Dateien eines Tages anzeigen:",
         "no_log": "Keine Log-Dateien gefunden!",
         "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden."
     },

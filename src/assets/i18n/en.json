@@ -198,6 +198,7 @@
         "store_error": "The log could not be stored!",
         "select_logs": "Select log file:",
         "logfile": "log file",
+        "select_logday_title": "Show all log files of a certain day",
         "no_log": "No log files found!",
         "no_log_note": "No log files were found for {{date}}"
     },

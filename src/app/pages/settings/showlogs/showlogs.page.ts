@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Capacitor } from "@capacitor/core";
 import { FileInfo } from "@capacitor/filesystem";
@@ -24,7 +24,6 @@ import { PageBase } from "../../page-base";
     imports: [PageEmptyComponent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, IonIcon, IonLabel, IonFabButton, IonFab, IonFabList, IonContent, IonList, IonItem, IonSelect, IonTextarea, IonSelectOption, IonText],
 })
 export class ShowlogsPage extends PageBase {
-    @ViewChild('selectLogfiles') private selectLogfiles?: IonSelect;
     public currentLogfile?: FileUtils.File;
     public availableLogfiles: FileInfo[] = [];
     private timerSubscription?: Subscription;
@@ -39,10 +38,8 @@ export class ShowlogsPage extends PageBase {
         return this.selectedDate?.toLocaleDateString(this.Locale.CurrentLanguage.locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
     }
 
-    public get selectActionSheetOptions(): any {
-        return {
-            header: 'Logfiles',
-        };
+    public get LogfilesAvailable(): boolean {
+        return this.availableLogfiles.length > 0;
     }
 
     public override async ionViewWillEnter() {
@@ -110,13 +107,12 @@ export class ShowlogsPage extends PageBase {
 
     public async openCalendar() {
         let minimumDate: Date | undefined = undefined;
-        console.log(this.Logger.AutoDelete);
         if (this.Logger.AutoDelete > 0) {
             minimumDate = new Date();
             minimumDate.setDate(minimumDate.getDate() - this.Logger.AutoDelete);
         };
 
-        const date = await SelectDatetime(this.ModaleCtrl, { selectedDate: this.selectedDate, maximumDate: new Date(), minimumDate: minimumDate });
+        const date = await SelectDatetime(this.ModaleCtrl, { selectedDate: this.selectedDate, maximumDate: new Date(), minimumDate: minimumDate, title: this.Locale.getText("page_settings_showlogs.select_logday_title") });
         if (date) {
             this.selectLogDay(date);
         }
@@ -130,25 +126,19 @@ export class ShowlogsPage extends PageBase {
         this.selectedDate = date;
         this.availableLogfiles = await this.Logger.ListLogfiles(new Date(date).setHours(0, 0, 0, 0), new Date(date).setHours(23, 59, 59, 999));
         if (this.availableLogfiles.length > 0) {
-            this.loadLogfile(this.availableLogfiles[0]);
+            this.loadLogfile(this.availableLogfiles[0].name);
         }
         else {
             this.loadLogfile(undefined);
         }
     }
 
-    private async loadLogfile(file: FileInfo | undefined) {
-        if (file) {
-            this.currentLogfile = await this.Logger.GetLogfile(file?.name);
-            if (this.currentLogfile && this.selectLogfiles) {
-                this.selectLogfiles.label = this.currentLogfile?.Filename;
-            }
+    private async loadLogfile(filename: string | undefined) {
+        if (filename) {
+            this.currentLogfile = await this.Logger.GetLogfile(filename);
         }
         else {
             this.currentLogfile = undefined;
-            if (this.selectLogfiles) {
-                this.selectLogfiles.label = this.Locale.getText("page_settings_showlogs.no_log");
-            }
         }
 
         this.cdr.detectChanges();
