@@ -1,4 +1,3 @@
-import { GeoFence, GeoFenceModel } from "../geo/geo-fence";
 import { Logger } from "../logging/logger";
 import { Listitem, ListitemModel } from "./listitem";
 
@@ -11,8 +10,6 @@ export class List {
     private _itemsCount?: number;
     private _items?: Listitem[];
     private _deleted?: number;
-    private _geofence?: GeoFence;
-    private _geofenceEnabled: boolean = false;
     private _dirty: boolean = false;
 
     public constructor(obj: ListModel, itemcount?: number) {
@@ -35,9 +32,6 @@ export class List {
             }
         }
         this._itemsCount = this._items?.length ?? itemcount;
-        this._deleted = obj.deleted;
-        this._geofence = obj.geofence ? GeoFence.fromBackend(obj.geofence) : undefined;
-        this._geofenceEnabled = (this._geofence && obj.geofence_enabled) ?? false;
         this._deleted = obj.deleted;
         this._dirty = true;
     }
@@ -130,33 +124,6 @@ export class List {
     /** get the deleted timestamp */
     public get Deleted(): number {
         return this._deleted ?? 0;
-    }
-
-    /** set the geofence */
-    public set GeoFence(fence: GeoFence | undefined) {
-        if ((fence && !fence.equals(this.GeoFence)) || (!fence && this.GeoFence)) {
-            this._dirty = true;
-            this._geofence = fence;
-            this._geofenceEnabled = fence != undefined;
-        }
-    }
-
-    /** get the geofence */
-    public get GeoFence(): GeoFence | undefined {
-        return this._geofence;
-    }
-
-    /** set the geofence enabled state */
-    public set GeoFenceEnabled(enabled: boolean) {
-        if (this._geofenceEnabled != enabled) {
-            this._geofenceEnabled = enabled;
-            this._dirty = true;
-        }
-    }
-
-    /** get the geofence enabled state */
-    public get GeoFenceEnabled(): boolean {
-        return this._geofenceEnabled;
     }
 
     /** are only peek information loaded */
@@ -283,8 +250,6 @@ export class List {
                 created: this._created,
                 updated: this._updated ?? undefined,
                 deleted: this._deleted ?? undefined,
-                geofence: undefined,
-                geofence_enabled: undefined,
                 order: this._order,
             };
 
@@ -292,11 +257,6 @@ export class List {
                 this._items.forEach(item => {
                     ret.items!.push(item.toBackend());
                 });
-            }
-
-            if (this._geofence) {
-                ret.geofence = this._geofence.toBackend();
-                ret.geofence_enabled = this._geofenceEnabled;
             }
 
             this.Clean();
@@ -363,8 +323,6 @@ export class List {
                 updated: obj.updated,
                 deleted: obj.deleted,
                 items: obj.items,
-                geofence: obj.geofence,
-                geofence_enabled: obj.geofence_enabled,
             },
             itemscount,
         );
@@ -382,6 +340,4 @@ export declare type ListModel = {
     updated?: number;
     deleted?: number;
     items?: ListitemModel[];
-    geofence?: GeoFenceModel;
-    geofence_enabled?: boolean;
 };

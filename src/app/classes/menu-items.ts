@@ -10,8 +10,7 @@ export enum EMenuItemType {
     "Devices",
     "Settings",
     "AppInfo",
-    "Privacy",
-    "GeoFencing"
+    "Privacy"
 }
 export const MenuitemFactory = function(itemtype: EMenuItemType, options?: { title_id?: string, url_addition?: string, disabled?: boolean, hidden?: boolean, onClick?: () => Promise<boolean>; }): MenuItem {
     let url: string;
@@ -43,9 +42,6 @@ export const MenuitemFactory = function(itemtype: EMenuItemType, options?: { tit
         case EMenuItemType.Privacy:
             url = options?.url_addition ? StringUtils.concat(["/privacy-policy/privacy", options.url_addition], "/") : "/privacy-policy/privacy";
             return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.privacy", Icon: "./assets/icons/menu/privacy.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
-        case EMenuItemType.GeoFencing:
-            url = options?.url_addition ? StringUtils.concat(["/geofencing", options.url_addition], "/") : "/geofencing";
-            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.geofencing", Icon: "./assets/icons/menu/geofencing.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
     }
 };
 

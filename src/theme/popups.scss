@@ -89,8 +89,17 @@ ion-alert {
     }
 }
 
-/** */
+/** ion-select with action sheet as interface */
 .select-action-sheet .action-sheet-container {
-    max-height: calc(70dvh - (var(--ion-safe-area-top, 0) + var(--ion-safe-area-bottom, 0)));
+    max-height: calc(80dvh - (var(--ion-safe-area-top, 0) + var(--ion-safe-area-bottom, 0)));
     box-shadow: 0px -50px 50px 0px var(--color-menu-shadow);
+    --color: var(--color-text-tint);
+    --background: var(--color-popup-background);
+    --button-color: var(--color);
+    --button-color-hover: var(--color-text);
+    --button-color-selected: var(--text-color);
+
+    .action-sheet-selected {
+        background: var(--color-control-selected-background);
+    }
 }

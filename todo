@@ -1,8 +1,8 @@
-WIP: Geofencing - Open App and load list automaticly
-TODO: Lock items
+TODO: Select logfiles export folder
+https://github.com/zagham-nadeem/capacitor-folder-picker
 
-GeoLocation:
-https://github.com/capacitor-community/background-geolocation/tree/master
+
+TODO: Lock items
 
 ConnectIQ Documentation:
 https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/

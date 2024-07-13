@@ -18,15 +18,6 @@
             </ion-toggle>
         </ion-item>
 
-        <!-- geofencing -->
-        <ion-item lines="full">
-            <ion-toggle label-placement="start" [checked]="GeoFencing" (ionChange)="onGeoFencingChanged($event.target.checked)">
-                <div class="text" [innerHTML]="'page_settings.geofencing'|translate"></div>
-                <ion-note [innerHTML]="'page_settings.geofencing_note'|translate"></ion-note>
-                <ion-note [innerHTML]="'page_settings.geofencing_warning'|translate"></ion-note>
-            </ion-toggle>
-        </ion-item>
-
         <!-- confirmations -->
         <ion-item [button]="true" routerDirection="forward" [routerLink]="['/settings/confirmations']" lines="full">
             <ion-label>

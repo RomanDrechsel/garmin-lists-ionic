@@ -27,8 +27,7 @@
         "settings": "Einstellungen",
         "privacy": "Datenschutz",
         "appinfos": "App Informationen",
-        "empty_trash": "Papierkorb leeren",
-        "geofencing": "Geo-Fencing"
+        "empty_trash": "Papierkorb leeren"
     },
     "service-lists": {
         "store_list_error": "Die Liste konnte nicht gespeichert werden!",
@@ -68,10 +67,6 @@
         "transmit_success": "Die Liste wurde erfolgreich übertragen",
         "transmit_error": "Die Liste konnte nicht übertragen werden!"
     },
-    "service-geo": {
-        "fence_desc": "Mein Ort",
-        "currentLocation": "Mein Standort"
-    },
     "comp-listeditor": {
         "title_new": "Neue Liste anlegen",
         "title_edit": "Liste bearbeiten",
@@ -82,10 +77,6 @@
         "title_edit": "Listenpunkt bearbeiten",
         "itemname": "Bezeichnung",
         "itemnote": "Notiz"
-    },
-    "comp-markereditor": {
-        "title": "Ort bearbeiten",
-        "description": "Bezeichnung:"
     },
     "page_lists": {
         "page_title": "Meine Listen",
@@ -103,14 +94,6 @@
         "show": "Anzeigen",
         "nolist": "Etwas ist schiefgelaufen :(<br /><br />Die Liste kann nicht angezeigt werden.",
         "add_new_hint": "Lege einen neuen Punkt in der Liste an."
-    },
-    "page_geofencing": {
-        "page_title": "Geo-Fencing",
-        "active": "Aktiv",
-        "active_note": "Geo-Fencing für die Liste \"<strong>{{title}}</strong>\" ist aktiv.",
-        "inactive": "Inaktiv",
-        "inactive_note": "Geo-Fencing für die Liste \"<strong>{{title}}</strong>\" ist inaktiv.",
-        "address": "Adresse suchen"
     },
     "page_trash": {
         "page_title": "Papierkorb",
@@ -152,10 +135,7 @@
         "trash": "Papierkorb",
         "trash_note": "Einstellungen zur Verwendung des Papierkorbs",
         "openontransmit": "App beim Übertragen starten",
-        "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst.",
-        "geofencing": "Geo-Fencing erlauben",
-        "geofencing_note": "Ermöglicht, für jede Liste einen Ort festzulegen, in dessen Nähe auf deiner Uhr nachgefragt wird ob die App geöffnet werden soll.",
-        "geofencing_warning": "<br /><strong>Achtung:</strong> Dies kann zu einer erhöhten Akku-Beanspruchung deines Smartphones führen!"
+        "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst."
     },
     "page_settings_logs": {
         "page_title": "Logging",

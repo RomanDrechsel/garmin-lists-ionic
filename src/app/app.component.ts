@@ -6,10 +6,8 @@ import { StatusBar } from "@capacitor/status-bar";
 import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonNote, IonRouterOutlet, IonSplitPane, IonToggle, NavController, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { EMenuItemType, MenuItem, MenuitemFactory, MenuitemFactoryList } from "./classes/menu-items";
-import { AdmobService } from "./services/adverticing/admob.service";
 import { AppService } from "./services/app/app.service";
 import { ConnectIQService } from "./services/connectiq/connect-iq.service";
-import { GeoLocationService } from "./services/geo/geo-location.service";
 import { EPrefProperty, PreferencesService } from "./services/storage/preferences.service";
 
 @Component({
@@ -28,8 +26,6 @@ export class AppComponent implements OnInit {
     private readonly Platform = inject(Platform);
     private readonly Preferences = inject(PreferencesService);
     private readonly App = inject(AppService);
-    private readonly GeoLocation = inject(GeoLocationService);
-    private readonly Admob = inject(AdmobService);
     private readonly NavController = inject(NavController);
 
     @ViewChild("router_outlet") private routerOutlet!: IonRouterOutlet;

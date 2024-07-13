@@ -30,7 +30,6 @@ export class ListItemsPage extends PageBase {
     private disableClick = false;
     private preferencesSubscription?: Subscription;
     private listSubscriptiion?: Subscription;
-    private geofencing = false;
     private useTrash = true;
 
     private readonly Route = inject(ActivatedRoute);
@@ -45,13 +44,9 @@ export class ListItemsPage extends PageBase {
             }
             this.appComponent.setAppPages(this.ModifyMainMenu());
         }
-        this.geofencing = await this.Preferences.Get<boolean>(EPrefProperty.AllowGeoFencing, false);
         this.useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true);
         this.preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
-            if (prop.prop == EPrefProperty.AllowGeoFencing) {
-                this.geofencing = prop.value as boolean;
-                this.appComponent.setAppPages(this.ModifyMainMenu());
-            } else if (prop.prop == EPrefProperty.TrashListitems) {
+            if (prop.prop == EPrefProperty.TrashListitems) {
                 this.useTrash = prop.value as boolean;
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
@@ -141,7 +136,6 @@ export class ListItemsPage extends PageBase {
                 MenuitemFactory(EMenuItemType.ListsTrash, { hidden: true }),
                 MenuitemFactory(EMenuItemType.Devices, { title_id: "page_listitems.menu_devices", url_addition: this.List.Uuid, onClick: async () => { this.ConnectIQ.TransmitList(this.List!.Uuid); return true; } }),
                 MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: this.List.Uuid, disabled: !this.useTrash }),
-                MenuitemFactory(EMenuItemType.GeoFencing, { url_addition: this.List.Uuid, disabled: !this.geofencing }),
                 MenuitemFactory(EMenuItemType.EmptyList, { onClick: () => this.EmptyList(), disabled: this.List.Items.length <= 0 }),
             ];
         } else {
