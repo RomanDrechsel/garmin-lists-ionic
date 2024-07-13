@@ -1,25 +1,25 @@
 <app-main-toolbar back="/lists">{{'page_trashitem.page_title'|translate}}</app-main-toolbar>
 
 <ion-content class="advertice">
-    <div *ngIf="List && List.TrashItems.length > 0; else empty">
+    <div *ngIf="Trash && Trash.items.length > 0; else empty">
         <ion-list #itemsContainer>
-            <ion-item-sliding *ngFor="let item of List?.TrashItems">
+            <ion-item-sliding *ngFor="let item of Trash.items">
                 <ion-item-options side="start" (ionSwipe)="onSwipeRight(item)">
                     <ion-item-option color="danger" expandable="true" (click)="deleteItem(item)">
                         <ion-icon slot="start" src="./assets/icons/trash_solid.svg"></ion-icon>
                         {{'delete'|translate}}
                     </ion-item-option>
                 </ion-item-options>
-                <ion-item lines="full" [ngClass]="{'hidden': item.Hidden}">
+                <ion-item lines="full" [ngClass]="{'hidden': item.hidden}">
                     <div class="listpoint-indicator-wrapper" slot="start">
                         <div class="listpoint-indicator"></div>
                     </div>
                     <div class="details">
                         <div>
-                            <ion-text class="item">{{item.Item}}</ion-text>
+                            <ion-text class="item">{{item.item}}</ion-text>
                         </div>
-                        <div *ngIf="item.Note">
-                            <ion-note color="medium" class="note">{{item.Note}}</ion-note>
+                        <div *ngIf="item.note">
+                            <ion-note color="medium" class="note">{{item.note}}</ion-note>
                         </div>
                     </div>
                 </ion-item>

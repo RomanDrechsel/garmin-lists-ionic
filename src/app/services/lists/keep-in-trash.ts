@@ -1,5 +1,11 @@
 export namespace KeepInTrash {
-    export enum Enum { Unlimited = -1, Day = 1, Week = 7, Month = 30, LastEntries = 10000 }
+    export enum Enum {
+        Unlimited = -1,
+        Day = 1,
+        Week = 7,
+        Month = 30,
+        LastEntries = 10000,
+    }
 
     export const Default = Enum.LastEntries;
 
@@ -8,7 +14,7 @@ export namespace KeepInTrash {
      * @param number number representation
      * @returns KeepInTrash.Enum
      */
-    export const FromNumber = function(number: number | string | Enum): Enum {
+    export const FromNumber = function (number: number | string | Enum): Enum {
         if (typeof number == "string") {
             number = parseInt(number);
         }
@@ -33,12 +39,11 @@ export namespace KeepInTrash {
      * @param number Enum representation or number
      * @returns number of days after which old entries should be deleted, undefined if no period is set
      */
-    export const StockPeriod = function(number: number | Enum): number | undefined {
+    export const StockPeriod = function (number: number | Enum): number | undefined {
         number = number as number;
         if (number <= 30) {
             return number;
-        }
-        else {
+        } else {
             return undefined;
         }
     };
@@ -48,12 +53,11 @@ export namespace KeepInTrash {
      * @param number Enum representation or number
      * @returns maximum number of entries, undefined if no number is set
      */
-    export const StockSize = function(number: number | Enum): number | undefined {
+    export const StockSize = function (number: number | Enum): number | undefined {
         number = number as number;
         if (number == Enum.LastEntries) {
-            return 3;
-        }
-        else {
+            return 100;
+        } else {
             return undefined;
         }
     };

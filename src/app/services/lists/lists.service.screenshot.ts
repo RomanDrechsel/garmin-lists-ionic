@@ -28,7 +28,7 @@ export class ListsService {
      */
     public async GetLists(): Promise<List[]> {
 
-        if (this.Locale.currentLang == "de") {
+        if (this.Locale.CurrentLanguage.localeFile == "de") {
             return [
                 List.fromBackend({ uuid: await this.createUuid(), name: "Wocheneinkäufe", created: Date.now(), order: 0, updated: Date.now() - 3456 * 1000, itemscount: 5 })!,
                 List.fromBackend({ uuid: await this.createUuid(), name: "Muttis Geburtstags-Fete", created: Date.now(), order: 1, updated: Date.now() - (60 * 60 * 36 * 1000), itemscount: 12 })!,
@@ -50,7 +50,7 @@ export class ListsService {
      * @returns List object
      */
     public async GetList(uuid: string): Promise<List | null> {
-        if (this.Locale.currentLang == "de") {
+        if (this.Locale.CurrentLanguage.localeFile == "de") {
             const list = List.fromBackend({ uuid: uuid, name: "Wocheneinkäufe", created: Date.now(), order: 0, updated: Date.now() - 3456 * 1000, itemscount: 7 })!;
             list.Items = [
                 Listitem.fromBackend({ id: 1, order: 0, item: "Brot", created: Date.now() - (60 * 60 * 4 * 1000) })!,

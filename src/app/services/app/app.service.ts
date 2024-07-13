@@ -13,7 +13,6 @@ import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { LoggingService } from "../logging/logging.service";
 import { ConfigService } from "../storage/config.service";
-import { DatabaseService } from "../storage/database.service";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 
 @Injectable({
@@ -28,7 +27,6 @@ export class AppService {
 
     public readonly Config = inject(ConfigService);
     public readonly Locale = inject(LocalizationService);
-    public readonly Database = inject(DatabaseService);
     public readonly ListsService = inject(ListsService);
     public readonly ConnectIQ = inject(ConnectIQService);
     public readonly Platform = inject(Platform);
@@ -68,13 +66,13 @@ export class AppService {
         AppService.AppInfo = await this.GetAppInfo();
         await Logger.Initialize(this.loggerService);
         await Locale.Initialize(this.Locale);
-        await this.Database.Initialize();
         await this.ListsService.Initialize();
+
+        await this.Admob.Initialize();
+        await this.Admob.ShowBanner();
 
         const debugmode = await this.Preferences.Get<boolean>(EPrefProperty.DebugDevices, isDevMode());
         await this.ConnectIQ.Initialize(debugmode);
-
-        await this.Admob.Initialize();
     }
 
     /**

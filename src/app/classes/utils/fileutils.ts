@@ -45,11 +45,11 @@ export namespace FileUtils {
      * @param dir Capacitor-directory
      * @returns object with information
      */
-    export async function GetDirStat(path: string, dir: Directory | undefined = undefined): Promise<{ files: number; size: number; }> {
+    export async function GetDirStat(path: string, dir: Directory | undefined = undefined): Promise<{ files: number; size: number }> {
         const files = await Filesystem.readdir({ path: path, directory: dir });
         if (files) {
             let size = 0;
-            files.files.forEach((file) => {
+            files.files.forEach(file => {
                 size += file.size;
             });
             return { files: files.files.length, size: size };
@@ -115,8 +115,7 @@ export namespace FileUtils {
         try {
             await Filesystem.deleteFile({ path: path, directory: dir });
             return true;
-        }
-        catch {
+        } catch {
             return false;
         }
     }
@@ -126,15 +125,18 @@ export namespace FileUtils {
      * @param args configuration arguments
      * @returns array of File objects
      */
-    export async function GetFiles(args: { path: string, dir?: Directory, pattern?: string | RegExp, with_data?: boolean; }): Promise<File[]> {
+    export async function GetFiles(args: { path: string; dir?: Directory; pattern?: string | RegExp; with_data?: boolean }): Promise<File[]> {
         try {
             const ret: File[] = [];
             const files = await Filesystem.readdir({ path: args.path, directory: args.dir });
             for (let i = 0; i < files.files.length; i++) {
                 const f = files.files[i];
-                if ((typeof (args.pattern) == "string" && f.name.includes(args.pattern)) || (args.pattern instanceof RegExp && args.pattern.test(f.name))) {
+                if (f.type != "file") {
+                    continue;
+                }
+                if (!args.pattern || (typeof args.pattern == "string" && f.name.includes(args.pattern)) || (args.pattern instanceof RegExp && args.pattern.test(f.name))) {
                     let file = await GetFileStat(f.uri);
-                    if (args.with_data == true) {
+                    if (args.with_data === true) {
                         file = await GetFile(file);
                     }
                     if (file.Exists) {
@@ -144,8 +146,7 @@ export namespace FileUtils {
             }
 
             return ret;
-        }
-        catch {
+        } catch {
             return [];
         }
     }
@@ -167,8 +168,7 @@ export namespace FileUtils {
                     try {
                         await Filesystem.deleteFile({ path: file.uri });
                         count++;
-                    }
-                    catch (error) {
+                    } catch (error) {
                         Logger.Error(`Could not delete file ${file.uri}`, error);
                     }
                 }
@@ -182,12 +182,7 @@ export namespace FileUtils {
         public Filename;
         public Content: string | undefined = undefined;
 
-        constructor(
-            public Path: string,
-            public Size: number = -1,
-            public Created: number = -1,
-            public Modified: number = -1
-        ) {
+        constructor(public Path: string, public Size: number = -1, public Created: number = -1, public Modified: number = -1) {
             let filename = this.Path.split("/").pop();
             this.Filename = filename ? filename : this.Path;
         }

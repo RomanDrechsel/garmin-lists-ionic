@@ -1,6 +1,5 @@
 // Ionic Variables and Theming. For more info, please see:
 // http://ionicframework.com/docs/theming/
-
 /** Ionic CSS Variables **/
 :root {
     /** primary **/
@@ -10,7 +9,6 @@
     --ion-color-primary-contrast-rgb: 255, 255, 255;
     --ion-color-primary-shade: #1288dd;
     --ion-color-primary-tint: #a0d7ff;
-
     /** secondary **/
     --ion-color-secondary: #ad1caf;
     --ion-color-secondary-rgb: 169, 0, 173;
@@ -18,7 +16,6 @@
     --ion-color-secondary-contrast-rgb: 255, 255, 255;
     --ion-color-secondary-shade: #d82fdc;
     --ion-color-secondary-tint: #f38ff7;
-
     /** success **/
     --ion-color-success: #3fb439;
     --ion-color-success-rgb: 45, 211, 111;
@@ -26,7 +23,6 @@
     --ion-color-success-contrast-rgb: 3, 139, 3;
     --ion-color-success-shade: #28ba62;
     --ion-color-success-tint: #e8fddb;
-
     /** warning **/
     --ion-color-warning: #ffc409;
     --ion-color-warning-rgb: 255, 196, 9;
@@ -34,7 +30,6 @@
     --ion-color-warning-contrast-rgb: 0, 0, 0;
     --ion-color-warning-shade: #e0ac08;
     --ion-color-warning-tint: #ffca22;
-
     /** danger **/
     --ion-color-danger: #ff2525;
     --ion-color-danger-rgb: 235, 68, 90;
@@ -42,11 +37,9 @@
     --ion-color-danger-contrast-rgb: 255, 255, 255;
     --ion-color-danger-shade: #cf3c4f;
     --ion-color-danger-tint: #ffe0e0;
-
     /** toast notice **/
     --color-notice: #1d75e9;
     --color-notice-tint: #dcf3ff;
-
     /** Custom **/
     --ion-background-color: #ffffff;
     --ion-color-medium: #97989e;
@@ -59,12 +52,12 @@
     --color-item-background: #ffffff;
     --color-control-background: #ffffff;
     --color-control-border: #cecece;
+    --color-control-selected-background: #dddddd;
     --color-shadow: #000000;
     --color-shadow-rgb: 0, 0, 0;
     --color-backdrop: #000000;
-    --color-popup-background: #e4e4e4;
+    --color-popup-background: #ffffff;
     --color-highlight: var(--ion-color-primary);
-
     /** main menu **/
     --color-menu-background: #ebfcff;
     --color-menu-text: #000000;

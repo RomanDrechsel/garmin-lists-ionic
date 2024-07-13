@@ -1,92 +1,60 @@
-export const MenuItemLists = function (): MenuItem {
-    return {
-        Id: "lists",
-        Title: "mainmenu.lists",
-        Icon: "./assets/icons/menu/lists.svg",
-        Url: "/lists",
-    };
+import { StringUtils } from "./utils/stringutils";
+
+export enum EMenuItemType {
+    "Lists",
+    "EmptyList",
+    "ListsTrash",
+    "EmptyListTrash",
+    "ListitemsTrash",
+    "EmptyItemTrash",
+    "Devices",
+    "Settings",
+    "AppInfo",
+    "Privacy"
+}
+export const MenuitemFactory = function(itemtype: EMenuItemType, options?: { title_id?: string, url_addition?: string, disabled?: boolean, hidden?: boolean, onClick?: () => Promise<boolean>; }): MenuItem {
+    let url: string;
+    switch (itemtype) {
+        case EMenuItemType.Lists:
+            url = options?.url_addition ? StringUtils.concat(["/lists", options.url_addition], "/") : "/lists";
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.lists", Icon: "./assets/icons/menu/lists.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.EmptyList:
+            return { Id: itemtype, TitleId: options?.title_id ?? "page_listitems.menu_empty", Icon: "./assets/icons/menu/empty.svg", Url: options?.url_addition, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.ListsTrash:
+            url = options?.url_addition ? StringUtils.concat(["/trash", options.url_addition], "/") : "/trash";
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.trash", Icon: "./assets/icons/menu/trash.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.EmptyListTrash:
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.empty_trash", Icon: "./assets/icons/menu/empty_trash.svg", Url: options?.url_addition, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.ListitemsTrash:
+            url = options?.url_addition ? StringUtils.concat(["/trash/items", options.url_addition], "/") : "/trash/items";
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.trash", Icon: "./assets/icons/menu/trash_items.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.EmptyItemTrash:
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.empty_trash", Icon: "./assets/icons/menu/empty_trash.svg", Url: options?.url_addition, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.Devices:
+            url = options?.url_addition ? StringUtils.concat(["/devices", options.url_addition], "/") : "/devices";
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.devices", Icon: "./assets/icons/menu/devices.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.Settings:
+            url = options?.url_addition ? StringUtils.concat(["/settings", options.url_addition], "/") : "/settings";
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.settings", Icon: "./assets/icons/menu/settings.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.AppInfo:
+            url = options?.url_addition ? StringUtils.concat(["/appinfo", options.url_addition], "/") : "/appinfo";
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.appinfos", Icon: "./assets/icons/menu/appinfos.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.Privacy:
+            url = options?.url_addition ? StringUtils.concat(["/privacy-policy/privacy", options.url_addition], "/") : "/privacy-policy/privacy";
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.privacy", Icon: "./assets/icons/menu/privacy.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+    }
 };
 
-export const MenuItemListsTrash = function (hide: boolean = false): MenuItem {
-    return {
-        Id: "trash",
-        Title: "mainmenu.trash",
-        Icon: "./assets/icons/menu/trash.svg",
-        Url: "/trash",
-        Hide: hide,
-    };
-};
-
-export const MenuItemListitemsTrash = function (list_uuid: string, hide: boolean = false): MenuItem {
-    return {
-        Id: "trash",
-        Title: "mainmenu.trash",
-        Icon: "./assets/icons/menu/trash_items.svg",
-        Url: `/trash/items/${list_uuid}`,
-        Hide: hide,
-    };
-};
-
-export const MenuItemDevices = function (): MenuItem {
-    return {
-        Id: "devices",
-        Title: "mainmenu.devices",
-        Icon: "./assets/icons/menu/devices.svg",
-        Url: "/devices",
-    };
-};
-
-export const MenuItemSettings = function (): MenuItem {
-    return {
-        Id: "settings",
-        Title: "mainmenu.settings",
-        Icon: "./assets/icons/menu/settings.svg",
-        Url: "/settings",
-    };
-};
-
-export const MenuItemAppInfos = function (): MenuItem {
-    return {
-        Id: "appinfos",
-        Title: "mainmenu.appinfos",
-        Icon: "./assets/icons/menu/appinfos.svg",
-        Url: "/appinfos",
-    };
-};
-
-export const MenuItemPrivacy = function (): MenuItem {
-    return {
-        Id: "privacy",
-        Title: "mainmenu.privacy",
-        Icon: "./assets/icons/menu/privacy.svg",
-        Url: "/privacy-policy/privacy",
-    };
-};
-
-export const MenuItemEmptyList = function (onclick: () => Promise<boolean>): MenuItem {
-    return {
-        Id: "emptylist",
-        Title: "page_listitems.menu_empty",
-        Icon: "./assets/icons/menu/empty.svg",
-        onClick: onclick,
-    };
-};
-
-export const MenuItemEmptyListTrash = function (onclick: () => Promise<boolean>): MenuItem {
-    return {
-        Id: "emptytrash",
-        Title: "mainmenu.empty_trash",
-        Icon: "./assets/icons/menu/empty_trash.svg",
-        onClick: onclick,
-    };
+export const MenuitemFactoryList = function(itemtypes: EMenuItemType[]): MenuItem[] {
+    return itemtypes.map(item => MenuitemFactory(item));
 };
 
 export declare type MenuItem = {
-    Id: string;
-    Title: string;
-    Icon?: string;
-    IconName?: string;
-    Url?: string;
-    Hide?: boolean;
-    onClick?: () => Promise<boolean>;
+    Id: EMenuItemType,
+    TitleId: string,
+    Disabled: boolean,
+    Hidden: boolean,
+    Icon: string,
+    Url?: string,
+    onClick?: () => Promise<boolean>,
 };

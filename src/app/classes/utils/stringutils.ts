@@ -7,7 +7,7 @@ export namespace StringUtils {
      */
     export function trimStart(input: string, charToRemove: string): string {
         const regex = new RegExp(`^(${charToRemove})+`);
-        return input.replace(regex, '');
+        return input.replace(regex, "");
     }
 
     /**
@@ -18,7 +18,7 @@ export namespace StringUtils {
      */
     export function trimEnd(input: string, charToRemove: string): string {
         const regex = new RegExp(`(${charToRemove})+$`);
-        return input.replace(regex, '');
+        return input.replace(regex, "");
     }
 
     /**
@@ -39,16 +39,14 @@ export namespace StringUtils {
      * @param separator  separator, if arg1 and arg2 are objects
      * @returns concatenated string
      */
-    export function concat(arg1: string | object, arg2: string = '', arg3: string = ''): string {
+    export function concat(arg1: string | object, arg2: string = "", arg3: string = ""): string {
         if (Array.isArray(arg1)) {
             // array of objects
-            return arg1.map((item) => String(item)).join(String(arg2));
-        }
-        else if (arg2 !== undefined) {
+            return arg1.map(item => String(item)).join(String(arg2));
+        } else if (arg2 !== undefined) {
             // two objects
             return `${String(arg1)}${arg3}${String(arg2)}`;
-        }
-        else {
+        } else {
             // only one object
             return String(arg1);
         }
@@ -76,12 +74,20 @@ export namespace StringUtils {
      * @returns true, if it is a string, else false
      */
     export function isString(arg: any): boolean {
-        if (typeof arg === 'string' || arg instanceof String) {
+        if (typeof arg === "string" || arg instanceof String) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
+    }
+
+    /**
+     * replace all non alphanumberical characters in a string with _ to use them as filename
+     * @param str non filesave string
+     * @returns filesave string
+     */
+    export function FilesaveString(str: string) {
+        return str.replace(/[^a-zA-Z0-9_]/g, "_");
     }
 
     /**
@@ -92,13 +98,12 @@ export namespace StringUtils {
     export function toString(obj: any): string {
         if (isString(obj)) {
             return String(obj);
-        }
-        else {
+        } else {
             const seen = new WeakSet();
-            return JSON.stringify(obj, function(key, value) {
-                if (typeof value === 'object' && value !== null) {
+            return JSON.stringify(obj, function (key, value) {
+                if (typeof value === "object" && value !== null) {
                     if (seen.has(value)) {
-                        return '[Circular]';
+                        return "[Circular]";
                     }
                     seen.add(value);
                 }

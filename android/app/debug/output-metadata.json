@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "de.romandrechsel.lists.dev",
+  "variantName": "debug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 41,
+      "versionName": "2024.6.0200-d",
+      "outputFile": "app-debug.apk"
+    }
+  ],
+  "elementType": "File",
+  "minSdkVersionForDexing": 22
+}

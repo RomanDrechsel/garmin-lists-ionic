@@ -57,8 +57,8 @@
         "restore_item_error": "The item could not be restored!",
         "empty_trash_confirm": "Do you really want to empty the trash and erase all {{count}} lists?",
         "empty_trash_confirm_single": "Do you really want to empty the trash and erase the list?",
-        "empty_trash_listitems_confirm": "Do you really want to empty the trash for the list <strong>{{name}}</strong>?",
-        "empty_trash_listitems_confirm_single": "Do you really want to empty the trash for the list <strong>{{name}}</strong> and delete the item?",
+        "empty_trash_listitems_confirm": "Do you really want to empty the trash for the list and delete all {{count}} items?",
+        "empty_trash_listitems_confirm_single": "Do you really want to empty the trash for the list and delete the item?",
         "empty_trash_success": "The trash is now empty.",
         "empry_trash_error": "The trash could not be emptied!"
     },
@@ -78,6 +78,9 @@
         "title_edit": "Edit item",
         "itemname": "Description",
         "itemnote": "Note"
+    },
+    "comp-datetime": {
+        "title": "Log file start time:"
     },
     "page_lists": {
         "page_title": "My lists",
@@ -135,7 +138,9 @@
         "confirm": "Confirmation settings",
         "confirm_note": "Settings for requesting user confirmation",
         "trash": "Trash",
-        "trash_note": "Settings for usage of the trash"
+        "trash_note": "Settings for usage of the trash",
+        "openontransmit": "Start app after transferring a list",
+        "openontransmit_note": "Request on your watch whether the app should be opened when you transfer a list."
     },
     "page_settings_logs": {
         "page_title": "Log settings",
@@ -159,7 +164,8 @@
     },
     "page_settings_showlogs": {
         "page_title": "Logs",
-        "logfile": "Log-File",
+        "log_onemore": "One more log",
+        "log_more": "{{count}} more logs",
         "log_empty": "The log could not be loaded.",
         "btn_delete": "Delete log",
         "btn_save": "Store log",
@@ -169,7 +175,12 @@
         "store_text": "The logfile <strong>{{filename}}</strong> will be stored in <strong>DOCUMENTS</strong> on your device.",
         "store_text_web": "The logfile <strong>{{filename}}</strong> will be stored on your disk.",
         "store_success": "The log was stored.",
-        "store_error": "The log could not be stored!"
+        "store_error": "The log could not be stored!",
+        "select_logs": "Select log file:",
+        "logfile": "log file",
+        "select_logday_title": "Show all log files of a certain day",
+        "no_log": "No log files found!",
+        "no_log_note": "No log files were found for {{date}}"
     },
     "page_settings_confirm": {
         "page_title": "Confirmations",
@@ -189,7 +200,7 @@
         "restore_list_note": "Request confirmation when restoring a list from the trash.",
         "restore_listitem": "Restore listitem",
         "restore_listitem_note": "Request confirmation when restoring a listitem from the trash.",
-        "undo_warning": "<br /><strong>Warning: </strong> The action can not be undone!",
+        "undo_warning": "<br /><strong>Warning:</strong> The action can not be undone!",
         "transmit_list": "Transmit list",
         "transmit_list_note": "Request confirmation when transferring a list to a watch."
     },
@@ -204,7 +215,13 @@
         "instock_oneweek": "one week",
         "instock_onemonth": "one month",
         "instock_hundredentries": "last 100 entries",
-        "instock_note": "How long should old lists or list items be kept in the trash?"
+        "instock_note": "How long should old lists or list items be kept in the trash?",
+        "confirm_cleartrash": "Should the trash be emptied?<br /><br /><strong>Warning:</strong> The action can not be undone!",
+        "confirm_cleartrash_ok": "Empty trash",
+        "confirm_cleartrash_cancel": "Don't empty trash",
+        "confirm_clearitemstrash": "Should the trashes be emptied?<br /><br /><strong>Warning:</strong> The action can not be undone!",
+        "confirm_clearitemstrash_ok": "Empty trashes",
+        "confirm_clearitemstrash_cancel": "Don't empty trashes"
     },
     "page_appinfos": {
         "page_title": "App information",

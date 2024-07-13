@@ -46,7 +46,7 @@ export namespace DateUtils {
             return (
                 Locale.getText("date.today") +
                 ", " +
-                date.toLocaleTimeString(Locale.currentLang(), options) +
+                date.toLocaleTimeString(Locale.currentLang().locale, options) +
                 Locale.getText("date.date_add")
             );
         } else if (isYesterday(date)) {
@@ -57,7 +57,7 @@ export namespace DateUtils {
             return (
                 Locale.getText("date.yesterday") +
                 ", " +
-                date.toLocaleTimeString(Locale.currentLang(), options) +
+                date.toLocaleTimeString(Locale.currentLang().locale, options) +
                 Locale.getText("date.date_add")
             );
         } else {
@@ -70,7 +70,7 @@ export namespace DateUtils {
                 minute: "2-digit",
             };
             return (
-                date.toLocaleString(Locale.currentLang(), options) +
+                date.toLocaleString(Locale.currentLang().locale, options) +
                 Locale.getText("date.date_add")
             );
         }

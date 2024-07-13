@@ -30,11 +30,11 @@ export class AdmobService {
         AdMob.addListener(BannerAdPluginEvents.SizeChanged, (size: AdMobBannerSize) => {
             if (this._bannerHeight != size.height) {
                 Logger.Debug(`Admob banner size changed: `, size);
-                this.resizeContainer(size.height);
             }
             if (size.height != 0) {
                 this._bannerHeight = size.height;
             }
+            this.resizeContainer(size.height);
         });
 
         AdMob.addListener(BannerAdPluginEvents.FailedToLoad, (error: any) => {
@@ -69,7 +69,12 @@ export class AdmobService {
                 isTesting: environment.publicRelease !== true,
                 //npa: true
             };
-            await AdMob.showBanner(options);
+            try {
+                await AdMob.removeBanner();
+                await AdMob.showBanner(options);
+            } catch {
+                await AdMob.resumeBanner();
+            }
         }
     }
 
@@ -122,14 +127,13 @@ export class AdmobService {
                 testDeviceIdentifiers: ["edfcf89c-603c-45fa-a1c8-f77b771ee68c"],
             };
         }
-        const info = AdMob.requestConsentInfo(options);
-        console.log(info);
-        return info;
+        return AdMob.requestConsentInfo(options);
     }
 
     /** resumes the banner */
     private async resumeBanner() {
         await AdMob.resumeBanner();
+        this._bannerIsShown = true;
         this.resizeContainer(this._bannerHeight);
     }
 

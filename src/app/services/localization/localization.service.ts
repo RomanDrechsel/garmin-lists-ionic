@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
-import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
+import { TranslateService } from "@ngx-translate/core";
 import { firstValueFrom } from "rxjs";
 import { Logger } from "../logging/logger";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
@@ -11,40 +11,30 @@ import { EPrefProperty, PreferencesService } from "../storage/preferences.servic
 })
 export class LocalizationService {
     /** fallback language if the requested language doesn't exist  */
-    private readonly fallbackLang = "en";
+    public readonly fallbackLang: Culture = {
+        localeFile: "en", locale: "en-US", name: "English (US)", firstDayOfWeek: 0
+    };
+
     /** current app language */
-    public currentLang: string = "";
+    private currentLang: Culture = this.fallbackLang;
 
     /** all available languages */
-    public readonly availableLangsDetails: { short: string; long: string; }[] = [
-        { short: "de", long: "Deutsch" },
-        { short: "en", long: "English" },
-    ];
-
-    /** get all available short languages */
-    private get availableLangs(): string[] {
-        let ret: string[] = [];
-        this.availableLangsDetails.forEach(l => {
-            ret.push(l.short);
-        });
-        return ret;
-    }
+    public get availableTranslations(): Culture[] {
+        return [
+            this.fallbackLang,
+            { localeFile: "en", locale: "en-GB", name: "English (UK)", firstDayOfWeek: 1 },
+            { localeFile: "de", locale: "de-DE", name: "Deutsch", firstDayOfWeek: 1 },
+        ];
+    };
 
     constructor(public translate: TranslateService, private Preferences: PreferencesService) {
-        this.translate.addLangs(this.availableLangs);
-        this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
-            if (event.lang != this.currentLang && this.availableLangs.indexOf(event.lang) >= 0) {
-                this.Preferences.Set(EPrefProperty.AppLanguage, event.lang);
-                Logger.Debug(`Changed language to ${event.lang}`);
-                this.currentLang = event.lang;
-            }
-        });
+        const avail = this.availableTranslations;
+        this.translate.addLangs([...new Set<string>(avail.map(l => l.localeFile))]);
+        this.translate.setDefaultLang(this.fallbackLang.localeFile);
+    }
 
-        let lang = this.translate.getBrowserLang();
-        if (!lang || this.availableLangs.indexOf(lang) < 0) {
-            lang = this.fallbackLang;
-        }
-        this.translate.setDefaultLang(lang);
+    public get CurrentLanguage(): Culture {
+        return this.currentLang;
     }
 
     /**
@@ -54,12 +44,11 @@ export class LocalizationService {
         let lang: string | undefined = await this.Preferences.Get<string>(EPrefProperty.AppLanguage, "");
         if (lang.length == 0) {
             if (Capacitor.isNativePlatform()) {
-                const res = await Device.getLanguageCode();
-                lang = res.value;
+                lang = (await Device.getLanguageTag()).value;
                 Logger.Debug(`Device language is ${lang}`);
             }
             else {
-                lang = this.translate.getBrowserLang();
+                lang = this.translate.getBrowserCultureLang();
                 Logger.Debug(`Browser language is ${lang}`);
             }
         }
@@ -67,8 +56,8 @@ export class LocalizationService {
             Logger.Debug(`User language is ${lang}`);
         }
 
-        if (!lang || this.availableLangs.indexOf(lang) < 0) {
-            lang = this.fallbackLang;
+        if (!lang || !this.availableTranslations.some(l => l.locale == lang)) {
+            lang = this.fallbackLang.locale;
         }
 
         this.ChangeLanguage(lang);
@@ -76,15 +65,22 @@ export class LocalizationService {
 
     /**
      * change the current app language
-     * @param lang new language
+     * @param culture new language
      */
-    public async ChangeLanguage(lang: string) {
-        if (this.currentLang != lang) {
-            if (this.availableLangs.indexOf(lang) >= 0) {
-                await firstValueFrom(this.translate.use(lang));
-            } else {
-                Logger.Important(`Not supported language ${lang}, staying with ${this.currentLang}`);
+    public async ChangeLanguage(locale: string) {
+        const culture = this.availableTranslations.find(l => l.locale == locale);
+        if (!culture) {
+            Logger.Important(`Not supported language ${locale}, staying with ${this.currentLang.locale}`);
+            return;
+        }
+
+        if (this.currentLang.locale != culture.locale) {
+            if (this.currentLang.localeFile != culture.localeFile) {
+                await firstValueFrom(this.translate.use(culture.localeFile));
             }
+            this.currentLang = culture;
+            this.Preferences.Set(EPrefProperty.AppLanguage, this.currentLang.locale);
+            Logger.Debug(`Changed language to ${this.currentLang.locale}`);
         }
     }
 
@@ -98,3 +94,10 @@ export class LocalizationService {
         return this.translate.instant(keys, params);
     }
 }
+
+export declare type Culture = {
+    localeFile: string,
+    locale: string,
+    name: string,
+    firstDayOfWeek: number,
+};

@@ -1,6 +1,5 @@
 import { Logger } from "../logging/logger";
-import { ListModel } from "../storage/database/models/list-model";
-import { Listitem } from "./listitem";
+import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
     private _uuid: string;
@@ -8,29 +7,33 @@ export class List {
     private _created: number;
     private _updated: number;
     private _order: number;
-    private _itemsCount: number = 0;
+    private _itemsCount?: number;
     private _items?: Listitem[];
-    private _trashItems?: Listitem[];
     private _deleted?: number;
+    private _dirty: boolean = false;
 
-    public Dirty: boolean = false;
-
-    private constructor(args: {
-        uuid: string,
-        name: string,
-        order: number,
-        created?: number,
-        updated?: number,
-        itemscount?: number,
-        deleted?: number,
-    }) {
-        this._name = args.name;
-        this._order = args.order;
-        this._uuid = args.uuid;
-        this._created = args.created ?? Date.now();
-        this._updated = args.updated ?? Date.now();
-        this._itemsCount = args.itemscount ?? 0;
-        this._deleted = args.deleted;
+    public constructor(obj: ListModel, itemcount?: number) {
+        this._uuid = obj.uuid;
+        this._name = obj.name;
+        this._order = obj.order;
+        this._created = obj.created;
+        this._updated = obj.updated ?? Date.now();
+        this._items = undefined;
+        if (obj.items) {
+            let items: Listitem[] = [];
+            obj.items.forEach((el: ListitemModel) => {
+                const i = Listitem.fromBackend(el);
+                if (i) {
+                    items.push(i);
+                }
+            });
+            if (items.length > 0) {
+                this._items = items;
+            }
+        }
+        this._itemsCount = this._items?.length ?? itemcount;
+        this._deleted = obj.deleted;
+        this._dirty = true;
     }
 
     /** get unique list id */
@@ -42,7 +45,7 @@ export class List {
     public set Name(name: string) {
         if (this._name != name) {
             this._name = name;
-            this.Dirty = true;
+            this._dirty = true;
             this._updated = Date.now();
         }
     }
@@ -61,7 +64,7 @@ export class List {
     public set Updated(updated: number) {
         if (this._updated != updated) {
             this._updated = updated;
-            this.Dirty = true;
+            this._dirty = true;
         }
     }
 
@@ -74,7 +77,7 @@ export class List {
     public set Order(order: number) {
         if (this._order != order) {
             this._order = order;
-            this.Dirty = true;
+            this._dirty = true;
         }
     }
 
@@ -85,42 +88,37 @@ export class List {
 
     /** get number of items of this list */
     public get ItemsCount(): number {
-        if (this._items && this._items.length > 0) {
+        if (this._items) {
             return this._items.length;
-        }
-        else {
-            return this._itemsCount;
+        } else {
+            return this._itemsCount ?? 0;
         }
     }
 
     /** set the list of all items */
-    public set Items(items: Listitem[]) {
+    public set Items(items: Listitem[] | undefined) {
         this._items = items;
-        this._itemsCount = this._items.length;
+        if (this._items) {
+            this._itemsCount = this._items.length;
+        }
+        this._dirty = true;
     }
 
     /** get the list of all items */
     public get Items(): Listitem[] {
         if (this._items) {
             return this._items;
-        }
-        else {
+        } else {
             return [];
         }
     }
 
-    /** set the list of items in list trash */
-    public set TrashItems(items: Listitem[]) {
-        this._trashItems = items;
-    }
-
-    public get TrashItems(): Listitem[] {
-        return this._trashItems ?? [];
-    }
-
     /** set the delete timestamp */
     public set Deleted(date: number) {
-        this._deleted = date;
+        if (this._deleted != date) {
+            this._dirty = true;
+            this._deleted = date;
+        }
     }
 
     /** get the deleted timestamp */
@@ -128,21 +126,49 @@ export class List {
         return this._deleted ?? 0;
     }
 
+    /** are only peek information loaded */
+    public get isPeek(): boolean {
+        return this._items == undefined;
+    }
+
+    /**
+     * Is the list needed to be stored in backend?
+     */
+    public get Dirty(): boolean {
+        if (this._dirty == true) {
+            return true;
+        }
+
+        if (this._items) {
+            for (let i = 0; i < this._items.length; i++) {
+                if (this._items[i].Dirty) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * adds a new item to the list
      * @param item item to add
      * @returns item that was added
      */
-    public AddItem(item: Listitem): Listitem {
+    public AddItem(item: Listitem | ListitemModel): Listitem {
+        if (!(item instanceof Listitem)) {
+            item = Listitem.Create(item);
+        }
+
         item.Order = this.Items.length;
         if (!this._items) {
             this._items = [item];
-        }
-        else {
+        } else {
             this._items.push(item);
         }
         this._itemsCount = this._items.length;
         this.Updated = Date.now();
+        this._dirty = true;
         return item;
     }
 
@@ -151,8 +177,14 @@ export class List {
      * @param item item to remove
      */
     public RemoveItem(item: Listitem) {
-        this._items = this.Items.filter(el => el != item);
+        this._items = this.Items.filter(el => !el.equals(item));
         this._itemsCount = this._items.length;
+
+        let order = 0;
+        this._items.forEach(i => {
+            i.Order = order++;
+        });
+        this._dirty = true;
         this.Updated = Date.now();
     }
 
@@ -162,7 +194,26 @@ export class List {
     public DeleteAllItems() {
         this._items = undefined;
         this._itemsCount = 0;
+        this._dirty = true;
         this.Updated = Date.now();
+    }
+
+    /**
+     * the list is not longer dirty
+     */
+    public Clean() {
+        this._dirty = false;
+        this._items?.forEach(i => i.Clean());
+    }
+
+    /**
+     * get detailed information of another list, but not override peek details
+     * @param list the other list
+     */
+    public copyDetails(list: List | undefined) {
+        if (list && !list.isPeek) {
+            this.Items = list.Items;
+        }
     }
 
     /**
@@ -191,15 +242,35 @@ export class List {
     public toBackend(force: boolean = false): ListModel | undefined {
         if (!this.Dirty && !force) {
             return undefined;
-        }
-        else {
-            return {
+        } else {
+            const ret: ListModel = {
                 uuid: this._uuid,
                 name: this._name,
+                items: [],
                 created: this._created,
-                updated: this._updated ?? null,
+                updated: this._updated ?? undefined,
+                deleted: this._deleted ?? undefined,
                 order: this._order,
             };
+
+            if (this._items && this._items.length > 0) {
+                this._items.forEach(item => {
+                    ret.items!.push(item.toBackend());
+                });
+            }
+
+            this.Clean();
+            return ret;
+        }
+    }
+
+    /**
+     * purges all items from the list to save memory
+     */
+    public PurgeDetails() {
+        if (this._items !== undefined) {
+            this._itemsCount = this._items.length;
+            this._items = undefined;
         }
     }
 
@@ -212,38 +283,61 @@ export class List {
     }
 
     /**
+     * check if two list objects are equal
+     * @param other other list object or undefined
+     * @returns are the lists equal
+     */
+    public equals(other: List | null | undefined): boolean {
+        if (!other) {
+            return false;
+        }
+        return this.Uuid === other.Uuid;
+    }
+
+    /**
      * creates a list object from backend
      * @param obj backend object
      * @returns List object
      */
-    public static fromBackend(obj: any): List | undefined {
+    public static fromBackend(obj: any, only_peek: boolean = false): List | undefined {
         const props = ["uuid", "name", "created", "order"];
         for (let i = 0; i < props.length; i++) {
             if (!obj.hasOwnProperty(props[i])) {
-                Logger.Error(`List could not been read from database, property ${props[i]} not found}`);
+                Logger.Error(`List could not been read from backend, property ${props[i]} not found}`);
                 return undefined;
-            };
+            }
         }
-        const list = new List({
-            uuid: obj.uuid,
-            name: obj.name,
-            created: obj.created,
-            order: obj.order,
-            updated: obj.updated,
-            itemscount: obj.itemscount,
-            deleted: obj.deleted
-        });
-        return list;
-    }
 
-    /**
-     * creates a new List object from user input
-     * @param obj user input
-     * @returns List object
-     */
-    public static Create(obj: { name: string, uuid: string, order: number; }): List {
-        const list = new List(obj);
-        list.Dirty = true;
+        const itemscount = obj.items?.length ?? 0;
+        if (only_peek) {
+            //remove items from memory...
+            obj.items = undefined;
+        }
+
+        const list = new List(
+            {
+                uuid: obj.uuid,
+                name: obj.name,
+                created: obj.created,
+                order: obj.order,
+                updated: obj.updated,
+                deleted: obj.deleted,
+                items: obj.items,
+            },
+            itemscount,
+        );
+        list.Clean();
+
         return list;
     }
 }
+
+export declare type ListModel = {
+    uuid: string;
+    name: string;
+    created: number;
+    order: number;
+    updated?: number;
+    deleted?: number;
+    items?: ListitemModel[];
+};

@@ -14,5 +14,7 @@ export interface IConnectIQ extends Plugin {
 
     OpenStore(): Promise<void>;
 
+    OpenApp(opts: { device_id: string }): Promise<void>;
+
     addListener<T>(eventName: string, listenerFunc: (data: T) => void): Promise<PluginListenerHandle>;
 }

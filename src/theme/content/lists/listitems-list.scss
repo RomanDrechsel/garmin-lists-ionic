@@ -12,7 +12,7 @@ ion-list {
         cursor: pointer;
 
         ion-reorder {
-            margin-inline-end: 15px;
+            margin-inline-end: 0;
             margin-inline-start: 10px;
         }
 
@@ -38,6 +38,7 @@ ion-list {
             .item {
                 font-size: 1.3em;
                 padding-top: 6px;
+                white-space: pre-line;
             }
 
             .note {

@@ -1,12 +1,22 @@
 import { formatDate } from "@angular/common";
 import { Injectable, isDevMode } from "@angular/core";
-import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
+import { Directory, Encoding, FileInfo, Filesystem } from "@capacitor/filesystem";
 import { FileUtils } from "src/app/classes/utils/fileutils";
 import { StringUtils } from "../../classes/utils/stringutils";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 
-enum ELogType { Debug = 4, Notice = 3, Important = 2, Error = 1, }
-enum EAutoDelete { Never = 0, Day = 1, Week = 7, Month = 30, }
+enum ELogType {
+    Debug = 4,
+    Notice = 3,
+    Important = 2,
+    Error = 1,
+}
+export enum EAutoDelete {
+    Never = 0,
+    Day = 1,
+    Week = 7,
+    Month = 30,
+}
 
 @Injectable({
     providedIn: "root",
@@ -70,7 +80,7 @@ export class LoggingService {
     }
 
     /**
-     * log an important message
+     * log a important message
      * @param message message text
      * @param obj additional objects
      */
@@ -82,7 +92,7 @@ export class LoggingService {
     }
 
     /**
-     * log an notice message
+     * log a notice message
      * @param message message text
      * @param obj additional objects
      */
@@ -93,13 +103,24 @@ export class LoggingService {
         }
     }
     /**
-         * log an debug message
-         * @param message message text
-         * @param obj additional objects
-         */
+     * log a debug message
+     * @param message message text
+     * @param obj additional objects
+     */
     public Debug(message: string, ...objs: any[]) {
         if (this.LogLevel >= ELogType.Debug) {
             this.WriteInLogfile(message, ELogType.Debug, ...objs);
+            console.log(message, ...objs);
+        }
+    }
+
+    /**
+     * log a debug message
+     * @param message message text
+     * @param obj additional objects
+     */
+    public Console(message: string, ...objs: any[]) {
+        if (this.LogLevel >= ELogType.Debug && isDevMode()) {
             console.log(message, ...objs);
         }
     }
@@ -114,7 +135,7 @@ export class LoggingService {
         this.LogfileProcessRunning = true;
         if (this.WriteToLogQueue.length > 0) {
             //Log-Datei erstellen, falls nicht vorhanden
-            if (!await FileUtils.FileExists(this.LogFile, LoggingService.LogDirectory)) {
+            if (!(await FileUtils.FileExists(this.LogFile, LoggingService.LogDirectory))) {
                 let loglevel: string;
                 switch (this.LogLevel) {
                     case ELogType.Error:
@@ -249,35 +270,55 @@ export class LoggingService {
 
     /**
      * get a list of all logfiles on the device
+     * @param maxcount maximum number of files
      * @returns array with all logfiles
-     */
-    public async ListLogfiles(): Promise<FileUtils.File[]> {
+    public async ListLogfiles(maxcount?: number): Promise<{ totalcount: number, files: FileInfo[]; }> {
         try {
-            let ret: FileUtils.File[] = [];
-            let files = (await Filesystem.readdir({ path: LoggingService.LogPath, directory: LoggingService.LogDirectory, })).files;
+            let ret: FileInfo[] = [];
+            let files = (await Filesystem.readdir({ path: LoggingService.LogPath, directory: LoggingService.LogDirectory })).files;
             if (files) {
-                files.sort((a, b) => a.mtime < b.mtime ? 1 : b.mtime < a.mtime ? -1 : 0);
-                await Promise.all(files.map(async (file) => {
+                files.sort((a, b) => a.mtime - b.mtime);
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
                     if (file.type == "file") {
-                        let logfile = await FileUtils.GetFileStat(file.uri);
-                        if (logfile) {
-                            ret.push(logfile);
-                        }
+                        ret.push(file);
                     }
-                }));
+                    if (maxcount && ret.length >= maxcount) {
+                        break;
+                    }
+                }
             }
-            return ret;
+            return { totalcount: files.length, files: ret };
         } catch (e) {
-            let logfile = await FileUtils.GetFileStat(
-                this.LogFile,
-                LoggingService.LogDirectory
-            );
+            let logfile = await Filesystem.stat({ path: this.LogFile, directory: LoggingService.LogDirectory });
             if (logfile) {
-                return [logfile];
+                return { totalcount: 1, files: [logfile as FileInfo] };
+            }
+            return { totalcount: 0, files: [] };
+        }
+    }*/
+
+    /**
+     * get a list of all logfiles on the device in the given time periode
+     * @param from logfiles newer the this timestamp
+     * @param to logfiles older then this timestamp
+     */
+    public async ListLogfiles(from: number, to: number): Promise<FileInfo[]> {
+        try {
+            let ret: FileInfo[] = [];
+            let files = (await Filesystem.readdir({ path: LoggingService.LogPath, directory: LoggingService.LogDirectory })).files;
+            files = files.filter(f => (f.ctime ?? f.mtime) >= from && (f.ctime ?? f.mtime) <= to);
+            files.sort((a, b) => b.mtime - a.mtime);
+            return files;
+        } catch (e) {
+            let logfile = await Filesystem.stat({ path: this.LogFile, directory: LoggingService.LogDirectory });
+            if (logfile) {
+                return [logfile as FileInfo];
             }
             return [];
         }
     }
+
 
     /**
      * gehts a specific logfile with content
@@ -327,9 +368,14 @@ export class LoggingService {
      * @returns number of all logsfiles
      */
     public async LogfilesCount(): Promise<number> {
-        return FileUtils.GetFilesCount(
-            LoggingService.LogPath,
-            LoggingService.LogDirectory
-        );
+        return FileUtils.GetFilesCount(LoggingService.LogPath, LoggingService.LogDirectory);
+    }
+
+    /**
+     * get the size and file count of all logfiles on the device
+     * @returns size in bytes and number of logfiles
+     */
+    public async GetLogSize(): Promise<{ size: number; files: number; }> {
+        return FileUtils.GetDirStat(LoggingService.LogPath, LoggingService.LogDirectory);
     }
 }

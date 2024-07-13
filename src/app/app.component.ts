@@ -5,8 +5,7 @@ import { App } from "@capacitor/app";
 import { StatusBar } from "@capacitor/status-bar";
 import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonNote, IonRouterOutlet, IonSplitPane, IonToggle, NavController, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import { MenuItem, MenuItemAppInfos, MenuItemDevices, MenuItemLists, MenuItemListsTrash, MenuItemPrivacy, MenuItemSettings } from "./classes/menu-items";
-import { AdmobService } from "./services/adverticing/admob.service";
+import { EMenuItemType, MenuItem, MenuitemFactory, MenuitemFactoryList } from "./classes/menu-items";
 import { AppService } from "./services/app/app.service";
 import { ConnectIQService } from "./services/connectiq/connect-iq.service";
 import { EPrefProperty, PreferencesService } from "./services/storage/preferences.service";
@@ -20,22 +19,18 @@ import { EPrefProperty, PreferencesService } from "./services/storage/preference
 })
 export class AppComponent implements OnInit {
     public appPages: MenuItem[] = [];
-    public systemPages: MenuItem[] = [MenuItemSettings(), MenuItemAppInfos(), MenuItemPrivacy()];
+    public systemPages: MenuItem[] = MenuitemFactoryList([EMenuItemType.Settings, EMenuItemType.AppInfo, EMenuItemType.Privacy]);
+    private useTrash: boolean = true;
 
     public readonly ConnectIQ = inject(ConnectIQService);
     private readonly Platform = inject(Platform);
     private readonly Preferences = inject(PreferencesService);
     private readonly App = inject(AppService);
-    private readonly Admob = inject(AdmobService);
     private readonly NavController = inject(NavController);
 
     @ViewChild("router_outlet") private routerOutlet!: IonRouterOutlet;
 
     @ViewChild("mainMenu") private MainMenu!: IonMenu;
-
-    constructor() {
-        this.setAppPages();
-    }
 
     public get isDevMode(): boolean {
         return isDevMode();
@@ -55,7 +50,16 @@ export class AppComponent implements OnInit {
             await this.tapBackToExit();
         });
 
-        await this.Admob.ShowBanner();
+        this.Preferences.onPrefChanged$.subscribe(prop => {
+            if (prop.prop == EPrefProperty.TrashLists) {
+                this.useTrash = prop.value as boolean;
+                this.setAppPages();
+            }
+        });
+        this.useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true);
+        this.setAppPages();
+
+        //await this.Admob.ShowBanner();
     }
 
     public async onMenuItemClick(item: MenuItem) {
@@ -75,15 +79,14 @@ export class AppComponent implements OnInit {
     }
 
     public setAppPages(menu: MenuItem[] = []) {
-        const required = [MenuItemLists(), MenuItemDevices(), MenuItemListsTrash()];
+        let required = MenuitemFactoryList([EMenuItemType.Lists, EMenuItemType.Devices]);
+        required.push(MenuitemFactory(EMenuItemType.ListsTrash, { disabled: !this.useTrash }));
         for (let i = required.length - 1; i >= 0; i--) {
             if (!menu?.find(m => m.Id == required[i].Id)) {
                 menu?.unshift(required[i]);
             }
         }
-
-        menu = menu.filter(m => !m.Hide);
-
+        menu = menu.filter(m => m.Hidden !== true);
         this.appPages = menu;
     }
 

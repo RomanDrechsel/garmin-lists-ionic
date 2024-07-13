@@ -3,11 +3,19 @@
 <ion-content>
     <ion-list>
         <ion-item lines="full">
-            <ion-select [label]="'page_settings.language'|translate" label-placement="stacked" value="{{Locale.currentLang}}" [okText]="'change'|translate" [cancelText]="'cancel'|translate" (ionChange)="onChangeLanguage($event)">
-                <ion-select-option *ngFor="let details of Locale.availableLangsDetails" value="{{details.short}}" (selected)="Locale.currentLang == details.short">
-                    {{details.long}}
+            <ion-select [label]="'page_settings.language'|translate" label-placement="stacked" value="{{Locale.CurrentLanguage.locale}}" [okText]="'change'|translate" [cancelText]="'cancel'|translate" (ionChange)="onChangeLanguage($event)">
+                <ion-select-option *ngFor="let details of Locale.availableTranslations" value="{{details.locale}}" (selected)="Locale.CurrentLanguage.locale == details.locale">
+                    {{details.name}}
                 </ion-select-option>
             </ion-select>
+        </ion-item>
+
+        <!-- open app on transmitting list-->
+        <ion-item lines="full">
+            <ion-toggle label-placement="start" [checked]="OpenAppOnTransmit" (ionChange)="onOpenAppOnTransmitChanged($event.target.checked)">
+                <div class="text" [innerHTML]="'page_settings.openontransmit'|translate"></div>
+                <ion-note [innerHTML]="'page_settings.openontransmit_note'|translate"></ion-note>
+            </ion-toggle>
         </ion-item>
 
         <!-- confirmations -->

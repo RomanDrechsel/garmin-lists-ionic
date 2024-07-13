@@ -3,7 +3,7 @@ import { Component, ViewChild } from "@angular/core";
 import { IonContent, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
-import { MenuItem, MenuItemEmptyListTrash } from "../../../classes/menu-items";
+import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { DateUtils } from "../../../classes/utils/dateutils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
@@ -23,13 +23,12 @@ export class TrashListsPage extends PageBase {
     public Lists: List[] = [];
     private trashChangedSubscription?: Subscription;
 
-    constructor() {
-        super();
-    }
-
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
-        this.trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => (this.Lists = lists ?? []));
+        this.trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => {
+            this.Lists = lists ?? [];
+            this.appComponent.setAppPages(this.ModifyMainMenu());
+        });
         this.Lists = await this.ListsService.GetTrash();
     }
 
@@ -39,11 +38,9 @@ export class TrashListsPage extends PageBase {
     }
 
     public override ModifyMainMenu(): MenuItem[] {
-        if (this.Lists.length > 0) {
-            return [MenuItemEmptyListTrash(() => this.emptyTrash())];
-        } else {
-            return [];
-        }
+        return [
+            MenuitemFactory(EMenuItemType.EmptyListTrash, { onClick: () => this.emptyTrash(), disabled: this.Lists.length <= 0 }),
+        ];
     }
 
     public async onSwipeRight(list: List) {
@@ -65,8 +62,7 @@ export class TrashListsPage extends PageBase {
     }
 
     public async emptyTrash(): Promise<boolean> {
-        await this.ListsService.EmptyTrash();
-        return true;
+        return (await this.ListsService.WipeTrash()) !== false;
     }
 
     public DeletedString(list: List): string {

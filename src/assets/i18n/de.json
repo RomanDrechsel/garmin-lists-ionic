@@ -56,8 +56,8 @@
         "restore_item_error": "Der Punkt konnte nicht wiederhergestellt werden!",
         "empty_trash_confirm": "Möchstest du den Papierkorb leeren und die {{count}} Listen löschen?",
         "empty_trash_confirm_single": "Möchtest du den Papierkorb leeren und die Listen löschen?",
-        "empty_trash_listitems_confirm": "Möchtest du den Papierkorb der Liste <strong>{{name}}</strong> leeren und die {{count}} Punkte löschen?",
-        "empty_trash_listitems_confirm_single": "Möchtest du den Papierkorb der Liste <strong>{{name}}</strong> leeren und den Punkt löschen",
+        "empty_trash_listitems_confirm": "Möchtest du den Papierkorb der Liste leeren und die {{count}} Punkte löschen?",
+        "empty_trash_listitems_confirm_single": "Möchtest du den Papierkorb der Liste leeren und den Punkt löschen",
         "empty_trash_success": "Der Papierkorb wurde geleert.",
         "empry_trash_error": "Der Papierkorb konnte nicht geleert werden!"
     },
@@ -133,7 +133,9 @@
         "confirm": "Bestätigungs-Einstellungen",
         "confirm_note": "Einstellungen zur Abfrage von Benutzerbestätigungen",
         "trash": "Papierkorb",
-        "trash_note": "Einstellungen zur Verwendung des Papierkorbs"
+        "trash_note": "Einstellungen zur Verwendung des Papierkorbs",
+        "openontransmit": "App beim Übertragen starten",
+        "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst."
     },
     "page_settings_logs": {
         "page_title": "Logging",
@@ -157,7 +159,8 @@
     },
     "page_settings_showlogs": {
         "page_title": "Logs",
-        "logfile": "Log-Datei",
+        "log_onemore": "Ein weiteres Log",
+        "log_more": "{{count}} weitere Logs",
         "log_empty": "Das Log konnte nicht geladen werden.",
         "btn_delete": "Log löschen",
         "btn_save": "Log speichern",
@@ -167,7 +170,12 @@
         "store_text": "Die Log-Datei <strong>{{filename}}</strong> wird in <strong>DOCUMENTS</strong> auf Ihren Gerät gespeichert.",
         "store_text_web": "Die Log-Datei <strong>{{filename}}</strong> wird auf Ihrem Rechner gespeichert.",
         "store_success": "Das Log wurde gespeichert.",
-        "store_error": "Das Log konnte nicht gespeichert werden!"
+        "store_error": "Das Log konnte nicht gespeichert werden!",
+        "select_logs": "Log-Datei auswählen:",
+        "logfile": "Log Datei",
+        "select_logday_title": "Alle Log-Dateien eines Tages anzeigen:",
+        "no_log": "Keine Log-Dateien gefunden!",
+        "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden."
     },
     "page_settings_confirm": {
         "page_title": "Bestätigungen",
@@ -202,7 +210,13 @@
         "instock_oneweek": "eine Woche",
         "instock_onemonth": "einen Monat",
         "instock_hundredentries": "letzte 100 Einträge",
-        "instock_note": "Wie lange sollen alte Listen bzw. Listenpunkte im Papierkorb vorrätig gehalten werden?"
+        "instock_note": "Wie lange sollen alte Listen bzw. Listenpunkte im Papierkorb vorrätig gehalten werden?",
+        "confirm_cleartrash": "Soll der Papierkorb geleert werden?<br /><br /><strong>Achtung:</strong> Die Aktion kann nichtmehr rückgängig gemacht werden!",
+        "confirm_cleartrash_ok": "Papierkorb leeren",
+        "confirm_cleartrash_cancel": "Papierkorb nicht leeren",
+        "confirm_clearitemstrash": "Sollen die Papierkörbe geleert werden?<br /><br /><strong>Achtung:</strong> Die Aktion kann nichtmehr rückgängig gemacht werden!",
+        "confirm_clearitemstrash_ok": "Papierkörbe leeren",
+        "confirm_clearitemstrash_cancel": "Papierkörbe nicht leeren"
     },
     "page_appinfos": {
         "page_title": "App Informationen",
@@ -211,6 +225,9 @@
         "build": "Build:",
         "platform": "Platform:",
         "database": "Datenbank-Größe:",
+        "database_lists": "Listen:",
+        "database_trash": "Papierkorb:",
+        "database_logs": "Logs:",
         "support": "Ich habe die App in meiner Freizeit und ohne finanzielle Hintergedanken entwickelt.<br />Sie ist und bleibt kostenlos und OpenSource.<br /><br />Wenn sie Dir gefällt und du mich unterstützen möchtest,<br />warum kaufst du mir dann nicht einen Kaffee?"
     },
     "page_privacy": {

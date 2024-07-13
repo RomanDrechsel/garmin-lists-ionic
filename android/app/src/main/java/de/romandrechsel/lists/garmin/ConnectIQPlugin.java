@@ -19,24 +19,20 @@ import de.romandrechsel.lists.logging.Logger;
 import de.romandrechsel.lists.utils.HelperUtils;
 
 @CapacitorPlugin(name = "ConnectIQ")
-public class ConnectIQPlugin extends Plugin
-{
-    private static final String TAG = "ConnectIQPlugin";
-
+public class ConnectIQPlugin extends Plugin {
     DeviceManager Manager;
-    @Override public void load()
-    {
+
+    @Override
+    public void load() {
         super.load();
         this.Manager = new DeviceManager(this);
         Logger.Plugin = this;
     }
 
     @PluginMethod
-    public void Initialize(PluginCall call)
-    {
+    public void Initialize(PluginCall call) {
         Activity activity = this.getActivity();
-        if (activity != null)
-        {
+        if (activity != null) {
             this.Manager.Initialize(activity, call.getBoolean("live", true));
         }
         this.emitJsEvent("INIT", new JSObject());
@@ -44,52 +40,61 @@ public class ConnectIQPlugin extends Plugin
     }
 
     @PluginMethod
-    public void OpenStore(PluginCall call)
-    {
+    public void OpenStore(PluginCall call) {
         this.Manager.openStore();
         call.resolve();
     }
 
     @PluginMethod
-    public void GetDevices(PluginCall call)
-    {
+    public void OpenApp(PluginCall call) {
+        Long device_id = HelperUtils.toLong(call.getString("device_id", null));
+        boolean request = false;
+        if (device_id != null) {
+            request = this.Manager.openApp(device_id, (device, success) -> {
+                JSObject event = new JSObject();
+                event.put("app_opened", success);
+                event.put("device", device.getDeviceIdentifier());
+                this.emitJsEvent("APP_OPENED", event);
+            });
+        }
+
+        JSObject ret = new JSObject();
+        ret.put("request_send", request);
+        call.resolve(ret);
+    }
+
+    @PluginMethod
+    public void GetDevices(PluginCall call) {
         List<DeviceInfo> devices = this.Manager.getDevices(call.getBoolean("force_reload", false));
         call.resolve(this.toJSObject(devices));
     }
 
     @PluginMethod
-    public void GetDevice(PluginCall call)
-    {
+    public void GetDevice(PluginCall call) {
         Long identifier = HelperUtils.toLong(call.getString("device_id", null));
         DeviceInfo device = this.Manager.getDevice(identifier);
-        if (device != null)
-        {
-            JSObject ret = device.toJSObject();
+        if (device != null) {
             call.resolve(device.toJSObject());
-        }
-        else
-        {
+        } else {
             call.resolve();
         }
     }
 
     @PluginMethod
-    public void SendToDevice(PluginCall call)
-    {
+    public void SendToDevice(PluginCall call) {
         Long device_id = HelperUtils.toLong(call.getString("device_id", null));
         String json = call.getString("data", null);
 
-        this.Manager.transmitToDevice(device_id, json, new DeviceManager.IMessageSendListener()
-        {
-            @Override public void onMessageStatus(@NonNull ConnectIQ.IQMessageStatus status)
-            {
+        this.Manager.transmitToDevice(device_id, json, new DeviceManager.IMessageSendListener() {
+            @Override
+            public void onMessageStatus(@NonNull ConnectIQ.IQMessageStatus status) {
                 JSObject ret = new JSObject();
                 ret.put("success", status == ConnectIQ.IQMessageStatus.SUCCESS);
                 call.resolve(ret);
             }
 
-            @Override public void onMessageSendFailed(@Nullable DeviceInfo.DeviceState state)
-            {
+            @Override
+            public void onMessageSendFailed(@Nullable DeviceInfo.DeviceState state) {
                 JSObject ret = new JSObject();
                 ret.put("success", false);
                 call.resolve(ret);
@@ -97,25 +102,20 @@ public class ConnectIQPlugin extends Plugin
         });
     }
 
-    public void emitJsEvent(String event, JSObject log)
-    {
+    public void emitJsEvent(String event, JSObject log) {
         this.notifyListeners(event, log);
     }
 
-    private JSObject toJSObject(@NonNull List<DeviceInfo> devices)
-    {
+    private JSObject toJSObject(@NonNull List<DeviceInfo> devices) {
         ArrayList<JSObject> list = new ArrayList<>();
-        for (DeviceInfo d : devices)
-        {
+        for (DeviceInfo d : devices) {
             JSObject obj = d.toJSObject();
-            if (obj != null)
-            {
+            if (obj != null) {
                 list.add(obj);
             }
         }
 
-        if (!list.isEmpty())
-        {
+        if (!list.isEmpty()) {
             JSObject ret = new JSObject();
             ret.put("devices", list);
             return ret;

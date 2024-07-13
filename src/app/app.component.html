@@ -6,9 +6,9 @@
                     <ion-img id="main-applogo" src="./assets/icons/applogo.svg" alt="{{'appname'|translate}}"></ion-img>
                 </div>
                 <ion-list id="page-list">
-                    <ion-item routerDirection="forward" [routerLink]="!p.onClick ? p.Url : undefined" (click)="onMenuItemClick(p)" routerLinkActive="selected" lines="full" detail="false" *ngFor="let p of appPages; let i = index">
-                        <ion-icon aria-hidden="true" slot="start" [name]="p.IconName" [src]="p.Icon"></ion-icon>
-                        <ion-label>{{ p.Title|translate }}</ion-label>
+                    <ion-item routerDirection="forward" [disabled]="p.Disabled" [routerLink]="!p.onClick ? p.Url : undefined" (click)="onMenuItemClick(p)" routerLinkActive="selected" lines="full" detail="false" *ngFor="let p of appPages; let i = index">
+                        <ion-icon aria-hidden="true" slot="start" [src]="p.Icon"></ion-icon>
+                        <ion-label>{{ p.TitleId | translate }}</ion-label>
                     </ion-item>
                 </ion-list>
             </ion-content>
@@ -17,9 +17,9 @@
                     <ion-item *ngIf="isDevMode" lines="full">
                         <ion-toggle labelPlacement="end" justify="start" [checked]="ConnectIQ.isDebugMode" (ionChange)="onDebugDevices($event.target.checked)">Debug-Geräte anzeigen</ion-toggle>
                     </ion-item>
-                    <ion-item routerDirection="forward" [routerLink]="!p.onClick ? p.Url : undefined" (click)="onMenuItemClick(p)" routerLinkActive="selected" lines="full" detail="false" *ngFor="let p of systemPages; let i = index">
-                        <ion-icon aria-hidden="true" slot="start" [name]="p.IconName" [src]="p.Icon"></ion-icon>
-                        <ion-label>{{ p.Title|translate }}</ion-label>
+                    <ion-item routerDirection="forward" [disabled]="p.Disabled" [routerLink]="!p.onClick ? p.Url : undefined" (click)="onMenuItemClick(p)" routerLinkActive="selected" lines="full" detail="false" *ngFor="let p of systemPages; let i = index">
+                        <ion-icon aria-hidden="true" slot="start" [src]="p.Icon"></ion-icon>
+                        <ion-label>{{ p.TitleId | translate }}</ion-label>
                     </ion-item>
                 </ion-list>
             </ion-footer>

@@ -1,12 +1,24 @@
 <app-main-toolbar back="/settings/logging">{{'page_settings_showlogs.page_title'|translate}}</app-main-toolbar>
 
 <ion-content>
-    <ion-select [label]="'page_settings_showlogs.logfile'|translate" label-placement="stacked" value="{{currentLogfile?.Filename}}" interface="popover" (ionChange)="onChangeLogfile($event)">
-        <ion-select-option *ngFor="let file of availableLogfiles" value="{{file.Filename}}" (selected)="currentLogfile?.Path == file.Path">
-            {{file.Filename}}
-        </ion-select-option>
-    </ion-select>
-    <div id="logtext">{{currentLogfile?.Content}}</div>
+    <div class="select">
+        <ion-icon src="./assets/icons/calendar.svg" class="calendar" (click)="openCalendar()"></ion-icon>
+        <ion-select interface="action-sheet" [interfaceOptions]="{header: 'page_settings_showlogs.select_logs'|translate}" [value]="currentLogfile?.Filename" [cancelText]="'cancel'|translate" [disabled]="!LogfilesAvailable" (ionChange)="onChangeLogfile($event)">
+            <ion-text slot="label">{{currentLogfile?.Filename ?? 'page_settings_showlogs.no_log'|translate}}</ion-text>
+            <ion-select-option *ngFor="let file of availableLogfiles" [value]="file.name" (selected)="currentLogfile?.Path == file.uri">{{formatLogfile(file)}}</ion-select-option>
+        </ion-select>
+    </div>
+    <div id="logtext" *ngIf="currentLogfile; else nologfile">{{currentLogfile.Content}}</div>
+    <ng-template #nologfile>
+        <app-page-empty>
+            <div slot="image">
+                <ion-icon src="./assets/icons/file.svg"></ion-icon>
+            </div>
+            <div slot="text">
+                <ion-text>{{'page_settings_showlogs.no_log_note'|translate: {date: SelectedDayString} }}</ion-text>
+            </div>
+        </app-page-empty>
+    </ng-template>
 
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button [disabled]="!currentLogfile || !currentLogfile.Exists">

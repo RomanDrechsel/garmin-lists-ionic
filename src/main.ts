@@ -3,11 +3,9 @@ import { APP_INITIALIZER, enableProdMode, importProvidersFrom, isDevMode } from 
 import { bootstrapApplication } from "@angular/platform-browser";
 import { RouteReuseStrategy, provideRouter } from "@angular/router";
 import { provideServiceWorker } from "@angular/service-worker";
-import { Capacitor } from "@capacitor/core";
 import { IonicRouteStrategy, provideIonicAngular } from "@ionic/angular/standalone";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
-import { defineCustomElements as jeepSqlite } from "jeep-sqlite/loader";
 import { PageTransitionAnimation } from "./app/animations/page-transition.animation";
 import { AppComponent } from "./app/app.component";
 import { routes } from "./app/app.routes";
@@ -24,14 +22,6 @@ export function initializeFactory(init: AppService) {
 
 if (environment.production) {
     enableProdMode();
-}
-
-if (Capacitor.getPlatform() === "web") {
-    jeepSqlite(window);
-    window.addEventListener("DOMContentLoaded", () => {
-        const jeepEl = document.createElement("jeep-sqlite");
-        document.body.appendChild(jeepEl);
-    });
 }
 
 bootstrapApplication(AppComponent, {
