@@ -37,7 +37,6 @@
                         "styles": [
                             "src/global.scss",
                             "src/theme/variables.scss",
-                            "src/theme/variables_dark.scss",
                             "src/theme/theming.scss",
                             "src/theme/popups.scss"
                         ],
@@ -169,7 +168,6 @@
                         "styles": [
                             "src/global.scss",
                             "src/theme/variables.scss",
-                            "src/theme/variables_dark.scss",
                             "src/theme/theming.scss",
                             "src/theme/popups.scss"
                         ],

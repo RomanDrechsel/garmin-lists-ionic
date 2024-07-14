@@ -12,7 +12,6 @@ enum ELogType {
     Error = 1,
 }
 export enum EAutoDelete {
-    Never = 0,
     Day = 1,
     Week = 7,
     Month = 30,
@@ -262,9 +261,7 @@ export class LoggingService {
             this.AutoDelete = autodelete;
             this.Notice(`Changed logging autodelete to ${autodelete} days`);
             this.Preferences.Set(EPrefProperty.LogsAutoDelete, this.AutoDelete);
-            if (this.AutoDelete != EAutoDelete.Never) {
-                this.DeleteLogs(this.AutoDelete);
-            }
+            this.DeleteLogs(this.AutoDelete);
         }
     }
 
