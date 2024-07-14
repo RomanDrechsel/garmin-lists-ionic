@@ -1,7 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ViewChild, ViewEncapsulation, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild, ViewEncapsulation, inject } from '@angular/core';
 import { IonButton, IonButtons, IonDatetime, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
+import { timer } from "rxjs";
 import { LocalizationService } from "../../services/localization/localization.service";
 
 @Component({
@@ -15,8 +16,8 @@ import { LocalizationService } from "../../services/localization/localization.se
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
 })
-export class DatetimeComponent {
-    @ViewChild('datetime') public datetime?: IonDatetime;
+export class DatetimeComponent implements AfterViewInit {
+    @ViewChild('datetime', { read: ElementRef, static: false }) datetime?: ElementRef;
 
     public selectedDate: string | undefined;
 
@@ -38,10 +39,23 @@ export class DatetimeComponent {
         return new Date().toISOString();
     }
 
+    public ngAfterViewInit() {
+        timer(200).subscribe(() => {
+            const shadow: DocumentFragment = this.datetime?.nativeElement.shadowRoot;
+            if (shadow) {
+                shadow.querySelector('.calendar-days-of-week')?.setAttribute('part', 'days-of-week');
+                shadow.querySelectorAll('.calendar-next-prev ion-button').forEach(el => el.setAttribute('part', 'calender-next-prev-button'));
+                shadow.querySelector('.datetime-header')?.setAttribute('part', 'header');
+                shadow.querySelector('ion-picker')?.setAttribute('part', 'picker');
+            }
+        });
+    }
+
     public async selectToday() {
         if (this.datetime) {
-            this.datetime.value = new Date().toISOString();
-            this.datetime.confirm();
+            const datetime = this.datetime.nativeElement as IonDatetime;
+            datetime.value = new Date().toISOString();
+            datetime.confirm();
         }
     }
 

@@ -145,7 +145,6 @@
         "mode_normal": "Normal",
         "mode_error": "Nur Fehler",
         "autodelete": "Alte Logs löschen",
-        "autodelete_never": "Nie",
         "autodelete_day": "Nach einem Tag",
         "autodelete_week": "Nach einer Woche",
         "autodelete_month": "Nach einem Monat",
@@ -173,7 +172,7 @@
         "store_error": "Das Log konnte nicht gespeichert werden!",
         "select_logs": "Log-Datei auswählen:",
         "logfile": "Log Datei",
-        "select_logday_title": "Alle Log-Dateien eines Tages anzeigen:",
+        "select_logday_title": "Tage der Log-Dateien auswählen:",
         "no_log": "Keine Log-Dateien gefunden!",
         "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden."
     },

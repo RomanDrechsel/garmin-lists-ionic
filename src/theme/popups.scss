@@ -89,6 +89,59 @@ ion-alert {
     }
 }
 
+ion-datetime {
+    --background: var(--ion-background-color);
+    --wheel-highlight-background: var(--background);
+    color: var(--color-text);
+
+    &::part(calendar-day) {
+        color: var(--color-text);
+    }
+
+    &::part(month-year-button) {
+        color: var(--color-text);
+    }
+
+    &::part(days-of-week) {
+        color: var(--color-text);
+    }
+
+    &::part(calender-next-prev-button) {
+        color: var(--color-text);
+    }
+
+    &::part(header) {
+        background: var(--color-toolbar);
+    }
+
+    &::part(calendar-day active) {
+        background: var(--ion-color-secondary);
+        border-color: var(--ion-color-secondary);
+        color: var(--color-text-contrast);
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    &::part(calendar-day today) {
+        border-color: var(--ion-color-secondary);
+    }
+
+    &::part(picker) {
+        --ion-color-base: var(--ion-color-primary);
+        --ion-background-color-rgb: var(--color-background-tint-rgb);
+        background: var(--color-control-background);
+    }
+
+    ion-buttons {
+        ion-button.button:not(.button-solid) {
+            --color: var(--color-text) !important;
+            --ion-color-base: var(--color) !important;
+        }
+    }
+}
+
 /** ion-select with action sheet as interface */
 .select-action-sheet .action-sheet-container {
     max-height: calc(80dvh - (var(--ion-safe-area-top, 0) + var(--ion-safe-area-bottom, 0)));
@@ -101,5 +154,13 @@ ion-alert {
 
     .action-sheet-selected {
         background: var(--color-control-selected-background);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    ion-datetime {
+        &::part(calendar-day active) {
+            color: var(--color-text);
+        }
     }
 }

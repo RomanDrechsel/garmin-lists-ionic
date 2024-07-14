@@ -3,6 +3,7 @@ https://github.com/zagham-nadeem/capacitor-folder-picker
 
 
 TODO: Lock items
+BUG: Success-Toast color problem in dark mode
 
 ConnectIQ Documentation:
 https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
