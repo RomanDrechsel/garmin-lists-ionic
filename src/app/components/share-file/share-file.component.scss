@@ -11,8 +11,17 @@
     }
 
     .inner-content {
+        ion-select {
+            margin-top: 20px;
+
+            &::part(container) {
+                margin-inline: auto;
+            }
+        }
+
         ion-button {
             margin-top: 20px;
+            float: right;
         }
     }
 }

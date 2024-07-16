@@ -3,7 +3,7 @@ import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
 import { Platform } from "@ionic/angular";
-import { StringUtils } from "../../classes/utils/stringutils";
+import { StringUtils } from "../../classes/utils/string-utils";
 import { MainToolbarComponent } from "../../components/main-toolbar/main-toolbar.component";
 import { AdmobService } from "../adverticing/admob.service";
 import { ConnectIQService } from "../connectiq/connect-iq.service";

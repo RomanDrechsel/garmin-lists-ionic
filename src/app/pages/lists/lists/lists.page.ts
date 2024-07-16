@@ -5,7 +5,7 @@ import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonImg, IonInput,
 import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { List } from "src/app/services/lists/list";
-import { DateUtils } from "../../../classes/utils/dateutils";
+import { DateUtils } from "../../../classes/utils/date-utils";
 import { PageAddNewComponent } from "../../../components/page-add-new/page-add-new.component";
 import { PageBase } from "../../page-base";
 

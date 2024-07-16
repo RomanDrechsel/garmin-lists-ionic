@@ -4,7 +4,7 @@ import { IonContent, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSli
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
-import { DateUtils } from "../../../classes/utils/dateutils";
+import { DateUtils } from "../../../classes/utils/date-utils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { List } from "../../../services/lists/list";

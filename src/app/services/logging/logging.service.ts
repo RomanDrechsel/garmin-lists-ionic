@@ -1,8 +1,8 @@
 import { formatDate } from "@angular/common";
 import { Injectable, isDevMode } from "@angular/core";
 import { Directory, Encoding, FileInfo, Filesystem } from "@capacitor/filesystem";
-import { FileUtils } from "src/app/classes/utils/fileutils";
-import { StringUtils } from "../../classes/utils/stringutils";
+import { FileUtils } from "src/app/classes/utils/file-utils";
+import { StringUtils } from "../../classes/utils/string-utils";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 
 enum ELogType {

@@ -5,7 +5,7 @@ import { RouterLink } from "@angular/router";
 import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, SelectCustomEvent } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
-import { FileUtils } from "../../../classes/utils/fileutils";
+import { FileUtils } from "../../../classes/utils/file-utils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { PageBase } from "../../page-base";
 

@@ -1,9 +1,10 @@
-TODO: Select logfiles export folder
-https://github.com/zagham-nadeem/capacitor-folder-picker
+WIP: Store logfile
+https://github.com/diachedelic/capacitor-blob-writer
 
 
 TODO: Lock items
-WIP: Error-Toast color problem in dark mode
+TODO: App Review
+https://github.com/capacitor-community/in-app-review
 
 ConnectIQ Documentation:
 https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/

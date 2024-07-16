@@ -1,18 +1,17 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Capacitor } from "@capacitor/core";
 import { FileInfo } from "@capacitor/filesystem";
 import { SelectCustomEvent } from "@ionic/angular";
 import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonText, IonTextarea, ModalController, NavController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
-import { FileUtils } from "src/app/classes/utils/fileutils";
+import { FileUtils } from "src/app/classes/utils/file-utils";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { AppMetaData } from "../../../classes/app-meta-data";
 import { SelectDatetime } from "../../../components/datetime/datetime.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
-import { StoreFile } from "../../../components/store-file/store-file.component";
+import { ShareFile } from "../../../components/share-file/share-file.component";
 import { AppService } from "../../../services/app/app.service";
 import { PageBase } from "../../page-base";
 @Component({
@@ -85,14 +84,15 @@ export class ShowlogsPage extends PageBase {
 
     public async onSave() {
         if (this.currentLogfile) {
-            this.Logger.Important("Device Info: \n", await AppMetaData(this.AppService));
-            const text_key = Capacitor.isNativePlatform() ? "page_settings_showlogs.store_text" : "page_settings_showlogs.store_text_web";
-            const locale = this.Locale.getText(["page_settings_showlogs.store_title", text_key, "save"]);
-            await StoreFile(this.ModaleCtrl, {
-                title: locale["page_settings_showlogs.store_title"],
-                text: (locale[text_key] as string).replace("{{filename}}", this.currentLogfile.Filename),
+            this.Logger.Important("Device Info:", await AppMetaData(this.AppService));
+            const locale = this.Locale.getText(["page_settings_showlogs.share_email.title", "page_settings_showlogs.share_email.text", "save"]);
+            await ShareFile(this.ModaleCtrl, {
+                email_text: locale["page_settings_showlogs.share_email.text"],
+                email_title: locale["page_settings_showlogs.share_email.title"],
                 button: locale["save"],
                 file: this.currentLogfile,
+                filename: this.currentLogfile.Filename + ".txt",
+                mime: 'text/plain'
             });
         }
     }

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
-import { FileUtils } from "../../../classes/utils/fileutils";
-import { StringUtils } from "../../../classes/utils/stringutils";
+import { FileUtils } from "../../../classes/utils/file-utils";
+import { StringUtils } from "../../../classes/utils/string-utils";
 import { ListModel } from "../../lists/list";
 import { ListitemTrashModel, ListitemTrashUtils } from "../../lists/listitems-trash-utils";
 import { Logger } from "../../logging/logger";
@@ -323,7 +323,7 @@ export class ListsBackendService {
      * @param backend backend identifier to be fetched
      * @returns size in bytes and total number of files in the backend
      */
-    public async GetSize(backend?: string): Promise<{ size: number; files: number }> {
+    public async GetSize(backend?: string): Promise<{ size: number; files: number; }> {
         const allfiles = await this.getAllFiles(backend, false);
         return { size: allfiles.reduce((a, b) => a + b.Size, 0), files: allfiles.length };
     }

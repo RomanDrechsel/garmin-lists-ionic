@@ -1,4 +1,4 @@
-import { StringUtils } from "./utils/stringutils";
+import { StringUtils } from "./utils/string-utils";
 
 export enum EMenuItemType {
     "Lists",

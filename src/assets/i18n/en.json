@@ -79,8 +79,13 @@
         "itemname": "Description",
         "itemnote": "Note"
     },
-    "comp-datetime": {
-        "title": "Log file start time:"
+    "comp_sharefile": {
+        "title": "Store file",
+        "text": "How do you want to store the file <br /><strong>{{filename}}</strong>?",
+        "text_web": "The file <strong>{{filename}}</strong> will be stored on your disk.",
+        "store": "Store in Documents on your device",
+        "share": "Share",
+        "email": "Send via e-mail"
     },
     "page_lists": {
         "page_title": "My lists",
@@ -170,16 +175,17 @@
         "btn_save": "Store log",
         "confirm_delete": "Should the log <strong>{{filename}}</strong> be deleted?",
         "toast_deleted": "The log was deleted.",
-        "store_title": "Store Log",
-        "store_text": "The logfile <strong>{{filename}}</strong> will be stored in <strong>DOCUMENTS</strong> on your device.",
-        "store_text_web": "The logfile <strong>{{filename}}</strong> will be stored on your disk.",
         "store_success": "The log was stored.",
         "store_error": "The log could not be stored!",
         "select_logs": "Select log file:",
         "logfile": "log file",
         "select_logday_title": "Show log files of a certain day:",
         "no_log": "No log files found!",
-        "no_log_note": "No log files were found for {{date}}"
+        "no_log_note": "No log files were found for {{date}}",
+        "share": {
+            "title": "{{package}} / {{platform}} - logfile {{file}} ({{size}})",
+            "text": "<i>Please describe the problems in more detail so that I can understand them:</i>\n\n"
+        }
     },
     "page_settings_confirm": {
         "page_title": "Confirmations",

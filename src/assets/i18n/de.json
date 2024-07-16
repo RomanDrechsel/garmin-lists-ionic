@@ -78,6 +78,14 @@
         "itemname": "Bezeichnung",
         "itemnote": "Notiz"
     },
+    "comp_sharefile": {
+        "title": "Datei Speichern",
+        "text": "Wie möchtest du die Datei <br /><strong>{{filename}}</strong><br /> speichern?",
+        "text_web": "Die Datei <strong>{{filename}}</strong> wird auf Ihrem Rechner gespeichert.",
+        "store": "In Documents speichern",
+        "share": "Teilen",
+        "email": "Per E-Mail senden"
+    },
     "page_lists": {
         "page_title": "Meine Listen",
         "empty": "Leeren",
@@ -165,16 +173,17 @@
         "btn_save": "Log speichern",
         "confirm_delete": "Soll das Log <strong>{{filename}}</strong> wirklich gelöscht?",
         "toast_deleted": "Das Log wurde gelöscht.",
-        "store_title": "Log Speichern",
-        "store_text": "Die Log-Datei <strong>{{filename}}</strong> wird in <strong>DOCUMENTS</strong> auf Ihren Gerät gespeichert.",
-        "store_text_web": "Die Log-Datei <strong>{{filename}}</strong> wird auf Ihrem Rechner gespeichert.",
         "store_success": "Das Log wurde gespeichert.",
         "store_error": "Das Log konnte nicht gespeichert werden!",
         "select_logs": "Log-Datei auswählen:",
         "logfile": "Log Datei",
         "select_logday_title": "Tage der Log-Dateien auswählen:",
         "no_log": "Keine Log-Dateien gefunden!",
-        "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden."
+        "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden.",
+        "share_email": {
+            "title": "{{package}} / {{platform}} - Log-Datei {{file}} ({{size}})",
+            "text": "<i>Bitte schildere mir die Probleme etwas ausführlicher, damit ich sie nachvollziehen kann:</i>\n\n"
+        }
     },
     "page_settings_confirm": {
         "page_title": "Bestätigungen",
