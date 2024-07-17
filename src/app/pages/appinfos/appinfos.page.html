@@ -48,6 +48,8 @@
         <div class="support">
             <div [innerHTML]="'page_appinfos.support'|translate" class="ion-text-center"></div>
             <ion-img [src]="isDarkmode ? './assets/img/bmc_dark.png' : './assets/img/bmc.png'" (click)="bmc()" />
+            <div [innerHTML]="'page_appinfos.review'|translate" class="ion-text-center review" (click)="writeReview()"></div>
+            <div [innerHTML]="'page_appinfos.thanks'|translate" class="ion-text-center"></div>
         </div>
     </div>
 </ion-content>

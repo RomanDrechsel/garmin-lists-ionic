@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { InAppReview } from "@capacitor-community/in-app-review";
 import { Browser } from "@capacitor/browser";
 import { IonButton, IonCol, IonContent, IonGrid, IonImg, IonItem, IonItemDivider, IonLabel, IonList, IonNote, IonRow, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
@@ -53,6 +54,10 @@ export class AppinfosPage extends PageBase {
 
     public async bmc() {
         await Browser.open({ url: "https://buymeacoffee.com/romandrechsel" });
+    }
+
+    public async writeReview() {
+        await InAppReview.requestReview();
     }
 
     private async requestDatabaseSize() {

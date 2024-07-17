@@ -234,8 +234,13 @@
         "version": "version:",
         "build": "build:",
         "platform": "platform:",
-        "database": "Database-size:",
-        "support": "I developed this app in my spare time and without financial ulterior motives.<br />It is and remains free and open source.<br /><br />If you like it and want to support me,<br />then why don't you buy me a coffee?"
+        "database": "Database size:",
+        "database_lists": "Lists:",
+        "database_trash": "Trash:",
+        "database_logs": "Logs:",
+        "support": "I developed this app in my spare time and without financial ulterior motives.<br />It is and remains free and open source.<br /><br />If you like it and want to support me,<br />then why don't you buy me a coffee?",
+        "review": "Or write a nice review in the PlayStore.",
+        "thanks": "Thank you!"
     },
     "page_privacy": {
         "page_title": "Privacy",
