@@ -182,7 +182,7 @@
         "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden.",
         "share_email": {
             "title": "{{package}} / {{platform}} - Log-Datei {{file}} ({{size}})",
-            "text": "<i>Bitte schildere mir die Probleme etwas ausführlicher, damit ich sie nachvollziehen kann:</i>\n\n"
+            "text": "Bitte schildere mir die Probleme etwas ausführlicher, damit ich sie nachvollziehen kann:\n\n"
         }
     },
     "page_settings_confirm": {

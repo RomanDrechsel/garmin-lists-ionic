@@ -1,10 +1,7 @@
-WIP: Store logfile
-https://github.com/diachedelic/capacitor-blob-writer
-
-
 TODO: Lock items
 TODO: App Review
 https://github.com/capacitor-community/in-app-review
+BUG: App crashes on watch, when transfering a list
 
 ConnectIQ Documentation:
 https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/

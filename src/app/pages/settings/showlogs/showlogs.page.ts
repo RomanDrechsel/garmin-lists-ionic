@@ -85,7 +85,7 @@ export class ShowlogsPage extends PageBase {
     public async onSave() {
         if (this.currentLogfile) {
             this.Logger.Important("Device Info:", await AppMetaData(this.AppService));
-            const locale = this.Locale.getText(["page_settings_showlogs.share_email.title", "page_settings_showlogs.share_email.text", "save"]);
+            const locale = this.Locale.getText(["page_settings_showlogs.share_email.title", "page_settings_showlogs.share_email.text", "save"], { package: AppService.AppInfo.PackageName, platform: AppService.AppInfo.Platform, file: this.currentLogfile.Filename, size: FileUtils.File.FormatSize(this.currentLogfile.Size) });
             await ShareFile(this.ModaleCtrl, {
                 email_text: locale["page_settings_showlogs.share_email.text"],
                 email_title: locale["page_settings_showlogs.share_email.title"],

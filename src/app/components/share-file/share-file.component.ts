@@ -8,9 +8,9 @@ import { TranslateModule } from "@ngx-translate/core";
 import { FileUtils } from "../../classes/utils/file-utils";
 import { ShareUtil } from "../../classes/utils/share-utils";
 import { AppService } from "../../services/app/app.service";
-import { LocalizationService } from "../../services/localization/localization.service";
 import { Logger } from "../../services/logging/logger";
 import { PopupsService } from "../../services/popups/popups.service";
+import { ConfigService } from "../../services/storage/config.service";
 
 @Component({
     selector: "app-share-file",
@@ -26,7 +26,7 @@ export class StoreFileComponent {
 
     private readonly Popups = inject(PopupsService);
     private readonly modalCtrl = inject(ModalController);
-    private readonly Locale = inject(LocalizationService);
+    private readonly Config = inject(ConfigService);
 
     public get IsWebApp(): boolean {
         return AppService.isWebApp;
@@ -65,22 +65,24 @@ export class StoreFileComponent {
                         else {
                             Logger.Error(`Could not share log ${this.Params.file.Filename}`);
                             this.modalCtrl.dismiss(null, "cancel");
+                            this.Popups.Toast.Error("page_settings_showlogs.store_error");
                         }
                     }
                     catch (error) {
                         Logger.Error(`Could not share log ${this.Params.file.Filename}: `, error);
                         this.modalCtrl.dismiss(null, "cancel");
+                        this.Popups.Toast.Error("page_settings_showlogs.store_error");
                     }
                 }
                 else if (this.do.value == "email") {
-                    //WIP: send an e-mail
-                    if (await ShareUtil.SendMail({ files: this.Params.file.Path, title: this.Params.email_title, text: this.Params.email_text })) {
+                    if (await ShareUtil.SendMail({ sendto: this.Config.MyEmail, files: this.Params.file.Path, title: this.Params.email_title, text: this.Params.email_text })) {
                         Logger.Debug(`Shared log ${this.Params.file.Filename} via e-mail`);
                         this.modalCtrl.dismiss(null, "confirm");
                     }
                     else {
                         Logger.Error(`Could not share log ${this.Params.file.Filename} via e-mail`);
                         this.modalCtrl.dismiss(null, "cancel");
+                        this.Popups.Toast.Error("page_settings_showlogs.store_error");
                     }
                 }
             }

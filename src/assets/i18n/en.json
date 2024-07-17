@@ -184,7 +184,7 @@
         "no_log_note": "No log files were found for {{date}}",
         "share": {
             "title": "{{package}} / {{platform}} - logfile {{file}} ({{size}})",
-            "text": "<i>Please describe the problems in more detail so that I can understand them:</i>\n\n"
+            "text": "Please describe the problems in more detail so that I can understand them:\n\n"
         }
     },
     "page_settings_confirm": {
