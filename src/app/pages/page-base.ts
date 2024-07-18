@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, ViewChild, inject } from "@angular/core";
+import { NavController } from "@ionic/angular/standalone";
 import { AppComponent } from "../app.component";
 import { MenuItem } from "../classes/menu-items";
 import { MainToolbarComponent } from "../components/main-toolbar/main-toolbar.component";
@@ -25,6 +26,7 @@ export abstract class PageBase {
     protected readonly Locale = inject(LocalizationService);
     protected readonly Logger = inject(LoggingService);
     protected readonly Preferences = inject(PreferencesService);
+    protected readonly NavController = inject(NavController);
     protected readonly cdr = inject(ChangeDetectorRef);
 
     public async ionViewWillEnter() {
@@ -36,9 +38,9 @@ export abstract class PageBase {
         AppService.AppToolbar = this.Toolbar;
     }
 
-    public async ionViewWillLeave() {}
+    public async ionViewWillLeave() { }
 
-    public async ionViewDidLeave() {}
+    public async ionViewDidLeave() { }
 
     public ModifyMainMenu(): MenuItem[] {
         return [];

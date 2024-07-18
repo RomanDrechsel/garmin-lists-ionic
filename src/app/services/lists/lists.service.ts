@@ -357,12 +357,14 @@ export class ListsService {
      * @param items items to be ordered
      * @returns list with reordered listitems
      */
-    public async ReorderListitems(list: List, items: Listitem[]): Promise<void> {
+    public async ReorderListitems(list: List, items: Listitem[], store: boolean = true): Promise<void> {
         list.Items = items;
         for (let i = 0; i < list.Items.length; i++) {
             list.Items[i].Order = i;
         }
-        await this.StoreList(list);
+        if (store) {
+            await this.StoreList(list);
+        }
     }
 
     /**
@@ -372,6 +374,16 @@ export class ListsService {
      */
     public async ToggleHiddenListitem(list: List, item: Listitem): Promise<void> {
         item.Hidden = !item.Hidden;
+        await this.StoreList(list);
+    }
+
+    /**
+     * lock the item, so it is not deleted when emptying the list
+     * @param list list, the item is part of^
+     * @param item listitem, that should be locked/unlocked
+     */
+    public async ToggleLockListitem(list: List, item: Listitem): Promise<void> {
+        item.Locked = !item.Locked;
         await this.StoreList(list);
     }
 
@@ -604,13 +616,13 @@ export class ListsService {
     private async emptyList(list: List): Promise<boolean> {
         if (list.ItemsCount > 0) {
             if ((await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) == true) {
-                const del = await this.TrashItemsProvider.StoreListitem(list.Uuid, list.Items);
+                const del = await this.TrashItemsProvider.StoreListitem(list.Uuid, list.Items.filter(i => !i.Locked));
                 if (!del) {
                     Logger.Error(`Could not empty list ${list.toLog()} and move items to trash`);
                     return false;
                 }
             }
-            list.Items = [];
+            await this.ReorderListitems(list, list.Items.filter(i => i.Locked), false);
             if (await this.StoreList(list)) {
                 this.putListInIndex(list);
                 this.Popups.Toast.Success("service-lists.empty_success");

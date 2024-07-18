@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, ViewChild, WritableSignal, inject } from "@angular/core";
+import { Component, ViewChild, WritableSignal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTitle, IonToolbar, ItemReorderEventDetail, NavController } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTitle, IonToolbar, ItemReorderEventDetail } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { List } from "src/app/services/lists/list";
@@ -21,8 +21,6 @@ export class ListsPage extends PageBase {
 
     public Lists: WritableSignal<List[]> = this.ListsService.Lists;
     private disableClick = false;
-
-    private readonly NavController = inject(NavController);
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();

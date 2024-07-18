@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { FileInfo } from "@capacitor/filesystem";
 import { SelectCustomEvent } from "@ionic/angular";
-import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonText, IonTextarea, ModalController, NavController } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonText, IonTextarea, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { FileUtils } from "src/app/classes/utils/file-utils";
@@ -31,7 +31,6 @@ export class ShowlogsPage extends PageBase {
 
     private readonly ModaleCtrl = inject(ModalController);
     private readonly AppService = inject(AppService);
-    private readonly NavController = inject(NavController);
 
     public get SelectedDayString(): string | undefined {
         return this.selectedDate?.toLocaleDateString(this.Locale.CurrentLanguage.locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });

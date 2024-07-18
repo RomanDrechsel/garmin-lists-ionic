@@ -24,6 +24,7 @@
     "mainmenu": {
         "lists": "My lists",
         "trash": "Trash",
+        "delete_list": "Delete list",
         "devices": "Devices",
         "settings": "Settings",
         "privacy": "Privacy policy",
@@ -101,6 +102,8 @@
         "menu_devices": "Transmit list",
         "hide": "Hide",
         "show": "Show",
+        "lock": "Lock",
+        "unlock": "Unlock",
         "nolist": "Something went wrong :(<br /><br />The list can not be displayed.",
         "add_new_hint": "Create a new item in the list."
     },

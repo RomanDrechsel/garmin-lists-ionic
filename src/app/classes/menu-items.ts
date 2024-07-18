@@ -3,6 +3,7 @@ import { StringUtils } from "./utils/string-utils";
 export enum EMenuItemType {
     "Lists",
     "EmptyList",
+    "DeleteList",
     "ListsTrash",
     "EmptyListTrash",
     "ListitemsTrash",
@@ -20,6 +21,8 @@ export const MenuitemFactory = function(itemtype: EMenuItemType, options?: { tit
             return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.lists", Icon: "./assets/icons/menu/lists.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
         case EMenuItemType.EmptyList:
             return { Id: itemtype, TitleId: options?.title_id ?? "page_listitems.menu_empty", Icon: "./assets/icons/menu/empty.svg", Url: options?.url_addition, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.DeleteList:
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.delete_list", Icon: "./assets/icons/menu/delete.svg", Url: options?.url_addition, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
         case EMenuItemType.ListsTrash:
             url = options?.url_addition ? StringUtils.concat(["/trash", options.url_addition], "/") : "/trash";
             return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.trash", Icon: "./assets/icons/menu/trash.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };

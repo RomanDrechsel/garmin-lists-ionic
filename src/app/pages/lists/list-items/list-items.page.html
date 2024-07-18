@@ -19,7 +19,8 @@
                     </ion-item-options>
                     <ion-item lines="full" [button]="true" (click)="editItem(item)" [ngClass]="{'hidden': item.Hidden}">
                         <div class="listpoint-indicator-wrapper" slot="start">
-                            <div class="listpoint-indicator"></div>
+                            <div class="listpoint-indicator" *ngIf="!item.Locked"></div>
+                            <ion-icon src="./assets/icons/pin_solid.svg" *ngIf="item.Locked"></ion-icon>
                         </div>
                         <div class="details">
                             <div>
@@ -32,6 +33,10 @@
                         <ion-reorder slot="end"></ion-reorder>
                     </ion-item>
                     <ion-item-options side="end" (ionSwipe)="onSwipeLeft(item)">
+                        <ion-item-option color="secondary" (click)="pinItem(item)">
+                            <ion-icon slot="end" [src]="item.Locked ? './assets/icons/pin_off.svg' : './assets/icons/pin.svg'"></ion-icon>
+                            {{(item.Locked ? 'page_listitems.unlock' : 'page_listitems.lock')|translate}}
+                        </ion-item-option>
                         <ion-item-option color="secondary" expandable="true" (click)="hideItem(item)">
                             <ion-icon slot="end" [src]="item.Hidden ? './assets/icons/eye.svg' : './assets/icons/eye_off.svg'"></ion-icon>
                             {{(item.Hidden ? 'page_listitems.show' : 'page_listitems.hide')|translate}}

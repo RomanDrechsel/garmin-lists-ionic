@@ -89,7 +89,8 @@ export class ListitemsTrashProvider {
     public async EraseListitemTrash(trash: ListitemTrashModel): Promise<boolean> {
         const success = await this.Backend.RemoveAllListitems(trash, this.StoragePath);
         if (success === true) {
-            this._datasetChangedSubject.next(undefined);
+            trash.items = [];
+            this._datasetChangedSubject.next(trash);
         }
         return success !== false;
     }

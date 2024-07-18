@@ -36,9 +36,11 @@ export class TrashListitemsPage extends PageBase {
         }
 
         this.trashChangedSubscription = this.ListsService.onTrashItemsDatasetChanged$.subscribe(trash => {
-            this.Trash = trash;
-            this.cdr.detectChanges();
-            this.appComponent.setAppPages(this.ModifyMainMenu());
+            if (trash) {
+                this.Trash = trash;
+                this.cdr.detectChanges();
+                this.appComponent.setAppPages(this.ModifyMainMenu());
+            }
         });
     }
 
