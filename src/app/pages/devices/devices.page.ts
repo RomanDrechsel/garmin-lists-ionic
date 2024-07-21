@@ -82,9 +82,11 @@ export class DevicesPage extends PageBase {
         this.ConnectIQ.openStore();
     }
 
-    public TransmitList() {
+    public async TransmitList() {
         if (this.ListUuid && this.SelectedDevice) {
-            this.ConnectIQ.TransmitList(this.ListUuid, this.SelectedDevice, true);
+            if (await this.ConnectIQ.TransmitList(this.ListUuid, this.SelectedDevice, true)) {
+                this.NavController.navigateBack(`/lists/items/${this.ListUuid}`);
+            }
         }
     }
 

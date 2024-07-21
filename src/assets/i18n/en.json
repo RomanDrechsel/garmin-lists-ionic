@@ -40,7 +40,7 @@
         "delete_item_confirm": "Do you really want to delete the item <strong>{{name}}</strong>?",
         "delete_item_success": "The item was deleted.",
         "delete_item_error": "The item could not be deleted!",
-        "empty_confirm": "Do you really want to delete all items from the list <strong>{{name}}</strong>?",
+        "empty_confirm": "Do you really want to delete all non-locked items from the list <strong>{{name}}</strong>?",
         "empty_success": "All items were deleted.",
         "empty_error": "The item could not be deleted!",
         "undo_warning": "<br /><br /><strong>Warning: </strong> This could not be undone!",

@@ -39,7 +39,7 @@
         "delete_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> wirklich löschen?",
         "delete_item_success": "Der Punkt wurde gelöscht.",
         "delete_item_error": "Der Punkt konnte nicht gelöscht werden!",
-        "empty_confirm": "Möchtest du alle Punkte der Liste <strong>{{name}}</strong> löschen?",
+        "empty_confirm": "Möchtest du alle nicht-gesperrten Punkte der Liste <strong>{{name}}</strong> löschen?",
         "empty_success": "Alle Listenpunkte wurden gelöscht.",
         "empty_error": "Die Listenpunkte konnten nicht gelöscht werden!",
         "undo_warning": "<br /><br /><strong>Achtung:</strong> Dies kann nichtmehr rückgängig gemacht werden!",
