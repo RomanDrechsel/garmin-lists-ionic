@@ -1,6 +1,6 @@
 import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
 import { Logger } from "../../services/logging/logger";
-import { StringUtils } from "./stringutils";
+import { StringUtils } from "./string-utils";
 
 export namespace FileUtils {
     /**
@@ -45,7 +45,7 @@ export namespace FileUtils {
      * @param dir Capacitor-directory
      * @returns object with information
      */
-    export async function GetDirStat(path: string, dir: Directory | undefined = undefined): Promise<{ files: number; size: number }> {
+    export async function GetDirStat(path: string, dir: Directory | undefined = undefined): Promise<{ files: number; size: number; }> {
         const files = await Filesystem.readdir({ path: path, directory: dir });
         if (files) {
             let size = 0;
@@ -125,7 +125,7 @@ export namespace FileUtils {
      * @param args configuration arguments
      * @returns array of File objects
      */
-    export async function GetFiles(args: { path: string; dir?: Directory; pattern?: string | RegExp; with_data?: boolean }): Promise<File[]> {
+    export async function GetFiles(args: { path: string; dir?: Directory; pattern?: string | RegExp; with_data?: boolean; }): Promise<File[]> {
         try {
             const ret: File[] = [];
             const files = await Filesystem.readdir({ path: args.path, directory: args.dir });

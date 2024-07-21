@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from "rxjs";
-import { HelperUtils } from "../../classes/utils/helperutils";
+import { HelperUtils } from "../../classes/utils/helper-utils";
 import { LocalizationService } from "../localization/localization.service";
 import { KeepInTrash } from "./keep-in-trash";
 import { List } from "./list";

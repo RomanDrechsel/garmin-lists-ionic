@@ -9,6 +9,7 @@ export class Listitem {
     private _item: string;
     private _note?: string;
     private _hidden: boolean = false;
+    private _locked: boolean = false;
     private _deleted?: number;
     private _dirty: boolean = false;
 
@@ -18,6 +19,7 @@ export class Listitem {
         this._note = obj.note;
         this._order = obj.order;
         this._hidden = obj.hidden ?? false;
+        this._locked = obj.locked ?? false;
         this._created = obj.created ?? Date.now();
         this._updated = obj.updated ?? Date.now();
         this._dirty = obj.dirty ?? false;
@@ -126,6 +128,23 @@ export class Listitem {
         }
     }
 
+    /**
+     * lock the item, so it is not deleted when emptying the list
+     */
+    public set Locked(lock: boolean) {
+        if (this._locked != lock) {
+            this._locked = lock;
+            this._dirty = true;
+        }
+    }
+
+    /**
+     * is the item locked, so it is not deleted when emptying the list
+     */
+    public get Locked(): boolean {
+        return this._locked;
+    }
+
     /** any changes since the last storage */
     public get Dirty(): boolean {
         return this._dirty;
@@ -160,6 +179,7 @@ export class Listitem {
             note: this._note,
             order: this._order,
             hidden: this._hidden,
+            locked: this._locked,
             created: this._created,
             updated: this._updated,
             deleted: this._deleted,
@@ -222,6 +242,7 @@ export class Listitem {
             note: obj.note,
             order: obj.order,
             hidden: obj.hidden,
+            locked: obj.locked,
             created: obj.created,
             updated: obj.updated,
             deleted: obj.deleted,
@@ -241,6 +262,7 @@ export declare type ListitemModel = {
     order: number;
     created: number;
     hidden?: boolean;
+    locked?: boolean;
     updated?: number;
     deleted?: number;
     dirty?: boolean;

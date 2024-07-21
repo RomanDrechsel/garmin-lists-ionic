@@ -113,6 +113,13 @@ export class ListItemsPage extends PageBase {
         this.itemsContainer?.closeSlidingItems();
     }
 
+    public async pinItem(item: Listitem) {
+        if (this.List) {
+            await this.ListsService.ToggleLockListitem(this.List, item);
+        }
+        this.itemsContainer?.closeSlidingItems();
+    }
+
     public async addItem() {
         if (this.List) {
             await this.ListsService.NewListitem(this.List);
@@ -130,6 +137,17 @@ export class ListItemsPage extends PageBase {
         }
     }
 
+    public async deleteList(): Promise<boolean> {
+        if (this.List) {
+            const del = await this.ListsService.DeleteList(this.List);
+            if (del === true) {
+                this.NavController.navigateBack("/lists");
+            }
+            return del ?? false;
+        }
+        return false;
+    }
+
     public override ModifyMainMenu(): MenuItem[] {
         if (this.List) {
             return [
@@ -137,6 +155,7 @@ export class ListItemsPage extends PageBase {
                 MenuitemFactory(EMenuItemType.Devices, { title_id: "page_listitems.menu_devices", url_addition: this.List.Uuid, onClick: async () => { this.ConnectIQ.TransmitList(this.List!.Uuid); return true; } }),
                 MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: this.List.Uuid, disabled: !this.useTrash }),
                 MenuitemFactory(EMenuItemType.EmptyList, { onClick: () => this.EmptyList(), disabled: this.List.Items.length <= 0 }),
+                MenuitemFactory(EMenuItemType.DeleteList, { onClick: () => this.deleteList() }),
             ];
         } else {
             return [];

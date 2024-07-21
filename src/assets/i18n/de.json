@@ -23,6 +23,7 @@
     "mainmenu": {
         "lists": "Meine Listen",
         "trash": "Papierkorb",
+        "delete_list": "Liste löschen",
         "devices": "Geräte",
         "settings": "Einstellungen",
         "privacy": "Datenschutz",
@@ -38,7 +39,7 @@
         "delete_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> wirklich löschen?",
         "delete_item_success": "Der Punkt wurde gelöscht.",
         "delete_item_error": "Der Punkt konnte nicht gelöscht werden!",
-        "empty_confirm": "Möchtest du alle Punkte der Liste <strong>{{name}}</strong> löschen?",
+        "empty_confirm": "Möchtest du alle nicht-gesperrten Punkte der Liste <strong>{{name}}</strong> löschen?",
         "empty_success": "Alle Listenpunkte wurden gelöscht.",
         "empty_error": "Die Listenpunkte konnten nicht gelöscht werden!",
         "undo_warning": "<br /><br /><strong>Achtung:</strong> Dies kann nichtmehr rückgängig gemacht werden!",
@@ -78,6 +79,14 @@
         "itemname": "Bezeichnung",
         "itemnote": "Notiz"
     },
+    "comp_sharefile": {
+        "title": "Datei Speichern",
+        "text": "Wie möchtest du die Datei <br /><strong>{{filename}}</strong><br /> speichern?",
+        "text_web": "Die Datei <strong>{{filename}}</strong> wird auf Ihrem Rechner gespeichert.",
+        "store": "In Documents speichern",
+        "share": "Teilen",
+        "email": "Per E-Mail senden"
+    },
     "page_lists": {
         "page_title": "Meine Listen",
         "empty": "Leeren",
@@ -92,6 +101,8 @@
         "menu_devices": "Liste übertragen",
         "hide": "Verstecken",
         "show": "Anzeigen",
+        "lock": "Sperren",
+        "unlock": "Entsperren",
         "nolist": "Etwas ist schiefgelaufen :(<br /><br />Die Liste kann nicht angezeigt werden.",
         "add_new_hint": "Lege einen neuen Punkt in der Liste an."
     },
@@ -165,16 +176,17 @@
         "btn_save": "Log speichern",
         "confirm_delete": "Soll das Log <strong>{{filename}}</strong> wirklich gelöscht?",
         "toast_deleted": "Das Log wurde gelöscht.",
-        "store_title": "Log Speichern",
-        "store_text": "Die Log-Datei <strong>{{filename}}</strong> wird in <strong>DOCUMENTS</strong> auf Ihren Gerät gespeichert.",
-        "store_text_web": "Die Log-Datei <strong>{{filename}}</strong> wird auf Ihrem Rechner gespeichert.",
         "store_success": "Das Log wurde gespeichert.",
         "store_error": "Das Log konnte nicht gespeichert werden!",
         "select_logs": "Log-Datei auswählen:",
         "logfile": "Log Datei",
         "select_logday_title": "Tage der Log-Dateien auswählen:",
         "no_log": "Keine Log-Dateien gefunden!",
-        "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden."
+        "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden.",
+        "share_email": {
+            "title": "{{package}} / {{platform}} - Log-Datei {{file}} ({{size}})",
+            "text": "Bitte schildere mir die Probleme etwas ausführlicher, damit ich sie nachvollziehen kann:\n\n"
+        }
     },
     "page_settings_confirm": {
         "page_title": "Bestätigungen",
@@ -227,7 +239,9 @@
         "database_lists": "Listen:",
         "database_trash": "Papierkorb:",
         "database_logs": "Logs:",
-        "support": "Ich habe die App in meiner Freizeit und ohne finanzielle Hintergedanken entwickelt.<br />Sie ist und bleibt kostenlos und OpenSource.<br /><br />Wenn sie Dir gefällt und du mich unterstützen möchtest,<br />warum kaufst du mir dann nicht einen Kaffee?"
+        "support": "Ich habe die App in meiner Freizeit und ohne finanzielle Hintergedanken entwickelt.<br />Sie ist und bleibt kostenlos und OpenSource.<br /><br />Wenn sie Dir gefällt und du mich unterstützen möchtest,<br />warum kaufst du mir dann nicht einen Kaffee?",
+        "review": "Oder schreibe eine nette Bewertung im PlayStore.",
+        "thanks": "Danke!"
     },
     "page_privacy": {
         "page_title": "Datenschutz",

@@ -50,4 +50,11 @@ export class ConfigService {
     public get BundleId(): string {
         return this._config["bundleId"] ?? "de.romandrechsel.lists";
     }
+
+    /**
+     * my e-mail address, to send error logs to...
+     */
+    public get MyEmail(): string {
+        return this._config["myemail"] ?? "";
+    }
 }

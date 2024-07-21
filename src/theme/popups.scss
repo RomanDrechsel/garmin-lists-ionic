@@ -152,8 +152,16 @@ ion-datetime {
     --button-color-hover: var(--color-text);
     --button-color-selected: var(--text-color);
 
+    .action-sheet-title {
+        border-bottom: solid 2px var(--color-control-border);
+    }
+
     .action-sheet-selected {
         background: var(--color-control-selected-background);
+    }
+
+    .action-sheet-cancel {
+        border-top: solid 1px var(--color-control-border);
     }
 }
 

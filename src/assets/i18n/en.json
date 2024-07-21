@@ -24,6 +24,7 @@
     "mainmenu": {
         "lists": "My lists",
         "trash": "Trash",
+        "delete_list": "Delete list",
         "devices": "Devices",
         "settings": "Settings",
         "privacy": "Privacy policy",
@@ -39,7 +40,7 @@
         "delete_item_confirm": "Do you really want to delete the item <strong>{{name}}</strong>?",
         "delete_item_success": "The item was deleted.",
         "delete_item_error": "The item could not be deleted!",
-        "empty_confirm": "Do you really want to delete all items from the list <strong>{{name}}</strong>?",
+        "empty_confirm": "Do you really want to delete all non-locked items from the list <strong>{{name}}</strong>?",
         "empty_success": "All items were deleted.",
         "empty_error": "The item could not be deleted!",
         "undo_warning": "<br /><br /><strong>Warning: </strong> This could not be undone!",
@@ -79,8 +80,13 @@
         "itemname": "Description",
         "itemnote": "Note"
     },
-    "comp-datetime": {
-        "title": "Log file start time:"
+    "comp_sharefile": {
+        "title": "Store file",
+        "text": "How do you want to store the file <br /><strong>{{filename}}</strong>?",
+        "text_web": "The file <strong>{{filename}}</strong> will be stored on your disk.",
+        "store": "Store in Documents on your device",
+        "share": "Share",
+        "email": "Send via e-mail"
     },
     "page_lists": {
         "page_title": "My lists",
@@ -96,6 +102,8 @@
         "menu_devices": "Transmit list",
         "hide": "Hide",
         "show": "Show",
+        "lock": "Lock",
+        "unlock": "Unlock",
         "nolist": "Something went wrong :(<br /><br />The list can not be displayed.",
         "add_new_hint": "Create a new item in the list."
     },
@@ -170,16 +178,17 @@
         "btn_save": "Store log",
         "confirm_delete": "Should the log <strong>{{filename}}</strong> be deleted?",
         "toast_deleted": "The log was deleted.",
-        "store_title": "Store Log",
-        "store_text": "The logfile <strong>{{filename}}</strong> will be stored in <strong>DOCUMENTS</strong> on your device.",
-        "store_text_web": "The logfile <strong>{{filename}}</strong> will be stored on your disk.",
         "store_success": "The log was stored.",
         "store_error": "The log could not be stored!",
         "select_logs": "Select log file:",
         "logfile": "log file",
         "select_logday_title": "Show log files of a certain day:",
         "no_log": "No log files found!",
-        "no_log_note": "No log files were found for {{date}}"
+        "no_log_note": "No log files were found for {{date}}",
+        "share": {
+            "title": "{{package}} / {{platform}} - logfile {{file}} ({{size}})",
+            "text": "Please describe the problems in more detail so that I can understand them:\n\n"
+        }
     },
     "page_settings_confirm": {
         "page_title": "Confirmations",
@@ -228,8 +237,13 @@
         "version": "version:",
         "build": "build:",
         "platform": "platform:",
-        "database": "Database-size:",
-        "support": "I developed this app in my spare time and without financial ulterior motives.<br />It is and remains free and open source.<br /><br />If you like it and want to support me,<br />then why don't you buy me a coffee?"
+        "database": "Database size:",
+        "database_lists": "Lists:",
+        "database_trash": "Trash:",
+        "database_logs": "Logs:",
+        "support": "I developed this app in my spare time and without financial ulterior motives.<br />It is and remains free and open source.<br /><br />If you like it and want to support me,<br />then why don't you buy me a coffee?",
+        "review": "Or write a nice review in the PlayStore.",
+        "thanks": "Thank you!"
     },
     "page_privacy": {
         "page_title": "Privacy",
