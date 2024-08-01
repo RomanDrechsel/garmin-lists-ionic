@@ -1,14 +1,22 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('/home/roman/MyStuff/Coding/Github/GarminLists/Android-Keystore/release.jks')
+            storePassword 'EbYfTzIt-1L_g1Zjf2bP0gANMBhPj2NBgk4d'
+            keyPassword 'F40tJWFp7DjunAow-vtGCA5gsM-SLu6l89dp'
+            keyAlias 'key0'
+        }
+    }
     namespace "de.romandrechsel.lists"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId 'de.romandrechsel.lists'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 49
-        versionName "2024.7.2500"
+        versionCode 53
+        versionName "2024.8.0103"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -25,6 +33,7 @@ android {
             ndk {
                 debugSymbolLevel 'FULL'
             }
+            signingConfig signingConfigs.debug
         }
         debug {
             manifestPlaceholders appname: '@string/app_name_debug'
