@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject, ViewChild } from "@angular/core";
 import { FileOpener } from "@capacitor-community/file-opener";
-import { Capacitor } from "@capacitor/core";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
@@ -10,7 +9,6 @@ import { ShareUtil } from "../../classes/utils/share-utils";
 import { AppService } from "../../services/app/app.service";
 import { Logger } from "../../services/logging/logger";
 import { PopupsService } from "../../services/popups/popups.service";
-import { ConfigService } from "../../services/storage/config.service";
 
 @Component({
     selector: "app-share-file",
@@ -26,7 +24,6 @@ export class StoreFileComponent {
 
     private readonly Popups = inject(PopupsService);
     private readonly modalCtrl = inject(ModalController);
-    private readonly Config = inject(ConfigService);
 
     public get IsWebApp(): boolean {
         return AppService.isWebApp;
@@ -75,7 +72,7 @@ export class StoreFileComponent {
                     }
                 }
                 else if (this.do.value == "email") {
-                    if (await ShareUtil.SendMail({ sendto: this.Config.MyEmail, files: this.Params.file.Path, title: this.Params.email_title, text: this.Params.email_text })) {
+                    if (await ShareUtil.SendMail({ sendto: AppService.EMailAddress, files: this.Params.file.Path, title: this.Params.email_title, text: this.Params.email_text })) {
                         Logger.Debug(`Shared log ${this.Params.file.Filename} via e-mail`);
                         this.modalCtrl.dismiss(null, "confirm");
                     }
@@ -85,16 +82,6 @@ export class StoreFileComponent {
                         this.Popups.Toast.Error("page_settings_showlogs.store_error");
                     }
                 }
-            }
-            else if (!Capacitor.isNativePlatform()) {
-                var a = document.createElement("a");
-                a.style.display = "none";
-                var file = new Blob([this.Params.file.Content!], { type: "text/plain" });
-                a.href = URL.createObjectURL(file);
-                a.download = this.Params.file.Filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
             }
         }
     }

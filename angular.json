@@ -68,7 +68,12 @@
                                 }
                             ],
                             "outputHashing": "all",
-                            "serviceWorker": "ngsw-config.json"
+                            "serviceWorker": "ngsw-config.json",
+                            "optimization": true,
+                            "extractLicenses": true,
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "aot": true
                         },
                         "development": {
                             "optimization": false,
@@ -116,7 +121,11 @@
                                 }
                             ],
                             "outputHashing": "all",
-                            "serviceWorker": "ngsw-config.json"
+                            "serviceWorker": "ngsw-config.json",
+                            "optimization": true,
+                            "extractLicenses": true,
+                            "sourceMap": false,
+                            "namedChunks": false
                         },
                         "ci": {
                             "progress": false
@@ -135,9 +144,6 @@
                         },
                         "screenshots": {
                             "buildTarget": "app:build:screenshots"
-                        },
-                        "ci": {
-                            "progress": false
                         }
                     },
                     "defaultConfiguration": "development"

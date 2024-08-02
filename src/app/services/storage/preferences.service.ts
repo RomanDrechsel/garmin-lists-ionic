@@ -21,6 +21,7 @@ export enum EPrefProperty {
     "TrashKeepinStock" = "LISTS_TrashKeepInStock",
     "OpenAppOnTransmit" = "LISTS_OpenAppOnTransmit",
     "DebugDevices" = "LISTS_DebugDevices",
+    "OpenedList" = "LISTS_OpenedList",
 }
 
 @Injectable({

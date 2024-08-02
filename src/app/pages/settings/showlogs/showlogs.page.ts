@@ -8,11 +8,9 @@ import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { FileUtils } from "src/app/classes/utils/file-utils";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
-import { AppMetaData } from "../../../classes/app-meta-data";
 import { SelectDatetime } from "../../../components/datetime/datetime.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { ShareFile } from "../../../components/share-file/share-file.component";
-import { AppService } from "../../../services/app/app.service";
 import { PageBase } from "../../page-base";
 @Component({
     selector: "app-showlogs",
@@ -30,7 +28,7 @@ export class ShowlogsPage extends PageBase {
     private selectedDate?: Date;
 
     private readonly ModaleCtrl = inject(ModalController);
-    private readonly AppService = inject(AppService);
+
 
     public get SelectedDayString(): string | undefined {
         return this.selectedDate?.toLocaleDateString(this.Locale.CurrentLanguage.locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
@@ -83,8 +81,10 @@ export class ShowlogsPage extends PageBase {
 
     public async onSave() {
         if (this.currentLogfile) {
-            this.Logger.Important("Device Info:", await AppMetaData(this.AppService));
-            const locale = this.Locale.getText(["page_settings_showlogs.share_email.title", "page_settings_showlogs.share_email.text", "save"], { package: AppService.AppInfo.PackageName, platform: AppService.AppInfo.Platform, file: this.currentLogfile.Filename, size: FileUtils.File.FormatSize(this.currentLogfile.Size) });
+            const meta = await this.AppService.AppMetaInfo();
+            this.Logger.WithoutTag("Device Info:", meta);
+            this.currentLogfile = await this.Logger.GetLogfile(this.currentLogfile.Filename);
+            const locale = this.Locale.getText(["page_settings_showlogs.share_email.title", "page_settings_showlogs.share_email.text", "save"], { package: meta.Package?.Name, platform: meta.Device.Platform, file: this.currentLogfile.Filename, size: FileUtils.File.FormatSize(this.currentLogfile.Size) });
             await ShareFile(this.ModaleCtrl, {
                 email_text: locale["page_settings_showlogs.share_email.text"],
                 email_title: locale["page_settings_showlogs.share_email.title"],

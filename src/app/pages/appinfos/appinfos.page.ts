@@ -3,13 +3,14 @@ import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { InAppReview } from "@capacitor-community/in-app-review";
 import { Browser } from "@capacitor/browser";
+import { Device } from "@capacitor/device";
 import { IonButton, IonCol, IonContent, IonGrid, IonImg, IonItem, IonItemDivider, IonLabel, IonList, IonNote, IonRow, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { FileUtils } from "../../classes/utils/file-utils";
-import { AppService } from "../../services/app/app.service";
 import { PageBase } from "../page-base";
+import { AppService } from './../../services/app/app.service';
 
 @Component({
     selector: "app-appinfos",
@@ -26,21 +27,23 @@ export class AppinfosPage extends PageBase {
     public Platform: string = "";
     public DatabaseSizeLists: string = "-";
     public DatabaseSizeTrash: string = "-";
+    public MemoryUsage: string = "-";
     public LogsSize: string = "-";
     private timerSubscription?: Subscription;
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
 
-        this.BundleId = AppService.AppInfo.PackageName;
-        this.Appversion = AppService.AppInfo.VersionString;
-        this.Build = String(AppService.AppInfo.Build);
+        const meta = await this.AppService.AppMetaInfo();
+        this.BundleId = meta.Package?.Name ?? "-";
+        this.Appversion = meta.Package?.VersionString ?? "-";
+        this.Build = String(meta.Package?.Build ?? "");
         this.Platform = AppService.AppPlatformString;
 
-        this.timerSubscription = interval(5000).subscribe(() => {
-            this.requestDatabaseSize();
+        this.timerSubscription = interval(5000).subscribe(async () => {
+            await this.requestStatistics();
         });
-        await this.requestDatabaseSize();
+        await this.requestStatistics();
     }
 
     public override async ionViewWillLeave() {
@@ -60,11 +63,16 @@ export class AppinfosPage extends PageBase {
         await InAppReview.requestReview();
     }
 
-    private async requestDatabaseSize() {
+    private async requestStatistics() {
         this.LogsSize = FileUtils.File.FormatSize((await this.Logger.GetLogSize()).size);
         const database = await this.ListsService.BackendSize();
         this.DatabaseSizeLists = FileUtils.File.FormatSize(database.lists.size);
         this.DatabaseSizeTrash = FileUtils.File.FormatSize(database.trash.size);
+
+        const deviceinfo = await Device.getInfo();
+        if (deviceinfo.memUsed) {
+            this.MemoryUsage = FileUtils.File.FormatSize(deviceinfo.memUsed);
+        }
         this.cdr.detectChanges();
     }
 }

@@ -3,6 +3,8 @@ import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
 import { Platform } from "@ionic/angular";
+import { NavController } from '@ionic/angular/standalone';
+import { environment } from "../../../environments/environment";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { MainToolbarComponent } from "../../components/main-toolbar/main-toolbar.component";
 import { AdmobService } from "../adverticing/admob.service";
@@ -12,26 +14,24 @@ import { Locale } from "../localization/locale";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { LoggingService } from "../logging/logging.service";
-import { ConfigService } from "../storage/config.service";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 
 @Injectable({
     providedIn: "root",
 })
 export class AppService {
-    /** object with app info */
-    public static AppInfo: AppInfo;
     public static AppToolbar?: MainToolbarComponent;
+    public static readonly EMailAddress: string = "lists-app@roman-drechsel.de";
 
     public readonly loggerService = inject(LoggingService);
-
-    public readonly Config = inject(ConfigService);
     public readonly Locale = inject(LocalizationService);
     public readonly ListsService = inject(ListsService);
     public readonly ConnectIQ = inject(ConnectIQService);
     public readonly Platform = inject(Platform);
     public readonly Preferences = inject(PreferencesService);
     public readonly Admob = inject(AdmobService);
+    public readonly NavController = inject(NavController);
+    public readonly Logger = inject(LoggingService);
 
     /** platform as short string (android, ios, web) */
     public static get AppPlatform(): string {
@@ -63,7 +63,6 @@ export class AppService {
      * initialize app services
      */
     public async InitializeApp() {
-        AppService.AppInfo = await this.GetAppInfo();
         await Logger.Initialize(this.loggerService);
         await Locale.Initialize(this.Locale);
         await this.ListsService.Initialize();
@@ -73,6 +72,11 @@ export class AppService {
 
         const debugmode = await this.Preferences.Get<boolean>(EPrefProperty.DebugDevices, isDevMode());
         await this.ConnectIQ.Initialize(debugmode);
+
+        const loadList = await this.Preferences.Get<string>(EPrefProperty.OpenedList, "");
+        if (loadList.length > 0) {
+            await this.NavController.navigateForward(`/lists/items/${loadList}`);
+        }
     }
 
     /**
@@ -97,36 +101,109 @@ export class AppService {
     }
 
     /**
-     * get info about the app instance
-     * @returns app info
+     * get info about the app instance and the device
+     * @returns app meta information
      */
-    private async GetAppInfo(): Promise<AppInfo> {
-        const appinfo: AppInfo = {
-            AppName: "Lists",
-            PackageName: this.Config.BundleId,
-            VersionString: this.Config.VersionString,
-            Build: this.Config.Build,
-            Platform: (await Device.getInfo()).platform,
-            Identifier: (await Device.getId()).identifier,
+    public async AppMetaInfo(): Promise<AppMetaInfo> {
+        const deviceinfo = await Device.getInfo();
+        const database = await this.ListsService.BackendSize();
+        const logs = await this.Logger.GetLogSize();
+        const meta: AppMetaInfo = {
+            Device: {
+                Identifier: (await Device.getId()).identifier,
+                Model: deviceinfo.model,
+                Platform: deviceinfo.platform,
+                OperatingSystem: {
+                    OS: deviceinfo.operatingSystem,
+                    Version: deviceinfo.osVersion,
+                    AndroidSDKVersion: deviceinfo.androidSDKVersion,
+                },
+                Resolution: `${this.DeviceWidth}x${this.DeviceHeight}`,
+                Manufacturer: deviceinfo.manufacturer,
+                isVirtual: deviceinfo.isVirtual,
+                DiskFree: deviceinfo.realDiskFree,
+                MemoryUsed: deviceinfo.memUsed,
+                WebViewVersion: deviceinfo.webViewVersion,
+            },
+            Settings: {
+                LogMode: this.loggerService.LogLevelShort,
+                AppLanguage: this.Locale.CurrentLanguage.locale,
+                AdmobStatus: await this.Admob.Status(),
+            },
+            Storage: {
+                Lists: {
+                    Count: database.lists.files,
+                    Size: database.lists.size,
+                },
+                Trash: {
+                    Count: database.trash.files,
+                    Size: database.trash.size,
+                },
+                Logs: {
+                    Count: logs.files,
+                    Size: logs.size,
+                }
+            }
         };
 
         if (AppService.isMobileApp) {
             const info = await App.getInfo();
-            appinfo.AppName = info.name;
-            appinfo.PackageName = info.id;
-            appinfo.VersionString = info.version;
-            appinfo.Build = parseInt(info.build);
+            meta.Package = {
+                AppName: info.name,
+                Name: info.id,
+                VersionString: info.version,
+                Build: parseInt(info.build),
+                Environment: environment.production ? "Production" : "Development",
+                Release: environment.publicRelease,
+            };
         }
 
-        return appinfo;
+        return meta;
     }
 }
 
-export declare type AppInfo = {
-    AppName: string;
-    PackageName: string;
-    VersionString: string;
-    Build: number;
-    Platform: "android" | "ios" | "web";
-    Identifier: string;
+export declare type AppMetaInfo = {
+    Settings: {
+        LogMode: string,
+        AppLanguage: string,
+        AdmobStatus: string,
+    },
+    Device: {
+        Identifier: string,
+        Resolution: string,
+        Model: string,
+        Platform: "android" | "ios" | "web",
+        OperatingSystem: {
+            OS: string,
+            Version: string,
+            AndroidSDKVersion: number | undefined,
+        };
+        Manufacturer: string,
+        isVirtual: boolean,
+        DiskFree: number | undefined,
+        MemoryUsed: number | undefined,
+        WebViewVersion: string,
+    },
+    Package?: {
+        Name: string,
+        AppName: string,
+        VersionString: string,
+        Build: number;
+        Environment: "Production" | "Development",
+        Release: boolean,
+    },
+    Storage: {
+        Lists: {
+            Count: number,
+            Size: number;
+        },
+        Trash: {
+            Count: number,
+            Size: number;
+        },
+        Logs: {
+            Count: number,
+            Size: number;
+        },
+    };
 };
