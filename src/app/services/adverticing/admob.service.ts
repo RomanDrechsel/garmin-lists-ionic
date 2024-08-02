@@ -28,9 +28,9 @@ export class AdmobService {
         });
 
         AdMob.addListener(BannerAdPluginEvents.SizeChanged, (size: AdMobBannerSize) => {
-            if (this._bannerHeight != size.height) {
+            /*if (this._bannerHeight != size.height) {
                 Logger.Debug(`Admob banner size changed: `, size);
-            }
+            }*/
             if (size.height != 0) {
                 this._bannerHeight = size.height;
             }
@@ -112,6 +112,14 @@ export class AdmobService {
         } else {
             return false;
         }
+    }
+
+    /**
+     * returns the tracking authorizationStatus
+     * @returns
+     */
+    public async Status(): Promise<string> {
+        return (await AdMob.trackingAuthorizationStatus()).status;
     }
 
     /**

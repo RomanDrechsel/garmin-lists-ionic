@@ -124,6 +124,11 @@ export class LoggingService {
         }
     }
 
+    public WithoutTag(message: string, ...objs: any[]) {
+        this.WriteInLogfile(message, undefined, ...objs);
+        console.log(message, ...objs);
+    }
+
     /**
      * process the pending messages queue
      */
@@ -188,25 +193,25 @@ export class LoggingService {
      * @param type message level
      * @param objs additional objects
      */
-    private WriteInLogfile(message: string, type: ELogType, ...objs: any[]) {
+    private WriteInLogfile(message: string, type?: ELogType, ...objs: any[]) {
         let date = formatDate(new Date(), "yyyy-MM-ddTHH:mm:ss.SSS", "en");
-        let prefix: string;
+        let prefix: string = "";
         switch (type) {
             case ELogType.Error:
-                prefix = "E";
+                prefix = " (E)";
                 break;
             case ELogType.Important:
-                prefix = "I";
+                prefix = " (I)";
                 break;
             case ELogType.Notice:
-                prefix = "N";
+                prefix = " (N)";
                 break;
-            default:
-                prefix = "D";
+            case ELogType.Debug:
+                prefix = " (D)";
                 break;
         }
 
-        message = `${date} (${prefix}): ${message}`;
+        message = `${date}${prefix}: ${message}`;
         if (objs.length > 0) {
             objs.forEach(obj => {
                 if (obj) {

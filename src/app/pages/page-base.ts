@@ -9,7 +9,6 @@ import { ListsService } from "../services/lists/lists.service";
 import { LocalizationService } from "../services/localization/localization.service";
 import { LoggingService } from "../services/logging/logging.service";
 import { PopupsService } from "../services/popups/popups.service";
-import { ConfigService } from "../services/storage/config.service";
 import { PreferencesService } from "../services/storage/preferences.service";
 
 @Component({
@@ -20,13 +19,13 @@ export abstract class PageBase {
 
     protected readonly appComponent = inject(AppComponent);
     protected readonly Popups = inject(PopupsService);
-    protected readonly Config = inject(ConfigService);
     protected readonly ConnectIQ = inject(ConnectIQService);
     protected readonly ListsService = inject(ListsService);
     protected readonly Locale = inject(LocalizationService);
     protected readonly Logger = inject(LoggingService);
     protected readonly Preferences = inject(PreferencesService);
     protected readonly NavController = inject(NavController);
+    protected readonly AppService = inject(AppService);
     protected readonly cdr = inject(ChangeDetectorRef);
 
     public async ionViewWillEnter() {

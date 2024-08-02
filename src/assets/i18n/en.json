@@ -15,10 +15,10 @@
         "date_add": "",
         "today": "Today",
         "yesterday": "Yesterday",
-        "sec_short": "sec.",
-        "min_short": "min.",
-        "hour_short": "hr.",
-        "hours_short": "hrs.",
+        "sec_short": "sec",
+        "min_short": "min",
+        "hour_short": "hr",
+        "hours_short": "hrs",
         "ago": "{{date}} ago"
     },
     "mainmenu": {
@@ -185,7 +185,7 @@
         "select_logday_title": "Show log files of a certain day:",
         "no_log": "No log files found!",
         "no_log_note": "No log files were found for {{date}}",
-        "share": {
+        "share_email": {
             "title": "{{package}} / {{platform}} - logfile {{file}} ({{size}})",
             "text": "Please describe the problems in more detail so that I can understand them:\n\n"
         }
@@ -234,13 +234,14 @@
     "page_appinfos": {
         "page_title": "App information",
         "package": "Package:",
-        "version": "version:",
-        "build": "build:",
-        "platform": "platform:",
-        "database": "Database size:",
+        "version": "Version:",
+        "build": "Build:",
+        "platform": "Platform:",
+        "stats": "Statistics:",
         "database_lists": "Lists:",
         "database_trash": "Trash:",
         "database_logs": "Logs:",
+        "memory": "Memory Usage:",
         "support": "I developed this app in my spare time and without financial ulterior motives.<br />It is and remains free and open source.<br /><br />If you like it and want to support me,<br />then why don't you buy me a coffee?",
         "review": "Or write a nice review in the PlayStore.",
         "thanks": "Thank you!"

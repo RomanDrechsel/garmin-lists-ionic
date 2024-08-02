@@ -58,8 +58,6 @@ export class AppComponent implements OnInit {
         });
         this.useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true);
         this.setAppPages();
-
-        //await this.Admob.ShowBanner();
     }
 
     public async onMenuItemClick(item: MenuItem) {

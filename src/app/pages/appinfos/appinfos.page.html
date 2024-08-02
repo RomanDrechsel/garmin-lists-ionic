@@ -26,7 +26,7 @@
                 </ion-item>
                 <ion-item lines="full">
                     <div>
-                        <ion-text>{{'page_appinfos.database'|translate}}</ion-text>
+                        <ion-text>{{'page_appinfos.stats'|translate}}</ion-text>
                         <ion-grid>
                             <ion-row>
                                 <ion-col class="ion-text-end">{{'page_appinfos.database_lists'|translate}}</ion-col>
@@ -39,6 +39,10 @@
                             <ion-row>
                                 <ion-col class="ion-text-end">{{'page_appinfos.database_logs'|translate}}</ion-col>
                                 <ion-col class="ion-text-end">{{LogsSize}}</ion-col>
+                            </ion-row>
+                            <ion-row>
+                                <ion-col class="ion-text-end">{{'page_appinfos.memory'|translate}}</ion-col>
+                                <ion-col class="ion-text-end">{{MemoryUsage}}</ion-col>
                             </ion-row>
                         </ion-grid>
                     </div>

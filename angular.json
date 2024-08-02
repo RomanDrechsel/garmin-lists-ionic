@@ -144,9 +144,6 @@
                         },
                         "screenshots": {
                             "buildTarget": "app:build:screenshots"
-                        },
-                        "ci": {
-                            "progress": false
                         }
                     },
                     "defaultConfiguration": "development"

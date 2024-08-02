@@ -61,8 +61,16 @@ export class ListItemsPage extends PageBase {
         });
     }
 
-    public override async ionViewDidLeave() {
-        super.ionViewDidLeave();
+    public override async ionViewDidEnter() {
+        await super.ionViewDidEnter();
+        if (this.List) {
+            await this.Preferences.Set(EPrefProperty.OpenedList, this.List.Uuid);
+        }
+    }
+
+    public override async ionViewWillLeave() {
+        await super.ionViewWillLeave();
+        await this.Preferences.Remove(EPrefProperty.OpenedList);
         this.preferencesSubscription?.unsubscribe();
         this.listSubscriptiion?.unsubscribe();
     }
