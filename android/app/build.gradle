@@ -15,8 +15,8 @@ android {
         applicationId 'de.romandrechsel.lists'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 54
-        versionName "2024.8.0200"
+        versionCode 55
+        versionName "2024.8.0201"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -33,7 +33,6 @@ android {
             ndk {
                 debugSymbolLevel 'FULL'
             }
-            signingConfig signingConfigs.debug
         }
         debug {
             manifestPlaceholders appname: '@string/app_name_debug'

@@ -5,4 +5,4 @@ ADB
 https://wiki.ubuntuusers.de/adb/
 
 
-ionic build --clean --configuration=production
+ionic build --clean --configuration=production && npx cap sync
