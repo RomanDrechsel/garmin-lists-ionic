@@ -191,7 +191,6 @@ export declare type AppMetaInfo = {
         Build: number;
         Environment: "Production" | "Development",
         Release: boolean,
-        Plugins?: { name: string, version: string; }[];
     },
     Storage: {
         Lists: {
