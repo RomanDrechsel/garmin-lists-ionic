@@ -1,8 +1,13 @@
+WIP: Benutzer kann zustimmen, welche Meta-Daten beim Logfile übertragen werden sollen
+BUG: Meta-Data an Log anhängen, nicht an das Aktuelle
+TODO: Wenn von der Devices-Page übertragen wird, nicht immer zur Liste zurückleiten, vielleicht auch zur Übersicht
+
 ConnectIQ Documentation:
 https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
 
 ADB
 https://wiki.ubuntuusers.de/adb/
 
-
 ionic build --clean --configuration=production && npx cap sync
+
+ionic build --clean --configuration=liveRelease && npx cap sync

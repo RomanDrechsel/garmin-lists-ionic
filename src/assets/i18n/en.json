@@ -10,7 +10,7 @@
     "delete": "Delete",
     "change": "Change",
     "select": "Select",
-    "loading": "Loading...",
+    "share": "Share",
     "date": {
         "date_add": "",
         "today": "Today",
@@ -80,13 +80,19 @@
         "itemname": "Description",
         "itemnote": "Note"
     },
-    "comp_sharefile": {
-        "title": "Store file",
-        "text": "How do you want to store the file <br /><strong>{{filename}}</strong>?",
-        "text_web": "The file <strong>{{filename}}</strong> will be stored on your disk.",
+    "comp_sharelog": {
+        "title": "Store log",
+        "text": "How do you want to store the logfile <br /><strong>{{filename}}</strong>?",
+        "text_web": "The logfile <strong>{{filename}}</strong> will be stored on your disk.",
         "store": "Store in Documents on your device",
         "share": "Share",
-        "email": "Send via e-mail"
+        "email": "Send me via e-mail",
+        "share_email": {
+            "title": "{{package}} / {{platform}} - logfile {{file}} ({{size}})",
+            "text": "Please describe me the problems in more detailed way, so I can understand them a little bit better:\n\n"
+        },
+        "store_success": "The log was stored.",
+        "store_error": "The log could not be stored!"
     },
     "page_lists": {
         "page_title": "My lists",
@@ -178,17 +184,11 @@
         "btn_save": "Store log",
         "confirm_delete": "Should the log <strong>{{filename}}</strong> be deleted?",
         "toast_deleted": "The log was deleted.",
-        "store_success": "The log was stored.",
-        "store_error": "The log could not be stored!",
         "select_logs": "Select log file:",
         "logfile": "log file",
         "select_logday_title": "Show log files of a certain day:",
         "no_log": "No log files found!",
-        "no_log_note": "No log files were found for {{date}}",
-        "share_email": {
-            "title": "{{package}} / {{platform}} - logfile {{file}} ({{size}})",
-            "text": "Please describe the problems in more detail so that I can understand them:\n\n"
-        }
+        "no_log_note": "No log files were found for {{date}}"
     },
     "page_settings_confirm": {
         "page_title": "Confirmations",

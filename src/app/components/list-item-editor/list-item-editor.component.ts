@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { IonButton, IonButtons, IonHeader, IonIcon, IonInput, IonTextarea, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
@@ -24,6 +24,7 @@ import { Locale } from "../../services/localization/locale";
     ],
     templateUrl: './list-item-editor.component.html',
     styleUrl: './list-item-editor.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListItemEditorComponent implements OnInit {
     @ViewChild('itemname') private itemname!: IonTextarea;

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { IonImg } from "@ionic/angular/standalone";
 import { AppService } from "../../services/app/app.service";
 
@@ -9,6 +9,7 @@ import { AppService } from "../../services/app/app.service";
     imports: [IonImg, CommonModule,],
     templateUrl: './page-add-new.component.html',
     styleUrl: './page-add-new.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageAddNewComponent {
 

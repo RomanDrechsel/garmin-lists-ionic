@@ -232,7 +232,7 @@ export class Listitem {
         const props = ["uuid", "item", "created", "order"];
         for (let i = 0; i < props.length; i++) {
             if (!obj.hasOwnProperty(props[i])) {
-                Logger.Error(`Could not read listitem from backend, property ${props[i]} not found}`);
+                Logger.Error(`Could not read listitem from backend, property ${props[i]} not found`);
                 return undefined;
             }
         }

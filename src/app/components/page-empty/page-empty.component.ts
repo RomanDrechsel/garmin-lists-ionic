@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'app-page-empty',
@@ -7,6 +7,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
     imports: [CommonModule],
     templateUrl: './page-empty.component.html',
     styleUrl: './page-empty.component.scss',
-    encapsulation: ViewEncapsulation.ShadowDom
+    encapsulation: ViewEncapsulation.ShadowDom,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageEmptyComponent { }

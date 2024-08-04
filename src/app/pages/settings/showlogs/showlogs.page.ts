@@ -10,7 +10,7 @@ import { FileUtils } from "src/app/classes/utils/file-utils";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { SelectDatetime } from "../../../components/datetime/datetime.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
-import { ShareFile } from "../../../components/share-file/share-file.component";
+import { ShareLogfile } from "../../../components/share-log/share-log.component";
 import { PageBase } from "../../page-base";
 @Component({
     selector: "app-showlogs",
@@ -81,18 +81,7 @@ export class ShowlogsPage extends PageBase {
 
     public async onSave() {
         if (this.currentLogfile) {
-            const meta = await this.AppService.AppMetaInfo();
-            this.Logger.WithoutTag("Device Info:", meta);
-            this.currentLogfile = await this.Logger.GetLogfile(this.currentLogfile.Filename);
-            const locale = this.Locale.getText(["page_settings_showlogs.share_email.title", "page_settings_showlogs.share_email.text", "save"], { package: meta.Package?.Name, platform: meta.Device.Platform, file: this.currentLogfile.Filename, size: FileUtils.File.FormatSize(this.currentLogfile.Size) });
-            await ShareFile(this.ModaleCtrl, {
-                email_text: locale["page_settings_showlogs.share_email.text"],
-                email_title: locale["page_settings_showlogs.share_email.title"],
-                button: locale["save"],
-                file: this.currentLogfile,
-                filename: this.currentLogfile.Filename + ".txt",
-                mime: 'text/plain'
-            });
+            await ShareLogfile(this.ModaleCtrl, { file: this.currentLogfile });
         }
     }
 
