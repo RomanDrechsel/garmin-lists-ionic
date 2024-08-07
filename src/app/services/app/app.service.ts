@@ -104,12 +104,11 @@ export class AppService {
      * get info about the app instance and the device
      * @returns app meta information
      */
-    public async AppMetaInfo(): Promise<AppMetaInfo> {
-        const deviceinfo = await Device.getInfo();
-        const database = await this.ListsService.BackendSize();
-        const logs = await this.Logger.GetLogSize();
-        const meta: AppMetaInfo = {
-            Device: {
+    public async AppMetaInfo(query?: { device?: boolean, settings?: boolean, storage?: boolean; }): Promise<AppMetaInfo> {
+        const meta: AppMetaInfo = {};
+        if (!query || query.device !== false) {
+            const deviceinfo = await Device.getInfo();
+            meta.Device = {
                 Identifier: (await Device.getId()).identifier,
                 Model: deviceinfo.model,
                 Platform: deviceinfo.platform,
@@ -124,13 +123,21 @@ export class AppService {
                 DiskFree: deviceinfo.realDiskFree,
                 MemoryUsed: deviceinfo.memUsed,
                 WebViewVersion: deviceinfo.webViewVersion,
-            },
-            Settings: {
+            };
+        }
+
+        if (!query || query.settings !== false) {
+            meta.Settings = {
                 LogMode: this.loggerService.LogLevelShort,
                 AppLanguage: this.Locale.CurrentLanguage.locale,
                 AdmobStatus: await this.Admob.Status(),
-            },
-            Storage: {
+            };
+        }
+
+        if (!query || query.storage !== false) {
+            const database = await this.ListsService.BackendSize();
+            const logs = await this.Logger.GetLogSize();
+            meta.Storage = {
                 Lists: {
                     Count: database.lists.files,
                     Size: database.lists.size,
@@ -143,8 +150,8 @@ export class AppService {
                     Count: logs.files,
                     Size: logs.size,
                 }
-            }
-        };
+            };
+        }
 
         if (AppService.isMobileApp) {
             const info = await App.getInfo();
@@ -163,12 +170,12 @@ export class AppService {
 }
 
 export declare type AppMetaInfo = {
-    Settings: {
+    Settings?: {
         LogMode: string,
         AppLanguage: string,
         AdmobStatus: string,
     },
-    Device: {
+    Device?: {
         Identifier: string,
         Resolution: string,
         Model: string,
@@ -184,15 +191,7 @@ export declare type AppMetaInfo = {
         MemoryUsed: number | undefined,
         WebViewVersion: string,
     },
-    Package?: {
-        Name: string,
-        AppName: string,
-        VersionString: string,
-        Build: number;
-        Environment: "Production" | "Development",
-        Release: boolean,
-    },
-    Storage: {
+    Storage?: {
         Lists: {
             Count: number,
             Size: number;
@@ -205,5 +204,13 @@ export declare type AppMetaInfo = {
             Count: number,
             Size: number;
         },
-    };
+    },
+    Package?: {
+        Name: string,
+        AppName: string,
+        VersionString: string,
+        Build: number;
+        Environment: "Production" | "Development",
+        Release: boolean,
+    },
 };

@@ -85,7 +85,10 @@ export class DevicesPage extends PageBase {
     public async TransmitList() {
         if (this.ListUuid && this.SelectedDevice) {
             if (await this.ConnectIQ.TransmitList(this.ListUuid, this.SelectedDevice, true)) {
-                this.NavController.navigateBack(`/lists/items/${this.ListUuid}`);
+                const route = this.Route.snapshot.queryParamMap.get('routeAfterTransmit');
+                if (route) {
+                    this.NavController.navigateBack(route);
+                }
             }
         }
     }

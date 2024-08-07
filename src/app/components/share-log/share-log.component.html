@@ -16,6 +16,43 @@
             <ion-select-option value="share">{{'comp_sharelog.share'|translate}}</ion-select-option>
             <ion-select-option value="email">{{'comp_sharelog.email'|translate}}</ion-select-option>
         </ion-select>
+        <ion-accordion-group (ionChange)="accordionGroupChange($event)">
+            <ion-accordion toggleIcon="none">
+                <div slot="header">
+                    <ion-item lines="none">
+                        <ion-checkbox #attachMeta>
+                            {{'comp_sharelog.meta'|translate}}
+                        </ion-checkbox>
+                    </ion-item>
+                </div>
+                <ion-list slot="content">
+                    <ion-item lines="none">
+                        <div>
+                            <ion-checkbox labelPlacement="end" justify="start" checked="true" #attachMetaDevice>{{'comp_sharelog.meta_device'|translate}}</ion-checkbox>
+                            <div class="meta_note">
+                                <ion-note [innerHTML]="'comp_sharelog.meta_device_note'|translate"></ion-note>
+                            </div>
+                        </div>
+                    </ion-item>
+                    <ion-item lines="none">
+                        <div>
+                            <ion-checkbox labelPlacement="end" justify="start" checked="true" #attachMetaSettings>{{'comp_sharelog.meta_settings'|translate}}</ion-checkbox>
+                            <div class="meta_note">
+                                <ion-note [innerHTML]="'comp_sharelog.meta_settings_note'|translate"></ion-note>
+                            </div>
+                        </div>
+                    </ion-item>
+                    <ion-item lines="none">
+                        <div>
+                            <ion-checkbox labelPlacement="end" justify="start" checked="true" #attachMetaStorage>{{'comp_sharelog.meta_storage'|translate}}</ion-checkbox>
+                            <div class="meta_note">
+                                <ion-note [innerHTML]="'comp_sharelog.meta_storage_note'|translate"></ion-note>
+                            </div>
+                        </div>
+                    </ion-item>
+                </ion-list>
+            </ion-accordion>
+        </ion-accordion-group>
     </div>
     <div class="button">
         <ion-button (click)="storeFile()">{{'share'|translate}}</ion-button>

@@ -92,7 +92,14 @@
             "text": "Bitte schildere mir die Probleme etwas ausführlicher, damit ich sie nachvollziehen kann:\n\n"
         },
         "store_success": "Das Log wurde gespeichert.",
-        "store_error": "Das Log konnte nicht gespeichert werden!"
+        "store_error": "Das Log konnte nicht gespeichert werden!",
+        "meta": "Meta-Daten anhängen",
+        "meta_device": "Geräte Informationen",
+        "meta_device_note": "Model, Auflösung, Speicherverbrauch, etc.",
+        "meta_settings": "App Einstellungen",
+        "meta_settings_note": "Log-Einstellungen, Sprache, etc.",
+        "meta_storage": "Speicher Informationen",
+        "meta_storage_note": "Anzahl/Größe der Listen und Logs auf dem Gerät"
     },
     "page_lists": {
         "page_title": "Meine Listen",

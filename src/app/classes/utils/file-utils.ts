@@ -78,16 +78,7 @@ export namespace FileUtils {
             }
 
             if (ret.Exists) {
-                let fileRes = await Filesystem.readFile({
-                    path: ret.Path,
-                    encoding: Encoding.UTF8,
-                });
-
-                if (fileRes.data instanceof Blob) {
-                    ret.Content = StringUtils.toString(fileRes.data);
-                } else {
-                    ret.Content = String(fileRes.data);
-                }
+                await ret.ReadContent();
             }
         } catch (e) {
             Logger.Error(`Could not read file ${StringUtils.toString(file)}`, e);
@@ -192,6 +183,24 @@ export namespace FileUtils {
          */
         public get Exists() {
             return this.Size >= 0;
+        }
+
+        /**
+         * reads the content of the file
+         */
+        public async ReadContent() {
+            if (this.Exists) {
+                let fileRes = await Filesystem.readFile({
+                    path: this.Path,
+                    encoding: Encoding.UTF8,
+                });
+
+                if (fileRes.data instanceof Blob) {
+                    this.Content = StringUtils.toString(fileRes.data);
+                } else {
+                    this.Content = String(fileRes.data);
+                }
+            }
         }
 
         /**

@@ -1,11 +1,12 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject, ViewChild } from "@angular/core";
 import { FileOpener } from "@capacitor-community/file-opener";
-import { Directory, Filesystem } from "@capacitor/filesystem";
-import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
+import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
+import { AccordionGroupCustomEvent, IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonNote, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { FileUtils } from "../../classes/utils/file-utils";
 import { ShareUtil } from "../../classes/utils/share-utils";
+import { StringUtils } from "../../classes/utils/string-utils";
 import { LocalizationService } from "../../services/localization/localization.service";
 import { Logger } from "../../services/logging/logger";
 import { PopupsService } from "../../services/popups/popups.service";
@@ -14,7 +15,7 @@ import { AppService } from './../../services/app/app.service';
 @Component({
     selector: "app-share-log",
     standalone: true,
-    imports: [IonContent, IonText, IonInput, IonButtons, IonButton, IonTitle, IonIcon, IonToolbar, IonHeader, IonSelect, IonSelectOption, CommonModule, TranslateModule],
+    imports: [IonNote, IonList, IonCheckbox, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonContent, IonText, IonInput, IonButtons, IonButton, IonTitle, IonIcon, IonToolbar, IonHeader, IonSelect, IonSelectOption, CommonModule, TranslateModule],
     templateUrl: "./share-log.component.html",
     styleUrl: "./share-log.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +23,12 @@ import { AppService } from './../../services/app/app.service';
 export class StoreLogComponent {
     @ViewChild('do', { read: IonSelect }) do?: IonSelect;
     public Params!: ShareLogParams;
+
+    @ViewChild('attachMeta', { read: IonCheckbox }) attachMeta?: IonCheckbox;
+    @ViewChild('attachMetaDevice', { read: IonCheckbox }) attachMetaDevice?: IonCheckbox;
+    @ViewChild('attachMetaSettings', { read: IonCheckbox }) attachMetaSettings?: IonCheckbox;
+    @ViewChild('attachMetaStorage', { read: IonCheckbox }) attachMetaStorage?: IonCheckbox;
+
 
     private readonly Locale = inject(LocalizationService);
     private readonly Popups = inject(PopupsService);
@@ -39,8 +46,23 @@ export class StoreLogComponent {
     public async storeFile() {
         if (this.Params.file && this.Params.file.Exists) {
             if (this.do) {
-                const meta = await this.AppService.AppMetaInfo();
-                //TODO: Meta an Log anhängen, nach Vorgaben des Benutzers
+                const meta_device = this.attachMetaDevice?.checked ?? false;
+                const meta_settings = this.attachMetaSettings?.checked ?? false;
+                const meta_storage = this.attachMetaStorage?.checked ?? false;
+                const meta = await this.AppService.AppMetaInfo({ device: meta_device, settings: meta_settings, storage: meta_storage });
+
+                if (this.attachMeta?.checked === true) {
+                    try {
+                        await Filesystem.appendFile({
+                            path: this.Params.file.Path,
+                            data: "\n" + StringUtils.toString(meta) + "\n",
+                            encoding: Encoding.UTF8,
+                        });
+                        this.Params.file.ReadContent();
+                    } catch (e) {
+                        console.error(`Could not attach meta data to logfile ${this.Params.file.Filename}:`, e);
+                    }
+                }
 
                 if (this.do.value == 'store') {
                     try {
@@ -76,7 +98,7 @@ export class StoreLogComponent {
                     }
                 }
                 else if (this.do.value == "email") {
-                    const email_title = this.Locale.getText("comp_sharelog.share_email.title", { package: meta.Package?.Name, platform: meta.Device.Platform, file: this.Params.file.Filename, size: FileUtils.File.FormatSize(this.Params.file.Size) });
+                    const email_title = this.Locale.getText("comp_sharelog.share_email.title", { package: meta.Package?.Name, platform: meta.Device?.Platform, file: this.Params.file.Filename, size: FileUtils.File.FormatSize(this.Params.file.Size) });
                     if (await ShareUtil.SendMail({ sendto: AppService.EMailAddress, files: this.Params.file.Path, title: email_title, text: this.Locale.getText("comp_sharelog.share_email.text") })) {
                         Logger.Debug(`Shared log ${this.Params.file.Filename} via e-mail`);
                         this.modalCtrl.dismiss(null, "confirm");
@@ -90,6 +112,17 @@ export class StoreLogComponent {
             }
         }
     }
+
+    accordionGroupChange = (ev: AccordionGroupCustomEvent) => {
+        if (this.attachMeta) {
+            if (ev.detail.value) {
+                this.attachMeta.checked = true;
+            }
+            else {
+                this.attachMeta.checked = false;
+            }
+        }
+    };
 }
 
 export const ShareLogfile = async function(modalController: ModalController, params: ShareLogParams): Promise<boolean> {

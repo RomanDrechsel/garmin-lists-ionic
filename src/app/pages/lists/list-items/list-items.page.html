@@ -2,14 +2,14 @@
 
 <ion-content fixed-slot-placement="before" *ngIf="List !== null; else error">
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button class="add" (click)="addItem()" [ariaLabel]="'add'|translate">
+        <ion-fab-button class="add" (click)="AddItem()" [ariaLabel]="'add'|translate">
             <ion-icon src="./assets/icons/add.svg"></ion-icon>
         </ion-fab-button>
     </ion-fab>
 
     <div *ngIf="List && List.Items.length > 0; else noItems">
         <ion-list #itemsContainer>
-            <ion-reorder-group [disabled]="List.Items.length <= 1" (ionItemReorder)="handleReorder($any($event))">
+            <ion-reorder-group [disabled]="List.Items.length <= 1" (ionItemReorder)="HandleReorder($any($event))">
                 <ion-item-sliding *ngFor="let item of List.Items">
                     <ion-item-options side="start" (ionSwipe)="onSwipeRight(item)">
                         <ion-item-option color="danger" expandable="true" (click)="deleteItem(item)">
@@ -33,11 +33,11 @@
                         <ion-reorder slot="end"></ion-reorder>
                     </ion-item>
                     <ion-item-options side="end" (ionSwipe)="onSwipeLeft(item)">
-                        <ion-item-option color="secondary" (click)="pinItem(item)">
+                        <ion-item-option color="secondary" (click)="PinItem(item)">
                             <ion-icon slot="end" [src]="item.Locked ? './assets/icons/pin_off.svg' : './assets/icons/pin.svg'"></ion-icon>
                             {{(item.Locked ? 'page_listitems.unlock' : 'page_listitems.lock')|translate}}
                         </ion-item-option>
-                        <ion-item-option color="secondary" expandable="true" (click)="hideItem(item)">
+                        <ion-item-option color="secondary" expandable="true" (click)="HideItem(item)">
                             <ion-icon slot="end" [src]="item.Hidden ? './assets/icons/eye.svg' : './assets/icons/eye_off.svg'"></ion-icon>
                             {{(item.Hidden ? 'page_listitems.show' : 'page_listitems.hide')|translate}}
                         </ion-item-option>

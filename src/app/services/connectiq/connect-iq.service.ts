@@ -80,7 +80,9 @@ export class ConnectIQService {
                     }
                 });
             }
+            this._devices = [];
             await ConnectIQ.Initialize({ live: !debug_devices });
+
         }
         this.isDebugMode = debug_devices;
 
@@ -172,7 +174,7 @@ export class ConnectIQService {
      * @param force force transmitting to the device without going to devices page if something goes wrong
      * @returns transmit successful or not
      */
-    public async TransmitList(uuid: string, device?: ConnectIQDevice, force: boolean = false): Promise<boolean> {
+    public async TransmitList(uuid: string, device?: ConnectIQDevice, force: boolean = false, routeAfterTransmit?: string): Promise<boolean> {
         let resp: TransmitListEventArgs | undefined = { success: false };
         let redirect = false;
 
@@ -210,7 +212,7 @@ export class ConnectIQService {
         }
 
         if (redirect && !force) {
-            this.Router.navigate(["/devices"], { queryParams: { transmit: uuid } });
+            this.Router.navigate(["/devices"], { queryParams: { transmit: uuid, routeAfterTransmit: routeAfterTransmit } });
             return true;
         } else if (device) {
             if (resp && resp.success) {

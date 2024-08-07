@@ -271,36 +271,6 @@ export class LoggingService {
     }
 
     /**
-     * get a list of all logfiles on the device
-     * @param maxcount maximum number of files
-     * @returns array with all logfiles
-    public async ListLogfiles(maxcount?: number): Promise<{ totalcount: number, files: FileInfo[]; }> {
-        try {
-            let ret: FileInfo[] = [];
-            let files = (await Filesystem.readdir({ path: LoggingService.LogPath, directory: LoggingService.LogDirectory })).files;
-            if (files) {
-                files.sort((a, b) => a.mtime - b.mtime);
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    if (file.type == "file") {
-                        ret.push(file);
-                    }
-                    if (maxcount && ret.length >= maxcount) {
-                        break;
-                    }
-                }
-            }
-            return { totalcount: files.length, files: ret };
-        } catch (e) {
-            let logfile = await Filesystem.stat({ path: this.LogFile, directory: LoggingService.LogDirectory });
-            if (logfile) {
-                return { totalcount: 1, files: [logfile as FileInfo] };
-            }
-            return { totalcount: 0, files: [] };
-        }
-    }*/
-
-    /**
      * get a list of all logfiles on the device in the given time periode
      * @param from logfiles newer the this timestamp
      * @param to logfiles older then this timestamp

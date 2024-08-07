@@ -88,7 +88,7 @@ export class ListItemsPage extends PageBase {
     }
 
     public onSwipeLeft(item: Listitem) {
-        this.hideItem(item);
+        this.HideItem(item);
     }
 
     public editItem(item: Listitem) {
@@ -114,28 +114,28 @@ export class ListItemsPage extends PageBase {
         this.itemsContainer?.closeSlidingItems();
     }
 
-    public async hideItem(item: Listitem) {
+    public async HideItem(item: Listitem) {
         if (this.List) {
             await this.ListsService.ToggleHiddenListitem(this.List, item);
         }
         this.itemsContainer?.closeSlidingItems();
     }
 
-    public async pinItem(item: Listitem) {
+    public async PinItem(item: Listitem) {
         if (this.List) {
             await this.ListsService.ToggleLockListitem(this.List, item);
         }
         this.itemsContainer?.closeSlidingItems();
     }
 
-    public async addItem() {
+    public async AddItem() {
         if (this.List) {
             await this.ListsService.NewListitem(this.List);
             this.appComponent.setAppPages(this.ModifyMainMenu());
         }
     }
 
-    public async handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
+    public async HandleReorder(event: CustomEvent<ItemReorderEventDetail>) {
         if (this.List) {
             await this.ListsService.ReorderListitems(this.List, event.detail.complete(this.List.Items) as Listitem[]);
             this.disableClick = true;
@@ -145,7 +145,7 @@ export class ListItemsPage extends PageBase {
         }
     }
 
-    public async deleteList(): Promise<boolean> {
+    public async DeleteList(): Promise<boolean> {
         if (this.List) {
             const del = await this.ListsService.DeleteList(this.List);
             if (del === true) {
@@ -160,10 +160,10 @@ export class ListItemsPage extends PageBase {
         if (this.List) {
             return [
                 MenuitemFactory(EMenuItemType.ListsTrash, { hidden: true }),
-                MenuitemFactory(EMenuItemType.Devices, { title_id: "page_listitems.menu_devices", url_addition: this.List.Uuid, onClick: async () => { this.ConnectIQ.TransmitList(this.List!.Uuid); return true; } }),
+                MenuitemFactory(EMenuItemType.Devices, { title_id: "page_listitems.menu_devices", onClick: async () => { this.ConnectIQ.TransmitList(this.List!.Uuid, undefined, false, `/lists/items/${this.List!.Uuid}`); return true; } }),
                 MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: this.List.Uuid, disabled: !this.useTrash }),
                 MenuitemFactory(EMenuItemType.EmptyList, { onClick: () => this.EmptyList(), disabled: this.List.Items.length <= 0 }),
-                MenuitemFactory(EMenuItemType.DeleteList, { onClick: () => this.deleteList() }),
+                MenuitemFactory(EMenuItemType.DeleteList, { onClick: () => this.DeleteList() }),
             ];
         } else {
             return [];

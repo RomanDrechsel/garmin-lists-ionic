@@ -23,5 +23,30 @@
             margin-top: 20px;
             float: right;
         }
+
+        ion-accordion-group {
+            ion-accordion {
+                ion-item {
+                    --background-hover: #FFFFFF;
+                    --padding-start: 6px;
+                }
+
+                ion-list {
+                    ion-item {
+                        --background-hover: #FFFFFF;
+
+                        ::part(label) {
+                            margin-inline-start: 6px;
+                        }
+
+                        .meta_note {
+                            margin-inline-start: 24px;
+                            position: relative;
+                            top: -12px;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

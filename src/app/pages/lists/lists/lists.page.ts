@@ -55,7 +55,7 @@ export class ListsPage extends PageBase {
     }
 
     public async transmitList(list: List) {
-        await this.ConnectIQ.TransmitList(list.Uuid);
+        await this.ConnectIQ.TransmitList(list.Uuid, undefined, false, "/lists");
         this.listsContainer.closeSlidingItems();
     }
 

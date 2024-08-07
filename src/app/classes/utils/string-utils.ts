@@ -100,7 +100,7 @@ export namespace StringUtils {
             return String(obj);
         } else {
             const seen = new WeakSet();
-            return JSON.stringify(obj, function (key, value) {
+            return JSON.stringify(obj, function(key, value) {
                 if (typeof value === "object" && value !== null) {
                     if (seen.has(value)) {
                         return "[Circular]";
@@ -108,7 +108,7 @@ export namespace StringUtils {
                     seen.add(value);
                 }
                 return value;
-            });
+            }, 4);
         }
     }
 }
