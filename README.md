@@ -10,7 +10,11 @@ All icons are self-made.<br /><br />
 ### Description
 You are able to manage todo- and shopping-lists on your smartphone and transmit them easily to your Garmin watch.<br /><br />
 
-This app is only available for Android in Google Playstore.<br />
+This app is only available for Android in <a href="https://play.google.com/store/apps/details?id=de.romandrechsel.lists" target="_blank">Google Playstore</a>.<br /><br />
+<div style="text-align:center">
+<a href="https://play.google.com/store/apps/details?id=de.romandrechsel.lists" target="_blank">
+<img src="github/GetItOnGooglePlay_Badge_Web_color_English.png" alt="Google Playstore" />
+</a></div><br /><br />
 It supports english and german language.<br /><br />
 
 ### Screenshots
