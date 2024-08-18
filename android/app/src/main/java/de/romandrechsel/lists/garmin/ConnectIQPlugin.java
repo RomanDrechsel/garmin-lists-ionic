@@ -33,7 +33,7 @@ public class ConnectIQPlugin extends Plugin {
     public void Initialize(PluginCall call) {
         Activity activity = this.getActivity();
         if (activity != null) {
-            this.Manager.Initialize(activity, call.getBoolean("live", true));
+            this.Manager.Initialize(activity, call.getBoolean("live_devices", true), call.getBoolean("live_app", true));
         }
         this.emitJsEvent("INIT", new JSObject());
         call.resolve();

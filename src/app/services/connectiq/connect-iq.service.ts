@@ -4,7 +4,7 @@ import { Capacitor, PluginListenerHandle } from "@capacitor/core";
 import { BehaviorSubject } from "rxjs";
 import { DeviceEventArgs } from "src/app/plugins/connectiq/event-args/device-event-args";
 import { LogEventArgs } from "src/app/plugins/connectiq/event-args/log-event-args";
-import { DebugDevices } from "../../../environments/environment";
+import { DebugDevices, environment } from "../../../environments/environment";
 import ConnectIQ from "../../plugins/connectiq/connect-iq";
 import { TransmitListEventArgs } from "../../plugins/connectiq/event-args/transmit-list-event-args";
 import { AppService } from "../app/app.service";
@@ -81,7 +81,7 @@ export class ConnectIQService {
                 });
             }
             this._devices = [];
-            await ConnectIQ.Initialize({ live: !debug_devices });
+            await ConnectIQ.Initialize({ live_devices: !debug_devices, live_app: environment.publicRelease });
 
         }
         this.isDebugMode = debug_devices;

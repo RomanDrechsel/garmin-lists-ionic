@@ -59,7 +59,11 @@ export class AppinfosPage extends PageBase {
         await Browser.open({ url: "https://buymeacoffee.com/romandrechsel" });
     }
 
-    public async writeReview() {
+    public async writeReviewIQ() {
+        await this.ConnectIQ.openStore();
+    }
+
+    public async writeReviewGoogle() {
         await InAppReview.requestReview();
     }
 
