@@ -63,14 +63,29 @@ ion-content {
         }
 
         ion-img {
-            margin-top: 30px;
+            margin-top: 10px;
             margin-inline: auto;
             max-width: 265px;
         }
 
         .review {
-            text-decoration: underline;
             margin-block: 16px;
+            font-size: 1.2em;
+
+            > div {
+                margin-bottom: 10px;
+            }
+        }
+
+        .my-website {
+            margin-block: 2em;
+            text-align: center;
+
+            .link {
+                margin-block-start: 1em;
+                font-weight: bold;
+                font-size: 1.2em;
+            }
         }
     }
 }

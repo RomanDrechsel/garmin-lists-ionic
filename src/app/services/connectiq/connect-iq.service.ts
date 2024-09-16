@@ -1,14 +1,16 @@
 import { Injectable, inject } from "@angular/core";
 import { Router } from "@angular/router";
+import { Browser } from "@capacitor/browser";
 import { Capacitor, PluginListenerHandle } from "@capacitor/core";
 import { BehaviorSubject } from "rxjs";
 import { DeviceEventArgs } from "src/app/plugins/connectiq/event-args/device-event-args";
 import { LogEventArgs } from "src/app/plugins/connectiq/event-args/log-event-args";
-import { DebugDevices } from "../../../environments/environment";
+import { DebugDevices, environment } from "../../../environments/environment";
 import ConnectIQ from "../../plugins/connectiq/connect-iq";
 import { TransmitListEventArgs } from "../../plugins/connectiq/event-args/transmit-list-event-args";
 import { AppService } from "../app/app.service";
 import { ListsService } from "../lists/lists.service";
+import { Locale } from "../localization/locale";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { PopupsService } from "../popups/popups.service";
@@ -81,7 +83,7 @@ export class ConnectIQService {
                 });
             }
             this._devices = [];
-            await ConnectIQ.Initialize({ live: !debug_devices });
+            await ConnectIQ.Initialize({ live_devices: !debug_devices, live_app: environment.publicRelease });
 
         }
         this.isDebugMode = debug_devices;
@@ -157,7 +159,9 @@ export class ConnectIQService {
      * opens the playstore
      */
     public async openStore() {
-        await ConnectIQ.OpenStore();
+        //await ConnectIQ.OpenStore();
+        const locale = Locale.currentLang().locale + "/" ?? "";
+        await Browser.open({ url: `https://apps.garmin.com/${locale}apps/c04a5671-7e39-46e7-b911-1911dbb2fe05` });
     }
 
     /**
