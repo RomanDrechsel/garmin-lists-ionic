@@ -57,6 +57,10 @@
                 <div [innerHTML]="'page_appinfos.review_google'|translate" class="ion-text-center" (click)="writeReviewGoogle()"></div>
             </div>
             <div [innerHTML]="'page_appinfos.thanks'|translate" class="ion-text-center"></div>
+            <div class="my-website" (click)="mywebsite()">
+                <div [innerHTML]="'page_appinfos.website'|translate" class="ion-text-center"></div>
+                <div class="link">{{WebsiteLink}}</div>
+            </div>
         </div>
     </div>
 </ion-content>

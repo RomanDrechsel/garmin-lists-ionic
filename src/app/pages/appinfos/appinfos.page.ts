@@ -29,6 +29,7 @@ export class AppinfosPage extends PageBase {
     public DatabaseSizeTrash: string = "-";
     public MemoryUsage: string = "-";
     public LogsSize: string = "-";
+    public WebsiteLink = "roman-drechsel.de";
     private timerSubscription?: Subscription;
 
     public override async ionViewWillEnter() {
@@ -57,6 +58,10 @@ export class AppinfosPage extends PageBase {
 
     public async bmc() {
         await Browser.open({ url: "https://buymeacoffee.com/romandrechsel" });
+    }
+
+    public async mywebsite() {
+        await Browser.open({ url: `https://${this.WebsiteLink}` });
     }
 
     public async writeReviewIQ() {

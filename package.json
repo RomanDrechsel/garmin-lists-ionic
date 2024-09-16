@@ -1,8 +1,8 @@
 {
     "name": "lists",
-    "version": "2024.8.0103",
-    "author": "Ionic Framework",
-    "homepage": "https://ionicframework.com/",
+    "version": "2024.9.1600",
+    "author": "Roman Drechsel",
+    "homepage": "https://roman-drechsel.de",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
