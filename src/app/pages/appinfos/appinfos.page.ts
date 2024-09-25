@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { InAppReview } from "@capacitor-community/in-app-review";
 import { Browser } from "@capacitor/browser";
@@ -9,8 +9,9 @@ import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { FileUtils } from "../../classes/utils/file-utils";
+import { WatchLoggingService } from "../../services/logging/watch-logging.service";
 import { PageBase } from "../page-base";
-import { AppService } from './../../services/app/app.service';
+import { AppService } from "./../../services/app/app.service";
 
 @Component({
     selector: "app-appinfos",
@@ -30,6 +31,8 @@ export class AppinfosPage extends PageBase {
     public MemoryUsage: string = "-";
     public LogsSize: string = "-";
     public WebsiteLink = "roman-drechsel.de";
+
+    private GarminLogger = inject(WatchLoggingService);
     private timerSubscription?: Subscription;
 
     public override async ionViewWillEnter() {
@@ -83,5 +86,11 @@ export class AppinfosPage extends PageBase {
             this.MemoryUsage = FileUtils.File.FormatSize(deviceinfo.memUsed);
         }
         this.cdr.detectChanges();
+    }
+
+    public async test() {
+        if (this.ConnectIQ.AlwaysTransmitToDevice) {
+            console.log(await this.GarminLogger.RequestGarminWatchLogs(this.ConnectIQ.AlwaysTransmitToDevice?.Identifier));
+        }
     }
 }

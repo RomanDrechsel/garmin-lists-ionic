@@ -291,7 +291,6 @@ export class LoggingService {
         }
     }
 
-
     /**
      * gehts a specific logfile with content
      * @param name filename of the logfile
@@ -347,7 +346,7 @@ export class LoggingService {
      * get the size and file count of all logfiles on the device
      * @returns size in bytes and number of logfiles
      */
-    public async GetLogSize(): Promise<{ size: number; files: number; }> {
+    public async GetLogSize(): Promise<{ size: number; files: number }> {
         return FileUtils.GetDirStat(LoggingService.LogPath, LoggingService.LogDirectory);
     }
 }

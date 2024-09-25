@@ -1,7 +1,11 @@
-TODO: Garmin Logs an Ionic Log anhängen
+WIP: Garmin Logs an Ionic Log anhängen
+TODO: Beim Löschen fragen, ob die Liste auch auf der Uhr gelöscht werden soll
+TODO: Zeitgesteuert Listen zurücksetzen
+TODO: In den Logs den Device-Namen anzeigen
+TODO: Neue Touch-Devices
 
-ConnectIQ Documentation:
-https://developer.garmin.com/connect-iq/core -topics/mobile-sdk-for-android/
+ConnectIQ Documentation Mobile SDK for Android:
+https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
 
 ADB
 https://wiki.ubuntuusers.de/adb/
@@ -9,7 +13,5 @@ https://wiki.ubuntuusers.de/adb/
 ionic build --clean --configuration=production && npx cap sync
 
 ionic build --clean --configuration=liveRelease && npx cap sync
-
-
 
 npx ionic cap run android --target=R5CW31K1TPT --livereload --external --configuration=development --public-host=192.168.178.27
