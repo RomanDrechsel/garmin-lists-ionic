@@ -1,3 +1,11 @@
 :host {
-  display: block;
+    display: block;
+    max-height: 80%;
+
+    .button {
+        margin-block-start: 2em;
+        display: flex;
+        justify-content: right;
+        padding: 0 6px 6px 0;
+    }
 }

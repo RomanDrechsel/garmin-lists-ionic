@@ -255,7 +255,7 @@ export class ConnectIQService {
         }
     }
 
-    public async SendToDevice(obj: { device?: ConnectIQDevice | number; data: any; response?: (message?: ConnectIQDeviceMessage) => Promise<void>; timeout?: number }): Promise<boolean> {
+    public async SendToDevice(obj: { device?: ConnectIQDevice | number; data: any; response?: (message?: ConnectIQDeviceMessage) => Promise<void>; timeout?: number }): Promise<number | boolean> {
         if (typeof obj.device === "number") {
             obj.device = await this.GetDevice(obj.device);
         }
@@ -273,12 +273,25 @@ export class ConnectIQService {
             return false;
         }
 
+        let tid: number | undefined = undefined;
         if (obj.response) {
-            let tid = this.addResponseListener(obj.response, obj.timeout);
+            tid = this.addResponseListener(obj.response, obj.timeout);
             obj.data.tid = tid;
         }
 
-        return (await ConnectIQ.SendToDevice({ device_id: String(obj.device.Identifier), json: JSON.stringify(obj.data) })).success;
+        if ((await ConnectIQ.SendToDevice({ device_id: String(obj.device.Identifier), json: JSON.stringify(obj.data) })).success) {
+            return tid ?? true;
+        } else {
+            return false;
+        }
+    }
+
+    public CancelRequest(tid: number) {
+        this._pendingResponses = this._pendingResponses.filter(l => l.id != tid);
+        if (this._pendingResponsesTimoutCheck && this._pendingResponses.length === 0) {
+            this._pendingResponsesTimoutCheck.unsubscribe();
+            this._pendingResponsesTimoutCheck = undefined;
+        }
     }
 
     /**

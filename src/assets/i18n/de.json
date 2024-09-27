@@ -83,7 +83,7 @@
     "comp_sharelog": {
         "title": "Log Speichern",
         "text": "Wie möchtest du das Log <br /><strong>{{filename}}</strong><br /> speichern?",
-        "text_web": "Das Log <strong>{{filename}}</strong> wird auf Ihrem Rechner gespeichert.",
+        "text_web": "Das Log <strong>{{filename}}</strong> wird auf Deinem Rechner gespeichert.",
         "store": "In Documents speichern",
         "share": "Teilen",
         "email": "Mir Per E-Mail senden",
@@ -99,7 +99,13 @@
         "meta_settings": "App Einstellungen",
         "meta_settings_note": "Log-Einstellungen, Sprache, etc.",
         "meta_storage": "Speicher Informationen",
-        "meta_storage_note": "Anzahl/Größe der Listen und Logs auf dem Gerät"
+        "meta_storage_note": "Anzahl/Größe der Listen und Logs auf dem Gerät",
+        "watch": "Logs der Uhr anhängen"
+    },
+    "comp_watchlogs": {
+        "title": "Logs übertragen",
+        "text": "Um die Logs von Deiner Uhr zu übertragen, musst du zuerst die App auf deiner Uhr<br /><br /><strong>{{name}}</strong><br /><br /> starten. Wenn du App läuft, sollten die Logs automatisch übertragen werden.",
+        "withoutlogs": "Ohne Logs fortfahren"
     },
     "page_lists": {
         "page_title": "Meine Listen",

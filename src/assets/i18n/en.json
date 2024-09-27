@@ -99,7 +99,8 @@
         "meta_settings": "App settings",
         "meta_settings_note": "Log settings, language, etc.",
         "meta_storage": "Storage information",
-        "meta_storage_note": "Number and size of lists and logs on the device"
+        "meta_storage_note": "Number and size of lists and logs on the device",
+        "watch": "Attach logs of the watch"
     },
     "page_lists": {
         "page_title": "My lists",
