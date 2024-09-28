@@ -1,13 +1,11 @@
-export namespace StringUtils
-{
+export namespace StringUtils {
     /**
      * Removes all occurrences of a character at the beginning of a string
      * @param input String to be trimmed
      * @param charToRemove character to be removed from the string
      * @returns trimmed string
      */
-    export function trimStart(input: string, charToRemove: string): string
-    {
+    export function trimStart(input: string, charToRemove: string): string {
         const regex = new RegExp(`^(${charToRemove})+`);
         return input.replace(regex, "");
     }
@@ -18,8 +16,7 @@ export namespace StringUtils
      * @param charToRemove character to be removed from the string
      * @returns trimmed string
      */
-    export function trimEnd(input: string, charToRemove: string): string
-    {
+    export function trimEnd(input: string, charToRemove: string): string {
         const regex = new RegExp(`(${charToRemove})+$`);
         return input.replace(regex, "");
     }
@@ -30,8 +27,7 @@ export namespace StringUtils
      * @param charToRemove character to be removed from the string
      * @returns trimmed string
      */
-    export function trim(input: string, charToRemove: string): string
-    {
+    export function trim(input: string, charToRemove: string): string {
         input = trimStart(input, charToRemove);
         return trimEnd(input, charToRemove);
     }
@@ -43,18 +39,14 @@ export namespace StringUtils
      * @param separator  separator, if arg1 and arg2 are objects
      * @returns concatenated string
      */
-    export function concat(arg1: string | object, arg2: string = "", arg3: string = ""): string
-    {
-        if (Array.isArray(arg1))
-        {
+    export function concat(arg1: string | object, arg2: string = "", arg3: string = ""): string {
+        if (Array.isArray(arg1)) {
             // array of objects
             return arg1.map(item => String(item)).join(String(arg2));
-        } else if (arg2 !== undefined)
-        {
+        } else if (arg2 !== undefined) {
             // two objects
             return `${String(arg1)}${arg3}${String(arg2)}`;
-        } else
-        {
+        } else {
             // only one object
             return String(arg1);
         }
@@ -65,15 +57,12 @@ export namespace StringUtils
      * @param str string
      * @returns converted string
      */
-    export function capitalize(str: string): string
-    {
+    export function capitalize(str: string): string {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    export function shorten(str: string, max_length: number): string
-    {
-        if (str.length <= max_length)
-        {
+    export function shorten(str: string, max_length: number): string {
+        if (str.length <= max_length) {
             return str;
         }
         return str.substring(0, max_length - 3) + "...";
@@ -84,13 +73,10 @@ export namespace StringUtils
      * @param arg variable
      * @returns true, if it is a string, else false
      */
-    export function isString(arg: any): boolean
-    {
-        if (typeof arg === "string" || arg instanceof String)
-        {
+    export function isString(arg: any): boolean {
+        if (typeof arg === "string" || arg instanceof String) {
             return true;
-        } else
-        {
+        } else {
             return false;
         }
     }
@@ -100,8 +86,7 @@ export namespace StringUtils
      * @param str non filesave string
      * @returns filesave string
      */
-    export function FilesaveString(str: string)
-    {
+    export function FilesaveString(str: string) {
         return str.replace(/[^a-zA-Z0-9_]/g, "_");
     }
 
@@ -110,20 +95,15 @@ export namespace StringUtils
      * @param obj variable
      * @returns string representation
      */
-    export function toString(obj: any): string
-    {
-        if (isString(obj))
-        {
+    export function toString(obj: any): string {
+        if (isString(obj)) {
             return String(obj);
-        }
-        else
-        {
-            try
-            {
+        } else if (obj.toString) {
+            return obj.toString();
+        } else {
+            try {
                 return JSON.stringify(obj);
-            }
-            catch
-            {
+            } catch {
                 return "[Object]";
             }
         }

@@ -180,6 +180,8 @@
         "autodelete_week": "Nach einer Woche",
         "autodelete_month": "Nach einem Monat",
         "show": "Logs anzeigen",
+        "show_watch": "Logs der Uhr anzeigen",
+        "show_watch_note": "Zeigt die Logs der Uhr an. Die App muss dazu auf der Uhr laufen",
         "size": "Größe:\n{{size}} / {{files}} Datei(en)",
         "deleteall": "Alle Logs löschen",
         "deleteall_confirm": "Sollen die {{count}} Log-Dateien gelöscht werden?",
@@ -201,6 +203,13 @@
         "select_logday_title": "Tage der Log-Dateien auswählen:",
         "no_log": "Keine Log-Dateien gefunden!",
         "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden."
+    },
+    "page_settings_showwatchlogs": {
+        "page_title": "Logs der Uhr",
+        "select_watch": "Gerät auswählen",
+        "no_watch": "Kein Gerät gefunden",
+        "no_logs": "Keine Logs gefunden!",
+        "no_device": "Kein aktives Gerät gefunden!"
     },
     "page_settings_confirm": {
         "page_title": "Bestätigungen",

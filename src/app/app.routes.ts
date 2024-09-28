@@ -58,4 +58,8 @@ export const routes: Routes = [
         path: "privacy-policy/policy",
         loadComponent: () => import("./pages/privacy-policy/policy/policy.page").then(m => m.PolicyPage),
     },
+    {
+        path: "settings/watch-logs",
+        loadComponent: () => import("./pages/settings/show-watch-logs/show-watch-logs.page").then(m => m.ShowWatchLogsPage),
+    },
 ];

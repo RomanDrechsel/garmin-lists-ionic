@@ -2,8 +2,8 @@ import { CommonModule } from "@angular/common";
 import { AfterViewInit, Component, inject } from "@angular/core";
 import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonItem, IonList, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import { ConnectIQDevice } from "../../../services/connectiq/connect-iq-device";
-import { ConnectIQService } from "../../../services/connectiq/connect-iq.service";
+import { ConnectIQDevice } from "../../services/connectiq/connect-iq-device";
+import { ConnectIQService } from "../../services/connectiq/connect-iq.service";
 
 @Component({
     selector: "app-request-watch-log",
@@ -20,7 +20,7 @@ export class RequestWatchLogComponent implements AfterViewInit {
     private _transactionId?: number = undefined;
 
     public async ngAfterViewInit(): Promise<void> {
-        const logs = await this.requestLog(this.Params.device.Identifier);
+        const logs = await this.requestLog(this.Params.device);
         if (logs) {
             this.modalCtrl.dismiss(logs, "confirm");
         } else {
@@ -40,10 +40,10 @@ export class RequestWatchLogComponent implements AfterViewInit {
         this.modalCtrl.dismiss(["Log request canceled"], "confirm");
     }
 
-    private async requestLog(uuid: number): Promise<string[]> {
+    private async requestLog(device: ConnectIQDevice): Promise<string[]> {
         return new Promise<string[]>(async resolve => {
             const tid = await this.ConnectIQ.SendToDevice({
-                device: uuid,
+                device: device,
                 data: { type: "request", request: "logs" },
                 response: async message => {
                     if (message) {
@@ -65,6 +65,7 @@ export class RequestWatchLogComponent implements AfterViewInit {
             } else {
                 resolve(["Request to device failed"]);
             }
+            this.ConnectIQ.openApp(device);
         });
     }
 }

@@ -257,6 +257,11 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         }
     }
 
+    private static boolean IsDebug()
+    {
+        return DeviceManager.AppId.equals(DeviceManager.AppIdDebug);
+    }
+
     private void test(DeviceInfo device, String json)
     {
         Object obj = new Gson().fromJson(json, Object.class);
@@ -280,15 +285,10 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
                             data.put("tid", tid);
                             List<Object> list = List.of(data);
                             device.onMessageReceived(device.device, device.deviceApp, list, ConnectIQ.IQMessageStatus.SUCCESS);
-                        }, 1000000);
+                        }, 10000);
                     }
                 }
             }
         }
-    }
-
-    private static boolean IsDebug()
-    {
-        return DeviceManager.AppId.equals(DeviceManager.AppIdDebug);
     }
 }

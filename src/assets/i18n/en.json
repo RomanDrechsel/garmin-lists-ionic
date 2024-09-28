@@ -102,6 +102,11 @@
         "meta_storage_note": "Number and size of lists and logs on the device",
         "watch": "Attach logs of the watch"
     },
+    "comp_watchlogs": {
+        "title": "Transmit logs",
+        "text": "To transfer the logs from your watch, you must first start the app on your watch<br /><br /><strong>{{name}}</strong><br /><br />If the app is running, the logs should be transferred automatically.",
+        "withoutlogs": "Continue without logs"
+    },
     "page_lists": {
         "page_title": "My lists",
         "empty": "Empty",
@@ -176,6 +181,8 @@
         "autodelete_week": "Older than a week",
         "autodelete_month": "Older than a month",
         "show": "Show logs",
+        "show_watch": "Show logs ot the watch",
+        "show_watch_note": "Displays the logs of the watch. The app must be running on the watch",
         "size": "Size:\n{{size}} / {{files}} file(s)",
         "deleteall": "Delete all logfiles",
         "deleteall_confirm": "Should the {{count}} logfiles be deleted?",
@@ -197,6 +204,13 @@
         "select_logday_title": "Show log files of a certain day:",
         "no_log": "No log files found!",
         "no_log_note": "No log files were found for {{date}}"
+    },
+    "page_settings_showwatchlogs": {
+        "page_title": "Watch logs",
+        "select_watch": "Select device",
+        "no_watch": "No device found",
+        "no_logs": "No Logs loaded!",
+        "no_device": "Found not active device!"
     },
     "page_settings_confirm": {
         "page_title": "Confirmations",

@@ -5,6 +5,7 @@ import { Capacitor, PluginListenerHandle } from "@capacitor/core";
 import { BehaviorSubject, interval, Subscription } from "rxjs";
 import { LogEventArgs } from "src/app/plugins/connectiq/event-args/log-event-args";
 import { DebugDevices, environment } from "../../../environments/environment";
+import { StringUtils } from "../../classes/utils/string-utils";
 import ConnectIQ from "../../plugins/connectiq/connect-iq";
 import { ConnectIQDeviceMessage } from "../../plugins/connectiq/event-args/connect-iq-device-message.";
 import { DeviceEventArgs } from "../../plugins/connectiq/event-args/device-event-args";
@@ -87,6 +88,7 @@ export class ConnectIQService {
             if (!this._deviceListener) {
                 this._deviceListener = await this.addListener<DeviceEventArgs>("DEVICE", device => {
                     if (device) {
+                        Logger.Debug("Device state changed: ", device);
                         this._devices.find(d => d.Identifier == device.id)?.Update(device);
                         this.onDeviceChangedSubject.next(ConnectIQDevice.FromEventArgs(device, this));
                     }
@@ -96,7 +98,7 @@ export class ConnectIQService {
                 this._receiverListener = await this.addListener<DeviceMessageEventArgs>("RECEIVE", async obj => {
                     if (obj) {
                         const message = new ConnectIQDeviceMessage(obj, this);
-                        Logger.Debug("Received message from device:", message.Device, message.Message);
+                        Logger.Debug(`Received message with ${StringUtils.toString(message.Message).length} bytes from device: `, message.Device.toString());
                         if ((await this.handleResponse(message)) == false) {
                             this.onMessageReceivedSubject.next({ device: ConnectIQDevice.FromEventArgs(obj.device, this), message: message });
                         }
@@ -342,8 +344,7 @@ export class ConnectIQService {
             if (!Number.isNaN(tid)) {
                 const pending = this._pendingResponses.find(r => r.id == tid);
                 if (pending) {
-                    Logger.Debug(`Received watch response for request ${tid} after ${Date.now() - pending.started} ms`, pending);
-
+                    Logger.Debug(`Received watch response for request ${tid} after ${Date.now() - pending.started} ms`);
                     await pending.callback(message);
                     this._pendingResponses = this._pendingResponses.filter(r => r != pending);
                     if (this._pendingResponses.length == 0 && this._pendingResponsesTimoutCheck != null) {

@@ -1,4 +1,5 @@
 WIP: Garmin Logs an Ionic Log anhängen
+BUG: Reload-Button auf Watch-Logs Page scrollt mit hoch
 TODO: Beim Löschen fragen, ob die Liste auch auf der Uhr gelöscht werden soll
 TODO: Zeitgesteuert Listen zurücksetzen
 TODO: In den Logs den Device-Namen anzeigen

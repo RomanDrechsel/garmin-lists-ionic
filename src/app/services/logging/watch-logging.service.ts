@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { ModalController } from "@ionic/angular/standalone";
-import { RequestWatchLogs } from "../../components/share-log/request-watch-log/request-watch-log.component";
+import { RequestWatchLogs } from "../../components/request-watch-log/request-watch-log.component";
 import { ConnectIQDevice } from "../connectiq/connect-iq-device";
 import { ConnectIQService } from "../connectiq/connect-iq.service";
 
