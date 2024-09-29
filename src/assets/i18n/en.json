@@ -166,8 +166,8 @@
         "confirm_note": "Settings for requesting user confirmation",
         "trash": "Trash",
         "trash_note": "Settings for usage of the trash",
-        "openontransmit": "Start app after transferring a list",
-        "openontransmit_note": "Request on your watch whether the app should be opened when you transfer a list."
+        "transmission": "Transmission settings",
+        "transmission_note": "Settings for transferring lists to your watch"
     },
     "page_settings_logs": {
         "page_title": "Log settings",
@@ -233,6 +233,13 @@
         "undo_warning": "<br /><strong>Warning:</strong> The action can not be undone!",
         "transmit_list": "Transmit list",
         "transmit_list_note": "Request confirmation when transferring a list to a watch."
+    },
+    "page_lists_transmission": {
+        "page_title": "Transmission settings",
+        "openontransmit": "Open app after transmitting a list",
+        "openontransmit_note": "Request on your watch whether the app should be opened when you transfer a list.",
+        "deletelist": "Automatically delete lists from the watch",
+        "deletelist_note": "When deleting a list on your smartphone, also delete the list on your watch."
     },
     "page_settings_trash": {
         "page_title": "Trash",

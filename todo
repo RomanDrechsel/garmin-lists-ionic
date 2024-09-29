@@ -1,8 +1,7 @@
-WIP: Garmin Logs an Ionic Log anhängen
-BUG: Reload-Button auf Watch-Logs Page scrollt mit hoch
-TODO: Beim Löschen fragen, ob die Liste auch auf der Uhr gelöscht werden soll
+TODO: Beim Löschen fragen, ob die Liste auch auf der Uhr gelöscht werden soll --> Transmission settings page
+TODO: Beim Start prüfen, ob die App auf der Uhr aktuell ist
+TODO: Einstellungen der Uhr auf dem Smartphone ändern
 TODO: Zeitgesteuert Listen zurücksetzen
-TODO: In den Logs den Device-Namen anzeigen
 TODO: Neue Touch-Devices
 
 ConnectIQ Documentation Mobile SDK for Android:

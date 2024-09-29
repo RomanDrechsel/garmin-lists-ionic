@@ -10,12 +10,13 @@
             </ion-select>
         </ion-item>
 
-        <!-- open app on transmitting list-->
-        <ion-item lines="full">
-            <ion-toggle label-placement="start" [checked]="OpenAppOnTransmit" (ionChange)="onOpenAppOnTransmitChanged($event.target.checked)">
-                <div class="text" [innerHTML]="'page_settings.openontransmit'|translate"></div>
-                <ion-note [innerHTML]="'page_settings.openontransmit_note'|translate"></ion-note>
-            </ion-toggle>
+        <!-- transmission settings -->
+        <ion-item [button]="true" routerDirection="forward" [routerLink]="['/settings/lists-transmission']" lines="full">
+            <ion-label>
+                <div>{{'page_settings.transmission'|translate}}</div>
+                <ion-note>{{'page_settings.transmission_note'|translate}}</ion-note>
+            </ion-label>
+            <ion-icon slot="end" src="./assets/icons/chevron_forward.svg"></ion-icon>
         </ion-item>
 
         <!-- confirmations -->

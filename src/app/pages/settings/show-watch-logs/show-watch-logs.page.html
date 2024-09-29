@@ -18,7 +18,7 @@
             </div>
         </app-page-empty>
     </ng-template>
-    <ion-fab horizontal="end" vertical="bottom">
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button (click)="loadLog()" [disabled]="!Device">
             <ion-icon src="./assets/icons/reload.svg"></ion-icon>
         </ion-fab-button>

@@ -269,6 +269,11 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
      */
     public boolean openApp(@Nullable IAppOpenedListener listener)
     {
+        if (this.device == null || this.deviceApp == null)
+        {
+            return false;
+        }
+
         if (this.Manager.connectIQ != null && this.Manager.sdkReady)
         {
             try

@@ -1,0 +1,22 @@
+<app-main-toolbar back="/settings">{{'page_lists_transmission.page_title'|translate}}</app-main-toolbar>
+<ion-content>
+    <ion-list>
+
+        <!-- open app on transmitting list -->
+        <ion-item lines="full">
+            <ion-toggle label-placement="start" [checked]="OpenAppOnTransmit" (ionChange)="onOpenAppOnTransmitChanged($event.target.checked)">
+                <div class="text" [innerHTML]="'page_lists_transmission.openontransmit'|translate"></div>
+                <ion-note [innerHTML]="'page_lists_transmission.openontransmit_note'|translate"></ion-note>
+            </ion-toggle>
+        </ion-item>
+
+        <!-- delete list on device when deleting on phone -->
+        <ion-item lines="full">
+            <ion-toggle label-placement="start" [checked]="DeleteListOnDevice" (ionChange)="onDeleteListOnDeviceChanged($event.target.checked)">
+                <div class="text" [innerHTML]="'page_lists_transmission.deletelist'|translate"></div>
+                <ion-note [innerHTML]="'page_lists_transmission.deletelist_note'|translate"></ion-note>
+            </ion-toggle>
+        </ion-item>
+
+    </ion-list>
+</ion-content>
