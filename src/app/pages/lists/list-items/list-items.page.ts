@@ -160,7 +160,13 @@ export class ListItemsPage extends PageBase {
         if (this.List) {
             return [
                 MenuitemFactory(EMenuItemType.ListsTrash, { hidden: true }),
-                MenuitemFactory(EMenuItemType.Devices, { title_id: "page_listitems.menu_devices", onClick: async () => { this.ConnectIQ.TransmitList(this.List!.Uuid, undefined, false, `/lists/items/${this.List!.Uuid}`); return true; } }),
+                MenuitemFactory(EMenuItemType.Devices, {
+                    title_id: "page_listitems.menu_devices",
+                    onClick: async () => {
+                        this.ListsService.TransferList(this.List!.Uuid);
+                        return true;
+                    },
+                }),
                 MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: this.List.Uuid, disabled: !this.useTrash }),
                 MenuitemFactory(EMenuItemType.EmptyList, { onClick: () => this.EmptyList(), disabled: this.List.Items.length <= 0 }),
                 MenuitemFactory(EMenuItemType.DeleteList, { onClick: () => this.DeleteList() }),

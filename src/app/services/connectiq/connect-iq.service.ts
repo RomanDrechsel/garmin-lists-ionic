@@ -6,16 +6,11 @@ import { BehaviorSubject, interval, Subscription } from "rxjs";
 import { LogEventArgs } from "src/app/plugins/connectiq/event-args/log-event-args";
 import { DebugDevices, environment } from "../../../environments/environment";
 import { StringUtils } from "../../classes/utils/string-utils";
+import { SelectGarminDevice } from "../../pages/devices/devices.page";
 import ConnectIQ from "../../plugins/connectiq/connect-iq";
 import { ConnectIQDeviceMessage } from "../../plugins/connectiq/event-args/connect-iq-device-message.";
 import { DeviceEventArgs } from "../../plugins/connectiq/event-args/device-event-args";
-import { TransmitDataEventArgs } from "../../plugins/connectiq/event-args/transmit-data-event-args";
-import { AppService } from "../app/app.service";
-import { ListsService } from "../lists/lists.service";
 import { Locale } from "../localization/locale";
-import { LocalizationService } from "../localization/localization.service";
-import { PopupsService } from "../popups/popups.service";
-import { Toast } from "../popups/toast";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 import { DeviceMessageEventArgs } from "./../../plugins/connectiq/event-args/device-message-event-args.";
 import { Logger } from "./../logging/logger";
@@ -46,10 +41,7 @@ export class ConnectIQService {
     private _pendingResponses: ConnectIQResponseListener[] = [];
     private _pendingResponsesTimoutCheck?: Subscription = undefined;
 
-    private readonly Locale = inject(LocalizationService);
-    private readonly Popups = inject(PopupsService);
     private readonly Preferences = inject(PreferencesService);
-    private readonly ListsService = inject(ListsService);
     private readonly Router = inject(Router);
 
     public set AlwaysTransmitToDevice(device: ConnectIQDevice | undefined) {
@@ -178,6 +170,25 @@ export class ConnectIQService {
     }
 
     /**
+     * Returns the most probable device, or let the user select one, if the device is uncertain
+     * @returns device object
+     */
+    public async GetDefaultDevice(args?: { btn_text?: string }): Promise<ConnectIQDevice | undefined> {
+        if (this._alwaysTransmitToDevice && Capacitor.isNativePlatform()) {
+            return this._alwaysTransmitToDevice;
+        } else {
+            const online = this._devices.filter(d => d.State == "Ready");
+            if (online.length == 1) {
+                return online[0];
+            } else {
+                return new Promise<ConnectIQDevice | undefined>(resolve => {
+                    SelectGarminDevice({ router: this.Router, callback: async (device?: ConnectIQDevice) => resolve(device), submitRoute: undefined, buttonText: args?.btn_text });
+                });
+            }
+        }
+    }
+
+    /**
      * opens the playstore
      */
     public async openStore() {
@@ -192,82 +203,11 @@ export class ConnectIQService {
         await ConnectIQ.OpenApp({ device_id: String(device.Identifier) });
     }
 
-    /**
-     * transmit al list to a device
-     * @param uuid unique id of the list
-     * @param device device object
-     * @param force force transmitting to the device without going to devices page if something goes wrong
-     * @returns transmit successful or not
-     */
-    public async TransmitList(uuid: string, device?: ConnectIQDevice, force: boolean = false, routeAfterTransmit?: string): Promise<boolean> {
-        let resp: TransmitDataEventArgs | undefined = { success: false };
-        let redirect = false;
-
-        const list = await this.ListsService.GetList(uuid);
-        if (!list) {
-            return false;
-        }
-
-        if (Capacitor.isNativePlatform()) {
-            if (!device) {
-                if (this._alwaysTransmitToDevice) {
-                    device = this._alwaysTransmitToDevice;
-                } else if (this._devices.length == 1) {
-                    device = this._devices[0];
-                }
-            }
-
-            if (device && device.State == "Ready") {
-                const confirm = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmTransmitList, true);
-                const locale = this.Locale.getText(["service-connectiq.transmit_confirm", "yes", "no"], { device: device.Name });
-                if (!confirm || (await this.Popups.Alert.YesNo({ message: locale["service-connectiq.transmit_confirm"], button_yes: locale["yes"], button_no: locale["no"] }))) {
-                    const toast = await this.Popups.Toast.Notice("service-connectiq.transmit_process", Toast.DURATION_INFINITE);
-                    AppService.AppToolbar?.ToggleProgressbar(true);
-                    resp = await ConnectIQ.SendToDevice({ device_id: String(device.Identifier), json: list.toDeviceJson() });
-                    toast.dismiss();
-                    AppService.AppToolbar?.ToggleProgressbar(false);
-                } else {
-                    return true;
-                }
-            } else {
-                redirect = true;
-            }
-        } else {
-            redirect = true;
-        }
-
-        if (redirect && !force) {
-            this.Router.navigate(["/devices"], { queryParams: { transmit: uuid, routeAfterTransmit: routeAfterTransmit } });
-            return true;
-        } else if (device) {
-            if (resp && resp.success) {
-                this.Popups.Toast.Success("service-connectiq.transmit_success");
-                if (await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, true)) {
-                    await this.openApp(device);
-                }
-                return true;
-            } else {
-                this.Popups.Toast.Error("service-connectiq.transmit_error");
-                return false;
-            }
-        } else {
-            this.Popups.Toast.Error("service-connectiq.transmit_error");
-            Logger.Debug(`The list ${uuid} could not be transmitted: No device found`);
-            return false;
-        }
-    }
-
     public async SendToDevice(obj: { device?: ConnectIQDevice | number; data: any; response?: (message?: ConnectIQDeviceMessage) => Promise<void>; timeout?: number }): Promise<number | boolean> {
         if (typeof obj.device === "number") {
             obj.device = await this.GetDevice(obj.device);
-        }
-
-        if (Capacitor.isNativePlatform() && !obj.device) {
-            if (this._alwaysTransmitToDevice) {
-                obj.device = this._alwaysTransmitToDevice;
-            } else if (this._devices.length == 1) {
-                obj.device = this._devices[0];
-            }
+        } else if (!obj.device) {
+            obj.device = await this.GetDefaultDevice();
         }
 
         if (!obj.device) {

@@ -35,6 +35,7 @@
         "store_list_error": "Die Liste konnte nicht gespeichert werden!",
         "store_listitem_error": "Der Punkt konnte nicht gespeichert werden!",
         "delete_confirm": "Möchtest du die Liste <strong>{{name}}</strong> wirklich löschen?",
+        "delete_confirm_watch": "Liste auch auf der Uhr löschen",
         "delete_error": "Die Liste konnte nicht gelöscht werden!",
         "delete_success": "Die Liste wurde gelöscht.",
         "delete_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> wirklich löschen?",
@@ -61,13 +62,12 @@
         "empty_trash_listitems_confirm": "Möchtest du den Papierkorb der Liste leeren und die {{count}} Punkte löschen?",
         "empty_trash_listitems_confirm_single": "Möchtest du den Papierkorb der Liste leeren und den Punkt löschen",
         "empty_trash_success": "Der Papierkorb wurde geleert.",
-        "empry_trash_error": "Der Papierkorb konnte nicht geleert werden!"
-    },
-    "service-connectiq": {
+        "empry_trash_error": "Der Papierkorb konnte nicht geleert werden!",
         "transmit_confirm": "Möchtest du die Liste auf dein Gerät <strong>{{device}}</strong> übertragen?",
         "transmit_process": "Die Liste wird übertragen...",
         "transmit_success": "Die Liste wurde erfolgreich übertragen",
-        "transmit_error": "Die Liste konnte nicht übertragen werden!"
+        "transmit_error": "Die Liste konnte nicht übertragen werden!",
+        "transmit_send_btn": "An Gerät senden"
     },
     "comp-listeditor": {
         "title_new": "Neue Liste anlegen",
@@ -143,7 +143,7 @@
         "install_app": "Du musst zuerst die Listen App auf deiner Uhr installieren.<br /><strong>Klicke hier</strong> um zum Garmin ConnectIQ Store zu gelangen.",
         "reload_btn": "Geräte neu laden",
         "toggle": "Immer an dieses Gerät senden",
-        "send_btn": "An Gerät senden",
+        "select_btn": "Gerät auswählen",
         "device_state": {
             "Ready": "Das Gerät ist bereit",
             "ServiceUnavailable": "Der ConnectIQ Service ist nicht erreichbar",

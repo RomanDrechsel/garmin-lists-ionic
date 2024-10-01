@@ -35,6 +35,7 @@
         "store_list_error": "The list could not be saved!",
         "store_listitem_error": "the item could not be saved!",
         "delete_confirm": "Do you really want to delete the list <strong>{{name}}</strong>?",
+        "delete_confirm_watch": "Delete list on the watch too",
         "delete_error": "The list could not be deleted!",
         "delete_success": "The list was deleted.",
         "delete_item_confirm": "Do you really want to delete the item <strong>{{name}}</strong>?",
@@ -61,13 +62,12 @@
         "empty_trash_listitems_confirm": "Do you really want to empty the trash for the list and delete all {{count}} items?",
         "empty_trash_listitems_confirm_single": "Do you really want to empty the trash for the list and delete the item?",
         "empty_trash_success": "The trash is now empty.",
-        "empry_trash_error": "The trash could not be emptied!"
-    },
-    "service-connectiq": {
+        "empry_trash_error": "The trash could not be emptied!",
         "transmit_confirm": "Do you want transmit the list to the device <strong>{{device}}</strong>?",
         "transmit_process": "The list is being transmitted...",
         "transmit_success": "The list has been transmitted successfully",
-        "transmit_error": "The list could not be transmitted!"
+        "transmit_error": "The list could not be transmitted!",
+        "transmit_send_btn": "Send to device"
     },
     "comp-listeditor": {
         "title_new": "Create new list",
@@ -143,7 +143,7 @@
         "install_app": "You need to install the Lists app on your device first.<br /><strong>Click here</strong> to get to the Garmin ConnectIQ Store.",
         "reload_btn": "Reload devices",
         "toggle": "Always send to this device",
-        "send_btn": "Send to device",
+        "select_btn": "Select device",
         "device_state": {
             "Ready": "The device is ready",
             "ServiceUnavailable": "The ConnectIQ service is unavailable",

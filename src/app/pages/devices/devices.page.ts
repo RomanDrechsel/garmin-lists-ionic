@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonLabel, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToggle, IonToolbar } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
@@ -24,6 +24,8 @@ export class DevicesPage extends PageBase {
     public ListUuid?: string;
     public Devices: ConnectIQDevice[] = [];
 
+    public static SubmitButton?: { callback?: (device?: ConnectIQDevice) => Promise<void>; submitRoute?: string; buttonText?: string };
+
     private initListener?: Subscription;
     private stateListener?: Subscription;
 
@@ -35,6 +37,18 @@ export class DevicesPage extends PageBase {
 
     public get AlwaysTransmitDeviceSelected(): boolean {
         return this.ConnectIQ.AlwaysTransmitToDevice != undefined && this.ConnectIQ.AlwaysTransmitToDevice.Identifier == this.SelectedDevice?.Identifier;
+    }
+
+    public get hasSubmitButton(): boolean {
+        return DevicesPage.SubmitButton?.callback != undefined || DevicesPage.SubmitButton?.submitRoute != undefined;
+    }
+
+    public get SubmitButtonLabel(): string {
+        if (DevicesPage.SubmitButton?.buttonText) {
+            return DevicesPage.SubmitButton?.buttonText;
+        } else {
+            return this.Locale.getText("page_devices.select_btn");
+        }
     }
 
     public override async ionViewWillEnter() {
@@ -82,13 +96,21 @@ export class DevicesPage extends PageBase {
         this.ConnectIQ.openStore();
     }
 
-    public async TransmitList() {
-        if (this.ListUuid && this.SelectedDevice) {
-            if (await this.ConnectIQ.TransmitList(this.ListUuid, this.SelectedDevice, true)) {
-                const route = this.Route.snapshot.queryParamMap.get('routeAfterTransmit');
-                if (route) {
-                    this.NavController.navigateBack(route);
-                }
+    public async SubmitButton() {
+        if (!DevicesPage.SubmitButton?.callback && !DevicesPage.SubmitButton?.submitRoute) {
+            return;
+        }
+        if (this.SelectedDevice) {
+            if (DevicesPage.SubmitButton?.callback) {
+                await DevicesPage.SubmitButton.callback(this.SelectedDevice);
+                DevicesPage.SubmitButton.callback = undefined;
+            }
+
+            if (DevicesPage.SubmitButton?.submitRoute) {
+                this.NavController.navigateBack(DevicesPage.SubmitButton.submitRoute);
+                DevicesPage.SubmitButton.submitRoute = undefined;
+            } else {
+                this.NavController.back();
             }
         }
     }
@@ -129,3 +151,12 @@ export class DevicesPage extends PageBase {
         this.cdr.detectChanges();
     }
 }
+
+export const SelectGarminDevice = function (args: { router: Router; callback: (device?: ConnectIQDevice) => Promise<void>; submitRoute?: string; buttonText?: string }) {
+    DevicesPage.SubmitButton = {
+        callback: args.callback,
+        submitRoute: args.submitRoute,
+        buttonText: args.buttonText,
+    };
+    args.router.navigate(["/devices"]);
+};
