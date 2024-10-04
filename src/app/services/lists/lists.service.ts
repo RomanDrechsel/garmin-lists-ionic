@@ -189,13 +189,13 @@ export class ListsService {
             const checkbox: AlertInput = {
                 label: this.Locale.getText("service-lists.delete_confirm_watch"),
                 type: "checkbox",
-                name: "del_watch",
-                value: 1,
+                value: "del_on_watch",
                 checked: del_on_watch,
             };
             const result = await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.delete_confirm", { name: StringUtils.shorten(list.Name, 40) }), inputs: [checkbox] });
             if (result !== false) {
-                return this.removeList(list.Uuid, result.del_watch ?? false);
+                const del_on_watch = Array.isArray(result) && result.includes("del_on_watch") ? true : false;
+                return this.removeList(list.Uuid, del_on_watch);
             } else {
                 return undefined;
             }
@@ -666,7 +666,6 @@ export class ListsService {
                         this.Popups.Toast.Success("service-lists.delete_success");
                         Logger.Notice(`Removed list ${list.toLog()}`);
                         if (delete_on_watch) {
-                            //WIP: hier weiter
                             this.ConnectIQ.SendToDevice({ device: undefined, data: { type: "dellist", uuid: uuid } });
                         }
                         return true;

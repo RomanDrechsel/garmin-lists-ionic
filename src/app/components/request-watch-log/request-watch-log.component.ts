@@ -62,7 +62,7 @@ export class RequestWatchLogComponent implements AfterViewInit {
             });
             if (typeof tid == "number") {
                 this._transactionId = tid;
-            } else {
+            } else if (tid === false) {
                 resolve(["Request to device failed"]);
             }
             this.ConnectIQ.openApp(device);

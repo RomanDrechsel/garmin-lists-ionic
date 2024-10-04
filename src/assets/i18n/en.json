@@ -235,7 +235,7 @@
         "transmit_list_note": "Request confirmation when transferring a list to a watch."
     },
     "page_lists_transmission": {
-        "page_title": "Transmission settings",
+        "page_title": "Transmission to watch",
         "openontransmit": "Open app after transmitting a list",
         "openontransmit_note": "Request on your watch whether the app should be opened when you transfer a list.",
         "deletelist": "Automatically delete lists from the watch",

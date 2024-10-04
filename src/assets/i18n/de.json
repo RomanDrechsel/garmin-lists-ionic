@@ -234,7 +234,7 @@
         "transmit_list_note": "Beim Übertragen einer Liste auf eine Uhr eine Bestätigung anfordern"
     },
     "page_lists_transmission": {
-        "page_title": "Übertragungseinstellungen",
+        "page_title": "Übertragung zu Uhr",
         "openontransmit": "App beim Übertragen starten",
         "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst.",
         "deletelist": "Listen automatisch von der Uhr löschen",
