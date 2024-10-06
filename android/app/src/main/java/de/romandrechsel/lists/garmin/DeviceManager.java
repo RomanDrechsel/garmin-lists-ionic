@@ -144,7 +144,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
             device.SendJson(json, listener);
             if (DeviceManager.IsDebug())
             {
-                this.test(device, json);
+                this.debugLogResponse(device, json);
             }
         }
         else if (listener != null)
@@ -262,7 +262,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         return DeviceManager.AppId.equals(DeviceManager.AppIdDebug);
     }
 
-    private void test(DeviceInfo device, String json)
+    private void debugLogResponse(DeviceInfo device, String json)
     {
         Object obj = new Gson().fromJson(json, Object.class);
         if (obj instanceof LinkedTreeMap)

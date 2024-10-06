@@ -500,7 +500,6 @@ export class ListsService {
      * @param device device to be transfered, if null the default device is used
      */
     public async TransferList(list?: List | string, device?: ConnectIQDevice | number): Promise<boolean> {
-        //WIP
         if (typeof list === "string") {
             list = await this.GetList(list);
         }

@@ -10,7 +10,10 @@ import { SelectGarminDevice } from "../../pages/devices/devices.page";
 import ConnectIQ from "../../plugins/connectiq/connect-iq";
 import { ConnectIQDeviceMessage } from "../../plugins/connectiq/event-args/connect-iq-device-message.";
 import { DeviceEventArgs } from "../../plugins/connectiq/event-args/device-event-args";
+import { ConfigService } from "../config/config.service";
 import { Locale } from "../localization/locale";
+import { LocalizationService } from "../localization/localization.service";
+import { PopupsService } from "../popups/popups.service";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 import { DeviceMessageEventArgs } from "./../../plugins/connectiq/event-args/device-message-event-args.";
 import { Logger } from "./../logging/logger";
@@ -27,6 +30,7 @@ export class ConnectIQService {
     private _receiverListener?: PluginListenerHandle;
 
     private _devices: ConnectIQDevice[] = [];
+    private _watchOutdatedNotice: number[] = [];
 
     public isDebugMode = false;
 
@@ -42,7 +46,10 @@ export class ConnectIQService {
     private _pendingResponsesTimoutCheck?: Subscription = undefined;
 
     private readonly Preferences = inject(PreferencesService);
+    private readonly Config = inject(ConfigService);
     private readonly Router = inject(Router);
+    private readonly Popup = inject(PopupsService);
+    private readonly Locale = inject(LocalizationService);
 
     public set AlwaysTransmitToDevice(device: ConnectIQDevice | undefined) {
         this.Preferences.Set(EPrefProperty.AlwaysTransmitTo, device?.Identifier);
@@ -83,6 +90,7 @@ export class ConnectIQService {
                         Logger.Debug("Device state changed: ", device);
                         this._devices.find(d => d.Identifier == device.id)?.Update(device);
                         this.onDeviceChangedSubject.next(ConnectIQDevice.FromEventArgs(device, this));
+                        this.checkDeviceVersion(device);
                     }
                 });
             }
@@ -98,8 +106,8 @@ export class ConnectIQService {
                 });
             }
             this._devices = [];
-            await ConnectIQ.Initialize({ live_devices: !debug_devices, live_app: environment.publicRelease });
             this.isDebugMode = debug_devices;
+            await ConnectIQ.Initialize({ live_devices: !debug_devices, live_app: environment.publicRelease });
 
             const defaultTransmitDevice = await this.Preferences.Get<number>(EPrefProperty.AlwaysTransmitTo, -1);
             this._alwaysTransmitToDevice = await this.GetDevice(defaultTransmitDevice);
@@ -193,7 +201,7 @@ export class ConnectIQService {
      */
     public async openStore() {
         //await ConnectIQ.OpenStore();
-        await Browser.open({ url: `https://apps.garmin.com/${Locale.currentLang().locale}apps/c04a5671-7e39-46e7-b911-1911dbb2fe05` });
+        await Browser.open({ url: `https://apps.garmin.com/${Locale.currentLang().locale}/apps/${this.Config.GarminAppStoreId}` });
     }
 
     /**
@@ -296,5 +304,61 @@ export class ConnectIQService {
             }
         }
         return false;
+    }
+
+    private async checkDeviceVersion(device: DeviceEventArgs) {
+        if (device.state == "Ready" && !this.isDebugMode && !this._watchOutdatedNotice.includes(device.id)) {
+            this._watchOutdatedNotice.push(device.id);
+            type ignore_device = { device: number; version: number; check: number };
+            let all_ignore = await this.Preferences.Get<ignore_device[] | undefined>(EPrefProperty.IgnoreWatchOutdated, undefined);
+            if (!device.version || device.version < this.Config.GarminAppVersion) {
+                if (!Array.isArray(all_ignore)) {
+                    all_ignore = [];
+                }
+                all_ignore = all_ignore.filter(d => d.device != device.id && d.check > Date.now() - 1000 * 60 * 60 * 24 * 180);
+                const ignore = all_ignore.find(d => d.device == device.id);
+                if (!ignore || ignore.version < this.Config.GarminAppVersion) {
+                    Logger.Notice(`Old lists app found on device ${device}, up-to-date version is ${this.Config.GarminAppVersion}`);
+                    const res = await this.Popup.Alert.Show({
+                        message: this.Locale.getText("service-connectiq.watch_outdated", { device: device.name }),
+                        buttons: [
+                            this.Locale.getText("service-connectiq.watch_outdated_ignore"),
+                            {
+                                text: this.Locale.getText("service-connectiq.watch_outdated_button"),
+                                handler: () => this.openStore(),
+                                role: "confirm",
+                            },
+                        ],
+                        inputs: [
+                            {
+                                type: "checkbox",
+                                label: this.Locale.getText("service-connectiq.watch_outdated_dontremind"),
+                                value: "ignore",
+                                checked: ignore != undefined,
+                            },
+                        ],
+                    });
+                    if (Array.isArray(res) && res.includes("ignore")) {
+                        if (ignore) {
+                            all_ignore?.forEach(d => {
+                                if (d.device == device.id) {
+                                    d.version = this.Config.GarminAppVersion;
+                                    d.check = Date.now();
+                                }
+                            });
+                        } else {
+                            all_ignore.push({ device: device.id, version: this.Config.GarminAppVersion, check: Date.now() });
+                        }
+                    } else {
+                        all_ignore = undefined;
+                    }
+                }
+            }
+            if (all_ignore && all_ignore.length > 0) {
+                await this.Preferences.Set(EPrefProperty.IgnoreWatchOutdated, all_ignore);
+            } else {
+                await this.Preferences.Remove(EPrefProperty.IgnoreWatchOutdated);
+            }
+        }
     }
 }

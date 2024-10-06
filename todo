@@ -1,5 +1,4 @@
-WIP: Beim Start prüfen, ob die App auf der Uhr aktuell ist
-TODO: Einstellungen der Uhr auf dem Smartphone ändern
+BUG: Header von Request-Watch-Logs Dialog fehlerhaft
 TODO: Zeitgesteuert Listen zurücksetzen
 TODO: Neue Touch-Devices
 
@@ -13,4 +12,5 @@ ionic build --clean --configuration=production && npx cap sync
 
 ionic build --clean --configuration=liveRelease && npx cap sync
 
-npx ionic cap run android --target=R5CW31K1TPT --livereload --external --configuration=development --public-host=192.168.178.27
+npx ionic cap run android --target=R5CW31K1TPT --livereload --external --configuration=development --public-host=192.168.178.33
+npx ionic cap run android --target=Android_14 --livereload --external --configuration=development --public-host=192.168.178.33

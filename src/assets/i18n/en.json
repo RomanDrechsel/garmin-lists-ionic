@@ -69,6 +69,12 @@
         "transmit_error": "The list could not be transmitted!",
         "transmit_send_btn": "Send to device"
     },
+    "service-connectiq": {
+        "watch_outdated": "You seem to be using an old version of the list app on your device <strong>{{device}}</strong>.<br /><br />Please update the app on your watch to be able to use all functions.",
+        "watch_outdated_button": "Go to the Connect-IQ Store",
+        "watch_outdated_ignore": "Ignore",
+        "watch_outdated_dontremind": "Do not notify again for this version"
+    },
     "comp-listeditor": {
         "title_new": "Create new list",
         "title_edit": "Edit list",

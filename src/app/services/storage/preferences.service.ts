@@ -23,6 +23,7 @@ export enum EPrefProperty {
     "DeleteListOnDevice" = "LISTS_DeleteListOnDevice",
     "DebugDevices" = "LISTS_DebugDevices",
     "OpenedList" = "LISTS_OpenedList",
+    "IgnoreWatchOutdated" = "LISTS_IgnoreWatchOutdated",
 }
 
 @Injectable({

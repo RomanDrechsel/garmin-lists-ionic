@@ -97,13 +97,11 @@ export namespace StringUtils {
      */
     export function toString(obj: any): string {
         if (isString(obj)) {
-            return String(obj);
-        } else if (obj.toString) {
-            return obj.toString();
+            return obj;
         } else {
             try {
                 return JSON.stringify(obj);
-            } catch {
+            } catch (ex) {
                 return "[Object]";
             }
         }

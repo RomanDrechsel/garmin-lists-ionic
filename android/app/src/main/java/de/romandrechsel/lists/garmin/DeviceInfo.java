@@ -73,8 +73,8 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
                     @Override
                     public void onApplicationInfoReceived(IQApp iqApp)
                     {
-                        DeviceInfo.this.setState(DeviceState.Ready);
                         DeviceInfo.this.deviceApp = iqApp;
+                        DeviceInfo.this.setState(DeviceState.Ready);
 
                         try
                         {
@@ -327,6 +327,7 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
             ret.put("id", this.device.getDeviceIdentifier());
             ret.put("name", this.device.getFriendlyName());
             ret.put("state", this.state.name());
+            ret.put("version", this.deviceApp != null ? this.deviceApp.version() : null);
             return ret;
         }
 
