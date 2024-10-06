@@ -2,10 +2,13 @@
     display: block;
     max-height: 80%;
 
-    .button {
-        margin-block-start: 2em;
+    .buttons {
         display: flex;
         justify-content: right;
         padding: 0 6px 6px 0;
+
+        ion-button {
+            margin-block-start: 2em;
+        }
     }
 }
