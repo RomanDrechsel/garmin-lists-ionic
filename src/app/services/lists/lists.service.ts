@@ -147,9 +147,8 @@ export class ListsService {
         if (AppService.isMobileApp) {
             await Keyboard.show();
         }
-        const listname = await ListEditor(this.ModalCtrl);
-        if (listname) {
-            const list = new List({ name: listname, uuid: await this.createUuid(), order: this._listIndex.size, created: Date.now() });
+        const list = await ListEditor(this.ModalCtrl, {});
+        if (list) {
             if (await this.StoreList(list)) {
                 Logger.Notice(`Created new list ${list.toLog()}`);
                 this.putListInIndex(list);
@@ -161,15 +160,15 @@ export class ListsService {
     }
 
     /**
-     * opens the list editor to edit the title of a list
+     * opens the list editor to edit the list
      * @param list list to be edited
+     * @param only_title if true, only the title will be edited
      */
-    public async RenameList(list: List) {
-        const listname = await ListEditor(this.ModalCtrl, { listname: list.Name, purpose: "edit" });
-        if (listname) {
-            list.Name = listname;
+    public async EditList(list: List, only_title: boolean = true) {
+        const ret = await ListEditor(this.ModalCtrl, { list: list, extended: !only_title });
+        if (ret) {
             if (await this.StoreList(list)) {
-                Logger.Notice(`Renamed list ${list.toLog()}`);
+                Logger.Notice(`Edited list ${list.toLog()}`);
                 this.putListInIndex(list);
             } else {
                 this.Popups.Toast.Error("service-lists.store_list_error");
@@ -591,6 +590,14 @@ export class ListsService {
         trash.files += itemtrash.files;
 
         return { lists: lists, trash: trash };
+    }
+
+    /**
+     * creates a new List object
+     * @param args list properties
+     */
+    public async createNewListObj(args: { name: string }): Promise<List> {
+        return new List({ name: args.name, uuid: await this.createUuid(), created: Date.now(), order: this._listIndex.size });
     }
 
     /**

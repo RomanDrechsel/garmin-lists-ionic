@@ -159,6 +159,7 @@ ion-header {
 
 ion-note {
     --color: var(--ion-color-medium);
+    text-wrap: wrap;
 }
 
 ion-backdrop {
@@ -168,4 +169,11 @@ ion-backdrop {
 
 ion-action-sheet {
     backdrop-filter: blur(2px);
+}
+
+ion-icon.info-icon {
+    color: var(--color-info);
+    padding: 12px;
+    height: 28px;
+    width: 28px;
 }

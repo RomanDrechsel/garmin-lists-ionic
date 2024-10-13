@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonRow, IonText, IonTitle, IonToolbar, ItemReorderEventDetail } from "@ionic/angular/standalone";
+import { IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonRow, IonText, IonTitle, IonToolbar, ItemReorderEventDetail, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
@@ -33,6 +33,7 @@ export class ListItemsPage extends PageBase {
     private useTrash = true;
 
     private readonly Route = inject(ActivatedRoute);
+    private readonly ModalCtrl = inject(ModalController);
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
@@ -156,6 +157,14 @@ export class ListItemsPage extends PageBase {
         return false;
     }
 
+    public async EditList(): Promise<boolean> {
+        if (this.List) {
+            this.ListsService.EditList(this.List, false);
+            return true;
+        }
+        return false;
+    }
+
     public override ModifyMainMenu(): MenuItem[] {
         if (this.List) {
             return [
@@ -168,6 +177,7 @@ export class ListItemsPage extends PageBase {
                     },
                 }),
                 MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: this.List.Uuid, disabled: !this.useTrash }),
+                MenuitemFactory(EMenuItemType.EditList, { onClick: () => this.EditList() }),
                 MenuitemFactory(EMenuItemType.EmptyList, { onClick: () => this.EmptyList(), disabled: this.List.Items.length <= 0 }),
                 MenuitemFactory(EMenuItemType.DeleteList, { onClick: () => this.DeleteList() }),
             ];

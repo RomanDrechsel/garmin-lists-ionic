@@ -19,12 +19,22 @@
         "min_short": "Min.",
         "hour_short": "Std.",
         "hours_short": "Std.",
-        "ago": "vor {{date}}"
+        "ago": "vor {{date}}",
+        "weekday": {
+            "mon": "Montag",
+            "tue": "Dienstag",
+            "wed": "Mittwoch",
+            "thu": "Donnerstag",
+            "fri": "Freitag",
+            "sat": "Samstag",
+            "sun": "Sonntag"
+        }
     },
     "mainmenu": {
         "lists": "Meine Listen",
         "trash": "Papierkorb",
         "delete_list": "Liste löschen",
+        "edit_list": "Liste bearbeiten",
         "devices": "Geräte",
         "settings": "Einstellungen",
         "privacy": "Datenschutz",
@@ -78,7 +88,19 @@
     "comp-listeditor": {
         "title_new": "Neue Liste anlegen",
         "title_edit": "Liste bearbeiten",
-        "listname": "Bezeichnung"
+        "listname": "Bezeichnung",
+        "reset": "Liste automatisch zurücksetzen",
+        "reset_note": "Setzt alle Listenpunkte auf der Uhr in einem bestimmten Interval auf nicht-erledigt.",
+        "reset_info": "Auf deiner Uhr werden alle Listenpunkte dieser Liste in einem bestimmten Intervall wieder auf \"nicht erledigt\" gesetzt.<br /><br />Dies eignet sich zum Beispiel für wiederkehrende Aufgaben wie Hausarbeiten oder andere regelmäßige Tätigkeiten.",
+        "reset_interval":  "Intervall",
+        "reset_daily": "Täglich",
+        "reset_weekly": "Wöchentlich",
+        "reset_monthly": "Monatlich"
+    },
+    "comp-select-interval": {
+        "last": "letzter",
+        "ofmonth": "Tag des Monats",
+        "oclock": "Uhr"
     },
     "comp-listitemeditor": {
         "title_new": "Listenpunkt anlegen",

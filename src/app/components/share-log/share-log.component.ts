@@ -123,7 +123,7 @@ export class StoreLogComponent {
         }
     }
 
-    accordionGroupChange = (ev: AccordionGroupCustomEvent) => {
+    public accordionGroupChange = (ev: AccordionGroupCustomEvent) => {
         if (this.attachMeta) {
             if (ev.detail.value) {
                 this.attachMeta.checked = true;

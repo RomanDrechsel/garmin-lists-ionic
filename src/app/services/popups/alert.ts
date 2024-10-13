@@ -4,7 +4,7 @@ import { LocalizationService } from "../localization/localization.service";
 export class Alert {
     public constructor(private Controller: AlertController, private Locale: LocalizationService) {}
 
-    public async Show(opts: { message: string; buttons?: (string | AlertButton)[]; header?: string; inputs?: AlertInput[]; translate?: boolean; ok_action?: () => Promise<void> }): Promise<any> {
+    public async Show(opts: { message: string; buttons?: (string | AlertButton)[]; header?: string; inputs?: AlertInput[]; translate?: boolean; ok_action?: () => Promise<void>; cssClass?: string }): Promise<any> {
         //at least an ok button
         if (!opts.buttons || opts.buttons.length == 0) {
             opts.buttons = opts.translate ? ["ok"] : [this.Locale.getText("ok")];
@@ -53,7 +53,7 @@ export class Alert {
             message: opts.message,
             header: opts.header,
             buttons: buttons,
-            cssClass: "alert",
+            cssClass: opts.cssClass && opts.cssClass.length > 0 ? "alert " + opts.cssClass : "alert",
             inputs: opts.inputs ?? [],
         };
 

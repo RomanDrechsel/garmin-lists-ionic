@@ -285,7 +285,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
                             data.put("tid", tid);
                             List<Object> list = List.of(data);
                             device.onMessageReceived(device.device, device.deviceApp, list, ConnectIQ.IQMessageStatus.SUCCESS);
-                        }, 1000000);
+                        }, 10000);
                     }
                 }
             }

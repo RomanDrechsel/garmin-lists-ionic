@@ -73,8 +73,19 @@ ion-modal.autosize-modal {
     }
 }
 
+ion-modal.bottom-modal {
+    align-items: flex-end;
+    --height: auto;
+}
+
 ion-alert.alert {
     --ion-text-color: var(--color-text);
+
+    &.info {
+        .alert-message {
+            font-size: 0.95em;
+        }
+    }
 
     .alert-radio-label {
         color: var(--color-text) !important;

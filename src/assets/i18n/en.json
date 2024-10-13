@@ -19,12 +19,22 @@
         "min_short": "min",
         "hour_short": "hr",
         "hours_short": "hrs",
-        "ago": "{{date}} ago"
+        "ago": "{{date}} ago",
+        "weekday": {
+            "mon": "Monday",
+            "tue": "Tuesday",
+            "wed": "Wednesday",
+            "thu": "Thursday",
+            "fri": "Friday",
+            "sat": "Saturday",
+            "sun": "Sunday"
+        }
     },
     "mainmenu": {
         "lists": "My lists",
         "trash": "Trash",
         "delete_list": "Delete list",
+        "edit_list": "Edit list",
         "devices": "Devices",
         "settings": "Settings",
         "privacy": "Privacy policy",
@@ -78,7 +88,19 @@
     "comp-listeditor": {
         "title_new": "Create new list",
         "title_edit": "Edit list",
-        "listname": "Description"
+        "listname": "Description",
+        "reset": "Reset the list automatically",
+        "reset_note": "Sets all list items in a certain interval to not done.",
+        "reset_info": "On your watch, all items on this list will be reset to \"not done\" at a certain interval.<br /><br />This is suitable for recurring tasks such as household chores or other regular activities.",
+        "reset_interval":  "Interval",
+        "reset_daily": "Daily",
+        "reset_weekly": "Weekly",
+        "reset_monthly": "Monthly"
+    },
+    "comp-select-interval": {
+        "last": "last",
+        "ofmonth": "day of month",
+        "oclock": ""
     },
     "comp-listitemeditor": {
         "title_new": "Create new item",

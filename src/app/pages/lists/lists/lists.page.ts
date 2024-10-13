@@ -60,7 +60,7 @@ export class ListsPage extends PageBase {
     }
 
     public editList(event: MouseEvent, list: List) {
-        this.ListsService.RenameList(list);
+        this.ListsService.EditList(list, true);
         event.stopImmediatePropagation();
     }
 

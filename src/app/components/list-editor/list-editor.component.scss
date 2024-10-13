@@ -10,6 +10,50 @@
         }
     }
 
+    ion-accordion-group {
+        ion-accordion {
+            ion-item {
+                --background-hover: #ffffff;
+                --padding-start: 6px;
+            }
+
+            ion-checkbox {
+                &::part(container) {
+                    position: absolute;
+                    top: 14px;
+                }
+
+                &::part(label) {
+                    margin-inline-start: 34px;
+                }
+            }
+
+            ion-list {
+                margin-inline: 34px auto;
+
+                ion-item {
+                    --background-hover: #ffffff;
+
+                    ::part(label) {
+                        margin-inline-start: 0;
+
+                        ion-note {
+                            white-space: wrap !important;
+                        }
+                    }
+
+                    &.select-resetdate {
+                        cursor: pointer;
+                    }
+
+                    ion-select {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+
     ion-button {
         margin-top: 20px;
     }
