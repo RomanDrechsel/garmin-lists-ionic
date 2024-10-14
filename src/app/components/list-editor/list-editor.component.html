@@ -16,7 +16,8 @@
                 <div slot="header">
                     <ion-item lines="none">
                         <ion-checkbox labelPlacement="end" justify="start" [checked]="ResetActive" (ionChange)="toggleReset($event)" #reset>
-                            <div>{{ "comp-listeditor.reset" | translate }}</div>
+                            <ion-text>{{ "comp-listeditor.reset" | translate }}</ion-text>
+                            <br />
                             <ion-note>{{ "comp-listeditor.reset_note" | translate }}</ion-note>
                         </ion-checkbox>
                         <ion-icon src="/assets/icons/info.svg" slot="end" (click)="resetInfo($event)" class="info-icon"></ion-icon>

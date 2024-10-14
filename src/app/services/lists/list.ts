@@ -251,11 +251,12 @@ export class List {
             date: this._updated,
             order: this._order,
             items: items,
-            reset_i: this._reset ? this._reset.interval.charAt(0) : undefined,
-            reset_h: this._reset ? this._reset.hour : undefined,
-            reset_m: this._reset ? this._reset.minute : undefined,
-            reset_d: this._reset ? this._reset.day : undefined,
-            reset_w: this._reset ? this._reset.weekday : undefined,
+            r_a: this._reset ? this._reset.active : undefined,
+            r_i: this._reset ? this._reset.interval.charAt(0) : undefined,
+            r_h: this._reset ? this._reset.hour : undefined,
+            r_m: this._reset ? this._reset.minute : undefined,
+            r_d: this._reset ? this._reset.day : undefined,
+            r_w: this._reset ? this._reset.weekday : undefined,
         };
     }
 
