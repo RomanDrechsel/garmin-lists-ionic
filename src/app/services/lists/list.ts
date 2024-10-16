@@ -244,6 +244,22 @@ export class List {
                 items.push(obj);
             }
         });
+
+        let reset: any = undefined;
+        if (this._reset && this._reset.active) {
+            reset = {
+                active: this._reset.active,
+                interval: this._reset.interval.charAt(0),
+                hour: this._reset.hour,
+                minute: this._reset.minute,
+            };
+            if (this._reset.interval == "weekly") {
+                reset.weekday = this._reset.weekday;
+            } else if (this._reset.interval == "monthly") {
+                reset.day = this._reset.day;
+            }
+        }
+
         return {
             type: "list",
             uuid: this._uuid,
@@ -251,12 +267,7 @@ export class List {
             date: this._updated,
             order: this._order,
             items: items,
-            r_a: this._reset ? this._reset.active : undefined,
-            r_i: this._reset ? this._reset.interval.charAt(0) : undefined,
-            r_h: this._reset ? this._reset.hour : undefined,
-            r_m: this._reset ? this._reset.minute : undefined,
-            r_d: this._reset ? this._reset.day : undefined,
-            r_w: this._reset ? this._reset.weekday : undefined,
+            reset: reset,
         };
     }
 
