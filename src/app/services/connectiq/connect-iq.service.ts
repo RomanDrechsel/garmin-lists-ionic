@@ -318,7 +318,7 @@ export class ConnectIQService {
                 all_ignore = all_ignore.filter(d => d.device != device.id && d.check > Date.now() - 1000 * 60 * 60 * 24 * 180);
                 const ignore = all_ignore.find(d => d.device == device.id);
                 if (!ignore || ignore.version < this.Config.GarminAppVersion) {
-                    Logger.Notice(`Old lists app found on device ${device}, up-to-date version is ${this.Config.GarminAppVersion}`);
+                    Logger.Notice(`Old lists app found on device ${StringUtils.toString(device)}, up-to-date version is ${this.Config.GarminAppVersion}`);
                     const res = await this.Popup.Alert.Show({
                         message: this.Locale.getText("service-connectiq.watch_outdated", { device: device.name }),
                         buttons: [
