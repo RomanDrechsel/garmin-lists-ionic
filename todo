@@ -1,4 +1,6 @@
-WIP: Zeitgesteuert Listen zurücksetzen
+TEST: Zeitgesteuert Listen zurücksetzen
+TEST: App Alte Version - Meldung lässt sich nicht abstellen
+TEST: Wenn man eine Liste löscht, stimmt die Reihenfolge nicht mehr ?!
 
 ConnectIQ Documentation Mobile SDK for Android:
 https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/

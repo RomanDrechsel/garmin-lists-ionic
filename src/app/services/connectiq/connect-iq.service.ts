@@ -307,7 +307,7 @@ export class ConnectIQService {
     }
 
     private async checkDeviceVersion(device: DeviceEventArgs) {
-        if (device.state == "Ready" && !this.isDebugMode && !this._watchOutdatedNotice.includes(device.id)) {
+        if (device.state == "Ready" && !this._watchOutdatedNotice.includes(device.id)) {
             this._watchOutdatedNotice.push(device.id);
             type ignore_device = { device: number; version: number; check: number };
             let all_ignore = await this.Preferences.Get<ignore_device[] | undefined>(EPrefProperty.IgnoreWatchOutdated, undefined);
@@ -315,14 +315,20 @@ export class ConnectIQService {
                 if (!Array.isArray(all_ignore)) {
                     all_ignore = [];
                 }
-                all_ignore = all_ignore.filter(d => d.device != device.id && d.check > Date.now() - 1000 * 60 * 60 * 24 * 180);
+
+                //remove old entries, older than 180 days...
+                all_ignore = all_ignore.filter(d => d.device == device.id || d.check > Date.now() - 1000 * 60 * 60 * 24 * 180);
+
                 const ignore = all_ignore.find(d => d.device == device.id);
                 if (!ignore || ignore.version < this.Config.GarminAppVersion) {
                     Logger.Notice(`Old lists app found on device ${StringUtils.toString(device)}, up-to-date version is ${this.Config.GarminAppVersion}`);
                     const res = await this.Popup.Alert.Show({
                         message: this.Locale.getText("service-connectiq.watch_outdated", { device: device.name }),
                         buttons: [
-                            this.Locale.getText("service-connectiq.watch_outdated_ignore"),
+                            {
+                                text: this.Locale.getText("service-connectiq.watch_outdated_ignore"),
+                                role: "confirm",
+                            },
                             {
                                 text: this.Locale.getText("service-connectiq.watch_outdated_button"),
                                 handler: () => this.openStore(),
