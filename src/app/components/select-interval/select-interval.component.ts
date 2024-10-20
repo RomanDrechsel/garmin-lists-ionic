@@ -42,7 +42,7 @@ export class SelectIntervalComponent {
                 [" AM", " PM"].forEach(ampm => {
                     this._hours!.push({ v: v++, s: 12 + ampm });
                     for (let i = 1; i < 12; i++) {
-                        this._hours!.push({ v: v++, s: i.toString().padStart(2, "0") + ampm });
+                        this._hours!.push({ v: v++, s: (i % 12).toString() + ampm });
                     }
                 });
             }
@@ -76,34 +76,38 @@ export class SelectIntervalComponent {
             const locale = this.Locale.getText(["date.weekday.mon", "date.weekday.tue", "date.weekday.wed", "date.weekday.thu", "date.weekday.fri", "date.weekday.sat", "date.weekday.sun"]);
             this._weekdays = [];
             let day = this.Locale.CurrentLanguage.firstDayOfWeek;
-            for (let i = 0; i < 7; i++) {
+            for (let i = 1; i <= 7; i++) {
                 let weekday: string;
-                switch ((i + day) % 7) {
-                    case 0:
+                let v = (i + day - 1) % 7;
+                if (v == 0) {
+                    v = 7;
+                }
+                switch (v) {
+                    case 1:
                         weekday = locale["date.weekday.sun"];
                         break;
-                    case 1:
+                    case 2:
                         weekday = locale["date.weekday.mon"];
                         break;
-                    case 2:
+                    case 3:
                         weekday = locale["date.weekday.tue"];
                         break;
-                    case 3:
+                    case 4:
                         weekday = locale["date.weekday.wed"];
                         break;
-                    case 4:
+                    case 5:
                         weekday = locale["date.weekday.thu"];
                         break;
-                    case 5:
+                    case 6:
                         weekday = locale["date.weekday.fri"];
                         break;
-                    case 6:
+                    case 7:
                         weekday = locale["date.weekday.sat"];
                         break;
                     default:
                         weekday = locale[6];
                 }
-                this._weekdays.push({ v: i + day, s: weekday });
+                this._weekdays.push({ v: v, s: weekday });
             }
         }
         return this._weekdays;

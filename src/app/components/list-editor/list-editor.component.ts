@@ -59,25 +59,25 @@ export class ListEditorComponent {
         if (this._listReset) {
             if (this._listReset.interval == "weekly") {
                 switch (this._listReset.weekday) {
-                    case 0:
+                    case 1:
                         str = this.Locale.getText("date.weekday.sun");
                         break;
-                    case 1:
+                    case 2:
                         str = this.Locale.getText("date.weekday.mon");
                         break;
-                    case 2:
+                    case 3:
                         str = this.Locale.getText("date.weekday.tue");
                         break;
-                    case 3:
+                    case 4:
                         str = this.Locale.getText("date.weekday.wed");
                         break;
-                    case 4:
+                    case 5:
                         str = this.Locale.getText("date.weekday.thu");
                         break;
-                    case 5:
+                    case 6:
                         str = this.Locale.getText("date.weekday.fri");
                         break;
-                    case 6:
+                    case 7:
                         str = this.Locale.getText("date.weekday.sat");
                         break;
                 }
@@ -101,13 +101,13 @@ export class ListEditorComponent {
                     str += "12";
                     ampm = "AM";
                 } else if (this._listReset.hour < 12) {
-                    str += this._listReset.hour.toString().padStart(2, "0");
+                    str += this._listReset.hour;
                     ampm = "AM";
                 } else if (this._listReset.hour == 12) {
                     str += "12";
                     ampm = "PM";
                 } else {
-                    str += this._listReset.hour.toString().padStart(2, "0");
+                    str += this._listReset.hour % 12;
                     ampm = "PM";
                 }
                 str += ":" + this._listReset.minute.toString().padStart(2, "0") + " " + ampm;
