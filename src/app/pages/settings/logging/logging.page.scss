@@ -4,6 +4,16 @@ ion-list {
             margin-top: 40px;
         }
 
+        &.no-margin {
+            margin-top: 0px;
+        }
+
+        ion-note {
+            font-size: 0.8em;
+            white-space: pre-line;
+            --color: var(--ion-color-medium);
+        }
+
         .info {
             font-size: 0.9em;
             color: var(--ion-color-medium);

@@ -60,6 +60,7 @@
     --color-popup-background: #ffffff;
     --color-popup-background-rgb: 255, 255, 255;
     --color-highlight: var(--ion-color-primary);
+    --color-info: #d1d2d4;
     /** main menu **/
     --color-menu-background: #ebfcff;
     --color-menu-text: #000000;
@@ -78,7 +79,6 @@ html {
 }
 
 @media (prefers-color-scheme: dark) {
-
     /*
    * Dark Colors
    * -------------------------------------------
@@ -126,7 +126,7 @@ html {
         --ion-card-color: var(--color-text);
         --ion-text-color: var(--color-text);
         --color-toolbar: #002794;
-        --color-text: #FFFFFF;
+        --color-text: #ffffff;
         --color-text-tint: #c5c5c5;
         --color-text-contrast: #000000;
         --color-background-tint-rgb: 59, 59, 59;
@@ -140,6 +140,7 @@ html {
         --color-popup-background: #7a7a7a;
         --color-popup-background-rgb: 122, 122, 122;
         --color-highlight: var(--ion-color-primary-shade);
+        --color-info: #babbc1;
         /** main menu **/
         --color-menu-background: #305174;
         --color-menu-text: #c5c5c5;

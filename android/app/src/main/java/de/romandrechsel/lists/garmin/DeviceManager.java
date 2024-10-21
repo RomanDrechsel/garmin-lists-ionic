@@ -12,27 +12,20 @@ import com.garmin.android.connectiq.IQDevice;
 import com.garmin.android.connectiq.exception.InvalidStateException;
 import com.garmin.android.connectiq.exception.ServiceUnavailableException;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
-import org.jetbrains.annotations.NotNull;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import de.romandrechsel.lists.logging.Logger;
 
 public class DeviceManager implements ConnectIQ.ConnectIQListener
 {
-    public interface IMessageSendListener
+    public interface IAppLogsResponse
     {
-        void onMessageStatus(@NonNull ConnectIQ.IQMessageStatus status);
-
-        void onMessageSendFailed(@Nullable DeviceInfo.DeviceState state);
-    }
-
-    public interface IAppOpenedListener
-    {
-        void onAppOpenResponse(@NotNull DeviceInfo device, boolean success);
+        void onAppLogsResponse(@Nullable List<String> logs);
     }
 
     @NonNull
@@ -43,7 +36,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
     public static String AppId = DeviceManager.AppIdRelease;
 
     private static final String TAG = "DeviceManager";
-    private boolean sdkReady = false;
+    public boolean sdkReady = false;
 
     private final List<DeviceInfo> devices = new ArrayList<>();
 
@@ -59,7 +52,8 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         if (live_app != null && live_app)
         {
             DeviceManager.AppId = DeviceManager.AppIdRelease;
-        } else
+        }
+        else
         {
             DeviceManager.AppId = DeviceManager.AppIdDebug;
             Logger.Debug(TAG, "Using garmin debug app...");
@@ -71,7 +65,8 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
             this.connectIQ = ConnectIQ.getInstance(activity, ConnectIQ.IQConnectType.TETHERED);
             this.connectIQ.setAdbPort(7381);
             Logger.Debug(TAG, "Initialize debug devices...");
-        } else
+        }
+        else
         {
             //get live devices
             this.connectIQ = ConnectIQ.getInstance(activity, ConnectIQ.IQConnectType.WIRELESS);
@@ -112,51 +107,50 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
             {
                 this.connectIQ.openStore(AppId);
             }
-        } catch (InvalidStateException | UnsupportedOperationException | ServiceUnavailableException ignored)
+        }
+        catch (InvalidStateException | UnsupportedOperationException | ServiceUnavailableException ignored)
         {
         }
     }
 
-    public boolean openApp(Long deviceId, @Nullable IAppOpenedListener listener)
+    public boolean openApp(@NonNull Long deviceId, @Nullable DeviceInfo.IAppOpenedListener listener)
     {
-        if (this.connectIQ != null && this.sdkReady)
+        DeviceInfo device = this.getDevice(deviceId);
+        if (device != null)
         {
-            DeviceInfo device = this.getDevice(deviceId);
-            if (device != null)
-            {
-                try
-                {
-                    this.connectIQ.openApplication(device.device, device.deviceApp, (device1, app, status) ->
-                    {
-                        boolean success = false;
-                        if (status == ConnectIQ.IQOpenApplicationStatus.APP_IS_ALREADY_RUNNING || status == ConnectIQ.IQOpenApplicationStatus.PROMPT_SHOWN_ON_DEVICE)
-                        {
-                            success = true;
-                            Logger.Debug(TAG, "Opened App on device " + device + ":", status);
-
-                        } else
-                        {
-                            Logger.Error(TAG, "Could not open app on device " + device + ":", status);
-                        }
-                        if (listener != null)
-                        {
-                            listener.onAppOpenResponse(device, success);
-                        }
-                    });
-                    return true;
-                } catch (InvalidStateException ex)
-                {
-                    Logger.Error(TAG, "Could not open app on device " + deviceId + ": invalid state", ex);
-                } catch (ServiceUnavailableException ex)
-                {
-                    Logger.Error(TAG, "Could not open app on device " + deviceId + ": service unavailable", ex);
-                }
-            } else
-            {
-                Logger.Error(TAG, "Could not open app on device " + deviceId + ": device not found.");
-            }
+            return device.openApp(listener);
+        }
+        else if (listener != null)
+        {
+            listener.onAppOpenResponse(null, false);
         }
         return false;
+    }
+
+    public void SendToDevice(@Nullable Long deviceId, @Nullable String json, @Nullable DeviceInfo.IMessageSendListener listener)
+    {
+        if (deviceId == null)
+        {
+            Logger.Error(TAG, "Could not send json to device, no device identifier provided");
+            if (listener != null)
+            {
+                listener.onMessageSendResult(DeviceInfo.EMessageSendResult.DeviceNotFound, null);
+            }
+            return;
+        }
+        DeviceInfo device = this.getDevice(deviceId);
+        if (device != null)
+        {
+            device.SendJson(json, listener);
+            if (DeviceManager.IsDebug())
+            {
+                this.debugLogResponse(device, json);
+            }
+        }
+        else if (listener != null)
+        {
+            listener.onMessageSendResult(DeviceInfo.EMessageSendResult.DeviceNotFound, null);
+        }
     }
 
     /**
@@ -198,90 +192,6 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
     }
 
     /**
-     * transmits data to the device
-     *
-     * @param identifier unique device identifier
-     * @param json       json data string
-     * @param listener   listener for result
-     */
-    public void transmitToDevice(@Nullable Long identifier, @Nullable String json, @NonNull IMessageSendListener listener)
-    {
-        if (identifier == null)
-        {
-            Logger.Error(TAG, "Failed to transmit list to device: no identifier");
-            listener.onMessageSendFailed(null);
-            return;
-        }
-
-        //final long identifier = tmp;
-        Object obj;
-        try
-        {
-            Gson gson = new Gson();
-            obj = gson.fromJson(json, Object.class);
-        } catch (JsonSyntaxException ex)
-        {
-            Logger.Error(TAG, "Could not deserialize list: " + ex.getMessage());
-            listener.onMessageSendFailed(null);
-            return;
-        }
-
-        final Handler timeoutHandler = new Handler(Looper.getMainLooper());
-        final boolean[] messageSent = {false};
-
-        Runnable timeoutRunnable = () ->
-        {
-            if (!messageSent[0])
-            {
-                Logger.Error(TAG, "Timeout: Failed to transmit list to device " + identifier + " within 30 seconds");
-                listener.onMessageSendFailed(DeviceInfo.DeviceState.ServiceUnavailable);
-            }
-        };
-
-        try
-        {
-            DeviceInfo send_to_device = this.getDevice(identifier);
-            if (send_to_device != null && send_to_device.state == DeviceInfo.DeviceState.Ready)
-            {
-                Logger.Debug(TAG, "Trying to transmit list to device " + identifier + " ...");
-                this.connectIQ.sendMessage(send_to_device.device, send_to_device.deviceApp, obj, (device, app, status) ->
-                {
-                    messageSent[0] = true;
-                    timeoutHandler.removeCallbacks(timeoutRunnable);
-                    if (status == ConnectIQ.IQMessageStatus.SUCCESS)
-                    {
-                        Logger.Debug(TAG, "Transmitted list to device " + identifier);
-                    } else
-                    {
-                        Logger.Error(TAG, "Failed to transmit list to device: " + status.name());
-                    }
-                    listener.onMessageStatus(status);
-                });
-            } else if (send_to_device != null)
-            {
-                Logger.Error(TAG, "Failed to transmit list to device " + identifier + ": Device is in state " + send_to_device.state);
-                listener.onMessageSendFailed(DeviceInfo.DeviceState.InvalidState);
-            } else
-            {
-                Logger.Error(TAG, "Failed to transmit list to device " + identifier + ": Device not found");
-                listener.onMessageSendFailed(null);
-            }
-        } catch (InvalidStateException e)
-        {
-            Logger.Error(TAG, "Failed to transmit list to device: Invalid state");
-            listener.onMessageSendFailed(DeviceInfo.DeviceState.InvalidState);
-        } catch (ServiceUnavailableException e)
-        {
-            Logger.Error(TAG, "Failed to transmit list to device: Service unavailable");
-            listener.onMessageSendFailed(DeviceInfo.DeviceState.ServiceUnavailable);
-        } catch (Exception ex)
-        {
-            Logger.Error(TAG, "Failed to transmit list to device: " + ex.getMessage());
-            listener.onMessageSendFailed(null);
-        }
-    }
-
-    /**
      * a device changed its state
      *
      * @param device the device
@@ -310,16 +220,19 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
                     {
                         info = new DeviceInfo(d, this);
                         this.devices.add(info);
-                    } else
+                    }
+                    else
                     {
                         info.setDevice(d);
                     }
                 }
-            } catch (InvalidStateException e)
+            }
+            catch (InvalidStateException e)
             {
                 Logger.Error(TAG, "ConnectIQ not in valid state!");
                 this.DisconnectAllDevices();
-            } catch (ServiceUnavailableException e)
+            }
+            catch (ServiceUnavailableException e)
             {
                 Logger.Error(TAG, "ConnectIQ Service unavailable!");
                 this.DisconnectAllDevices();
@@ -341,6 +254,41 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
                 device.disconnect();
             }
             this.devices.clear();
+        }
+    }
+
+    private static boolean IsDebug()
+    {
+        return DeviceManager.AppId.equals(DeviceManager.AppIdDebug);
+    }
+
+    private void debugLogResponse(DeviceInfo device, String json)
+    {
+        Object obj = new Gson().fromJson(json, Object.class);
+        if (obj instanceof LinkedTreeMap)
+        {
+            LinkedTreeMap<String, Object> map = ((LinkedTreeMap<String, Object>) obj);
+            if (map.containsKey("type"))
+            {
+                String type = (String) map.get("type");
+                if (type != null && type.equals("request"))
+                {
+                    String request = map.containsKey("request") ? (String) map.get("request") : null;
+                    Double tid = map.containsKey("tid") ? (Double) map.get("tid") : null;
+                    if (request != null && request.equals("logs"))
+                    {
+                        new Handler(Looper.getMainLooper()).postDelayed(() ->
+                        {
+                            List<String> logs = Arrays.asList("Hallo", "Welt", "!");
+                            HashMap<String, Object> data = new HashMap<>();
+                            data.put("logs", logs);
+                            data.put("tid", tid);
+                            List<Object> list = List.of(data);
+                            device.onMessageReceived(device.device, device.deviceApp, list, ConnectIQ.IQMessageStatus.SUCCESS);
+                        }, 10000);
+                    }
+                }
+            }
         }
     }
 }

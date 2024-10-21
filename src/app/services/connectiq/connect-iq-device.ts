@@ -35,6 +35,22 @@ export class ConnectIQDevice {
         this.Identifier = arg.id;
     }
 
+    public toString(): string {
+        return JSON.stringify({ Name: this.Name, State: this.State, Identifier: this.Identifier });
+    }
+
+    public toLog(): string {
+        return `${this.Name} (${this.Identifier})`;
+    }
+
+    public equals(device: any): boolean {
+        if (device instanceof ConnectIQDevice) {
+            return device.Identifier === this.Identifier;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * create a new object from device state plugin response
      * @param args

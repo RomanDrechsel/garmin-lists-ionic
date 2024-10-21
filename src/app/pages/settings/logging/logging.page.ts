@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, SelectCustomEvent } from "@ionic/angular/standalone";
+import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNote, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, SelectCustomEvent } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { FileUtils } from "../../../classes/utils/file-utils";
@@ -14,7 +14,7 @@ import { PageBase } from "../../page-base";
     templateUrl: "./logging.page.html",
     styleUrls: ["./logging.page.scss"],
     standalone: true,
-    imports: [IonIcon, IonLabel, IonCol, IonRow, IonGrid, IonText, IonList, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, IonButton, RouterLink, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
+    imports: [IonNote, IonIcon, IonLabel, IonCol, IonRow, IonGrid, IonText, IonList, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, IonButton, RouterLink, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
 })
 export class LoggingPage extends PageBase {
     public LogsSize?: string;

@@ -47,6 +47,14 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/settings/trash-settings/trash-settings.page").then(m => m.TrashSettingsPage),
     },
     {
+        path: "settings/watch-logs",
+        loadComponent: () => import("./pages/settings/show-watch-logs/show-watch-logs.page").then(m => m.ShowWatchLogsPage),
+    },
+    {
+        path: "settings/lists-transmission",
+        loadComponent: () => import("./pages/settings/lists-transmission/lists-transmission.page").then(m => m.ListsTransmissionPage),
+    },
+    {
         path: "appinfo",
         loadComponent: () => import("./pages/appinfos/appinfos.page").then(m => m.AppinfosPage),
     },

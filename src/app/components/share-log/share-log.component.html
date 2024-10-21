@@ -53,8 +53,14 @@
                 </ion-list>
             </ion-accordion>
         </ion-accordion-group>
+        <ion-item lines="none" class="attach-watchlog">
+            <ion-checkbox #attachWatchLogs>
+                {{'comp_sharelog.watch'|translate}}
+            </ion-checkbox>
+        </ion-item>
     </div>
-    <div class="button">
-        <ion-button (click)="storeFile()">{{'share'|translate}}</ion-button>
-    </div>
+
+</div>
+<div class="button">
+    <ion-button (click)="storeFile()">{{'share'|translate}}</ion-button>
 </div>

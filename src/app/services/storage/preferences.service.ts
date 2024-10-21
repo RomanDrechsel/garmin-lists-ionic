@@ -20,15 +20,17 @@ export enum EPrefProperty {
     "TrashListitems" = "LISTS_TrashListitems",
     "TrashKeepinStock" = "LISTS_TrashKeepInStock",
     "OpenAppOnTransmit" = "LISTS_OpenAppOnTransmit",
+    "DeleteListOnDevice" = "LISTS_DeleteListOnDevice",
     "DebugDevices" = "LISTS_DebugDevices",
     "OpenedList" = "LISTS_OpenedList",
+    "IgnoreWatchOutdated" = "LISTS_IgnoreWatchOutdated",
 }
 
 @Injectable({
     providedIn: "root",
 })
 export class PreferencesService {
-    private onPrefChangedSubject = new BehaviorSubject<{ prop: EPrefProperty; value: any; }>({ prop: EPrefProperty.LogMode, value: "" });
+    private onPrefChangedSubject = new BehaviorSubject<{ prop: EPrefProperty; value: any }>({ prop: EPrefProperty.LogMode, value: "" });
     public onPrefChanged$ = this.onPrefChangedSubject.asObservable();
 
     /**

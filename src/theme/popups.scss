@@ -73,8 +73,20 @@ ion-modal.autosize-modal {
     }
 }
 
-ion-alert {
+ion-modal.bottom-modal {
+    align-items: flex-end;
+    --height: auto;
+}
+
+ion-alert.alert {
     --ion-text-color: var(--color-text);
+
+    &.info {
+        .alert-message {
+            font-size: 1.1em;
+            font-style: italic;
+        }
+    }
 
     .alert-radio-label {
         color: var(--color-text) !important;
@@ -86,6 +98,14 @@ ion-alert {
 
     button.alert-button {
         color: var(--color-highlight) !important;
+    }
+
+    .alert-checkbox-group {
+        border: 0;
+
+        .alert-checkbox-label {
+            padding-inline-start: 40px;
+        }
     }
 }
 

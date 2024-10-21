@@ -2,7 +2,7 @@
 
 <ion-content fixed-slot-placement="before">
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button class="add" [ariaLabel]="'add'|translate" (click)="addList()">
+        <ion-fab-button [ariaLabel]="'add'|translate" (click)="addList()">
             <ion-icon src="./assets/icons/add.svg"></ion-icon>
         </ion-fab-button>
     </ion-fab>
@@ -39,7 +39,5 @@
     </ion-list>
 </ion-content>
 <ng-template #noLists>
-    <app-page-add-new>
-        {{'page_lists.add_new_hint'|translate}}
-    </app-page-add-new>
+    <app-page-add-new> {{'page_lists.add_new_hint'|translate}} </app-page-add-new>
 </ng-template>

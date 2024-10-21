@@ -14,8 +14,7 @@ export class ListsProvider {
         const models = await this.Backend.GetLists(this.StoragePath);
         let lists: List[] = [];
         for (let i = 0; i < models.length; i++) {
-            const m = models[i];
-            const list = List.fromBackend(m, peek);
+            const list = List.fromBackend(models[i], peek);
             if (list) {
                 lists.push(list);
             }

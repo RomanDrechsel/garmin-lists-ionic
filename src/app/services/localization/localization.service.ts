@@ -12,7 +12,11 @@ import { EPrefProperty, PreferencesService } from "../storage/preferences.servic
 export class LocalizationService {
     /** fallback language if the requested language doesn't exist  */
     public readonly fallbackLang: Culture = {
-        localeFile: "en", locale: "en-US", name: "English (US)", firstDayOfWeek: 0
+        localeFile: "en",
+        locale: "en-US",
+        name: "English (US)",
+        firstDayOfWeek: 1,
+        h24: false,
     };
 
     /** current app language */
@@ -20,12 +24,8 @@ export class LocalizationService {
 
     /** all available languages */
     public get availableTranslations(): Culture[] {
-        return [
-            this.fallbackLang,
-            { localeFile: "en", locale: "en-GB", name: "English (UK)", firstDayOfWeek: 1 },
-            { localeFile: "de", locale: "de-DE", name: "Deutsch", firstDayOfWeek: 1 },
-        ];
-    };
+        return [this.fallbackLang, { localeFile: "en", locale: "en-GB", name: "English (UK)", firstDayOfWeek: 2, h24: true }, { localeFile: "de", locale: "de-DE", name: "Deutsch", firstDayOfWeek: 2, h24: true }];
+    }
 
     constructor(public translate: TranslateService, private Preferences: PreferencesService) {
         const avail = this.availableTranslations;
@@ -46,13 +46,11 @@ export class LocalizationService {
             if (Capacitor.isNativePlatform()) {
                 lang = (await Device.getLanguageTag()).value;
                 Logger.Debug(`Device language is ${lang}`);
-            }
-            else {
+            } else {
                 lang = this.translate.getBrowserCultureLang();
                 Logger.Debug(`Browser language is ${lang}`);
             }
-        }
-        else {
+        } else {
             Logger.Debug(`User language is ${lang}`);
         }
 
@@ -96,8 +94,9 @@ export class LocalizationService {
 }
 
 export declare type Culture = {
-    localeFile: string,
-    locale: string,
-    name: string,
-    firstDayOfWeek: number,
+    localeFile: string;
+    locale: string;
+    name: string;
+    firstDayOfWeek: number;
+    h24: boolean;
 };

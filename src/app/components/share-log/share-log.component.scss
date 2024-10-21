@@ -48,5 +48,15 @@
                 }
             }
         }
+
+        .attach-watchlog {
+            --padding-start: 6px;
+        }
+    }
+
+    .button {
+        display: flex;
+        justify-content: right;
+        padding: 0 6px 6px 0;
     }
 }
