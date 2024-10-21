@@ -642,6 +642,7 @@ export class ListsService {
     private async resetOrder(lists: List[], force_event: boolean = false) {
         let order = 0;
         let changed = false;
+        lists = lists.sort((a: List, b: List) => (a.Order > b.Order ? 1 : -1));
         for (let i = 0; i < lists.length; i++) {
             const list = lists[i];
             list.Order = order++;

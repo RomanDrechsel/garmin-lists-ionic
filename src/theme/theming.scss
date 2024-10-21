@@ -172,4 +172,17 @@ ion-icon.info-icon {
     padding: 12px;
     height: 28px;
     width: 28px;
+    margin-inline-start: 6px;
+    margin-block: 0;
+}
+
+ion-checkbox {
+    &::part(container) {
+        position: absolute;
+        top: 14px;
+    }
+
+    &::part(label) {
+        margin-inline-start: 34px;
+    }
 }

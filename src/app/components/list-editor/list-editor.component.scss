@@ -17,17 +17,6 @@
                 --padding-start: 6px;
             }
 
-            ion-checkbox {
-                &::part(container) {
-                    position: absolute;
-                    top: 14px;
-                }
-
-                &::part(label) {
-                    margin-inline-start: 34px;
-                }
-            }
-
             ion-list {
                 margin-inline: 34px auto;
 
