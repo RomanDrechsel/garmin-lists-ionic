@@ -615,10 +615,10 @@ export class ListsService {
      * @param list list to be removed
      * @returns was the list removed successful
      */
-    private removeListInIndex(list: List): boolean {
+    private async removeListInIndex(list: List): Promise<boolean> {
         if (this._listIndex.delete(list.Uuid)) {
             let lists = Array.from(this._listIndex.values());
-            this.resetOrder(lists, true);
+            await this.resetOrder(lists, true);
             return true;
         } else {
             return false;
@@ -668,7 +668,7 @@ export class ListsService {
                 list.Deleted = Date.now();
                 if ((await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true)) == false || (await this.TrashProvider.StoreList(list, true))) {
                     if (await this.ListsProvider.RemoveList(list)) {
-                        this.removeListInIndex(list);
+                        await this.removeListInIndex(list);
                         this.Popups.Toast.Success("service-lists.delete_success");
                         Logger.Notice(`Removed list ${list.toLog()}`);
                         if (delete_on_watch) {
