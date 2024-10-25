@@ -169,6 +169,7 @@ ion-action-sheet {
 
 ion-icon.info-icon {
     color: var(--color-info);
+    fill: var(--color-info);
     padding: 12px;
     height: 28px;
     width: 28px;
@@ -185,4 +186,8 @@ ion-checkbox {
     &::part(label) {
         margin-inline-start: 34px;
     }
+}
+
+.no-wrap {
+    white-space: nowrap;
 }

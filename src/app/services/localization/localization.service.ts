@@ -24,7 +24,7 @@ export class LocalizationService {
 
     /** all available languages */
     public get availableTranslations(): Culture[] {
-        return [this.fallbackLang, { localeFile: "en", locale: "en-GB", name: "English (UK)", firstDayOfWeek: 2, h24: true }, { localeFile: "de", locale: "de-DE", name: "Deutsch", firstDayOfWeek: 2, h24: true }];
+        return [this.fallbackLang, { localeFile: "en", locale: "en-GB", name: "English (UK)", firstDayOfWeek: 2, h24: true }, { localeFile: "de", locale: "de-DE", name: "Deutsch", firstDayOfWeek: 2, h24: true }, { localeFile: "fr", locale: "fr-FR", name: "Français", firstDayOfWeek: 2, h24: true }];
     }
 
     constructor(public translate: TranslateService, private Preferences: PreferencesService) {

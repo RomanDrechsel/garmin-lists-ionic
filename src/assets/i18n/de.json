@@ -92,7 +92,7 @@
         "reset": "Liste automatisch zurücksetzen",
         "reset_note": "Setzt alle Listenpunkte auf der Uhr in einem bestimmten Interval auf nicht-erledigt.",
         "reset_info": "Auf deiner Uhr werden alle Listenpunkte dieser Liste in einem bestimmten Intervall wieder auf \"nicht erledigt\" gesetzt.<br /><br />Dies eignet sich zum Beispiel für wiederkehrende Aufgaben wie Hausarbeiten oder andere regelmäßige Tätigkeiten.",
-        "reset_interval":  "Intervall",
+        "reset_interval": "Intervall",
         "reset_daily": "Täglich",
         "reset_weekly": "Wöchentlich",
         "reset_monthly": "Monatlich"
@@ -187,6 +187,9 @@
     "page_settings": {
         "page_title": "Einstellungen",
         "language": "Sprache der App",
+        "language_hint": "Deutsch ist meine Muttersprache. Solltest du trotzdem Rechschreibfehler finden, melde sie bitte an <span class=\"no-wrap\">{{email}}</span>",
+        "translation_error_confirm": "Möchtest du mir einen Rechtschreibfehler melden?",
+        "translation_error_title": "Fehler in der deutschen Übersetzung",
         "logging": "Logging Einstellungen",
         "logging_note": "Einstellungen und Verwalung von Log-Einträgen",
         "confirm": "Bestätigungs-Einstellungen",

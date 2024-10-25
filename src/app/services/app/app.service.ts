@@ -3,7 +3,7 @@ import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
 import { Platform } from "@ionic/angular";
-import { NavController } from '@ionic/angular/standalone';
+import { NavController } from "@ionic/angular/standalone";
 import { environment } from "../../../environments/environment";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { MainToolbarComponent } from "../../components/main-toolbar/main-toolbar.component";
@@ -21,7 +21,6 @@ import { EPrefProperty, PreferencesService } from "../storage/preferences.servic
 })
 export class AppService {
     public static AppToolbar?: MainToolbarComponent;
-    public static readonly EMailAddress: string = "lists-app@roman-drechsel.de";
 
     public readonly loggerService = inject(LoggingService);
     public readonly Locale = inject(LocalizationService);
@@ -104,7 +103,7 @@ export class AppService {
      * get info about the app instance and the device
      * @returns app meta information
      */
-    public async AppMetaInfo(query?: { device?: boolean, settings?: boolean, storage?: boolean; }): Promise<AppMetaInfo> {
+    public async AppMetaInfo(query?: { device?: boolean; settings?: boolean; storage?: boolean }): Promise<AppMetaInfo> {
         const meta: AppMetaInfo = {};
         if (!query || query.device !== false) {
             const deviceinfo = await Device.getInfo();
@@ -149,7 +148,7 @@ export class AppService {
                 Logs: {
                     Count: logs.files,
                     Size: logs.size,
-                }
+                },
             };
         }
 
@@ -171,46 +170,46 @@ export class AppService {
 
 export declare type AppMetaInfo = {
     Settings?: {
-        LogMode: string,
-        AppLanguage: string,
-        AdmobStatus: string,
-    },
+        LogMode: string;
+        AppLanguage: string;
+        AdmobStatus: string;
+    };
     Device?: {
-        Identifier: string,
-        Resolution: string,
-        Model: string,
-        Platform: "android" | "ios" | "web",
+        Identifier: string;
+        Resolution: string;
+        Model: string;
+        Platform: "android" | "ios" | "web";
         OperatingSystem: {
-            OS: string,
-            Version: string,
-            AndroidSDKVersion: number | undefined,
+            OS: string;
+            Version: string;
+            AndroidSDKVersion: number | undefined;
         };
-        Manufacturer: string,
-        isVirtual: boolean,
-        DiskFree: number | undefined,
-        MemoryUsed: number | undefined,
-        WebViewVersion: string,
-    },
+        Manufacturer: string;
+        isVirtual: boolean;
+        DiskFree: number | undefined;
+        MemoryUsed: number | undefined;
+        WebViewVersion: string;
+    };
     Storage?: {
         Lists: {
-            Count: number,
+            Count: number;
             Size: number;
-        },
+        };
         Trash: {
-            Count: number,
+            Count: number;
             Size: number;
-        },
+        };
         Logs: {
-            Count: number,
+            Count: number;
             Size: number;
-        },
-    },
+        };
+    };
     Package?: {
-        Name: string,
-        AppName: string,
-        VersionString: string,
+        Name: string;
+        AppName: string;
+        VersionString: string;
         Build: number;
-        Environment: "Production" | "Development",
-        Release: boolean,
-    },
+        Environment: "Production" | "Development";
+        Release: boolean;
+    };
 };
