@@ -2,8 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { FileInfo } from "@capacitor/filesystem";
-import { SelectCustomEvent } from "@ionic/angular";
-import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonText, IonTextarea, ModalController } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonText, IonTextarea, ModalController, SelectCustomEvent } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { FileUtils } from "src/app/classes/utils/file-utils";
@@ -28,7 +27,6 @@ export class ShowlogsPage extends PageBase {
     private selectedDate?: Date;
 
     private readonly ModaleCtrl = inject(ModalController);
-
 
     public get SelectedDayString(): string | undefined {
         return this.selectedDate?.toLocaleDateString(this.Locale.CurrentLanguage.locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
@@ -98,7 +96,7 @@ export class ShowlogsPage extends PageBase {
         if (this.Logger.AutoDelete > 0) {
             minimumDate = new Date();
             minimumDate.setDate(minimumDate.getDate() - this.Logger.AutoDelete);
-        };
+        }
 
         const date = await SelectDatetime(this.ModaleCtrl, { selectedDate: this.selectedDate, maximumDate: new Date(), minimumDate: minimumDate, title: this.Locale.getText("page_settings_showlogs.select_logday_title") });
         if (date) {
@@ -115,8 +113,7 @@ export class ShowlogsPage extends PageBase {
         this.availableLogfiles = await this.Logger.ListLogfiles(new Date(date).setHours(0, 0, 0, 0), new Date(date).setHours(23, 59, 59, 999));
         if (this.availableLogfiles.length > 0) {
             this.loadLogfile(this.availableLogfiles[0].name);
-        }
-        else {
+        } else {
             this.loadLogfile(undefined);
         }
     }
@@ -124,8 +121,7 @@ export class ShowlogsPage extends PageBase {
     private async loadLogfile(filename: string | undefined) {
         if (filename) {
             this.currentLogfile = await this.Logger.GetLogfile(filename);
-        }
-        else {
+        } else {
             this.currentLogfile = undefined;
         }
 

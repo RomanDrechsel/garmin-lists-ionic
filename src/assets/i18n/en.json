@@ -19,12 +19,22 @@
         "min_short": "min",
         "hour_short": "hr",
         "hours_short": "hrs",
-        "ago": "{{date}} ago"
+        "ago": "{{date}} ago",
+        "weekday": {
+            "mon": "Monday",
+            "tue": "Tuesday",
+            "wed": "Wednesday",
+            "thu": "Thursday",
+            "fri": "Friday",
+            "sat": "Saturday",
+            "sun": "Sunday"
+        }
     },
     "mainmenu": {
         "lists": "My lists",
         "trash": "Trash",
         "delete_list": "Delete list",
+        "edit_list": "Edit list",
         "devices": "Devices",
         "settings": "Settings",
         "privacy": "Privacy policy",
@@ -35,6 +45,7 @@
         "store_list_error": "The list could not be saved!",
         "store_listitem_error": "the item could not be saved!",
         "delete_confirm": "Do you really want to delete the list <strong>{{name}}</strong>?",
+        "delete_confirm_watch": "Delete list on the watch too",
         "delete_error": "The list could not be deleted!",
         "delete_success": "The list was deleted.",
         "delete_item_confirm": "Do you really want to delete the item <strong>{{name}}</strong>?",
@@ -61,18 +72,35 @@
         "empty_trash_listitems_confirm": "Do you really want to empty the trash for the list and delete all {{count}} items?",
         "empty_trash_listitems_confirm_single": "Do you really want to empty the trash for the list and delete the item?",
         "empty_trash_success": "The trash is now empty.",
-        "empry_trash_error": "The trash could not be emptied!"
-    },
-    "service-connectiq": {
+        "empry_trash_error": "The trash could not be emptied!",
         "transmit_confirm": "Do you want transmit the list to the device <strong>{{device}}</strong>?",
         "transmit_process": "The list is being transmitted...",
         "transmit_success": "The list has been transmitted successfully",
-        "transmit_error": "The list could not be transmitted!"
+        "transmit_error": "The list could not be transmitted!",
+        "transmit_send_btn": "Send to device"
+    },
+    "service-connectiq": {
+        "watch_outdated": "You seem to be using an old version of the list app on your device <strong>{{device}}</strong>.<br /><br />Please update the app on your watch to be able to use all functions.",
+        "watch_outdated_button": "Go to the Connect-IQ Store",
+        "watch_outdated_ignore": "Ignore",
+        "watch_outdated_dontremind": "Do not notify again for this version"
     },
     "comp-listeditor": {
         "title_new": "Create new list",
         "title_edit": "Edit list",
-        "listname": "Description"
+        "listname": "Description",
+        "reset": "Reset the list automatically",
+        "reset_note": "Sets all list items in a certain interval to not done.",
+        "reset_info": "On your watch, all items on this list will be reset to \"not done\" at a certain interval.<br /><br />This is suitable for recurring tasks such as household chores or other regular activities.",
+        "reset_interval":  "Interval",
+        "reset_daily": "Daily",
+        "reset_weekly": "Weekly",
+        "reset_monthly": "Monthly"
+    },
+    "comp-select-interval": {
+        "last": "last",
+        "ofmonth": "day of month",
+        "oclock": ""
     },
     "comp-listitemeditor": {
         "title_new": "Create new item",
@@ -99,7 +127,13 @@
         "meta_settings": "App settings",
         "meta_settings_note": "Log settings, language, etc.",
         "meta_storage": "Storage information",
-        "meta_storage_note": "Number and size of lists and logs on the device"
+        "meta_storage_note": "Number and size of lists and logs on the device",
+        "watch": "Attach logs of the watch"
+    },
+    "comp_watchlogs": {
+        "title": "Transmit logs",
+        "text": "To transfer the logs from your watch, you must first start the app on your watch<br /><br /><strong>{{name}}</strong><br /><br />If the app is running, the logs should be transferred automatically.",
+        "withoutlogs": "Continue without logs"
     },
     "page_lists": {
         "page_title": "My lists",
@@ -137,7 +171,7 @@
         "install_app": "You need to install the Lists app on your device first.<br /><strong>Click here</strong> to get to the Garmin ConnectIQ Store.",
         "reload_btn": "Reload devices",
         "toggle": "Always send to this device",
-        "send_btn": "Send to device",
+        "select_btn": "Select device",
         "device_state": {
             "Ready": "The device is ready",
             "ServiceUnavailable": "The ConnectIQ service is unavailable",
@@ -160,8 +194,8 @@
         "confirm_note": "Settings for requesting user confirmation",
         "trash": "Trash",
         "trash_note": "Settings for usage of the trash",
-        "openontransmit": "Start app after transferring a list",
-        "openontransmit_note": "Request on your watch whether the app should be opened when you transfer a list."
+        "transmission": "Transmission settings",
+        "transmission_note": "Settings for transferring lists to your watch"
     },
     "page_settings_logs": {
         "page_title": "Log settings",
@@ -175,6 +209,8 @@
         "autodelete_week": "Older than a week",
         "autodelete_month": "Older than a month",
         "show": "Show logs",
+        "show_watch": "Show logs ot the watch",
+        "show_watch_note": "Displays the logs of the watch. The app must be running on the watch",
         "size": "Size:\n{{size}} / {{files}} file(s)",
         "deleteall": "Delete all logfiles",
         "deleteall_confirm": "Should the {{count}} logfiles be deleted?",
@@ -197,6 +233,13 @@
         "no_log": "No log files found!",
         "no_log_note": "No log files were found for {{date}}"
     },
+    "page_settings_showwatchlogs": {
+        "page_title": "Watch logs",
+        "select_watch": "Select device",
+        "no_watch": "No device found",
+        "no_logs": "No Logs loaded!",
+        "no_device": "Found not active device!"
+    },
     "page_settings_confirm": {
         "page_title": "Confirmations",
         "delete_list": "Delete list",
@@ -218,6 +261,13 @@
         "undo_warning": "<br /><strong>Warning:</strong> The action can not be undone!",
         "transmit_list": "Transmit list",
         "transmit_list_note": "Request confirmation when transferring a list to a watch."
+    },
+    "page_lists_transmission": {
+        "page_title": "Transmission to watch",
+        "openontransmit": "Open app after transmitting a list",
+        "openontransmit_note": "Request on your watch whether the app should be opened when you transfer a list.",
+        "deletelist": "Automatically delete lists from the watch",
+        "deletelist_note": "When deleting a list on your smartphone, also delete the list on your watch."
     },
     "page_settings_trash": {
         "page_title": "Trash",

@@ -7,6 +7,7 @@ export class List {
     private _created: number;
     private _updated: number;
     private _order: number;
+    private _reset?: ListReset;
     private _itemsCount?: number;
     private _items?: Listitem[];
     private _deleted?: number;
@@ -27,11 +28,10 @@ export class List {
                     items.push(i);
                 }
             });
-            if (items.length > 0) {
-                this._items = items;
-            }
+            this._items = items;
         }
         this._itemsCount = this._items?.length ?? itemcount;
+        this._reset = obj.reset;
         this._deleted = obj.deleted;
         this._dirty = true;
     }
@@ -126,6 +126,19 @@ export class List {
         return this._deleted ?? 0;
     }
 
+    /** set the interval, the list gets resettet automatiacally */
+    public set Reset(reset: ListReset | undefined) {
+        if (this._reset != reset) {
+            this._reset = reset;
+            this._dirty = true;
+        }
+    }
+
+    /** when does the list get reset automagically? */
+    public get Reset(): ListReset | undefined {
+        return this._reset;
+    }
+
     /** are only peek information loaded */
     public get isPeek(): boolean {
         return this._items == undefined;
@@ -213,6 +226,7 @@ export class List {
     public copyDetails(list: List | undefined) {
         if (list && !list.isPeek) {
             this.Items = list.Items;
+            this.Reset = list.Reset;
         }
     }
 
@@ -220,9 +234,8 @@ export class List {
      * create an object to send to a device
      * @returns device object representation
      */
-    public toDeviceJson(): string {
+    public toDeviceObj(): any {
         let items: any[] = [];
-
         let order = 0;
         this.Items.forEach(item => {
             const obj = item.toDeviceObject();
@@ -231,7 +244,31 @@ export class List {
                 items.push(obj);
             }
         });
-        return JSON.stringify({ type: "list", uuid: this._uuid, name: this._name, date: this._updated, order: this._order, items: items });
+
+        let reset: any = undefined;
+        if (this._reset && this._reset.active) {
+            reset = {
+                active: this._reset.active,
+                interval: this._reset.interval.charAt(0),
+                hour: this._reset.hour,
+                minute: this._reset.minute,
+            };
+            if (this._reset.interval == "weekly") {
+                reset.weekday = this._reset.weekday;
+            } else if (this._reset.interval == "monthly") {
+                reset.day = this._reset.day;
+            }
+        }
+
+        return {
+            type: "list",
+            uuid: this._uuid,
+            name: this._name,
+            date: this._updated,
+            order: this._order,
+            items: items,
+            reset: reset,
+        };
     }
 
     /**
@@ -251,6 +288,7 @@ export class List {
                 updated: this._updated ?? undefined,
                 deleted: this._deleted ?? undefined,
                 order: this._order,
+                reset: this._reset,
             };
 
             if (this._items && this._items.length > 0) {
@@ -265,13 +303,14 @@ export class List {
     }
 
     /**
-     * purges all items from the list to save memory
+     * purges all unnecessary data from the list to save memory
      */
     public PurgeDetails() {
         if (this._items !== undefined) {
             this._itemsCount = this._items.length;
             this._items = undefined;
         }
+        this._reset = undefined;
     }
 
     /**
@@ -312,6 +351,7 @@ export class List {
         if (only_peek) {
             //remove items from memory...
             obj.items = undefined;
+            obj.reset = undefined;
         }
 
         const list = new List(
@@ -323,6 +363,7 @@ export class List {
                 updated: obj.updated,
                 deleted: obj.deleted,
                 items: obj.items,
+                reset: obj.reset,
             },
             itemscount,
         );
@@ -339,5 +380,15 @@ export declare type ListModel = {
     order: number;
     updated?: number;
     deleted?: number;
+    reset?: ListReset;
     items?: ListitemModel[];
+};
+
+export declare type ListReset = {
+    active: boolean;
+    interval: "daily" | "weekly" | "monthly";
+    hour: number;
+    minute: number;
+    day: number;
+    weekday: number;
 };

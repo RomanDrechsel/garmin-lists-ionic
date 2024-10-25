@@ -2,16 +2,9 @@ import { AlertButton, AlertController, AlertInput, AlertOptions } from "@ionic/a
 import { LocalizationService } from "../localization/localization.service";
 
 export class Alert {
-    public constructor(private Controller: AlertController, private Locale: LocalizationService) { }
+    public constructor(private Controller: AlertController, private Locale: LocalizationService) {}
 
-    public async Show(opts: {
-        message: string,
-        buttons?: (string | AlertButton)[],
-        header?: string,
-        inputs?: AlertInput[],
-        translate?: boolean,
-        ok_action?: () => Promise<void>,
-    }): Promise<any> {
+    public async Show(opts: { message: string; buttons?: (string | AlertButton)[]; header?: string; inputs?: AlertInput[]; translate?: boolean; ok_action?: () => Promise<void>; cssClass?: string }): Promise<any> {
         //at least an ok button
         if (!opts.buttons || opts.buttons.length == 0) {
             opts.buttons = opts.translate ? ["ok"] : [this.Locale.getText("ok")];
@@ -26,8 +19,7 @@ export class Alert {
             opts.buttons.forEach(b => {
                 if (typeof b === "string") {
                     keys.push(b);
-                }
-                else {
+                } else {
                     keys.push(b.text);
                 }
             });
@@ -41,8 +33,7 @@ export class Alert {
                 const t = opts.buttons[i];
                 if (typeof t === "string") {
                     opts.buttons[i] = locale[t];
-                }
-                else {
+                } else {
                     t.text = locale[t.text];
                 }
             }
@@ -53,8 +44,7 @@ export class Alert {
             if (typeof b === "string") {
                 const role = buttons.length == 0 ? "confirm" : "cancel";
                 buttons.push(Alert.createButton(b, role, role === "confirm" ? opts.ok_action : undefined));
-            }
-            else {
+            } else {
                 buttons.push(b);
             }
         });
@@ -63,6 +53,7 @@ export class Alert {
             message: opts.message,
             header: opts.header,
             buttons: buttons,
+            cssClass: opts.cssClass && opts.cssClass.length > 0 ? "alert " + opts.cssClass : "alert",
             inputs: opts.inputs ?? [],
         };
 
@@ -71,26 +62,16 @@ export class Alert {
         const { data, role } = await alert.onWillDismiss();
         if (role == "confirm") {
             return data?.values?.length > 0 ? data.values : true;
-        }
-        else {
+        } else {
             return false;
         }
     }
 
-    public async YesNo(opts: {
-        message: string,
-        header?: string,
-        button_no?: AlertButton | string,
-        button_yes?: AlertButton | string,
-        button_yes_alternative?: AlertButton | string,
-        inputs?: AlertInput[],
-        translate?: boolean,
-    }): Promise<any> {
+    public async YesNo(opts: { message: string; header?: string; button_no?: AlertButton | string; button_yes?: AlertButton | string; button_yes_alternative?: AlertButton | string; inputs?: AlertInput[]; translate?: boolean }): Promise<any> {
         if (opts.translate) {
             opts.button_yes ??= "yes";
             opts.button_no ??= "no";
-        }
-        else {
+        } else {
             opts.button_yes ??= this.Locale.getText("yes");
             opts.button_no ??= this.Locale.getText("no");
         }

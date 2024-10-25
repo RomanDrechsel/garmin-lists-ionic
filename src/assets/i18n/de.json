@@ -19,12 +19,22 @@
         "min_short": "Min.",
         "hour_short": "Std.",
         "hours_short": "Std.",
-        "ago": "vor {{date}}"
+        "ago": "vor {{date}}",
+        "weekday": {
+            "mon": "Montag",
+            "tue": "Dienstag",
+            "wed": "Mittwoch",
+            "thu": "Donnerstag",
+            "fri": "Freitag",
+            "sat": "Samstag",
+            "sun": "Sonntag"
+        }
     },
     "mainmenu": {
         "lists": "Meine Listen",
         "trash": "Papierkorb",
         "delete_list": "Liste löschen",
+        "edit_list": "Liste bearbeiten",
         "devices": "Geräte",
         "settings": "Einstellungen",
         "privacy": "Datenschutz",
@@ -35,6 +45,7 @@
         "store_list_error": "Die Liste konnte nicht gespeichert werden!",
         "store_listitem_error": "Der Punkt konnte nicht gespeichert werden!",
         "delete_confirm": "Möchtest du die Liste <strong>{{name}}</strong> wirklich löschen?",
+        "delete_confirm_watch": "Liste auch auf der Uhr löschen",
         "delete_error": "Die Liste konnte nicht gelöscht werden!",
         "delete_success": "Die Liste wurde gelöscht.",
         "delete_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> wirklich löschen?",
@@ -61,18 +72,35 @@
         "empty_trash_listitems_confirm": "Möchtest du den Papierkorb der Liste leeren und die {{count}} Punkte löschen?",
         "empty_trash_listitems_confirm_single": "Möchtest du den Papierkorb der Liste leeren und den Punkt löschen",
         "empty_trash_success": "Der Papierkorb wurde geleert.",
-        "empry_trash_error": "Der Papierkorb konnte nicht geleert werden!"
-    },
-    "service-connectiq": {
+        "empry_trash_error": "Der Papierkorb konnte nicht geleert werden!",
         "transmit_confirm": "Möchtest du die Liste auf dein Gerät <strong>{{device}}</strong> übertragen?",
         "transmit_process": "Die Liste wird übertragen...",
         "transmit_success": "Die Liste wurde erfolgreich übertragen",
-        "transmit_error": "Die Liste konnte nicht übertragen werden!"
+        "transmit_error": "Die Liste konnte nicht übertragen werden!",
+        "transmit_send_btn": "An Gerät senden"
+    },
+    "service-connectiq": {
+        "watch_outdated": "Du scheinst auf deinem Gerät <strong>{{device}}</strong> eine alte Version der Listen-App zu verwenden.<br /><br />Bitte aktuallisiere die App auf deiner Uhr, um alle Funktionen nutzen zu können.",
+        "watch_outdated_button": "Zum Connect-IQ Store",
+        "watch_outdated_ignore": "Ignorieren",
+        "watch_outdated_dontremind": "für diese Version nicht wieder benachrichtigen"
     },
     "comp-listeditor": {
         "title_new": "Neue Liste anlegen",
         "title_edit": "Liste bearbeiten",
-        "listname": "Bezeichnung"
+        "listname": "Bezeichnung",
+        "reset": "Liste automatisch zurücksetzen",
+        "reset_note": "Setzt alle Listenpunkte auf der Uhr in einem bestimmten Interval auf nicht-erledigt.",
+        "reset_info": "Auf deiner Uhr werden alle Listenpunkte dieser Liste in einem bestimmten Intervall wieder auf \"nicht erledigt\" gesetzt.<br /><br />Dies eignet sich zum Beispiel für wiederkehrende Aufgaben wie Hausarbeiten oder andere regelmäßige Tätigkeiten.",
+        "reset_interval":  "Intervall",
+        "reset_daily": "Täglich",
+        "reset_weekly": "Wöchentlich",
+        "reset_monthly": "Monatlich"
+    },
+    "comp-select-interval": {
+        "last": "letzter",
+        "ofmonth": "Tag des Monats",
+        "oclock": "Uhr"
     },
     "comp-listitemeditor": {
         "title_new": "Listenpunkt anlegen",
@@ -83,7 +111,7 @@
     "comp_sharelog": {
         "title": "Log Speichern",
         "text": "Wie möchtest du das Log <br /><strong>{{filename}}</strong><br /> speichern?",
-        "text_web": "Das Log <strong>{{filename}}</strong> wird auf Ihrem Rechner gespeichert.",
+        "text_web": "Das Log <strong>{{filename}}</strong> wird auf Deinem Rechner gespeichert.",
         "store": "In Documents speichern",
         "share": "Teilen",
         "email": "Mir Per E-Mail senden",
@@ -99,7 +127,13 @@
         "meta_settings": "App Einstellungen",
         "meta_settings_note": "Log-Einstellungen, Sprache, etc.",
         "meta_storage": "Speicher Informationen",
-        "meta_storage_note": "Anzahl/Größe der Listen und Logs auf dem Gerät"
+        "meta_storage_note": "Anzahl/Größe der Listen und Logs auf dem Gerät",
+        "watch": "Logs der Uhr anhängen"
+    },
+    "comp_watchlogs": {
+        "title": "Logs übertragen",
+        "text": "Um die Logs von Deiner Uhr zu übertragen, musst du zuerst die App auf deiner Uhr<br /><br /><strong>{{name}}</strong><br /><br /> starten. Wenn du App läuft, sollten die Logs automatisch übertragen werden.",
+        "withoutlogs": "Ohne Logs fortfahren"
     },
     "page_lists": {
         "page_title": "Meine Listen",
@@ -137,7 +171,7 @@
         "install_app": "Du musst zuerst die Listen App auf deiner Uhr installieren.<br /><strong>Klicke hier</strong> um zum Garmin ConnectIQ Store zu gelangen.",
         "reload_btn": "Geräte neu laden",
         "toggle": "Immer an dieses Gerät senden",
-        "send_btn": "An Gerät senden",
+        "select_btn": "Gerät auswählen",
         "device_state": {
             "Ready": "Das Gerät ist bereit",
             "ServiceUnavailable": "Der ConnectIQ Service ist nicht erreichbar",
@@ -159,8 +193,8 @@
         "confirm_note": "Einstellungen zur Abfrage von Benutzerbestätigungen",
         "trash": "Papierkorb",
         "trash_note": "Einstellungen zur Verwendung des Papierkorbs",
-        "openontransmit": "App beim Übertragen starten",
-        "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst."
+        "transmission": "Übertragungs-Einstellungen",
+        "transmission_note": "Einstellungen für das Übertragen von Listen auf deine Uhr"
     },
     "page_settings_logs": {
         "page_title": "Logging",
@@ -174,6 +208,8 @@
         "autodelete_week": "Nach einer Woche",
         "autodelete_month": "Nach einem Monat",
         "show": "Logs anzeigen",
+        "show_watch": "Logs der Uhr anzeigen",
+        "show_watch_note": "Zeigt die Logs der Uhr an. Die App muss dazu auf der Uhr laufen",
         "size": "Größe:\n{{size}} / {{files}} Datei(en)",
         "deleteall": "Alle Logs löschen",
         "deleteall_confirm": "Sollen die {{count}} Log-Dateien gelöscht werden?",
@@ -196,6 +232,13 @@
         "no_log": "Keine Log-Dateien gefunden!",
         "no_log_note": "Für {{date}} wurden keine Log-Dateien gefunden."
     },
+    "page_settings_showwatchlogs": {
+        "page_title": "Logs der Uhr",
+        "select_watch": "Gerät auswählen",
+        "no_watch": "Kein Gerät gefunden",
+        "no_logs": "Keine Logs gefunden!",
+        "no_device": "Kein aktives Gerät gefunden!"
+    },
     "page_settings_confirm": {
         "page_title": "Bestätigungen",
         "delete_list": "Liste löschen",
@@ -217,6 +260,13 @@
         "undo_warning": "<br /><strong>Achtung:</strong> Die Aktion kann nichtmehr rückgängig gemacht werden!",
         "transmit_list": "Liste übertragen",
         "transmit_list_note": "Beim Übertragen einer Liste auf eine Uhr eine Bestätigung anfordern"
+    },
+    "page_lists_transmission": {
+        "page_title": "Übertragung zu Uhr",
+        "openontransmit": "App beim Übertragen starten",
+        "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst.",
+        "deletelist": "Listen automatisch von der Uhr löschen",
+        "deletelist_note": "Beim Löschen einer Liste auf dem Smartphone die Liste auch auf deiner Uhr löschen."
     },
     "page_settings_trash": {
         "page_title": "Papierkorb",

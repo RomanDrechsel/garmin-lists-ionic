@@ -18,13 +18,13 @@
                 </div>
             </ion-toggle>
             <div style="clear: both"></div>
-            <ion-button class="ion-float-right" [disabled]="SelectedDevice?.State != 'Ready'" *ngIf="ListUuid" (click)="TransmitList()">
-                {{'page_devices.send_btn'|translate}}
+            <ion-button class="ion-float-right" [disabled]="SelectedDevice?.State != 'Ready'" *ngIf="hasSubmitButton" (click)="SubmitButton()">
+                {{SubmitButtonLabel}}
             </ion-button>
         </ion-card>
     </div>
 
-    <ion-fab horizontal="end" vertical="bottom">
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button (click)="loadDevices()">
             <ion-icon src="./assets/icons/reload.svg"></ion-icon>
         </ion-fab-button>

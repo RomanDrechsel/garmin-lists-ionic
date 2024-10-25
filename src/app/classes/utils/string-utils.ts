@@ -97,18 +97,13 @@ export namespace StringUtils {
      */
     export function toString(obj: any): string {
         if (isString(obj)) {
-            return String(obj);
+            return obj;
         } else {
-            const seen = new WeakSet();
-            return JSON.stringify(obj, function(key, value) {
-                if (typeof value === "object" && value !== null) {
-                    if (seen.has(value)) {
-                        return "[Circular]";
-                    }
-                    seen.add(value);
-                }
-                return value;
-            }, 4);
+            try {
+                return JSON.stringify(obj);
+            } catch (ex) {
+                return "[Object]";
+            }
         }
     }
 }

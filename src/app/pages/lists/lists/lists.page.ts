@@ -55,12 +55,12 @@ export class ListsPage extends PageBase {
     }
 
     public async transmitList(list: List) {
-        await this.ConnectIQ.TransmitList(list.Uuid, undefined, false, "/lists");
+        await this.ListsService.TransferList(list.Uuid);
         this.listsContainer.closeSlidingItems();
     }
 
     public editList(event: MouseEvent, list: List) {
-        this.ListsService.RenameList(list);
+        this.ListsService.EditList(list, true);
         event.stopImmediatePropagation();
     }
 
