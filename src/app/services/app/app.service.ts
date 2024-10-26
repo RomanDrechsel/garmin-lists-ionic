@@ -14,7 +14,9 @@ import { Locale } from "../localization/locale";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { LoggingService } from "../logging/logging.service";
+import { PopupsService } from "../popups/popups.service";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
+import { ConfigService } from "./../config/config.service";
 
 @Injectable({
     providedIn: "root",
@@ -22,7 +24,7 @@ import { EPrefProperty, PreferencesService } from "../storage/preferences.servic
 export class AppService {
     public static AppToolbar?: MainToolbarComponent;
 
-    public readonly loggerService = inject(LoggingService);
+    public readonly Logger = inject(LoggingService);
     public readonly Locale = inject(LocalizationService);
     public readonly ListsService = inject(ListsService);
     public readonly ConnectIQ = inject(ConnectIQService);
@@ -30,7 +32,10 @@ export class AppService {
     public readonly Preferences = inject(PreferencesService);
     public readonly Admob = inject(AdmobService);
     public readonly NavController = inject(NavController);
-    public readonly Logger = inject(LoggingService);
+    public readonly Config = inject(ConfigService);
+
+    private readonly _popups = inject(PopupsService);
+    public static Popups: PopupsService;
 
     /** platform as short string (android, ios, web) */
     public static get AppPlatform(): string {
@@ -62,7 +67,8 @@ export class AppService {
      * initialize app services
      */
     public async InitializeApp() {
-        await Logger.Initialize(this.loggerService);
+        AppService.Popups = this._popups;
+        await Logger.Initialize(this.Logger);
         await Locale.Initialize(this.Locale);
         await this.ListsService.Initialize();
 
@@ -76,6 +82,9 @@ export class AppService {
         if (loadList.length > 0) {
             await this.NavController.navigateForward(`/lists/items/${loadList}`);
         }
+        window.setTimeout(async () => {
+            await this.Preferences.Set(EPrefProperty.FirstStart, false);
+        }, 5000);
     }
 
     /**
@@ -127,7 +136,7 @@ export class AppService {
 
         if (!query || query.settings !== false) {
             meta.Settings = {
-                LogMode: this.loggerService.LogLevelShort,
+                LogMode: this.Logger.LogLevelShort,
                 AppLanguage: this.Locale.CurrentLanguage.locale,
                 AdmobStatus: await this.Admob.Status(),
             };

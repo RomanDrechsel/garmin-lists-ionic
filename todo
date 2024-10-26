@@ -10,14 +10,3 @@ ionic build --clean --configuration=liveRelease && npx cap sync
 
 npx ionic cap run android --target=R5CW31K1TPT --livereload --external --configuration=development --public-host=192.168.178.33
 npx ionic cap run android --target=Android_14 --livereload --external --configuration=development --public-host=192.168.178.33
-
-Sprachen:
-TODO: Chinesisch (vereinfacht)
-TODO: Chinesisch (traditionell)
-TODO: Japanisch
-TODO: Ukrainisch
-TODO: Spanisch
-WIP: Französisch
-TODO: Hinweis, wenn sprache nicht deutsch ist und man die App zum ersten mal startet
-BUG: Im Französischen schreibt man 17h30
-BUG: Log-Tag auswählen: im Französischen sind die Buttons zu lang
