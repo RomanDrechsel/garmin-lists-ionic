@@ -7,6 +7,7 @@ import { TranslateModule } from "@ngx-translate/core";
 import { FileUtils } from "../../classes/utils/file-utils";
 import { ShareUtil } from "../../classes/utils/share-utils";
 import { StringUtils } from "../../classes/utils/string-utils";
+import { ConfigService } from "../../services/config/config.service";
 import { LocalizationService } from "../../services/localization/localization.service";
 import { Logger } from "../../services/logging/logger";
 import { WatchLoggingService } from "../../services/logging/watch-logging.service";
@@ -36,6 +37,7 @@ export class StoreLogComponent {
     private readonly modalCtrl = inject(ModalController);
     private readonly AppService = inject(AppService);
     private readonly WatchLogs = inject(WatchLoggingService);
+    private readonly Config = inject(ConfigService);
 
     public get IsWebApp(): boolean {
         return AppService.isWebApp;
@@ -94,7 +96,7 @@ export class StoreLogComponent {
                     }
                 } else if (this.do.value == "email") {
                     const email_title = this.Locale.getText("comp_sharelog.share_email.title", { package: meta.Package?.Name, platform: meta.Device?.Platform, file: this.Params.file.Filename, size: FileUtils.File.FormatSize(this.Params.file.Size) });
-                    if (await ShareUtil.SendMail({ sendto: AppService.EMailAddress, files: this.Params.file.Path, title: email_title, text: this.Locale.getText("comp_sharelog.share_email.text") })) {
+                    if (await ShareUtil.SendMail({ sendto: this.Config.EMailAddress, files: this.Params.file.Path, title: email_title, text: this.Locale.getText("comp_sharelog.share_email.text") })) {
                         Logger.Debug(`Shared log ${this.Params.file.Filename} via e-mail`);
                         this.modalCtrl.dismiss(null, "confirm");
                     } else {

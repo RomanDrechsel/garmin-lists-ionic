@@ -1,15 +1,26 @@
 ion-list {
     ion-item {
-        &:not(:first-of-type) {
+        &:not(:first-child):not(:nth-child(2)) {
             padding-top: 40px;
         }
 
-        --border-width: 0 0 1px 0;
+        &:not(:first-of-type) {
+            --border-width: 0 0 1px 0;
+        }
 
         ion-note {
             font-size: 0.8em;
             white-space: pre-line;
             --color: var(--ion-color-medium);
+        }
+
+        ion-icon.info-icon {
+            padding-inline-end: 0;
+            padding-block-start: 0;
+        }
+
+        .no-wrap {
+            font-weight: bold;
         }
     }
 }

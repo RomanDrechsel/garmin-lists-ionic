@@ -27,20 +27,16 @@
         ion-accordion-group {
             ion-accordion {
                 ion-item {
-                    --background-hover: #FFFFFF;
+                    --background-hover: #ffffff;
                     --padding-start: 6px;
                 }
 
                 ion-list {
                     ion-item {
-                        --background-hover: #FFFFFF;
-
-                        ::part(label) {
-                            margin-inline-start: 6px;
-                        }
+                        --background-hover: #ffffff;
 
                         .meta_note {
-                            margin-inline-start: 24px;
+                            margin-inline-start: 28px;
                             position: relative;
                             top: -12px;
                         }

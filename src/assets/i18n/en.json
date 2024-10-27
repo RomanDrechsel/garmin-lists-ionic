@@ -92,7 +92,7 @@
         "reset": "Reset the list automatically",
         "reset_note": "Sets all list items in a certain interval to not done.",
         "reset_info": "On your watch, all items on this list will be reset to \"not done\" at a certain interval.<br /><br />This is suitable for recurring tasks such as household chores or other regular activities.",
-        "reset_interval":  "Interval",
+        "reset_interval": "Interval",
         "reset_daily": "Daily",
         "reset_weekly": "Weekly",
         "reset_monthly": "Monthly"
@@ -186,8 +186,10 @@
     },
     "page_settings": {
         "page_title": "Settings",
-        "language_header": "App language",
         "language": "Language",
+        "language_hint": "English is not my native language. If you find any translation errors, please report them to <span class=\"no-wrap\">{{email}}</span>",
+        "translation_error_confirm": "Would you like to report a translation error to me?",
+        "translation_error_title": "Mistake in the english translation",
         "logging": "Log settings",
         "logging_note": "Settings and management of log files",
         "confirm": "Confirmation settings",
