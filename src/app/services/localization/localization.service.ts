@@ -20,6 +20,7 @@ export class LocalizationService {
         firstDayOfWeek: 1,
         h24: false,
         locale_regex: /^(en-[^-GB]*)$/i,
+        gdpr: "en",
     });
 
     /** current app language */
@@ -39,11 +40,12 @@ export class LocalizationService {
     public get availableTranslations(): Culture[] {
         return [
             this._fallbackLang,
-            new Culture({ localeFile: "en", locale: "en-GB", name: "English (UK)", firstDayOfWeek: 2, h24: true }),
-            new Culture({ localeFile: "de", locale: "de-DE", name: "Deutsch", firstDayOfWeek: 2, h24: true, locale_regex: /^de[-_][0-9A-Za-z]{2,}$/i }),
-            new Culture({ localeFile: "es", locale: "es-ES", name: "Español", firstDayOfWeek: 2, h24: true, locale_regex: /^es[-_][0-9A-Za-z]{2,}$/i }),
-            new Culture({ localeFile: "fr", locale: "fr-FR", name: "Français", firstDayOfWeek: 2, h24: true, locale_regex: /^fr[-_][0-9A-Za-z]{2,}$/i }),
-            new Culture({ localeFile: "jp", locale: "ja-JP", name: "日本語", firstDayOfWeek: 2, h24: true, locale_regex: /^ja[-_][0-9A-Za-z]{2,}$/i }),
+            new Culture({ localeFile: "en", locale: "en-GB", name: "English (UK)", firstDayOfWeek: 2, h24: true, gdpr: "en" }),
+            new Culture({ localeFile: "de", locale: "de-DE", name: "Deutsch", firstDayOfWeek: 2, h24: true, locale_regex: /^de[-_][0-9A-Za-z]{2,}$/i, gdpr: "de" }),
+            new Culture({ localeFile: "es", locale: "es-ES", name: "Español", firstDayOfWeek: 2, h24: true, locale_regex: /^es[-_][0-9A-Za-z]{2,}$/i, gdpr: "es" }),
+            new Culture({ localeFile: "fr", locale: "fr-FR", name: "Français", firstDayOfWeek: 2, h24: true, locale_regex: /^fr[-_][0-9A-Za-z]{2,}$/i, gdpr: "fr" }),
+            new Culture({ localeFile: "it", locale: "it-IT", name: "Italiano", firstDayOfWeek: 2, h24: true, locale_regex: /^it[-_][0-9A-Za-z]{2,}$/i, gdpr: "it" }),
+            new Culture({ localeFile: "jp", locale: "ja-JP", name: "日本語", firstDayOfWeek: 2, h24: true, locale_regex: /^ja[-_][0-9A-Za-z]{2,}$/i, gdpr: "jp" }),
             new Culture({ localeFile: "uk", locale: "uk-UA", name: "Українська", firstDayOfWeek: 2, h24: true, locale_regex: /^uk[-_][0-9A-Za-z]{2,}$/i }),
             new Culture({ localeFile: "zhs", locale: "zh-CN", name: "中文 (简体)", firstDayOfWeek: 1, h24: true, locale_regex: /^(zh-CN|zh-SG|zh-MY)$/i }),
             new Culture({ localeFile: "zht", locale: "zh-TW", name: "中文 (繁體)", firstDayOfWeek: 2, h24: false, locale_regex: /^(zh-TW|zh-HK|zh-MO)$/i }),
@@ -145,14 +147,16 @@ export class Culture {
     public name!: string;
     public firstDayOfWeek!: number;
     public h24!: boolean;
+    public gdpr!: string;
 
-    public constructor(obj: { localeFile: string; locale: string; locale_regex?: RegExp; name: string; firstDayOfWeek: number; h24: boolean }) {
+    public constructor(obj: { localeFile: string; locale: string; locale_regex?: RegExp; name: string; firstDayOfWeek: number; h24: boolean; gdpr?: string }) {
         this.localeFile = obj.localeFile;
         this.locale = obj.locale;
         this.locale_regex = obj.locale_regex;
         this.name = obj.name;
         this.firstDayOfWeek = obj.firstDayOfWeek;
         this.h24 = obj.h24;
+        this.gdpr = obj.gdpr ?? "en";
     }
 
     public Match(locale: string): boolean {

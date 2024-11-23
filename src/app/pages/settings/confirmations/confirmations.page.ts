@@ -11,9 +11,8 @@ import { PageBase } from "../../page-base";
     selector: "app-confirmations",
     templateUrl: "./confirmations.page.html",
     styleUrls: ["./confirmations.page.scss"],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonLabel, IonToggle, IonNote, IonItem, IonText, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
+    imports: [IonLabel, IonToggle, IonNote, IonItem, IonText, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent]
 })
 export class ConfirmationsPage extends PageBase {
     private _deleteList: boolean = true;

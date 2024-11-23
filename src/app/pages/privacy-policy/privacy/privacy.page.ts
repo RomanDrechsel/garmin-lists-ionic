@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNote, IonRow, IonText, IonTitle, IonToggle, IonToolbar } from "@ionic/angular/standalone";
+import { IonContent, IonIcon, IonItem, IonLabel, IonList, IonNote } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { AdmobService } from "../../../services/adverticing/admob.service";
@@ -12,8 +12,7 @@ import { PageBase } from "../../page-base";
     selector: "app-privacy",
     templateUrl: "./privacy.page.html",
     styleUrls: ["./privacy.page.scss"],
-    standalone: true,
-    imports: [IonIcon, IonLabel, IonToggle, IonNote, IonText, IonGrid, IonCol, IonRow, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, MainToolbarComponent, TranslateModule, RouterModule],
+    imports: [IonIcon, IonLabel, IonNote, IonItem, IonList, IonContent, CommonModule, FormsModule, MainToolbarComponent, TranslateModule, RouterModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrivacyPage extends PageBase {

@@ -14,8 +14,7 @@ import { PageBase } from "../../page-base";
     selector: "app-trash-lists",
     templateUrl: "./trash-lists.page.html",
     styleUrls: ["./trash-lists.page.scss"],
-    standalone: true,
-    imports: [IonContent, IonText, IonNote, IonItem, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
+    imports: [IonContent, IonText, IonNote, IonItem, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent]
 })
 export class TrashListsPage extends PageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;

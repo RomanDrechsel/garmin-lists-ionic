@@ -13,8 +13,7 @@ import { PageBase } from "../../page-base";
     selector: "app-logging",
     templateUrl: "./logging.page.html",
     styleUrls: ["./logging.page.scss"],
-    standalone: true,
-    imports: [IonNote, IonIcon, IonLabel, IonCol, IonRow, IonGrid, IonText, IonList, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, IonButton, RouterLink, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
+    imports: [IonNote, IonIcon, IonLabel, IonCol, IonRow, IonGrid, IonText, IonList, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, IonButton, RouterLink, CommonModule, FormsModule, TranslateModule, MainToolbarComponent]
 })
 export class LoggingPage extends PageBase {
     public LogsSize?: string;

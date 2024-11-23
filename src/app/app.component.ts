@@ -14,8 +14,7 @@ import { EPrefProperty, PreferencesService } from "./services/storage/preference
     selector: "app-root",
     templateUrl: "app.component.html",
     styleUrls: ["app.component.scss"],
-    standalone: true,
-    imports: [IonToggle, IonFooter, IonImg, IonApp, IonSplitPane, IonMenu, IonContent, IonList, IonNote, IonItem, IonIcon, IonLabel, IonRouterOutlet, TranslateModule, RouterLink, RouterLinkActive, CommonModule],
+    imports: [IonToggle, IonFooter, IonImg, IonApp, IonSplitPane, IonMenu, IonContent, IonList, IonNote, IonItem, IonIcon, IonLabel, IonRouterOutlet, TranslateModule, RouterLink, RouterLinkActive, CommonModule]
 })
 export class AppComponent implements OnInit {
     public appPages: MenuItem[] = [];

@@ -14,9 +14,8 @@ import { PageBase } from "../../page-base";
     selector: "app-show-watch-logs",
     templateUrl: "./show-watch-logs.page.html",
     styleUrls: ["./show-watch-logs.page.scss"],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonFabButton, IonFab, IonText, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
+    imports: [IonFabButton, IonFab, IonText, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageEmptyComponent]
 })
 export class ShowWatchLogsPage extends PageBase {
     public Device?: ConnectIQDevice = undefined;

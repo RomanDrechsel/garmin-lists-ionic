@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
 
 @Component({
     selector: 'app-page-empty',
-    standalone: true,
     imports: [CommonModule],
     templateUrl: './page-empty.component.html',
     styleUrl: './page-empty.component.scss',

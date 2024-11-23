@@ -7,7 +7,6 @@ import { Locale } from "../../services/localization/locale";
 
 @Component({
     selector: 'app-list-item-editor',
-    standalone: true,
     imports: [
         IonTextarea,
         IonInput,

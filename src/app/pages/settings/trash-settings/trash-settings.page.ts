@@ -12,9 +12,8 @@ import { PageBase } from "../../page-base";
     selector: "app-trash",
     templateUrl: "./trash-settings.page.html",
     styleUrls: ["./trash-settings.page.scss"],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonNote, IonToggle, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
+    imports: [IonNote, IonToggle, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent]
 })
 export class TrashSettingsPage extends PageBase {
     private _useTrash: boolean = true;

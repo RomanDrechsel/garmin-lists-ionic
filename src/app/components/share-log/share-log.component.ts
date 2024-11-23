@@ -16,11 +16,10 @@ import { AppService } from "./../../services/app/app.service";
 
 @Component({
     selector: "app-share-log",
-    standalone: true,
     imports: [IonNote, IonList, IonCheckbox, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonContent, IonText, IonInput, IonButtons, IonButton, IonTitle, IonIcon, IonToolbar, IonHeader, IonSelect, IonSelectOption, CommonModule, TranslateModule],
     templateUrl: "./share-log.component.html",
     styleUrl: "./share-log.component.scss",
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StoreLogComponent {
     public Params!: ShareLogParams;

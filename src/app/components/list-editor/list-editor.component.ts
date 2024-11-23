@@ -11,11 +11,10 @@ import { SelectTimeInterval } from "../select-interval/select-interval.component
 
 @Component({
     selector: "app-list-edit",
-    standalone: true,
     imports: [IonText, IonModal, IonNote, IonList, IonAccordion, IonCheckbox, IonAccordionGroup, IonPicker, IonIcon, IonTitle, IonItem, IonInput, IonButton, IonButtons, IonToolbar, IonHeader, IonContent, IonSelect, IonSelectOption, IonPickerColumn, IonPickerColumnOption, CommonModule, TranslateModule, ReactiveFormsModule, FormsModule],
     templateUrl: "./list-editor.component.html",
     styleUrl: "./list-editor.component.scss",
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListEditorComponent {
     @ViewChild("listname", { read: IonInput }) private listname!: IonInput;

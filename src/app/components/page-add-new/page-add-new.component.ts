@@ -5,7 +5,6 @@ import { AppService } from "../../services/app/app.service";
 
 @Component({
     selector: 'app-page-add-new',
-    standalone: true,
     imports: [IonImg, CommonModule,],
     templateUrl: './page-add-new.component.html',
     styleUrl: './page-add-new.component.scss',

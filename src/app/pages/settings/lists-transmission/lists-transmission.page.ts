@@ -11,8 +11,7 @@ import { PageBase } from "../../page-base";
     selector: "app-lists-transmission",
     templateUrl: "./lists-transmission.page.html",
     styleUrls: ["./lists-transmission.page.scss"],
-    standalone: true,
-    imports: [IonNote, IonItem, IonToggle, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
+    imports: [IonNote, IonItem, IonToggle, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent]
 })
 export class ListsTransmissionPage extends PageBase {
     private _openAppOnTransfer: boolean = false;

@@ -13,8 +13,7 @@ import { PageBase } from "../../page-base";
     selector: "app-lists",
     templateUrl: "./lists.page.html",
     styleUrls: ["./lists.page.scss"],
-    standalone: true,
-    imports: [IonImg, IonText, IonInput, IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonLabel, IonItem, IonReorder, IonReorderGroup, IonList, IonContent, IonHeader, IonTitle, IonToolbar, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule],
+    imports: [IonImg, IonText, IonInput, IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonLabel, IonItem, IonReorder, IonReorderGroup, IonList, IonContent, IonHeader, IonTitle, IonToolbar, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule]
 })
 export class ListsPage extends PageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;

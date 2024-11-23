@@ -15,9 +15,8 @@ import { PageBase } from "../../page-base";
     selector: "app-showlogs",
     templateUrl: "./showlogs.page.html",
     styleUrls: ["./showlogs.page.scss"],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [PageEmptyComponent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, IonIcon, IonLabel, IonFabButton, IonFab, IonFabList, IonContent, IonList, IonItem, IonSelect, IonTextarea, IonSelectOption, IonText],
+    imports: [PageEmptyComponent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, IonIcon, IonLabel, IonFabButton, IonFab, IonFabList, IonContent, IonList, IonItem, IonSelect, IonTextarea, IonSelectOption, IonText]
 })
 export class ShowlogsPage extends PageBase {
     public currentLogfile?: FileUtils.File;

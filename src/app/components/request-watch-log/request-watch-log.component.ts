@@ -7,10 +7,9 @@ import { ConnectIQService } from "../../services/connectiq/connect-iq.service";
 
 @Component({
     selector: "app-request-watch-log",
-    standalone: true,
     imports: [IonList, IonCheckbox, IonItem, IonAccordion, IonButton, IonButtons, IonTitle, IonToolbar, IonIcon, IonHeader, IonAccordionGroup, CommonModule, TranslateModule],
     templateUrl: "./request-watch-log.component.html",
-    styleUrl: "./request-watch-log.component.scss",
+    styleUrl: "./request-watch-log.component.scss"
 })
 export class RequestWatchLogComponent implements AfterViewInit {
     public Params!: RequestWatchLogsParams;

@@ -8,10 +8,9 @@ import { EPrefProperty, PreferencesService } from "../../services/storage/prefer
 
 @Component({
     selector: "app-select-interval",
-    standalone: true,
     imports: [IonItemDivider, IonIcon, IonPicker, IonContent, IonButton, IonButtons, IonToolbar, IonHeader, IonPickerColumn, IonPickerColumnOption, CommonModule, TranslateModule],
     templateUrl: "./select-interval.component.html",
-    styleUrl: "./select-interval.component.scss",
+    styleUrl: "./select-interval.component.scss"
 })
 export class SelectIntervalComponent {
     @ViewChild("pickerHour", { read: IonPickerColumn }) pickerHour?: IonPickerColumn;

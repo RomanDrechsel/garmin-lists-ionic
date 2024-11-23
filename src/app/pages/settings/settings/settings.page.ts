@@ -13,9 +13,8 @@ import { PageBase } from "../../page-base";
     selector: "app-settings",
     templateUrl: "./settings.page.html",
     styleUrls: ["./settings.page.scss"],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonToggle, IonNote, IonIcon, IonLabel, MainToolbarComponent, IonInput, CommonModule, TranslateModule, FormsModule, ReactiveFormsModule, RouterModule, IonContent, IonList, IonItemDivider, IonItem, IonSelect, IonSelectOption, IonRow, IonCol, IonGrid, IonButton, IonText],
+    imports: [IonToggle, IonNote, IonIcon, IonLabel, MainToolbarComponent, IonInput, CommonModule, TranslateModule, FormsModule, ReactiveFormsModule, RouterModule, IonContent, IonList, IonItemDivider, IonItem, IonSelect, IonSelectOption, IonRow, IonCol, IonGrid, IonButton, IonText]
 })
 export class SettingsPage extends PageBase {
     public get Email(): string {

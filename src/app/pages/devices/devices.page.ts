@@ -13,9 +13,8 @@ import { PageBase } from "../page-base";
     selector: "app-devices",
     templateUrl: "./devices.page.html",
     styleUrls: ["./devices.page.scss"],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonToggle, IonLabel, IonFabButton, IonIcon, IonFab, IonCol, IonRow, IonText, IonButton, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, MainToolbarComponent, TranslateModule],
+    imports: [IonToggle, IonLabel, IonFabButton, IonIcon, IonFab, IonCol, IonRow, IonText, IonButton, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, MainToolbarComponent, TranslateModule]
 })
 export class DevicesPage extends PageBase {
     @ViewChild("deviceSelect") private deviceSelect!: IonSelect;
