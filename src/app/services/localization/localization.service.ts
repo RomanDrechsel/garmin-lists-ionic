@@ -46,9 +46,9 @@ export class LocalizationService {
             new Culture({ localeFile: "fr", locale: "fr-FR", name: "Français", firstDayOfWeek: 2, h24: true, locale_regex: /^fr[-_][0-9A-Za-z]{2,}$/i, gdpr: "fr" }),
             new Culture({ localeFile: "it", locale: "it-IT", name: "Italiano", firstDayOfWeek: 2, h24: true, locale_regex: /^it[-_][0-9A-Za-z]{2,}$/i, gdpr: "it" }),
             new Culture({ localeFile: "jp", locale: "ja-JP", name: "日本語", firstDayOfWeek: 2, h24: true, locale_regex: /^ja[-_][0-9A-Za-z]{2,}$/i, gdpr: "jp" }),
-            new Culture({ localeFile: "uk", locale: "uk-UA", name: "Українська", firstDayOfWeek: 2, h24: true, locale_regex: /^uk[-_][0-9A-Za-z]{2,}$/i }),
-            new Culture({ localeFile: "zhs", locale: "zh-CN", name: "中文 (简体)", firstDayOfWeek: 1, h24: true, locale_regex: /^(zh-CN|zh-SG|zh-MY)$/i }),
-            new Culture({ localeFile: "zht", locale: "zh-TW", name: "中文 (繁體)", firstDayOfWeek: 2, h24: false, locale_regex: /^(zh-TW|zh-HK|zh-MO)$/i }),
+            new Culture({ localeFile: "uk", locale: "uk-UA", name: "Українська", firstDayOfWeek: 2, h24: true, locale_regex: /^uk[-_][0-9A-Za-z]{2,}$/i, gdpr: "uk" }),
+            new Culture({ localeFile: "zhs", locale: "zh-CN", name: "中文 (简体)", firstDayOfWeek: 1, h24: true, locale_regex: /^(zh-CN|zh-SG|zh-MY)$/i, gdpr: "zhs" }),
+            new Culture({ localeFile: "zht", locale: "zh-TW", name: "中文 (繁體)", firstDayOfWeek: 2, h24: false, locale_regex: /^(zh-TW|zh-HK|zh-MO)$/i, gdpr: "zht" }),
         ];
     }
 
