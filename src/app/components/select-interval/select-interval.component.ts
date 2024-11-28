@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, ViewChild } from "@angular/core";
-import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItemDivider, IonPicker, IonPickerColumn, IonPickerColumnOption, IonToolbar, ModalController } from "@ionic/angular/standalone";
+import { IonButton, IonButtons, IonHeader, IonPicker, IonPickerColumn, IonPickerColumnOption, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { ListReset } from "../../services/lists/list";
 import { LocalizationService } from "../../services/localization/localization.service";
@@ -8,9 +8,9 @@ import { EPrefProperty, PreferencesService } from "../../services/storage/prefer
 
 @Component({
     selector: "app-select-interval",
-    imports: [IonItemDivider, IonIcon, IonPicker, IonContent, IonButton, IonButtons, IonToolbar, IonHeader, IonPickerColumn, IonPickerColumnOption, CommonModule, TranslateModule],
+    imports: [IonPicker, IonButton, IonButtons, IonToolbar, IonHeader, IonPickerColumn, IonPickerColumnOption, CommonModule, TranslateModule],
     templateUrl: "./select-interval.component.html",
-    styleUrl: "./select-interval.component.scss"
+    styleUrl: "./select-interval.component.scss",
 })
 export class SelectIntervalComponent {
     @ViewChild("pickerHour", { read: IonPickerColumn }) pickerHour?: IonPickerColumn;

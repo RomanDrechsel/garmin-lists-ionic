@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { IonContent, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
+import { IonContent, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
@@ -16,7 +16,7 @@ import { PageBase } from "../../page-base";
     templateUrl: "./trash-listitems.page.html",
     styleUrls: ["./trash-listitems.page.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonImg, IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent]
+    imports: [IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListitemsPage extends PageBase {
     @ViewChild("itemsContainer") private itemsContainer!: IonList;
@@ -49,10 +49,7 @@ export class TrashListitemsPage extends PageBase {
     }
 
     public override ModifyMainMenu(): MenuItem[] {
-        return [
-            MenuitemFactory(EMenuItemType.ListsTrash, { hidden: true }),
-            MenuitemFactory(EMenuItemType.EmptyItemTrash, { disabled: (this.Trash ? this.Trash?.items.length <= 0 : true), onClick: () => this.emptyTrash() }),
-        ];
+        return [MenuitemFactory(EMenuItemType.ListsTrash, { hidden: true }), MenuitemFactory(EMenuItemType.EmptyItemTrash, { disabled: this.Trash ? this.Trash?.items.length <= 0 : true, onClick: () => this.emptyTrash() })];
     }
 
     public onSwipeRight(item: ListitemModel) {

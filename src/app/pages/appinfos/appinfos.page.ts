@@ -4,7 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { InAppReview } from "@capacitor-community/in-app-review";
 import { Browser } from "@capacitor/browser";
 import { Device } from "@capacitor/device";
-import { IonButton, IonCol, IonContent, IonGrid, IonImg, IonItem, IonItemDivider, IonLabel, IonList, IonNote, IonRow, IonText } from "@ionic/angular/standalone";
+import { IonCol, IonContent, IonGrid, IonImg, IonItem, IonList, IonNote, IonRow, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
@@ -18,7 +18,7 @@ import { AppService } from "./../../services/app/app.service";
     templateUrl: "./appinfos.page.html",
     styleUrls: ["./appinfos.page.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonImg, IonButton, IonNote, MainToolbarComponent, CommonModule, FormsModule, TranslateModule, IonContent, IonList, IonItem, IonLabel, IonText, IonGrid, IonRow, IonCol, IonItemDivider, IonContent, IonList, IonItem, IonLabel, IonText, IonGrid, IonRow, IonCol]
+    imports: [IonImg, IonNote, MainToolbarComponent, CommonModule, FormsModule, TranslateModule, IonContent, IonList, IonItem, IonText, IonGrid, IonRow, IonCol, IonContent, IonList, IonItem, IonText, IonGrid, IonRow, IonCol],
 })
 export class AppinfosPage extends PageBase {
     public BundleId: string = "";

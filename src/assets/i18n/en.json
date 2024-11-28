@@ -30,6 +30,18 @@
             "sun": "Sunday"
         }
     },
+    "languages": {
+        "en-US": "English (US)",
+        "en-GB": "English (UK)",
+        "de-DE": "German",
+        "es-ES": "Spanish",
+        "fr-FR": "French",
+        "it-IT": "Italian",
+        "ja-JP": "Japanese",
+        "uk-UA": "Ukrainian",
+        "zh-CN": "Chinese (Simplified)",
+        "zh-TW": "Chinese (Traditional)"
+    },
     "mainmenu": {
         "lists": "My lists",
         "trash": "Trash",

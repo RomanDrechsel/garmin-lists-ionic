@@ -20,5 +20,5 @@ export const environment = {
 // import 'zone.js/plugins/zone-error';  // Included with Angular CLI.
 
 export const DebugDevices = function (service: ConnectIQService): ConnectIQDevice[] {
-    return [ConnectIQDevice.FromEventArgs({ id: 123456789, name: "Webdummy No App", state: "AppNotInstalled" }, service), ConnectIQDevice.FromEventArgs({ id: 234567890, name: "Webdummy", state: "Ready" }, service), ConnectIQDevice.FromEventArgs({ id: 345678901, name: "Webdummy Invalid State", state: "InvalidState" }, service)];
+    return [];
 };

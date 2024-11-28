@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject, ViewChild } from "@angular/core";
 import { FileOpener } from "@capacitor-community/file-opener";
 import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
-import { AccordionGroupCustomEvent, IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonNote, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
+import { AccordionGroupCustomEvent, IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonItem, IonList, IonNote, IonSelect, IonSelectOption, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { FileUtils } from "../../classes/utils/file-utils";
 import { ShareUtil } from "../../classes/utils/share-utils";
@@ -16,10 +16,10 @@ import { AppService } from "./../../services/app/app.service";
 
 @Component({
     selector: "app-share-log",
-    imports: [IonNote, IonList, IonCheckbox, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonContent, IonText, IonInput, IonButtons, IonButton, IonTitle, IonIcon, IonToolbar, IonHeader, IonSelect, IonSelectOption, CommonModule, TranslateModule],
+    imports: [IonNote, IonList, IonCheckbox, IonItem, IonAccordionGroup, IonAccordion, IonButtons, IonButton, IonTitle, IonIcon, IonToolbar, IonHeader, IonSelect, IonSelectOption, CommonModule, TranslateModule],
     templateUrl: "./share-log.component.html",
     styleUrl: "./share-log.component.scss",
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoreLogComponent {
     public Params!: ShareLogParams;

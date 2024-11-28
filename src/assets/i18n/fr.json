@@ -30,6 +30,18 @@
             "sun": "Dimanche"
         }
     },
+    "languages": {
+        "en-US": "Anglais (États-Unis)",
+        "en-GB": "Anglais (Royaume-Uni)",
+        "de-DE": "Allemand",
+        "es-ES": "Espagnol",
+        "fr-FR": "Français",
+        "it-IT": "Italien",
+        "ja-JP": "Japonais",
+        "uk-UA": "Ukrainien",
+        "zh-CN": "Chinois (simplifié)",
+        "zh-TW": "Chinois (traditionnel)"
+    },
     "mainmenu": {
         "lists": "Mes listes",
         "trash": "Corbeille",

@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild, inject, isDevMode } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { App } from "@capacitor/app";
 import { StatusBar } from "@capacitor/status-bar";
-import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonNote, IonRouterOutlet, IonSplitPane, IonToggle, NavController, Platform } from "@ionic/angular/standalone";
+import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonRouterOutlet, IonSplitPane, IonToggle, NavController, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { EMenuItemType, MenuItem, MenuitemFactory, MenuitemFactoryList } from "./classes/menu-items";
 import { AppService } from "./services/app/app.service";
@@ -14,7 +14,7 @@ import { EPrefProperty, PreferencesService } from "./services/storage/preference
     selector: "app-root",
     templateUrl: "app.component.html",
     styleUrls: ["app.component.scss"],
-    imports: [IonToggle, IonFooter, IonImg, IonApp, IonSplitPane, IonMenu, IonContent, IonList, IonNote, IonItem, IonIcon, IonLabel, IonRouterOutlet, TranslateModule, RouterLink, RouterLinkActive, CommonModule]
+    imports: [IonToggle, IonFooter, IonImg, IonApp, IonSplitPane, IonMenu, IonContent, IonList, IonItem, IonIcon, IonLabel, IonRouterOutlet, TranslateModule, RouterLink, RouterLinkActive, CommonModule],
 })
 export class AppComponent implements OnInit {
     public appPages: MenuItem[] = [];

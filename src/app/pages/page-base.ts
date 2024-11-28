@@ -14,7 +14,7 @@ import { PreferencesService } from "../services/storage/preferences.service";
 
 @Component({
     template: "",
-    standalone: false
+    standalone: false,
 })
 export abstract class PageBase {
     @ViewChild(MainToolbarComponent) protected Toolbar?: MainToolbarComponent;

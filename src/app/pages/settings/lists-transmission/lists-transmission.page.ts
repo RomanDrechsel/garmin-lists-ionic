@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonHeader, IonItem, IonList, IonNote, IonTitle, IonToggle, IonToolbar } from "@ionic/angular/standalone";
+import { IonContent, IonItem, IonList, IonNote, IonToggle } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { EPrefProperty } from "../../../services/storage/preferences.service";
@@ -11,7 +11,7 @@ import { PageBase } from "../../page-base";
     selector: "app-lists-transmission",
     templateUrl: "./lists-transmission.page.html",
     styleUrls: ["./lists-transmission.page.scss"],
-    imports: [IonNote, IonItem, IonToggle, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent]
+    imports: [IonNote, IonItem, IonToggle, IonList, IonContent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
 })
 export class ListsTransmissionPage extends PageBase {
     private _openAppOnTransfer: boolean = false;

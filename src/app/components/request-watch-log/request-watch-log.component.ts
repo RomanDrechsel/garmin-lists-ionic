@@ -1,15 +1,15 @@
 import { CommonModule } from "@angular/common";
 import { AfterViewInit, Component, inject } from "@angular/core";
-import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonItem, IonList, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
+import { IonButton, IonButtons, IonHeader, IonIcon, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { ConnectIQDevice } from "../../services/connectiq/connect-iq-device";
 import { ConnectIQService } from "../../services/connectiq/connect-iq.service";
 
 @Component({
     selector: "app-request-watch-log",
-    imports: [IonList, IonCheckbox, IonItem, IonAccordion, IonButton, IonButtons, IonTitle, IonToolbar, IonIcon, IonHeader, IonAccordionGroup, CommonModule, TranslateModule],
+    imports: [IonButton, IonButtons, IonTitle, IonToolbar, IonIcon, IonHeader, CommonModule, TranslateModule],
     templateUrl: "./request-watch-log.component.html",
-    styleUrl: "./request-watch-log.component.scss"
+    styleUrl: "./request-watch-log.component.scss",
 })
 export class RequestWatchLogComponent implements AfterViewInit {
     public Params!: RequestWatchLogsParams;

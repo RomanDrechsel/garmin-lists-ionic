@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonHeader, IonItem, IonList, IonNote, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar } from "@ionic/angular/standalone";
+import { IonContent, IonItem, IonList, IonNote, IonSelect, IonSelectOption, IonToggle } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { KeepInTrash } from "../../../services/lists/keep-in-trash";
@@ -13,7 +13,7 @@ import { PageBase } from "../../page-base";
     templateUrl: "./trash-settings.page.html",
     styleUrls: ["./trash-settings.page.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonNote, IonToggle, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent]
+    imports: [IonNote, IonToggle, IonItem, IonList, IonContent, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
 })
 export class TrashSettingsPage extends PageBase {
     private _useTrash: boolean = true;
@@ -59,12 +59,15 @@ export class TrashSettingsPage extends PageBase {
     public async onUseTrashChanged(checked: boolean) {
         if (checked == false) {
             const count = await this.ListsService.GetTrashCount();
-            if (count > 0 && await this.Popups.Alert.YesNo({
-                message: "page_settings_trash.confirm_cleartrash",
-                button_yes: "page_settings_trash.confirm_cleartrash_ok",
-                button_no: "page_settings_trash.confirm_cleartrash_cancel",
-                translate: true,
-            })) {
+            if (
+                count > 0 &&
+                (await this.Popups.Alert.YesNo({
+                    message: "page_settings_trash.confirm_cleartrash",
+                    button_yes: "page_settings_trash.confirm_cleartrash_ok",
+                    button_no: "page_settings_trash.confirm_cleartrash_cancel",
+                    translate: true,
+                }))
+            ) {
                 await this.ListsService.WipeTrash(true);
             }
         }
@@ -74,12 +77,15 @@ export class TrashSettingsPage extends PageBase {
     public async onUseTrashListitemsChanged(checked: boolean) {
         if (checked == false) {
             const count = await this.ListsService.GetItemsTrashCount();
-            if (count > 0 && await this.Popups.Alert.YesNo({
-                message: "page_settings_trash.confirm_clearitemstrash",
-                button_yes: "page_settings_trash.confirm_clearitemstrash_ok",
-                button_no: "page_settings_trash.confirm_clearitemstrash_cancel",
-                translate: true,
-            })) {
+            if (
+                count > 0 &&
+                (await this.Popups.Alert.YesNo({
+                    message: "page_settings_trash.confirm_clearitemstrash",
+                    button_yes: "page_settings_trash.confirm_clearitemstrash_ok",
+                    button_no: "page_settings_trash.confirm_clearitemstrash_cancel",
+                    translate: true,
+                }))
+            ) {
                 await this.ListsService.WipeListitemTrashes();
             }
         }

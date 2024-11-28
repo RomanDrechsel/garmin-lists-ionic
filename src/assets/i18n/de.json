@@ -30,6 +30,18 @@
             "sun": "Sonntag"
         }
     },
+    "languages": {
+        "en-US": "English (US)",
+        "en-GB": "English (UK)",
+        "de-DE": "Deutsch",
+        "es-ES": "Spanisch",
+        "fr-FR": "Französisch",
+        "it-IT": "Italienisch",
+        "ja-JP": "Japanisch",
+        "uk-UA": "Ukrainisch",
+        "zh-CN": "Chinesisch (vereinfacht)",
+        "zh-TW": "Chinesisch (traditionell)"
+    },
     "mainmenu": {
         "lists": "Meine Listen",
         "trash": "Papierkorb",
@@ -311,7 +323,7 @@
         "page_title": "Datenschutz",
         "admob_consent": "Personalisierter Werbebanner",
         "admob_consent_note": "Lass dir personalisierte Werbung anzeigen oder widerrufen dies.",
-        "policy": "Datenschutz-Erklärung",
+        "policy": "Datenschutzerklärung",
         "policy_note": "Diese Erklärung erläutert, welche Daten gesammelt werden."
     },
     "page_policy": {

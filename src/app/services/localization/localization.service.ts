@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
-import { TranslateService } from "@ngx-translate/core";
+import { TranslateService, Translation, TranslationObject } from "@ngx-translate/core";
 import { firstValueFrom } from "rxjs";
 import { AppService } from "../app/app.service";
 import { ConfigService } from "../config/config.service";
@@ -13,7 +13,7 @@ import { EPrefProperty, PreferencesService } from "../storage/preferences.servic
 })
 export class LocalizationService {
     /** fallback language if the requested language doesn't exist  */
-    private readonly _fallbackLang = new Culture({
+    public readonly FallbackCulture = new Culture({
         localeFile: "en",
         locale: "en-US",
         name: "English (US)",
@@ -21,35 +21,42 @@ export class LocalizationService {
         h24: false,
         locale_regex: /^(en-[^-GB]*)$/i,
         gdpr: "en",
-    });
+        icon: "us",
+    }, this);
 
     /** current app language */
-    private _currentCulture: Culture = this._fallbackLang;
-    private _currentLocale: string = this._fallbackLang.locale;
+    private _currentCulture: Culture = this.FallbackCulture;
+    private _currentLocale: string = this.FallbackCulture.locale;
 
     public readonly Translate = inject(TranslateService);
     private readonly Preferences = inject(PreferencesService);
     private readonly Config = inject(ConfigService);
 
+    private _availableTranslations: Culture[] = [];
+
     constructor() {
-        this.Translate.addLangs([...new Set<string>(this.availableTranslations.map(l => l.localeFile))]);
-        this.Translate.setDefaultLang(this._fallbackLang.localeFile);
+        this.Translate.addLangs([...new Set<string>(this.AvailableTranslations.map(l => l.localeFile))]);
+        this.Translate.setDefaultLang(this.FallbackCulture.localeFile);
     }
 
     /** all available languages */
-    public get availableTranslations(): Culture[] {
-        return [
-            this._fallbackLang,
-            new Culture({ localeFile: "en", locale: "en-GB", name: "English (UK)", firstDayOfWeek: 2, h24: true, gdpr: "en" }),
-            new Culture({ localeFile: "de", locale: "de-DE", name: "Deutsch", firstDayOfWeek: 2, h24: true, locale_regex: /^de[-_][0-9A-Za-z]{2,}$/i, gdpr: "de" }),
-            new Culture({ localeFile: "es", locale: "es-ES", name: "Español", firstDayOfWeek: 2, h24: true, locale_regex: /^es[-_][0-9A-Za-z]{2,}$/i, gdpr: "es" }),
-            new Culture({ localeFile: "fr", locale: "fr-FR", name: "Français", firstDayOfWeek: 2, h24: true, locale_regex: /^fr[-_][0-9A-Za-z]{2,}$/i, gdpr: "fr" }),
-            new Culture({ localeFile: "it", locale: "it-IT", name: "Italiano", firstDayOfWeek: 2, h24: true, locale_regex: /^it[-_][0-9A-Za-z]{2,}$/i, gdpr: "it" }),
-            new Culture({ localeFile: "jp", locale: "ja-JP", name: "日本語", firstDayOfWeek: 2, h24: true, locale_regex: /^ja[-_][0-9A-Za-z]{2,}$/i, gdpr: "jp" }),
-            new Culture({ localeFile: "uk", locale: "uk-UA", name: "Українська", firstDayOfWeek: 2, h24: true, locale_regex: /^uk[-_][0-9A-Za-z]{2,}$/i, gdpr: "uk" }),
-            new Culture({ localeFile: "zhs", locale: "zh-CN", name: "中文 (简体)", firstDayOfWeek: 1, h24: true, locale_regex: /^(zh-CN|zh-SG|zh-MY)$/i, gdpr: "zhs" }),
-            new Culture({ localeFile: "zht", locale: "zh-TW", name: "中文 (繁體)", firstDayOfWeek: 2, h24: false, locale_regex: /^(zh-TW|zh-HK|zh-MO)$/i, gdpr: "zht" }),
-        ];
+    public get AvailableTranslations(): Culture[] {
+        if (this._availableTranslations.length == 0) {
+            this._availableTranslations = [
+                this.FallbackCulture,
+                new Culture({ localeFile: "en", locale: "en-GB", name: "English (UK)", gdpr: "en", icon: "gb" }, this),
+                new Culture({ localeFile: "de", locale: "de-DE", name: "Deutsch", locale_regex: /^de[-_][0-9A-Za-z]{2,}$/i, gdpr: "de" }, this),
+                new Culture({ localeFile: "es", locale: "es-ES", name: "Español", locale_regex: /^es[-_][0-9A-Za-z]{2,}$/i, gdpr: "es" }, this),
+                new Culture({ localeFile: "fr", locale: "fr-FR", name: "Français", locale_regex: /^fr[-_][0-9A-Za-z]{2,}$/i, gdpr: "fr" }, this),
+                new Culture({ localeFile: "it", locale: "it-IT", name: "Italiano", locale_regex: /^it[-_][0-9A-Za-z]{2,}$/i, gdpr: "it" }, this),
+                new Culture({ localeFile: "jp", locale: "ja-JP", name: "日本語", locale_regex: /^ja[-_][0-9A-Za-z]{2,}$/i, gdpr: "jp" }, this),
+                new Culture({ localeFile: "uk", locale: "uk-UA", name: "Українська", locale_regex: /^uk[-_][0-9A-Za-z]{2,}$/i, gdpr: "uk", icon: "ua" }, this),
+                new Culture({ localeFile: "zhs", locale: "zh-CN", name: "中文 (简体)", firstDayOfWeek: 1, locale_regex: /^(zh-CN|zh-SG|zh-MY)$/i, gdpr: "zhs", icon: "cn" }, this),
+                new Culture({ localeFile: "zht", locale: "zh-TW", name: "中文 (繁體)", h24: false, locale_regex: /^(zh-TW|zh-HK|zh-MO)$/i, gdpr: "zht", icon: "tw" }, this),
+            ];
+        }
+
+        return this._availableTranslations;
     }
 
     /**
@@ -76,8 +83,8 @@ export class LocalizationService {
             Logger.Debug(`User language is ${lang}`);
         }
 
-        if (!lang || !this.availableTranslations.some(l => l.Match(String(lang)))) {
-            lang = this._fallbackLang;
+        if (!lang || !this.AvailableTranslations.some(l => l.Match(String(lang)))) {
+            lang = this.FallbackCulture;
         }
 
         this.ChangeLanguage(lang, true);
@@ -92,7 +99,7 @@ export class LocalizationService {
         if (locale instanceof Culture) {
             culture = locale;
         } else if (typeof locale == "string") {
-            culture = this.availableTranslations.find(l => l.Match(String(locale)));
+            culture = this.AvailableTranslations.find(l => l.Match(String(locale)));
         }
         if (!culture) {
             Logger.Important(`Not supported language ${locale}, staying with ${this._currentLocale}`);
@@ -121,7 +128,7 @@ export class LocalizationService {
      * @param params placeholder to me replaced in text
      * @returns string or array of string from localization
      */
-    public getText(keys: string | string[], params: Object | undefined = undefined): any {
+    public getText(keys: string | string[], params: Object | undefined = undefined): Translation | TranslationObject {
         return this.Translate.instant(keys, params);
     }
 
@@ -136,27 +143,47 @@ export class LocalizationService {
                 });
             }
         }
-        console.log(await this.Preferences.Get(EPrefProperty.FirstStart, true));
     }
 }
 
 export class Culture {
-    public localeFile!: string;
-    public locale!: string;
+    public localeFile: string;
+    public locale: string;
     public locale_regex?: RegExp;
-    public name!: string;
-    public firstDayOfWeek!: number;
-    public h24!: boolean;
-    public gdpr!: string;
+    public name: string;
+    public firstDayOfWeek: number;
+    public h24: boolean;
+    public gdpr: string;
+    public localizationKey?: string;
+    private _icon: string;
+    private _localizationService?: LocalizationService;
 
-    public constructor(obj: { localeFile: string; locale: string; locale_regex?: RegExp; name: string; firstDayOfWeek: number; h24: boolean; gdpr?: string }) {
+    public constructor(obj: { localeFile: string; locale: string; locale_regex?: RegExp; name: string; firstDayOfWeek?: number; h24?: boolean; gdpr?: string; icon?: string, localizationKey?: string }, service: LocalizationService) {
         this.localeFile = obj.localeFile;
         this.locale = obj.locale;
         this.locale_regex = obj.locale_regex;
         this.name = obj.name;
-        this.firstDayOfWeek = obj.firstDayOfWeek;
-        this.h24 = obj.h24;
+        this.firstDayOfWeek = obj.firstDayOfWeek ?? 2;
+        this.h24 = obj.h24 ?? true;
         this.gdpr = obj.gdpr ?? "en";
+        this.localizationKey = obj.localizationKey;
+        this._icon = obj.icon ?? obj.localeFile;
+        this._localizationService= service;
+    }
+
+    public get Icon() {
+        return `/assets/icons/countries/${this._icon}.png`;
+    }
+
+    public get LocalizedString(): string {
+        const key = `languages.${this.locale}`;
+        let locale = String(this._localizationService?.getText(key));
+        if (locale == key || locale.length == 0 || locale == this.name) {
+            return this.name;
+        }
+        else {
+            return `${locale} - ${this.name}`;
+        }
     }
 
     public Match(locale: string): boolean {

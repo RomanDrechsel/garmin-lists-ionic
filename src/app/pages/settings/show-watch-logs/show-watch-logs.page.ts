@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, SelectCustomEvent } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonSelect, IonSelectOption, IonText, SelectCustomEvent } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
@@ -15,7 +15,7 @@ import { PageBase } from "../../page-base";
     templateUrl: "./show-watch-logs.page.html",
     styleUrls: ["./show-watch-logs.page.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonFabButton, IonFab, IonText, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageEmptyComponent]
+    imports: [IonFabButton, IonFab, IonText, IonIcon, IonContent, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class ShowWatchLogsPage extends PageBase {
     public Device?: ConnectIQDevice = undefined;

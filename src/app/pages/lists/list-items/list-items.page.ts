@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonRow, IonText, IonTitle, IonToolbar, ItemReorderEventDetail, ModalController } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonText, ItemReorderEventDetail } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
@@ -20,7 +20,7 @@ import { PageBase } from "../../page-base";
     templateUrl: "./list-items.page.html",
     styleUrls: ["./list-items.page.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonCol, IonRow, IonImg, IonGrid, IonText, IonFabButton, IonFab, IonReorder, IonNote, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent]
+    imports: [IonImg, IonText, IonFabButton, IonFab, IonReorder, IonNote, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent],
 })
 export class ListItemsPage extends PageBase {
     @ViewChild("itemsContainer") private itemsContainer?: IonList;
@@ -32,7 +32,6 @@ export class ListItemsPage extends PageBase {
     private useTrash = true;
 
     private readonly Route = inject(ActivatedRoute);
-    private readonly ModalCtrl = inject(ModalController);
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
