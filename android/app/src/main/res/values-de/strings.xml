@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Listen</string>
     <string name="app_name_debug">Listen Debug</string>
+    <string name="title_activity_main">Listen</string>
 </resources>

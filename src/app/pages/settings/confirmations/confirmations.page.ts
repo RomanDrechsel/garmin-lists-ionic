@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonHeader, IonItem, IonLabel, IonList, IonNote, IonText, IonTitle, IonToggle, IonToolbar } from "@ionic/angular/standalone";
+import { IonContent, IonItem, IonList, IonNote, IonToggle } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { EPrefProperty } from "../../../services/storage/preferences.service";
@@ -11,9 +11,8 @@ import { PageBase } from "../../page-base";
     selector: "app-confirmations",
     templateUrl: "./confirmations.page.html",
     styleUrls: ["./confirmations.page.scss"],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonLabel, IonToggle, IonNote, IonItem, IonText, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
+    imports: [IonToggle, IonNote, IonItem, IonList, IonContent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
 })
 export class ConfirmationsPage extends PageBase {
     private _deleteList: boolean = true;

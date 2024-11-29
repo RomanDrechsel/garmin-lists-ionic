@@ -3,7 +3,7 @@ import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
 import { Platform } from "@ionic/angular";
-import { NavController } from '@ionic/angular/standalone';
+import { NavController } from "@ionic/angular/standalone";
 import { environment } from "../../../environments/environment";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { MainToolbarComponent } from "../../components/main-toolbar/main-toolbar.component";
@@ -14,16 +14,17 @@ import { Locale } from "../localization/locale";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { LoggingService } from "../logging/logging.service";
+import { PopupsService } from "../popups/popups.service";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
+import { ConfigService } from "./../config/config.service";
 
 @Injectable({
     providedIn: "root",
 })
 export class AppService {
     public static AppToolbar?: MainToolbarComponent;
-    public static readonly EMailAddress: string = "lists-app@roman-drechsel.de";
 
-    public readonly loggerService = inject(LoggingService);
+    public readonly Logger = inject(LoggingService);
     public readonly Locale = inject(LocalizationService);
     public readonly ListsService = inject(ListsService);
     public readonly ConnectIQ = inject(ConnectIQService);
@@ -31,7 +32,10 @@ export class AppService {
     public readonly Preferences = inject(PreferencesService);
     public readonly Admob = inject(AdmobService);
     public readonly NavController = inject(NavController);
-    public readonly Logger = inject(LoggingService);
+    public readonly Config = inject(ConfigService);
+
+    private readonly _popups = inject(PopupsService);
+    public static Popups: PopupsService;
 
     /** platform as short string (android, ios, web) */
     public static get AppPlatform(): string {
@@ -63,7 +67,8 @@ export class AppService {
      * initialize app services
      */
     public async InitializeApp() {
-        await Logger.Initialize(this.loggerService);
+        AppService.Popups = this._popups;
+        await Logger.Initialize(this.Logger);
         await Locale.Initialize(this.Locale);
         await this.ListsService.Initialize();
 
@@ -77,6 +82,9 @@ export class AppService {
         if (loadList.length > 0) {
             await this.NavController.navigateForward(`/lists/items/${loadList}`);
         }
+        window.setTimeout(async () => {
+            await this.Preferences.Set(EPrefProperty.FirstStart, false);
+        }, 5000);
     }
 
     /**
@@ -104,7 +112,7 @@ export class AppService {
      * get info about the app instance and the device
      * @returns app meta information
      */
-    public async AppMetaInfo(query?: { device?: boolean, settings?: boolean, storage?: boolean; }): Promise<AppMetaInfo> {
+    public async AppMetaInfo(query?: { device?: boolean; settings?: boolean; storage?: boolean }): Promise<AppMetaInfo> {
         const meta: AppMetaInfo = {};
         if (!query || query.device !== false) {
             const deviceinfo = await Device.getInfo();
@@ -128,7 +136,7 @@ export class AppService {
 
         if (!query || query.settings !== false) {
             meta.Settings = {
-                LogMode: this.loggerService.LogLevelShort,
+                LogMode: this.Logger.LogLevelShort,
                 AppLanguage: this.Locale.CurrentLanguage.locale,
                 AdmobStatus: await this.Admob.Status(),
             };
@@ -149,7 +157,7 @@ export class AppService {
                 Logs: {
                     Count: logs.files,
                     Size: logs.size,
-                }
+                },
             };
         }
 
@@ -171,46 +179,46 @@ export class AppService {
 
 export declare type AppMetaInfo = {
     Settings?: {
-        LogMode: string,
-        AppLanguage: string,
-        AdmobStatus: string,
-    },
+        LogMode: string;
+        AppLanguage: string;
+        AdmobStatus: string;
+    };
     Device?: {
-        Identifier: string,
-        Resolution: string,
-        Model: string,
-        Platform: "android" | "ios" | "web",
+        Identifier: string;
+        Resolution: string;
+        Model: string;
+        Platform: "android" | "ios" | "web";
         OperatingSystem: {
-            OS: string,
-            Version: string,
-            AndroidSDKVersion: number | undefined,
+            OS: string;
+            Version: string;
+            AndroidSDKVersion: number | undefined;
         };
-        Manufacturer: string,
-        isVirtual: boolean,
-        DiskFree: number | undefined,
-        MemoryUsed: number | undefined,
-        WebViewVersion: string,
-    },
+        Manufacturer: string;
+        isVirtual: boolean;
+        DiskFree: number | undefined;
+        MemoryUsed: number | undefined;
+        WebViewVersion: string;
+    };
     Storage?: {
         Lists: {
-            Count: number,
+            Count: number;
             Size: number;
-        },
+        };
         Trash: {
-            Count: number,
+            Count: number;
             Size: number;
-        },
+        };
         Logs: {
-            Count: number,
+            Count: number;
             Size: number;
-        },
-    },
+        };
+    };
     Package?: {
-        Name: string,
-        AppName: string,
-        VersionString: string,
+        Name: string;
+        AppName: string;
+        VersionString: string;
         Build: number;
-        Environment: "Production" | "Development",
-        Release: boolean,
-    },
+        Environment: "Production" | "Development";
+        Release: boolean;
+    };
 };

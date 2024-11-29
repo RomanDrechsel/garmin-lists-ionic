@@ -4,9 +4,8 @@ https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
 ADB
 https://wiki.ubuntuusers.de/adb/
 
-ionic build --clean --configuration=production && npx cap sync
-
-ionic build --clean --configuration=liveRelease && npx cap sync
-
-npx ionic cap run android --target=R5CW31K1TPT --livereload --external --configuration=development --public-host=192.168.178.33
-npx ionic cap run android --target=Android_14 --livereload --external --configuration=development --public-host=192.168.178.33
+TEST: Italienisch
+TEST: DSGVO übersetzen
+TEST: Sprachauswahl in DSGVO
+TEST: SASS Import deprecated
+TEST: DSGVO Admob Daten löschen erklären

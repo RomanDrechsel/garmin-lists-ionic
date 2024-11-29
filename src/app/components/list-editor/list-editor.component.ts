@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, inject } from "@angular/core";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonList, IonModal, IonNote, IonPicker, IonPickerColumn, IonPickerColumnOption, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
+import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonInput, IonItem, IonList, IonNote, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { List, ListReset } from "../../services/lists/list";
 import { ListsService } from "../../services/lists/lists.service";
@@ -11,8 +11,7 @@ import { SelectTimeInterval } from "../select-interval/select-interval.component
 
 @Component({
     selector: "app-list-edit",
-    standalone: true,
-    imports: [IonText, IonModal, IonNote, IonList, IonAccordion, IonCheckbox, IonAccordionGroup, IonPicker, IonIcon, IonTitle, IonItem, IonInput, IonButton, IonButtons, IonToolbar, IonHeader, IonContent, IonSelect, IonSelectOption, IonPickerColumn, IonPickerColumnOption, CommonModule, TranslateModule, ReactiveFormsModule, FormsModule],
+    imports: [IonText, IonNote, IonList, IonAccordion, IonCheckbox, IonAccordionGroup, IonIcon, IonTitle, IonItem, IonInput, IonButton, IonButtons, IonToolbar, IonHeader, IonSelect, IonSelectOption, CommonModule, TranslateModule, ReactiveFormsModule, FormsModule],
     templateUrl: "./list-editor.component.html",
     styleUrl: "./list-editor.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,

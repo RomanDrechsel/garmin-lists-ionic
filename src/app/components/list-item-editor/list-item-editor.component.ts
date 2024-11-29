@@ -1,40 +1,26 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { IonButton, IonButtons, IonHeader, IonIcon, IonInput, IonTextarea, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
+import { IonButton, IonButtons, IonHeader, IonIcon, IonTextarea, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Locale } from "../../services/localization/locale";
 
 @Component({
-    selector: 'app-list-item-editor',
-    standalone: true,
-    imports: [
-        IonTextarea,
-        IonInput,
-        IonIcon,
-        IonButton,
-        IonButtons,
-        IonTitle,
-        IonToolbar,
-        IonHeader,
-        CommonModule,
-        TranslateModule,
-        ReactiveFormsModule,
-        FormsModule
-    ],
-    templateUrl: './list-item-editor.component.html',
-    styleUrl: './list-item-editor.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "app-list-item-editor",
+    imports: [IonTextarea, IonIcon, IonButton, IonButtons, IonTitle, IonToolbar, IonHeader, CommonModule, TranslateModule, ReactiveFormsModule, FormsModule],
+    templateUrl: "./list-item-editor.component.html",
+    styleUrl: "./list-item-editor.component.scss",
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListItemEditorComponent implements OnInit {
-    @ViewChild('itemname') private itemname!: IonTextarea;
+    @ViewChild("itemname") private itemname!: IonTextarea;
     public Params?: EditorParams;
     public Form: FormGroup;
 
     constructor(private modalCtrl: ModalController, formbuilder: FormBuilder) {
         this.Form = formbuilder.group({
-            item: ['', [Validators.required]],
-            note: ['']
+            item: ["", [Validators.required]],
+            note: [""],
         });
     }
 
@@ -44,19 +30,17 @@ export class ListItemEditorComponent implements OnInit {
     }
 
     public get Title(): string {
-        if (this.Params?.purpose == 'edit') {
+        if (this.Params?.purpose == "edit") {
             return Locale.getText("comp-listitemeditor.title_edit");
-        }
-        else {
+        } else {
             return Locale.getText("comp-listitemeditor.title_new");
         }
     }
 
     public get Confirm(): string {
-        if (this.Params?.purpose == 'edit') {
+        if (this.Params?.purpose == "edit") {
             return Locale.getText("save");
-        }
-        else {
+        } else {
             return Locale.getText("create");
         }
     }
@@ -74,36 +58,35 @@ export class ListItemEditorComponent implements OnInit {
         if (note) {
             note = note.trim();
         }
-        return this.modalCtrl.dismiss({ item: item, note: note }, 'confirm');
+        return this.modalCtrl.dismiss({ item: item, note: note }, "confirm");
     }
 
     public cancel() {
-        return this.modalCtrl.dismiss(null, 'cancel');
+        return this.modalCtrl.dismiss(null, "cancel");
     }
 }
 
-
-export const ListItemEditor = async function(modalController: ModalController, params?: EditorParams): Promise<ListItemEditorReturn | undefined> {
+export const ListItemEditor = async function (modalController: ModalController, params?: EditorParams): Promise<ListItemEditorReturn | undefined> {
     const modal = await modalController.create({
         component: ListItemEditorComponent,
         componentProps: { Params: params },
         animated: true,
         backdropDismiss: true,
         showBackdrop: true,
-        cssClass: 'autosize-modal'
+        cssClass: "autosize-modal",
     });
     modal.present();
 
     const { data, role } = await modal.onWillDismiss();
 
-    if (role === 'confirm') {
+    if (role === "confirm") {
         return data;
     }
     return undefined;
 };
 
 type EditorParams = {
-    purpose?: 'new' | 'edit';
+    purpose?: "new" | "edit";
     item?: string;
     note?: string;
 };

@@ -4,6 +4,7 @@ import { AppComponent } from "../app.component";
 import { MenuItem } from "../classes/menu-items";
 import { MainToolbarComponent } from "../components/main-toolbar/main-toolbar.component";
 import { AppService } from "../services/app/app.service";
+import { ConfigService } from "../services/config/config.service";
 import { ConnectIQService } from "../services/connectiq/connect-iq.service";
 import { ListsService } from "../services/lists/lists.service";
 import { LocalizationService } from "../services/localization/localization.service";
@@ -13,6 +14,7 @@ import { PreferencesService } from "../services/storage/preferences.service";
 
 @Component({
     template: "",
+    standalone: false,
 })
 export abstract class PageBase {
     @ViewChild(MainToolbarComponent) protected Toolbar?: MainToolbarComponent;
@@ -26,6 +28,7 @@ export abstract class PageBase {
     protected readonly Preferences = inject(PreferencesService);
     protected readonly NavController = inject(NavController);
     protected readonly AppService = inject(AppService);
+    protected readonly Config = inject(ConfigService);
     protected readonly cdr = inject(ChangeDetectorRef);
 
     public async ionViewWillEnter() {
@@ -37,9 +40,9 @@ export abstract class PageBase {
         AppService.AppToolbar = this.Toolbar;
     }
 
-    public async ionViewWillLeave() { }
+    public async ionViewWillLeave() {}
 
-    public async ionViewDidLeave() { }
+    public async ionViewDidLeave() {}
 
     public ModifyMainMenu(): MenuItem[] {
         return [];

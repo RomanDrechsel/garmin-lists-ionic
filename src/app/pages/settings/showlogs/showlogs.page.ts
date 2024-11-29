@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { FileInfo } from "@capacitor/filesystem";
-import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonText, IonTextarea, ModalController, SelectCustomEvent } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonSelect, IonSelectOption, IonText, ModalController, SelectCustomEvent } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription, interval } from "rxjs";
 import { FileUtils } from "src/app/classes/utils/file-utils";
@@ -15,9 +15,8 @@ import { PageBase } from "../../page-base";
     selector: "app-showlogs",
     templateUrl: "./showlogs.page.html",
     styleUrls: ["./showlogs.page.scss"],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [PageEmptyComponent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, IonIcon, IonLabel, IonFabButton, IonFab, IonFabList, IonContent, IonList, IonItem, IonSelect, IonTextarea, IonSelectOption, IonText],
+    imports: [PageEmptyComponent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, IonIcon, IonFabButton, IonFab, IonFabList, IonContent, IonSelect, IonSelectOption, IonText],
 })
 export class ShowlogsPage extends PageBase {
     public currentLogfile?: FileUtils.File;

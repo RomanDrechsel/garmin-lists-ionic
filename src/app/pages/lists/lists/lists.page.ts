@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, ViewChild, WritableSignal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTitle, IonToolbar, ItemReorderEventDetail } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { List } from "src/app/services/lists/list";
@@ -13,8 +13,7 @@ import { PageBase } from "../../page-base";
     selector: "app-lists",
     templateUrl: "./lists.page.html",
     styleUrls: ["./lists.page.scss"],
-    standalone: true,
-    imports: [IonImg, IonText, IonInput, IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonLabel, IonItem, IonReorder, IonReorderGroup, IonList, IonContent, IonHeader, IonTitle, IonToolbar, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule],
+    imports: [IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonReorderGroup, IonList, IonContent, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule],
 })
 export class ListsPage extends PageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;

@@ -7,14 +7,13 @@ import { LocalizationService } from "../../services/localization/localization.se
 
 @Component({
     selector: 'app-datetime',
-    standalone: true,
     imports: [
         IonDatetime, IonButtons, IonButton, CommonModule, TranslateModule,
     ],
     templateUrl: './datetime.component.html',
     styleUrl: './datetime.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None,
+    encapsulation: ViewEncapsulation.None
 })
 export class DatetimeComponent implements AfterViewInit {
     @ViewChild('datetime', { read: ElementRef, static: false }) datetime?: ElementRef;

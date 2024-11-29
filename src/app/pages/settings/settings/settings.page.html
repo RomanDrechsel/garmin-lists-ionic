@@ -2,12 +2,18 @@
 
 <ion-content>
     <ion-list>
-        <ion-item lines="full">
-            <ion-select [label]="'page_settings.language'|translate" label-placement="stacked" value="{{Locale.CurrentLanguage.locale}}" [okText]="'change'|translate" [cancelText]="'cancel'|translate" (ionChange)="onChangeLanguage($event)">
-                <ion-select-option *ngFor="let details of Locale.availableTranslations" value="{{details.locale}}" (selected)="Locale.CurrentLanguage.locale == details.locale">
-                    {{details.name}}
-                </ion-select-option>
+        <!-- app language -->
+        <ion-item lines="none">
+            <ion-select class="select-language" interface="action-sheet" [label]="'page_settings.language'|translate" label-placement="stacked" value="{{Locale.CurrentLanguage.locale}}" [okText]="'change'|translate" [cancelText]="'cancel'|translate" (ionChange)="onChangeLanguage($event)">
+                <ion-img *ngIf="Locale.CurrentLanguage?.Icon" slot="start" [src]="Locale.CurrentLanguage!.Icon"></ion-img>
+                <ion-select-option *ngFor="let details of Locale.AvailableTranslations" value="{{details.locale}}" (selected)="Locale.CurrentLanguage.locale == details.locale"> {{details.LocalizedString}} </ion-select-option>
             </ion-select>
+        </ion-item>
+
+        <!-- translation mistakes -->
+        <ion-item lines="full" (click)="reportTranslationMistake()">
+            <ion-note [innerHTML]="'page_settings.language_hint'|translate : { 'email': Email}"></ion-note>
+            <ion-icon src="/assets/icons/info.svg" slot="end" class="info-icon"></ion-icon>
         </ion-item>
 
         <!-- transmission settings -->

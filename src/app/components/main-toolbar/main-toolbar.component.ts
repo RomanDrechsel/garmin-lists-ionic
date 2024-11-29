@@ -5,11 +5,10 @@ import { TranslateModule } from "@ngx-translate/core";
 
 @Component({
     selector: "app-main-toolbar",
-    standalone: true,
     imports: [IonProgressBar, CommonModule, TranslateModule, IonToolbar, IonButtons, IonMenuButton, IonBackButton, IonTitle, IonHeader],
     templateUrl: "./main-toolbar.component.html",
     styleUrl: "./main-toolbar.component.scss",
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainToolbarComponent {
     @Input("title") pageTitle: string = "";
