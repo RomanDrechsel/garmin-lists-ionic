@@ -162,6 +162,12 @@ export class ListEditorComponent {
         return this.modalCtrl.dismiss(list, "confirm");
     }
 
+    public async onDelete() {
+        if (this.Params?.list && (await this.ListsService.DeleteList(this.Params.list))) {
+            this.cancel();
+        }
+    }
+
     public cancel() {
         return this.modalCtrl.dismiss(null, "cancel");
     }

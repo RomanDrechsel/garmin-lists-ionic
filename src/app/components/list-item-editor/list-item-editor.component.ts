@@ -99,6 +99,12 @@ export class ListItemEditorComponent implements OnInit {
         return this.modalCtrl.dismiss(item, "confirm");
     }
 
+    public async onDelete() {
+        if (this.Params?.list && this.Params?.item && (await this.ListsService.DeleteListitem(this.Params.list, this.Params.item))) {
+            this.cancel();
+        }
+    }
+
     public cancel() {
         return this.modalCtrl.dismiss(null, "cancel");
     }

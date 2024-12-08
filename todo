@@ -4,4 +4,6 @@ https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
 ADB
 https://wiki.ubuntuusers.de/adb/
 
-WIP: Listitem Einstellungen aus Swipe in Popup
+TEST: Listitem Einstellungen aus Swipe in Popup
+BUG: List-Editor Darkmode Fehler im Dropdown
+TODO: Hindi?

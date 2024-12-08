@@ -27,5 +27,9 @@
         <ion-button class="ion-float-end" [disabled]="!Form.valid" (click)="onSubmit()">
             {{ Confirm }}
         </ion-button>
+
+        <ion-button *ngIf="Params?.list && Params?.item" class="ion-float-end" (click)="onDelete()">
+            {{ "delete" | translate }}
+        </ion-button>
     </form>
 </div>
