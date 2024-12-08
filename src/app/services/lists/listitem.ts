@@ -1,4 +1,3 @@
-import { ListItemEditorReturn } from "../../components/list-item-editor/list-item-editor.component";
 import { Logger } from "../logging/logger";
 
 export class Listitem {
@@ -184,16 +183,6 @@ export class Listitem {
             updated: this._updated,
             deleted: this._deleted,
         };
-    }
-
-    /**
-     * update item info from user input
-     * @param obj user input object
-     */
-    public fromInput(obj: ListItemEditorReturn) {
-        this.Item = obj.item;
-        this.Note = obj.note;
-        this.Updated = Date.now();
     }
 
     /**

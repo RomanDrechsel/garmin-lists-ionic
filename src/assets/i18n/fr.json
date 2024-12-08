@@ -118,7 +118,11 @@
         "title_new": "Créer un élément",
         "title_edit": "Modifier l'élément",
         "itemname": "Nom",
-        "itemnote": "Note"
+        "itemnote": "Note",
+        "hidden": "Cacher",
+        "hidden_info": "Les points de liste cachés ne sont pas transférés sur votre montre mais restent sur le smartphone.<br /><br />Cela est utile si vous ne voulez temporairement pas afficher certains points, mais que vous ne voulez quand même pas les supprimer. Ils peuvent être réutilisés plus tard.",
+        "locked": "Verrouiller",
+        "locked_info": "Les points de liste verrouillés ne sont pas supprimés lorsque la liste est vidée.<br /><br />Cela simplifie le nettoyage de la liste si vous souhaitez répéter régulièrement certains points."
     },
     "comp_sharelog": {
         "title": "Sauvegarder le journal",
@@ -159,7 +163,7 @@
         "loading": "Chargement de la liste...",
         "menu_empty": "Vider la liste",
         "menu_devices": "Transférer la liste",
-        "hide": "Masquer",
+        "hide": "Cacher",
         "show": "Afficher",
         "lock": "Verrouiller",
         "unlock": "Déverrouiller",

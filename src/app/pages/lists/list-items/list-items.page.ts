@@ -157,7 +157,7 @@ export class ListItemsPage extends PageBase {
 
     public async EditList(): Promise<boolean> {
         if (this.List) {
-            this.ListsService.EditList(this.List, false);
+            this.ListsService.EditList(this.List);
             return true;
         }
         return false;

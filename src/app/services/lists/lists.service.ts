@@ -164,8 +164,8 @@ export class ListsService {
      * @param list list to be edited
      * @param only_title if true, only the title will be edited
      */
-    public async EditList(list: List, only_title: boolean = true) {
-        const ret = await ListEditor(this.ModalCtrl, { list: list, extended: !only_title });
+    public async EditList(list: List) {
+        const ret = await ListEditor(this.ModalCtrl, { list: list });
         if (ret) {
             if (await this.StoreList(list)) {
                 Logger.Notice(`Edited list ${list.toLog()}`);
@@ -230,10 +230,8 @@ export class ListsService {
         if (AppService.isMobileApp) {
             Keyboard.show();
         }
-        const obj = await ListItemEditor(this.ModalCtrl);
-        if (obj) {
-            const item_id = await this.createUuid(list);
-            const item = Listitem.Create({ uuid: item_id, item: obj.item, note: obj.note, order: list.Items.length, created: Date.now() });
+        const item = await ListItemEditor(this.ModalCtrl, { list: list });
+        if (item) {
             list.AddItem(item);
             if (await this.StoreList(list)) {
                 Logger.Debug(`Created new listitem ${item.toLog()}`);
@@ -253,9 +251,8 @@ export class ListsService {
      * @returns editing successful? undefined if user canceled it
      */
     public async EditListitem(list: List, item: Listitem): Promise<boolean | undefined> {
-        const obj = await ListItemEditor(this.ModalCtrl, { item: item.Item, note: item.Note, purpose: "edit" });
+        const obj = await ListItemEditor(this.ModalCtrl, { list: list, item: item });
         if (obj) {
-            item.fromInput(obj);
             if (await this.StoreList(list)) {
                 Logger.Debug(`Edited listitem ${item.toLog()}`);
                 return true;
@@ -595,9 +592,20 @@ export class ListsService {
     /**
      * creates a new List object
      * @param args list properties
+     * @returns list object
      */
     public async createNewListObj(args: { name: string }): Promise<List> {
         return new List({ name: args.name, uuid: await this.createUuid(), created: Date.now(), order: this._listIndex.size });
+    }
+
+    /**
+     * creates a new Listitem object
+     * @param list  the list the item is part of
+     * @param args listitem properties
+     * @returns Listitem object
+     */
+    public async createNewListitemObj(list: List, args: { item: string; note?: string; hidden?: boolean; locked?: boolean }): Promise<Listitem> {
+        return Listitem.Create({ item: args.item, note: args.note, hidden: args.hidden, locked: args.locked, order: list.ItemsCount, uuid: await this.createUuid(), created: Date.now() });
     }
 
     /**

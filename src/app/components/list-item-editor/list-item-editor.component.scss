@@ -20,6 +20,14 @@
         }
     }
 
+    ion-item {
+        --inner-padding-end: 0;
+
+        &:first-of-type {
+            margin-block-start: 1em;
+        }
+    }
+
     ion-button {
         margin-top: 20px;
     }

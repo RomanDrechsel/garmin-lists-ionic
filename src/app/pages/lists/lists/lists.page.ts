@@ -59,7 +59,7 @@ export class ListsPage extends PageBase {
     }
 
     public editList(event: MouseEvent, list: List) {
-        this.ListsService.EditList(list, true);
+        this.ListsService.EditList(list);
         event.stopImmediatePropagation();
     }
 

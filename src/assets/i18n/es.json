@@ -118,7 +118,11 @@
         "title_new": "Crear elemento de lista",
         "title_edit": "Editar elemento de lista",
         "itemname": "Nombre del elemento",
-        "itemnote": "Nota del elemento"
+        "itemnote": "Nota del elemento",
+        "hidden": "Ocultar",
+        "hidden_info": "Los puntos de lista ocultados no se transfieren a su reloj, pero permanecen en el teléfono inteligente.<br /><br />Esto es útil si temporalmente no desea mostrar ciertos puntos, pero tampoco desea eliminarlos. Pueden ser reutilizados más tarde.",
+        "locked": "Bloquear",
+        "locked_info": "Los puntos de lista bloqueados no se eliminan al vaciar la lista.<br /><br />Esto facilita el orden de la lista si desea repetir ciertos puntos regularmente."
     },
     "comp_sharelog": {
         "title": "Guardar log",
