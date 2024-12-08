@@ -117,9 +117,9 @@
         "title_edit": "Modifica il punto della lista",
         "itemname": "Nome",
         "itemnote": "Nota",
-        "hidden": "Nascondi",
+        "hidden": "Nascosto",
         "hidden_info": "I punti della lista nascosti non vengono trasferiti al tuo orologio, ma rimangono sul telefono.<br /><br />Questo è utile se desideri temporaneamente nascondere alcuni punti senza eliminarli. Possono essere riutilizzati in seguito.",
-        "locked": "Blocca",
+        "locked": "Bloccato",
         "locked_info": "I punti della lista bloccati non vengono eliminati quando la lista viene svuotata.<br /><br />Questo semplifica l'ordine nella lista se desideri ripetere regolarmente alcuni punti."
     },
     "comp_sharelog": {
