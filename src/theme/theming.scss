@@ -92,6 +92,10 @@ ion-select {
     }
 }
 
+ion-toggle {
+    --handle-background: var(--color-toggle-handle-background);
+}
+
 ion-modal,
 ion-alert,
 ion-loading {
@@ -142,6 +146,18 @@ ion-backdrop {
 
 ion-action-sheet {
     backdrop-filter: blur(2px);
+
+    .action-sheet-wrapper {
+        .action-sheet-container {
+            --background: var(--color-action-sheet-background);
+        }
+    }
+
+    .action-sheet-button {
+        span {
+            color: var(--color-text);
+        }
+    }
 }
 
 ion-icon.info-icon {
@@ -154,6 +170,9 @@ ion-icon.info-icon {
 }
 
 ion-checkbox {
+    --border-color: var(--color-control-border);
+    --checkbox-background: var(--color-control-background);
+
     &::part(container) {
         position: absolute;
         top: 14px;
@@ -170,6 +189,10 @@ ion-datetime {
         flex-wrap: wrap;
         justify-content: end;
     }
+}
+
+ion-picker {
+    --ion-background-color-rgb: var(--color-picker-rgb);
 }
 
 .no-wrap {
