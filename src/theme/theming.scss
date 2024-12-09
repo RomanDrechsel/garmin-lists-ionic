@@ -90,6 +90,12 @@ ion-select {
             color: var(--color-highlight) !important;
         }
     }
+
+    .input-bottom {
+        .counter {
+            --ion-color-step-550: var(--ion-color-medium);
+        }
+    }
 }
 
 ion-toggle {
