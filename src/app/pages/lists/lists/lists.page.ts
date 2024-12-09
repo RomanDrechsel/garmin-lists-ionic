@@ -59,13 +59,14 @@ export class ListsPage extends PageBase {
     }
 
     public editList(event: MouseEvent, list: List) {
-        this.ListsService.EditList(list);
         event.stopImmediatePropagation();
+        this.ListsService.EditList(list);
     }
 
-    public gotoList(list: List) {
+    public gotoList(event: MouseEvent, list: List) {
         if (!this.disableClick) {
             this.NavController.navigateForward(`/lists/items/${list.Uuid}`);
+            event.stopImmediatePropagation();
         }
     }
 
