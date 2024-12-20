@@ -1,33 +1,35 @@
 import { inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { Browser } from "@capacitor/browser";
-import { Capacitor, PluginListenerHandle } from "@capacitor/core";
+import { Capacitor } from "@capacitor/core";
 import { BehaviorSubject, interval, Subscription } from "rxjs";
-import { LogEventArgs } from "src/app/plugins/connectiq/event-args/log-event-args";
 import { DebugDevices, environment } from "../../../environments/environment";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { SelectGarminDevice } from "../../pages/devices/devices.page";
 import ConnectIQ from "../../plugins/connectiq/connect-iq";
 import { ConnectIQDeviceMessage } from "../../plugins/connectiq/event-args/connect-iq-device-message.";
 import { DeviceEventArgs } from "../../plugins/connectiq/event-args/device-event-args";
+import { ConnectIQListener } from "../../plugins/connectiq/listeners/connect-iq-listener";
+import { DeviceListener } from "../../plugins/connectiq/listeners/device-listener";
+import { DeviceLogsListener } from "../../plugins/connectiq/listeners/device-logs-listener";
+import { TimeoutListener } from "../../plugins/connectiq/listeners/timeout-listener";
+import { TransactionListener } from "../../plugins/connectiq/listeners/transaction-listener";
 import { ConfigService } from "../config/config.service";
 import { Locale } from "../localization/locale";
 import { LocalizationService } from "../localization/localization.service";
 import { PopupsService } from "../popups/popups.service";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
-import { DeviceMessageEventArgs } from "./../../plugins/connectiq/event-args/device-message-event-args.";
 import { Logger } from "./../logging/logger";
 import { ConnectIQDevice } from "./connect-iq-device";
-import { ConnectIQResponseListener } from "./connect-iq-response-listener.";
 
 @Injectable({
     providedIn: "root",
 })
 export class ConnectIQService {
     private _alwaysTransmitToDevice?: ConnectIQDevice;
-    private _logListener?: PluginListenerHandle;
-    private _deviceListener?: PluginListenerHandle;
-    private _receiverListener?: PluginListenerHandle;
+
+    private _watchListeners: Map<string, ConnectIQListener<any>[]> = new Map();
+    private _pendingListenersTimeoutCheck?: Subscription;
 
     private _devices: ConnectIQDevice[] = [];
     private _watchOutdatedNotice: number[] = [];
@@ -38,12 +40,6 @@ export class ConnectIQService {
     public onInitialized$ = this.onInitializedSubject.asObservable();
     private onDeviceChangedSubject = new BehaviorSubject<ConnectIQDevice | undefined>(undefined);
     public onDeviceChanged$ = this.onDeviceChangedSubject.asObservable();
-    private onMessageReceivedSubject = new BehaviorSubject<{ device: ConnectIQDevice; message?: ConnectIQDeviceMessage } | undefined>(undefined);
-    public onMessageReceived$ = this.onMessageReceivedSubject.asObservable();
-
-    private readonly DEFAULT_PENDING_RESPONSE_TIMEOUT: number = 10;
-    private _pendingResponses: ConnectIQResponseListener[] = [];
-    private _pendingResponsesTimoutCheck?: Subscription = undefined;
 
     private readonly Preferences = inject(PreferencesService);
     private readonly Config = inject(ConfigService);
@@ -66,45 +62,8 @@ export class ConnectIQService {
      */
     public async Initialize(debug_devices: boolean = true) {
         if (Capacitor.isNativePlatform()) {
-            if (!this._logListener) {
-                this._logListener = await this.addListener<LogEventArgs>("LOG", log => {
-                    switch (log.level) {
-                        case "debug":
-                            Logger.Debug(`${log.tag}: ${log.message}`, log.obj);
-                            break;
-                        case "notice":
-                            Logger.Notice(`${log.tag}: ${log.message}`, log.obj);
-                            break;
-                        case "important":
-                            Logger.Important(`${log.tag}: ${log.message}`, log.obj);
-                            break;
-                        case "error":
-                            Logger.Error(`${log.tag}: ${log.message}`, log.obj);
-                            break;
-                    }
-                });
-            }
-            if (!this._deviceListener) {
-                this._deviceListener = await this.addListener<DeviceEventArgs>("DEVICE", device => {
-                    if (device) {
-                        Logger.Debug("Device state changed: ", device);
-                        this._devices.find(d => d.Identifier == device.id)?.Update(device);
-                        this.onDeviceChangedSubject.next(ConnectIQDevice.FromEventArgs(device, this));
-                        this.checkDeviceVersion(device);
-                    }
-                });
-            }
-            if (!this._receiverListener) {
-                this._receiverListener = await this.addListener<DeviceMessageEventArgs>("RECEIVE", async obj => {
-                    if (obj) {
-                        const message = new ConnectIQDeviceMessage(obj, this);
-                        Logger.Debug(`Received message with ${StringUtils.toString(message.Message).length} bytes from device: `, message.Device.toString());
-                        if ((await this.handleResponse(message)) == false) {
-                            this.onMessageReceivedSubject.next({ device: ConnectIQDevice.FromEventArgs(obj.device, this), message: message });
-                        }
-                    }
-                });
-            }
+            this.addListener(new DeviceLogsListener(this));
+            this.addListener(new DeviceListener(this));
             this._devices = [];
             this.isDebugMode = debug_devices;
             await ConnectIQ.Initialize({ live_devices: !debug_devices, live_app: environment.publicRelease });
@@ -211,7 +170,7 @@ export class ConnectIQService {
         await ConnectIQ.OpenApp({ device_id: String(device.Identifier) });
     }
 
-    public async SendToDevice(obj: { device?: ConnectIQDevice | number; data: any; response?: (message?: ConnectIQDeviceMessage) => Promise<void>; timeout?: number }): Promise<number | boolean> {
+    public async SendToDevice(obj: { device?: ConnectIQDevice | number; data: any; response_callback?: (message?: ConnectIQDeviceMessage) => Promise<void>; timeout?: number }): Promise<number | boolean> {
         if (typeof obj.device === "number") {
             obj.device = await this.GetDevice(obj.device);
         } else if (!obj.device) {
@@ -223,87 +182,107 @@ export class ConnectIQService {
             return false;
         }
 
-        let tid: number | undefined = undefined;
-        if (obj.response) {
-            tid = this.addResponseListener(obj.response, obj.timeout);
-            obj.data.tid = tid;
+        let listener: TransactionListener | undefined;
+        if (obj.response_callback) {
+            let tid: number;
+            do {
+                tid = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+            } while (this._watchListeners.get(TransactionListener.Event) && this._watchListeners.get(TransactionListener.Event)!.filter(t => t instanceof TransactionListener && t.TId == tid).length > 0);
+
+            listener = new TransactionListener(this, obj.device, tid, obj.response_callback);
+            this.addListener(listener);
+            obj.data.tid = listener.TId;
         }
 
         if ((await ConnectIQ.SendToDevice({ device_id: String(obj.device.Identifier), json: JSON.stringify(obj.data) })).success) {
-            return tid ?? true;
+            return listener?.TId ?? true;
         } else {
+            if (listener) {
+                this.removeListener(listener);
+            }
             return false;
         }
     }
 
     public CancelRequest(tid: number) {
-        this._pendingResponses = this._pendingResponses.filter(l => l.id != tid);
-        if (this._pendingResponsesTimoutCheck && this._pendingResponses.length === 0) {
-            this._pendingResponsesTimoutCheck.unsubscribe();
-            this._pendingResponsesTimoutCheck = undefined;
-        }
+        Array.from(this._watchListeners.entries()).forEach(([key, value]) => {
+            if (value.length > 0) {
+                const l = value.findIndex(l => l instanceof TransactionListener && l.TId == tid);
+                if (l >= 0) {
+                    value.splice(l, 1);
+                    if (value.length > 0) {
+                        this._watchListeners.set(key, value);
+                    } else {
+                        this._watchListeners.delete(key);
+                    }
+                    return;
+                }
+            }
+        });
     }
 
-    /**
-     * adds a plugin event listener
-     * @param eventName event name
-     * @param listenerFunc listener function
-     * @returns listener handle
-     */
-    public async addListener<T>(eventName: string, listenerFunc: (data: T) => void): Promise<PluginListenerHandle | undefined> {
-        if (Capacitor.isNativePlatform()) {
-            return await ConnectIQ.addListener<T>(eventName, listenerFunc);
+    public async addListener(listener: ConnectIQListener<any>) {
+        const arr = this._watchListeners.get(listener.Event());
+        if (arr && arr.indexOf(listener) < 0) {
+            arr.push(listener);
+            this._watchListeners.set(listener.Event(), arr);
+        } else if (!arr) {
+            this._watchListeners.set(listener.Event(), [listener]);
+        } else {
+            //the listener is already added
+            return;
         }
-        return undefined;
-    }
-
-    private addResponseListener(callback: (message?: ConnectIQDeviceMessage) => Promise<void>, timeout?: number): number {
-        let tid: number;
-        do {
-            tid = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-        } while (this._pendingResponses.filter(r => r.id === tid).length > 0);
-        this._pendingResponses.push({ id: tid, callback: callback, started: Date.now(), timeout: timeout ?? this.DEFAULT_PENDING_RESPONSE_TIMEOUT });
-        if (!this._pendingResponsesTimoutCheck) {
-            this._pendingResponsesTimoutCheck = interval(1000).subscribe(async () => {
-                const timeouts = this._pendingResponses.filter(r => r.started < Date.now() - r.timeout * 1000);
-                timeouts.forEach(t => {
-                    Logger.Error(`Response timeout for request ${t.id} after ${t.timeout} seconds (started ${new Date(t.started).toLocaleString()})`);
-                    t.callback(undefined);
+        await listener.addListener();
+        
+        if (listener instanceof TimeoutListener && !this._pendingListenersTimeoutCheck) {
+            this._pendingListenersTimeoutCheck = interval(1000).subscribe(async () => {
+                let found_timeout_listeners = false;
+                Array.from(this._watchListeners.entries()).forEach(([key, value]) => {
+                    if (value.length > 0) {
+                        if (value[0] instanceof TimeoutListener) {
+                            value = value.filter(l => l instanceof TimeoutListener && !l.IsTimedOut());
+                            if (value.length > 0) {
+                                found_timeout_listeners = true;
+                                this._watchListeners.set(key, value);
+                            } else {
+                                this._watchListeners.delete(key);
+                            }
+                        }
+                    } else {
+                        this._watchListeners.delete(key);
+                    }
                 });
-                this._pendingResponses = this._pendingResponses.filter(r => timeouts.indexOf(r) < 0);
-                if (this._pendingResponsesTimoutCheck && this._pendingResponses.length === 0) {
-                    this._pendingResponsesTimoutCheck.unsubscribe();
-                    this._pendingResponsesTimoutCheck = undefined;
+
+                if (this._pendingListenersTimeoutCheck && !found_timeout_listeners) {
+                    this._pendingListenersTimeoutCheck.unsubscribe();
+                    this._pendingListenersTimeoutCheck = undefined;
                 }
             });
         }
-
-        return tid;
     }
 
-    /**
-     * check if the response is an answer of a former request
-     * @param resp response object
-     * @returns true, if the response was awaited, else false
-     */
-    private async handleResponse(message: ConnectIQDeviceMessage): Promise<boolean> {
-        if (message.Message && message.Message.tid) {
-            const tid = Number(message.Message.tid);
-            if (!Number.isNaN(tid)) {
-                const pending = this._pendingResponses.find(r => r.id == tid);
-                if (pending) {
-                    Logger.Debug(`Received watch response for request ${tid} after ${Date.now() - pending.started} ms`);
-                    await pending.callback(message);
-                    this._pendingResponses = this._pendingResponses.filter(r => r != pending);
-                    if (this._pendingResponses.length == 0 && this._pendingResponsesTimoutCheck != null) {
-                        this._pendingResponsesTimoutCheck.unsubscribe();
-                        this._pendingResponsesTimoutCheck = undefined;
-                    }
-                    return true;
+    public async removeListener(listener: ConnectIQListener<any>): Promise<boolean> {
+        let arr = this._watchListeners.get(listener.Event());
+        if (arr) {
+            const index = arr.findIndex(l => l === listener);
+            if (index >= 0) {
+                arr.splice(index, 1);
+                await listener.clearListener();
+                if (arr.length > 0) {
+                    this._watchListeners.set(listener.Event(), arr);
+                } else {
+                    this._watchListeners.delete(listener.Event());
                 }
+                return true;
             }
         }
         return false;
+    }
+
+    public UpdateDevice(device: DeviceEventArgs) {
+        this._devices.find(d => d.Identifier == device.id)?.Update(device);
+        this.onDeviceChangedSubject.next(ConnectIQDevice.FromEventArgs(device, this));
+        this.checkDeviceVersion(device);
     }
 
     private async checkDeviceVersion(device: DeviceEventArgs) {
