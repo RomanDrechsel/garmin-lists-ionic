@@ -139,6 +139,8 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
         else
         {
             Map<String, Object> data = (HashMap<String, Object>) list.get(0);
+            String json = new Gson().toJson(data);
+            Logger.Debug(TAG, "Received data from device " + this + ": " + json.length() + " bytes");
             if (data != null)
             {
                 JSObject event_args = new JSObject();

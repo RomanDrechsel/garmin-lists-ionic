@@ -7,7 +7,7 @@ export class DeviceLogsListener extends ConnectIQListener<LogEventArgs> {
         return "LOG";
     }
 
-    protected async Callback(log: LogEventArgs): Promise<boolean> {
+    protected async Callback(log: LogEventArgs): Promise<void> {
         switch (log.level) {
             case "debug":
                 Logger.Debug(`${log.tag}: ${log.message}`, log.obj);
@@ -22,6 +22,5 @@ export class DeviceLogsListener extends ConnectIQListener<LogEventArgs> {
                 Logger.Error(`${log.tag}: ${log.message}`, log.obj);
                 break;
         }
-        return true;
     }
 }

@@ -144,7 +144,8 @@
         "meta_settings_note": "Log settings, language, etc.",
         "meta_storage": "Storage information",
         "meta_storage_note": "Number and size of lists and logs on the device",
-        "watch": "Attach logs of the watch"
+        "watch": "Attach logs of the watch",
+        "error_report_confirm": "The error report has been received.<br /><br />Would you like to forward it to me as a bug report??"
     },
     "comp_watchlogs": {
         "title": "Transmit logs",

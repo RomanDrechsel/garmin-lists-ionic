@@ -1,6 +1,6 @@
 <app-main-toolbar back="/settings/logging">{{'page_settings_showlogs.page_title'|translate}}</app-main-toolbar>
 
-<ion-content>
+<ion-content [ngClass]="{ 'disabled': runningAnimation?.isRunning }">
     <div class="select">
         <ion-icon src="./assets/icons/calendar.svg" class="calendar" (click)="openCalendar()"></ion-icon>
         <ion-select interface="action-sheet" [interfaceOptions]="{header: 'page_settings_showlogs.select_logs'|translate}" [value]="currentLogfile?.Filename" [cancelText]="'cancel'|translate" [disabled]="!LogfilesAvailable" (ionChange)="onChangeLogfile($event)">
@@ -21,11 +21,11 @@
     </ng-template>
 
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button [disabled]="!currentLogfile || !currentLogfile.Exists">
+        <ion-fab-button [disabled]="!currentLogfile || !currentLogfile.Exists" #fabButton>
             <ion-icon src="./assets/icons/list_menu.svg"></ion-icon>
         </ion-fab-button>
         <ion-fab-list side="top">
-            <ion-fab-button [attr.data-label]="'page_settings_showlogs.btn_save'|translate" (click)="onSave()" [disabled]="!currentLogfile || !currentLogfile.Exists">
+            <ion-fab-button [attr.data-label]="'page_settings_showlogs.btn_save'|translate" (click)="onSave()" [disabled]="!currentLogfile || !currentLogfile.Exists" #saveLogsButton>
                 <ion-icon src="./assets/icons/store.svg"></ion-icon>
             </ion-fab-button>
             <ion-fab-button [attr.data-label]="'page_settings_showlogs.btn_delete'|translate" (click)="onDelete()" [disabled]="!currentLogfile || !currentLogfile.Exists">

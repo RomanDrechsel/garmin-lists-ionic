@@ -1,6 +1,5 @@
 import { Capacitor, PluginListenerHandle } from "@capacitor/core";
 import { ConnectIQService } from "../../../services/connectiq/connect-iq.service";
-import { Logger } from "../../../services/logging/logger";
 import ConnectIQ from "../connect-iq";
 
 export abstract class ConnectIQListener<T> {
@@ -17,9 +16,7 @@ export abstract class ConnectIQListener<T> {
     public async addListener() {
         if (Capacitor.isNativePlatform()) {
             this._connectiqListener = await ConnectIQ.addListener<T>(this.Event(), async (data: T) => {
-                if ((await this.Callback(data)) == false) {
-                    this.CallbackFailed();
-                }
+                return this.Callback(data);
             });
         }
     }
@@ -39,9 +36,5 @@ export abstract class ConnectIQListener<T> {
      */
     public abstract Event(): string;
 
-    protected abstract Callback(data: T): Promise<boolean>;
-
-    protected CallbackFailed() {
-        Logger.Error(`Processing data for message ${this.Event()} failed`);
-    }
+    protected abstract Callback(data: T): Promise<void>;
 }

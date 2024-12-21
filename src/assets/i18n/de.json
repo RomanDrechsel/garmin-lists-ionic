@@ -144,7 +144,8 @@
         "meta_settings_note": "Log-Einstellungen, Sprache, etc.",
         "meta_storage": "Speicher Informationen",
         "meta_storage_note": "Anzahl/Größe der Listen und Logs auf dem Gerät",
-        "watch": "Logs der Uhr anhängen"
+        "watch": "Logs der Uhr anhängen",
+        "error_report_confirm": "Der Fehlerbericht wurde empfangen.<br /><br />Möchtest du ihn als Fehlerbericht an mich weiterleiten?"
     },
     "comp_watchlogs": {
         "title": "Logs übertragen",

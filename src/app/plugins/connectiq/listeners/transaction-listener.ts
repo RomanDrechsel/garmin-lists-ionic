@@ -28,7 +28,7 @@ export class TransactionListener extends TimeoutListener<DeviceMessageEventArgs>
         return TransactionListener.Event;
     }
 
-    protected async Callback(obj: DeviceMessageEventArgs): Promise<boolean> {
+    protected async Callback(obj: DeviceMessageEventArgs): Promise<void> {
         const message = new ConnectIQDeviceMessage(obj, this._service);
         if (message.Device.equals(this._device) && message.Message?.tid) {
             const tid = Number(message.Message.tid);
@@ -36,12 +36,8 @@ export class TransactionListener extends TimeoutListener<DeviceMessageEventArgs>
                 Logger.Debug(`Received watch response for request ${tid} with ${StringUtils.toString(message.Message).length} bytes from device ${message.Device.toString()} after ${Date.now() - (this._started ?? -1)} ms`);
                 await this._callback(message);
                 this._service.removeListener(this);
-                return true;
+                return;
             }
         }
-
-        return false;
     }
-
-    protected override CallbackFailed() {}
 }

@@ -23,11 +23,6 @@ import de.romandrechsel.lists.logging.Logger;
 
 public class DeviceManager implements ConnectIQ.ConnectIQListener
 {
-    public interface IAppLogsResponse
-    {
-        void onAppLogsResponse(@Nullable List<String> logs);
-    }
-
     @NonNull
     public ConnectIQPlugin Plugin;
     public ConnectIQ connectIQ;

@@ -1,3 +1,6 @@
+.disabled {
+    pointer-events: none;
+}
 .select {
     position: sticky;
     top: 0;
@@ -28,9 +31,19 @@
 }
 
 #logtext {
-    font-family: 'RobotoMono', monospace;
+    font-family: "RobotoMono", monospace;
     padding: 10px 6px 100px 6px;
     font-size: 0.7em;
     white-space: pre-wrap;
     color: var(--color-text);
+}
+
+ion-fab {
+    ion-fab-button {
+        &.clicked[data-label]::after {
+            background-color: var(--ion-color-secondary);
+            transition: background-color 0.5s ease-in-out;
+            color: var(--ion-color-secondary-contrast);
+        }
+    }
 }

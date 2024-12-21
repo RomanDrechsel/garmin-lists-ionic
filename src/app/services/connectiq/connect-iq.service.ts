@@ -2,6 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { Browser } from "@capacitor/browser";
 import { Capacitor } from "@capacitor/core";
+import { NavController } from "@ionic/angular/standalone";
 import { BehaviorSubject, interval, Subscription } from "rxjs";
 import { DebugDevices, environment } from "../../../environments/environment";
 import { StringUtils } from "../../classes/utils/string-utils";
@@ -12,6 +13,7 @@ import { DeviceEventArgs } from "../../plugins/connectiq/event-args/device-event
 import { ConnectIQListener } from "../../plugins/connectiq/listeners/connect-iq-listener";
 import { DeviceListener } from "../../plugins/connectiq/listeners/device-listener";
 import { DeviceLogsListener } from "../../plugins/connectiq/listeners/device-logs-listener";
+import { ErrorReportListener } from "../../plugins/connectiq/listeners/error-report-listener";
 import { TimeoutListener } from "../../plugins/connectiq/listeners/timeout-listener";
 import { TransactionListener } from "../../plugins/connectiq/listeners/transaction-listener";
 import { ConfigService } from "../config/config.service";
@@ -46,6 +48,7 @@ export class ConnectIQService {
     private readonly Router = inject(Router);
     private readonly Popup = inject(PopupsService);
     private readonly Locale = inject(LocalizationService);
+    private readonly NavController = inject(NavController);
 
     public set AlwaysTransmitToDevice(device: ConnectIQDevice | undefined) {
         this.Preferences.Set(EPrefProperty.AlwaysTransmitTo, device?.Identifier);
@@ -64,6 +67,7 @@ export class ConnectIQService {
         if (Capacitor.isNativePlatform()) {
             this.addListener(new DeviceLogsListener(this));
             this.addListener(new DeviceListener(this));
+            this.addListener(new ErrorReportListener(this, this.NavController, this.Popup));
             this._devices = [];
             this.isDebugMode = debug_devices;
             await ConnectIQ.Initialize({ live_devices: !debug_devices, live_app: environment.publicRelease });
@@ -233,7 +237,7 @@ export class ConnectIQService {
             return;
         }
         await listener.addListener();
-        
+
         if (listener instanceof TimeoutListener && !this._pendingListenersTimeoutCheck) {
             this._pendingListenersTimeoutCheck = interval(1000).subscribe(async () => {
                 let found_timeout_listeners = false;

@@ -17,7 +17,7 @@ export abstract class TimeoutListener<T> extends ConnectIQListener<T> {
     }
 
     public override async addListener(): Promise<void> {
-        await super.addListener();
         this._started = Date.now();
+        return super.addListener();
     }
 }

@@ -47,7 +47,7 @@ export class StoreLogComponent {
     }
 
     public async storeFile() {
-        if (this.attachWatchLogs?.checked) {
+        if (this.attachWatchLogs?.checked && !this.Params.watch_logs_included) {
             const logs = await this.WatchLogs.RequestGarminWatchLogs();
             if (logs) {
                 await this.addToLog(logs);
@@ -156,4 +156,6 @@ export const ShareLogfile = async function (modalController: ModalController, pa
 
 declare type ShareLogParams = {
     file: FileUtils.File;
+    watch_logs_included?: boolean;
+    do?: "store" | "share" | "email";
 };
