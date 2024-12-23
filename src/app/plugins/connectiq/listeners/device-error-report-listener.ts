@@ -7,7 +7,7 @@ import { ConnectIQDeviceMessage } from "../event-args/connect-iq-device-message.
 import { DeviceMessageEventArgs } from "../event-args/device-message-event-args.";
 import { ConnectIQListener } from "./connect-iq-listener";
 
-export class ErrorReportListener extends ConnectIQListener<DeviceMessageEventArgs> {
+export class DeviceErrorReportListener extends ConnectIQListener<DeviceMessageEventArgs> {
     private readonly _navController: NavController;
     private readonly _popup: PopupsService;
 

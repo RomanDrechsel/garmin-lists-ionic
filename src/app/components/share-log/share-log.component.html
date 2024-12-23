@@ -11,7 +11,7 @@
 <div class="inner-content ion-padding ion-text-center">
     <div [innerHTML]="'comp_sharelog.text' | translate : { filename: Params.file.Filename }"></div>
     <div *ngIf="!IsWebApp">
-        <ion-select value="store" interface="popover" fill="outline" [value]="Params.do" #do>
+        <ion-select value="store" interface="popover" fill="outline" [value]="Params.do ?? 'email'" #do>
             <ion-select-option value="store">{{ "comp_sharelog.store" | translate }}</ion-select-option>
             <ion-select-option value="share">{{ "comp_sharelog.share" | translate }}</ion-select-option>
             <ion-select-option value="email">{{ "comp_sharelog.email" | translate }}</ion-select-option>
@@ -61,5 +61,5 @@
     </div>
 </div>
 <div class="button">
-    <ion-button (click)="storeFile()">{{ "share" | translate }}</ion-button>
+    <ion-button (click)="storeFile()">{{ "save" | translate }}</ion-button>
 </div>

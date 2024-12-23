@@ -130,7 +130,7 @@
         "text_web": "The logfile <strong>{{filename}}</strong> will be stored on your disk.",
         "store": "Store in Documents on your device",
         "share": "Share",
-        "email": "Send me via e-mail",
+        "email": "Send as e-mail to developer",
         "share_email": {
             "title": "{{package}} / {{platform}} - logfile {{file}} ({{size}})",
             "text": "Please describe me the problems in more detailed way, so I can understand them a little bit better:\n\n"
@@ -150,7 +150,9 @@
     "comp_watchlogs": {
         "title": "Transmit logs",
         "text": "To transfer the logs from your watch, you must first start the app on your watch<br /><br /><strong>{{name}}</strong><br /><br />If the app is running, the logs should be transferred automatically.",
-        "withoutlogs": "Continue without logs"
+        "withoutlogs": "Continue without logs",
+        "openApp": "Open app",
+        "logs_received_confirm": "The logs have been received.<br /><br />Would you like to see them now?"
     },
     "page_lists": {
         "page_title": "My lists",

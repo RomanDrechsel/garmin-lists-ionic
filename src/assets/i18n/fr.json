@@ -130,7 +130,7 @@
         "text_web": "Le journal <strong>{{filename}}</strong> sera sauvegardé sur votre ordinateur.",
         "store": "Sauvegarder dans Documents",
         "share": "Partager",
-        "email": "M'envoyer par e-mail",
+        "email": "Envoyer par e-mail aux développeurs",
         "share_email": {
             "title": "{{package}} / {{platform}} - Fichier journal {{file}} ({{size}})",
             "text": "Merci de me donner plus de détails sur le problème afin que je puisse le reproduire :\n\n"
@@ -144,12 +144,14 @@
         "meta_settings_note": "Paramètres de log, langue, etc.",
         "meta_storage": "Infos de stockage",
         "meta_storage_note": "Nombre/taille des listes et journaux sur l'appareil",
-        "watch": "Joindre les journaux de la montre"
+        "watch": "Joindre les journaux de la montre",
+        "error_report_confirm": "Le rapport d'erreur a été reçu.<br /><br />Est-ce que tu veux me le transmettre comme rapport d'erreur?"
     },
     "comp_watchlogs": {
         "title": "Transférer les journaux",
         "text": "Pour transférer les journaux de votre montre, vous devez d'abord lancer l'application sur votre montre<br /><br /><strong>{{name}}</strong><br /><br />. Les journaux devraient se transférer automatiquement une fois l'application lancée.",
-        "withoutlogs": "Continuer sans journaux"
+        "withoutlogs": "Continuer sans journaux",
+        "logs_received_confirm": "Les logs ont été reçus.<br /><br />Vous voulez les afficher maintenant?"
     },
     "page_lists": {
         "page_title": "Mes listes",

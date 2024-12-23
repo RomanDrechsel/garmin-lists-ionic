@@ -130,7 +130,7 @@
         "text_web": "El log <strong>{{filename}}</strong> se guardará en tu computadora.",
         "store": "Guardar en Documentos",
         "share": "Compartir",
-        "email": "Enviar por correo electrónico",
+        "email": "Enviar al promotor por e-mail",
         "share_email": {
             "title": "{{package}} / {{platform}} - {{file}} ({{size}})",
             "text": "Por favor, describe los problemas un poco más detalladamente para que pueda entenderlos:\n\n"
@@ -144,12 +144,14 @@
         "meta_settings_note": "Configuraciones de log, idioma, etc.",
         "meta_storage": "Información de almacenamiento",
         "meta_storage_note": "Número/granalla de listas y logs en el dispositivo",
-        "watch": "Anexar logs del reloj"
+        "watch": "Anexar logs del reloj",
+        "error_report_confirm": "El informe de error ha sido recibido.<br /><br />¿Quieres reenviármelo como informe de error?"
     },
     "comp_watchlogs": {
         "title": "Transferir logs",
         "text": "Para transferir los logs de tu reloj, primero debes iniciar la aplicación en tu reloj<br /><br /><strong>{{name}}</strong><br /><br /> Si la app está ejecutándose, los logs se transferirán automáticamente.",
-        "withoutlogs": "Continuar sin logs"
+        "withoutlogs": "Continuar sin logs",
+        "logs_received_confirm": "Los registros han sido recibidos.<br /><br />¿Desea verlos ahora?"
     },
     "page_lists": {
         "page_title": "Mis listas",

@@ -130,7 +130,7 @@
         "text_web": "ログ <strong>{{filename}}</strong> はあなたのPCに保存されます。",
         "store": "ドキュメントに保存",
         "share": "共有",
-        "email": "Eメールで送信",
+        "email": "開発者に電子メールで送信する",
         "share_email": {
             "title": "{{package}} / {{platform}} - ログファイル {{file}} ({{size}})",
             "text": "問題の詳細を教えてください：\n\n"
@@ -144,12 +144,14 @@
         "meta_settings_note": "ログ設定、言語など",
         "meta_storage": "ストレージ情報",
         "meta_storage_note": "デバイス上のリストやログの数・サイズ",
-        "watch": "ウォッチのログを添付"
+        "watch": "ウォッチのログを添付",
+        "error_report_confirm": "バグレポートは受け取りました。<br /><br />バグレポートとして転送しますか？"
     },
     "comp_watchlogs": {
         "title": "ログを転送",
         "text": "ウォッチからログを転送するには、まずウォッチでアプリ<br /><br /><strong>{{name}}</strong><br /><br />を起動する必要があります。アプリが起動すると、ログが自動的に転送されます。",
-        "withoutlogs": "ログなしで続行"
+        "withoutlogs": "ログなしで続行",
+        "logs_received_confirm": "ログが届きました。<br /><br />今すぐご覧になりますか？"
     },
     "page_lists": {
         "page_title": "マイリスト",

@@ -198,20 +198,20 @@ export class LoggingService {
         let prefix: string = "";
         switch (type) {
             case ELogType.Error:
-                prefix = " (E)";
+                prefix = "[E]";
                 break;
             case ELogType.Important:
-                prefix = " (I)";
+                prefix = "[I]";
                 break;
             case ELogType.Notice:
-                prefix = " (N)";
+                prefix = "[N]";
                 break;
             case ELogType.Debug:
-                prefix = " (D)";
+                prefix = "[D]";
                 break;
         }
 
-        message = `${date}${prefix}: ${message}`;
+        message = `${prefix}${date}: ${message}`;
         if (objs.length > 0) {
             objs.forEach(obj => {
                 if (obj) {

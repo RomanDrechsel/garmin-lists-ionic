@@ -130,7 +130,7 @@
         "text_web": "日志<strong>{{filename}}</strong>将保存在你的计算机上。",
         "store": "保存到Documents",
         "share": "分享",
-        "email": "通过电子邮件发送给我",
+        "email": "通过电子邮件发送给开发人员",
         "share_email": {
             "title": "{{package}} / {{platform}} - 日志文件 {{file}} ({{size}})",
             "text": "请更详细地描述问题，以便我能够更好地理解:\n\n"
@@ -144,12 +144,14 @@
         "meta_settings_note": "日志设置，语言等。",
         "meta_storage": "存储信息",
         "meta_storage_note": "设备上列表和日志的数量/大小",
-        "watch": "附加手表日志"
+        "watch": "附加手表日志",
+        "error_report_confirm": "已收到错误报告。<br /><br />您愿意将其作为错误报告转发给我吗？"
     },
     "comp_watchlogs": {
         "title": "传输日志",
         "text": "要传输手表的日志，请首先在手表上启动应用<br /><br /><strong>{{name}}</strong><br /><br />。当应用运行时，日志将会自动传输。",
-        "withoutlogs": "继续而不包含日志"
+        "withoutlogs": "继续而不包含日志",
+        "logs_received_confirm": "日志已收到。<br /><br />您想现在查看吗？"
     },
     "page_lists": {
         "page_title": "我的列表",

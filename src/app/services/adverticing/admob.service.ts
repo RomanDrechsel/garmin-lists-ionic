@@ -48,8 +48,10 @@ export class AdmobService {
             Logger.Debug(`Admob initialized in test mode`);
         }
 
-        Keyboard.addListener("keyboardDidShow", async info => {
-            await this.HideBanner();
+        Keyboard.addListener("keyboardWillShow", async info => {
+            if (window.innerHeight < 350) {
+                await this.HideBanner();
+            }
         });
         Keyboard.addListener("keyboardDidHide", async () => {
             await this.resumeBanner();

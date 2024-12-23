@@ -11,9 +11,10 @@ import ConnectIQ from "../../plugins/connectiq/connect-iq";
 import { ConnectIQDeviceMessage } from "../../plugins/connectiq/event-args/connect-iq-device-message.";
 import { DeviceEventArgs } from "../../plugins/connectiq/event-args/device-event-args";
 import { ConnectIQListener } from "../../plugins/connectiq/listeners/connect-iq-listener";
-import { DeviceListener } from "../../plugins/connectiq/listeners/device-listener";
+import { DeviceErrorReportListener } from "../../plugins/connectiq/listeners/device-error-report-listener";
 import { DeviceLogsListener } from "../../plugins/connectiq/listeners/device-logs-listener";
-import { ErrorReportListener } from "../../plugins/connectiq/listeners/error-report-listener";
+import { DeviceStateListener } from "../../plugins/connectiq/listeners/device-state-listener";
+import { PluginLogsListener } from "../../plugins/connectiq/listeners/plugin-logs-listener";
 import { TimeoutListener } from "../../plugins/connectiq/listeners/timeout-listener";
 import { TransactionListener } from "../../plugins/connectiq/listeners/transaction-listener";
 import { ConfigService } from "../config/config.service";
@@ -64,10 +65,19 @@ export class ConnectIQService {
      * @param debug_devices use debug devices or live devices
      */
     public async Initialize(debug_devices: boolean = true) {
+        const all_listeners = Array.from(this._watchListeners.values());
+        for (let i = 0; i < all_listeners.length; i++) {
+            for (let j = 0; j < all_listeners[i].length; j++) {
+                await all_listeners[i][j].clearListener();
+            }
+        }
+        this._watchListeners.clear();
+
         if (Capacitor.isNativePlatform()) {
-            this.addListener(new DeviceLogsListener(this));
-            this.addListener(new DeviceListener(this));
-            this.addListener(new ErrorReportListener(this, this.NavController, this.Popup));
+            this.addListener(new PluginLogsListener(this));
+            this.addListener(new DeviceStateListener(this));
+            this.addListener(new DeviceErrorReportListener(this, this.NavController, this.Popup));
+            this.addListener(new DeviceLogsListener(this, this.NavController, this.Popup));
             this._devices = [];
             this.isDebugMode = debug_devices;
             await ConnectIQ.Initialize({ live_devices: !debug_devices, live_app: environment.publicRelease });

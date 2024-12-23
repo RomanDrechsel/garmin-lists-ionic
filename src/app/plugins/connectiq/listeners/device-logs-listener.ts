@@ -1,26 +1,40 @@
+import { NavController } from "@ionic/angular/standalone";
+import { ConnectIQService } from "../../../services/connectiq/connect-iq.service";
 import { Logger } from "../../../services/logging/logger";
-import { LogEventArgs } from "../event-args/log-event-args";
+import { PopupsService } from "../../../services/popups/popups.service";
+import { ConnectIQDeviceMessage } from "../event-args/connect-iq-device-message.";
+import { DeviceMessageEventArgs } from "../event-args/device-message-event-args.";
 import { ConnectIQListener } from "./connect-iq-listener";
 
-export class DeviceLogsListener extends ConnectIQListener<LogEventArgs> {
-    public Event(): string {
-        return "LOG";
+export class DeviceLogsListener extends ConnectIQListener<DeviceMessageEventArgs> {
+    private readonly _navController: NavController;
+    private readonly _popup: PopupsService;
+
+    constructor(service: ConnectIQService, nav: NavController, popup: PopupsService) {
+        super(service);
+        this._navController = nav;
+        this._popup = popup;
     }
 
-    protected async Callback(log: LogEventArgs): Promise<void> {
-        switch (log.level) {
-            case "debug":
-                Logger.Debug(`${log.tag}: ${log.message}`, log.obj);
-                break;
-            case "notice":
-                Logger.Notice(`${log.tag}: ${log.message}`, log.obj);
-                break;
-            case "important":
-                Logger.Important(`${log.tag}: ${log.message}`, log.obj);
-                break;
-            case "error":
-                Logger.Error(`${log.tag}: ${log.message}`, log.obj);
-                break;
+    public override Event(): string {
+        return "RECEIVE";
+    }
+
+    protected async Callback(obj: DeviceMessageEventArgs): Promise<void> {
+        const data = new ConnectIQDeviceMessage(obj, this._service);
+        if (data.Message.type && data.Message.type == "logs" && data.Message.logs && Array.isArray(data.Message.logs)) {
+            let logreport = ["", "===========", `Received logs from device ${data.Device}:`];
+            logreport.push(...data.Message.logs);
+            logreport.push("===========", "");
+            Logger.Important(logreport.join("\n"));
+
+            if (await this._popup.Alert.YesNo({ message: "comp_watchlogs.logs_received_confirm", translate: true })) {
+                await this._navController.navigateForward("settings/watch-logs", {
+                    queryParams: {
+                        watchLogs: data.Message.logs,
+                    },
+                });
+            }
         }
     }
 }

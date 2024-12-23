@@ -39,11 +39,21 @@
 }
 
 ion-fab {
+    flex-direction: row;
+    gap: 1em;
+    display: flex;
+
     ion-fab-button {
         &.clicked[data-label]::after {
             background-color: var(--ion-color-secondary);
-            transition: background-color 0.5s ease-in-out;
+            transition: background-color 0.5s ease-in;
             color: var(--ion-color-secondary-contrast);
+        }
+
+        ion-icon {
+            &.to-bottom {
+                rotate: 180deg;
+            }
         }
     }
 }

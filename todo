@@ -4,8 +4,6 @@ https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
 ADB
 https://wiki.ubuntuusers.de/adb/
 
-WIP: Error-Report von Uhr empfangen und verarbeiten
-TODO: Ad-Banner in Edit-Dialog anzeigen, wenn Auflösung groß genug ist
 TODO: Hindi?
 
-TODO: "comp_sharelog.error_report_confirm"
+TODO: comp_watchlogs.openApp

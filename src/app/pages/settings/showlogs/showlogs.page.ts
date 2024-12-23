@@ -1,9 +1,10 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { FileInfo } from "@capacitor/filesystem";
-import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonSelect, IonSelectOption, IonText, ModalController, SelectCustomEvent } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonFabList, IonIcon, IonSelect, IonSelectOption, IonText, ModalController, ScrollDetail, SelectCustomEvent } from "@ionic/angular/standalone";
+import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { interval, Subscription } from "rxjs";
 import { FileUtils } from "src/app/classes/utils/file-utils";
@@ -22,8 +23,10 @@ import { PageBase } from "../../page-base";
 })
 export class ShowlogsPage extends PageBase {
     @ViewChild("fabButton", { read: ElementRef, static: false }) fabButton?: ElementRef;
-
     @ViewChild("saveLogsButton", { read: ElementRef, static: false }) saveLogsButton?: ElementRef;
+    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
+    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
+    @ViewChild("logContent", { read: ElementRef, static: false }) logContent?: ElementRef;
 
     public currentLogfile?: FileUtils.File;
 
@@ -35,15 +38,30 @@ export class ShowlogsPage extends PageBase {
 
     private _selectedDate?: Date;
 
+    private _scrollPosition: "top" | "bottom" | number = "top";
+
     private readonly ModaleCtrl = inject(ModalController);
     private readonly Route = inject(ActivatedRoute);
+    private readonly Router = inject(Router);
 
-    public get SelectedDayString(): string | undefined {
-        return this._selectedDate?.toLocaleDateString(this.Locale.CurrentLanguage.locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    public get SelectedDayString(): string {
+        return (this._selectedDate ?? new Date()).toLocaleDateString(this.Locale.CurrentLanguage.locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
     }
 
     public get LogfilesAvailable(): boolean {
         return this.availableLogfiles.length > 0;
+    }
+
+    public get ScrollPosition(): "top" | "bottom" | number {
+        return this._scrollPosition;
+    }
+
+    public get ShowScrollToTop(): boolean {
+        return this._scrollPosition != "top" && (this.logContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+    }
+
+    public get ShowScrollToBottom(): boolean {
+        return this._scrollPosition != "bottom" && (this.logContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
     }
 
     public override async ionViewWillEnter() {
@@ -53,28 +71,34 @@ export class ShowlogsPage extends PageBase {
 
     public override async ionViewDidEnter() {
         await super.ionViewDidEnter();
-        this._timerSubscription = interval(5000).subscribe(async () => {
+        this._timerSubscription = interval(2000).subscribe(async () => {
             if (this.currentLogfile) {
+                const size = this.currentLogfile?.Content?.length ?? 0;
                 this.currentLogfile = await this.Logger.GetLogfile(this.currentLogfile?.Filename);
+                if (size != (this.currentLogfile?.Content?.length ?? 0)) {
+                    this.ScrollToBottom(false);
+                    this.cdr.detectChanges();
+                }
             }
         });
         const send_errorReport = this.Route.snapshot.queryParams["errorReport"];
         if (send_errorReport) {
+            this.Router.navigate([], { queryParams: {}, replaceUrl: true });
             this.runningAnimation = new InteractionAnimation();
             this.runningAnimation.AddStep({
-                duration: 1000,
+                duration: 700,
                 do: async () => {
                     this.fabButton?.nativeElement.click();
                     return true;
                 },
             });
             this.runningAnimation.AddStep({
-                duration: 1000,
+                duration: 700,
                 do: async () => {
                     this.saveLogsButton?.nativeElement.classList.add("clicked");
                     await new Promise(resolve => setTimeout(resolve, 600));
                     this.saveLogsButton?.nativeElement.classList.remove("clicked");
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                    await new Promise(resolve => setTimeout(resolve, 200));
                     this.saveLogsButton?.nativeElement.click();
                     return true;
                 },
@@ -138,6 +162,24 @@ export class ShowlogsPage extends PageBase {
         }
     }
 
+    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
+        if (event.detail.scrollTop == 0) {
+            this._scrollPosition = "top";
+        } else if (event.detail.scrollTop >= (this.logContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.logContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+            this._scrollPosition = "bottom";
+        } else {
+            this._scrollPosition = event.detail.scrollTop;
+        }
+    }
+
+    public ScrollToTop() {
+        this.mainContent?.scrollToTop(300);
+    }
+
+    public ScrollToBottom(instant: boolean = true) {
+        this.mainContent?.scrollToBottom(instant ? 0 : 300);
+    }
+
     private async selectLogDay(date: Date | undefined) {
         if (!date) {
             date = new Date();
@@ -160,5 +202,6 @@ export class ShowlogsPage extends PageBase {
         }
 
         this.cdr.detectChanges();
+        this.ScrollToBottom(true);
     }
 }

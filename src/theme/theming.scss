@@ -39,24 +39,33 @@ ion-fab {
 
     ion-fab-button {
         --box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
-    }
 
-    ion-fab-button[data-label] {
-        position: relative;
-    }
+        &[data-label] {
+            position: relative;
+        }
 
-    ion-fab-button[data-label]::after {
-        cursor: pointer;
-        content: attr(data-label);
-        position: absolute;
-        z-index: 20;
-        right: 50px;
-        bottom: 6px;
-        background-color: var(--color-popup-background);
-        padding: 5px 15px;
-        border-radius: 15px;
-        color: var(--color-text);
-        box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
+        &[data-label]::after {
+            cursor: pointer;
+            content: attr(data-label);
+            position: absolute;
+            z-index: 20;
+            right: 50px;
+            bottom: 6px;
+            background-color: var(--color-popup-background);
+            padding: 5px 15px;
+            border-radius: 15px;
+            color: var(--color-text);
+            box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
+        }
+
+        &.fab-button-disabled {
+            opacity: 1;
+            --background: var(--ion-color-secondary-tint);
+
+            ion-icon {
+                fill: var(--color-text-disabled);
+            }
+        }
     }
 }
 
