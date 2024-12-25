@@ -17,6 +17,7 @@ import { DeviceStateListener } from "../../plugins/connectiq/listeners/device-st
 import { PluginLogsListener } from "../../plugins/connectiq/listeners/plugin-logs-listener";
 import { TimeoutListener } from "../../plugins/connectiq/listeners/timeout-listener";
 import { TransactionListener } from "../../plugins/connectiq/listeners/transaction-listener";
+import { AppService } from "../app/app.service";
 import { ConfigService } from "../config/config.service";
 import { Locale } from "../localization/locale";
 import { LocalizationService } from "../localization/localization.service";
@@ -97,6 +98,8 @@ export class ConnectIQService {
         if (!force_load && this._devices.length > 0) {
             return this._devices;
         }
+        AppService.AppToolbar?.ToggleProgressbar(true);
+
         const defaultTransmitDevice = await this.Preferences.Get<number>(EPrefProperty.AlwaysTransmitTo, -1);
         let devices: ConnectIQDevice[] = [];
 
@@ -134,6 +137,7 @@ export class ConnectIQService {
             Logger.Debug(`Lists will be transmited to device ${this._alwaysTransmitToDevice.Identifier} by default`);
         }
         this._devices = devices;
+        AppService.AppToolbar?.ToggleProgressbar(false);
         return this._devices;
     }
 
@@ -196,6 +200,7 @@ export class ConnectIQService {
             return false;
         }
 
+        AppService.AppToolbar?.ToggleProgressbar(true);
         let listener: TransactionListener | undefined;
         if (obj.response_callback) {
             let tid: number;
@@ -209,11 +214,13 @@ export class ConnectIQService {
         }
 
         if ((await ConnectIQ.SendToDevice({ device_id: String(obj.device.Identifier), json: JSON.stringify(obj.data) })).success) {
+            AppService.AppToolbar?.ToggleProgressbar(false);
             return listener?.TId ?? true;
         } else {
             if (listener) {
                 this.removeListener(listener);
             }
+            AppService.AppToolbar?.ToggleProgressbar(false);
             return false;
         }
     }

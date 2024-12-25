@@ -47,4 +47,11 @@ export abstract class PageBase {
     public ModifyMainMenu(): MenuItem[] {
         return [];
     }
+
+    protected async reload() {
+        this.cdr.detectChanges();
+        /* else, scroll buttons won't be shown */
+        await new Promise(resolve => setTimeout(resolve, 1));
+        this.cdr.detectChanges();
+    }
 }

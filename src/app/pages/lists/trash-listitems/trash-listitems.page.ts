@@ -1,7 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { IonContent, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
+import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
@@ -16,36 +17,58 @@ import { PageBase } from "../../page-base";
     templateUrl: "./trash-listitems.page.html",
     styleUrls: ["./trash-listitems.page.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
+    imports: [IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, CommonModule, IonFab, IonFabButton, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListitemsPage extends PageBase {
     @ViewChild("itemsContainer") private itemsContainer!: IonList;
     public Trash?: ListitemTrashModel;
 
-    private trashChangedSubscription?: Subscription;
+    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
+    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
+    @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
+
+    private _trashChangedSubscription?: Subscription;
+
+    private _scrollPosition: "top" | "bottom" | number = "top";
 
     private Route = inject(ActivatedRoute);
+
+    public get ScrollPosition(): "top" | "bottom" | number {
+        return this._scrollPosition;
+    }
+
+    public get ShowScrollButtons(): boolean {
+        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+    }
+
+    public get DisableScrollToTop(): boolean {
+        return this._scrollPosition == "top";
+    }
+
+    public get DisableScrollToBottom(): boolean {
+        return this._scrollPosition == "bottom";
+    }
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
             this.Trash = await this.ListsService.GetListitemTrash(listid);
-            this.cdr.detectChanges();
+            this.reload();
         }
 
-        this.trashChangedSubscription = this.ListsService.onTrashItemsDatasetChanged$.subscribe(trash => {
+        this._trashChangedSubscription = this.ListsService.onTrashItemsDatasetChanged$.subscribe(trash => {
             if (trash) {
                 this.Trash = trash;
-                this.cdr.detectChanges();
+                this.reload();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
     }
 
     public override async ionViewDidLeave() {
-        super.ionViewDidLeave();
-        this.trashChangedSubscription?.unsubscribe();
+        await super.ionViewDidLeave();
+        this._trashChangedSubscription?.unsubscribe();
     }
 
     public override ModifyMainMenu(): MenuItem[] {
@@ -63,6 +86,7 @@ export class TrashListitemsPage extends PageBase {
     public async deleteItem(item: ListitemModel) {
         if (this.Trash) {
             await this.ListsService.EraseListitemFromTrash(this.Trash, item);
+            this.reload();
         }
         this.itemsContainer.closeSlidingItems();
     }
@@ -70,6 +94,7 @@ export class TrashListitemsPage extends PageBase {
     public async restoreItem(item: ListitemModel) {
         if (this.Trash) {
             await this.ListsService.RestoreListitemFromTrash(this.Trash, item);
+            this.reload();
         }
         this.itemsContainer.closeSlidingItems();
     }
@@ -77,7 +102,26 @@ export class TrashListitemsPage extends PageBase {
     public async emptyTrash(): Promise<boolean> {
         if (this.Trash) {
             this.ListsService.EmptyListitemTrash(this.Trash);
+            this.reload();
         }
         return true;
+    }
+
+    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
+        if (event.detail.scrollTop == 0) {
+            this._scrollPosition = "top";
+        } else if (event.detail.scrollTop >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+            this._scrollPosition = "bottom";
+        } else {
+            this._scrollPosition = event.detail.scrollTop;
+        }
+    }
+
+    public ScrollToTop() {
+        this.mainContent?.scrollToTop(300);
+    }
+
+    public ScrollToBottom(instant: boolean = true) {
+        this.mainContent?.scrollToBottom(instant ? 0 : 300);
     }
 }

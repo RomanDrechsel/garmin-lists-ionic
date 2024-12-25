@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, ViewChild } from "@angular/core";
-import { IonContent, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
+import { Component, ElementRef, ViewChild } from "@angular/core";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
+import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
@@ -14,18 +15,39 @@ import { PageBase } from "../../page-base";
     selector: "app-trash-lists",
     templateUrl: "./trash-lists.page.html",
     styleUrls: ["./trash-lists.page.scss"],
-    imports: [IonContent, IonText, IonNote, IonItem, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent]
+    imports: [IonContent, IonText, IonNote, IonItem, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListsPage extends PageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;
+    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
+    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
+    @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
 
     public Lists: List[] = [];
-    private trashChangedSubscription?: Subscription;
+    private _trashChangedSubscription?: Subscription;
+    private _scrollPosition: "top" | "bottom" | number = "top";
+
+    public get ScrollPosition(): "top" | "bottom" | number {
+        return this._scrollPosition;
+    }
+
+    public get ShowScrollButtons(): boolean {
+        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+    }
+
+    public get DisableScrollToTop(): boolean {
+        return this._scrollPosition == "top";
+    }
+
+    public get DisableScrollToBottom(): boolean {
+        return this._scrollPosition == "bottom";
+    }
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
-        this.trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => {
+        this._trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => {
             this.Lists = lists ?? [];
+            this.reload();
             this.appComponent.setAppPages(this.ModifyMainMenu());
         });
         this.Lists = await this.ListsService.GetTrash();
@@ -33,13 +55,11 @@ export class TrashListsPage extends PageBase {
 
     public override async ionViewDidLeave() {
         super.ionViewDidLeave();
-        this.trashChangedSubscription?.unsubscribe();
+        this._trashChangedSubscription?.unsubscribe();
     }
 
     public override ModifyMainMenu(): MenuItem[] {
-        return [
-            MenuitemFactory(EMenuItemType.EmptyListTrash, { onClick: () => this.emptyTrash(), disabled: this.Lists.length <= 0 }),
-        ];
+        return [MenuitemFactory(EMenuItemType.EmptyListTrash, { onClick: () => this.emptyTrash(), disabled: this.Lists.length <= 0 })];
     }
 
     public async onSwipeRight(list: List) {
@@ -70,5 +90,23 @@ export class TrashListsPage extends PageBase {
         } else {
             return "";
         }
+    }
+
+    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
+        if (event.detail.scrollTop == 0) {
+            this._scrollPosition = "top";
+        } else if (event.detail.scrollTop >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+            this._scrollPosition = "bottom";
+        } else {
+            this._scrollPosition = event.detail.scrollTop;
+        }
+    }
+
+    public ScrollToTop() {
+        this.mainContent?.scrollToTop(300);
+    }
+
+    public ScrollToBottom(instant: boolean = true) {
+        this.mainContent?.scrollToBottom(instant ? 0 : 300);
     }
 }

@@ -24,11 +24,11 @@
         </ion-fab-button>
     </ion-fab>
 
-    <ion-fab slot="fixed" vertical="bottom" horizontal="start">
-        <ion-fab-button (click)="ScrollToTop()" *ngIf="DeviceLog && ShowScrollToTop">
+    <ion-fab slot="fixed" vertical="bottom" horizontal="start" *ngIf="ShowScrollButtons">
+        <ion-fab-button (click)="ScrollToTop()" [disabled]="DisableScrollToTop">
             <ion-icon src="./assets/icons/to-top.svg"></ion-icon>
         </ion-fab-button>
-        <ion-fab-button (click)="ScrollToBottom(false)" *ngIf="DeviceLog && ShowScrollToBottom">
+        <ion-fab-button (click)="ScrollToBottom(false)" [disabled]="DisableScrollToBottom">
             <ion-icon src="./assets/icons/to-top.svg" class="to-bottom"></ion-icon>
         </ion-fab-button>
     </ion-fab>

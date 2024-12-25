@@ -8,7 +8,7 @@
             <ion-select-option *ngFor="let file of availableLogfiles" [value]="file.name" (selected)="currentLogfile?.Path == file.uri">{{formatLogfile(file)}}</ion-select-option>
         </ion-select>
     </div>
-    <div id="logtext" *ngIf="currentLogfile; else nologfile" #logContent>{{currentLogfile.Content}}</div>
+    <div id="logtext" *ngIf="currentLogfile; else nologfile" class="list-content" #logContent>{{currentLogfile.Content}}</div>
     <ng-template #nologfile>
         <app-page-empty>
             <div slot="image">
@@ -33,11 +33,11 @@
             </ion-fab-button>
         </ion-fab-list>
     </ion-fab>
-    <ion-fab slot="fixed" vertical="bottom" horizontal="start">
-        <ion-fab-button (click)="ScrollToTop()" *ngIf="currentLogfile && ShowScrollToTop">
+    <ion-fab slot="fixed" vertical="bottom" horizontal="start" *ngIf="ShowScrollButtons">
+        <ion-fab-button (click)="ScrollToTop()" [disabled]="DisableScrollToTop">
             <ion-icon src="./assets/icons/to-top.svg"></ion-icon>
         </ion-fab-button>
-        <ion-fab-button (click)="ScrollToBottom(false)" *ngIf="currentLogfile && ShowScrollToBottom">
+        <ion-fab-button (click)="ScrollToBottom(false)" [disabled]="DisableScrollToBottom">
             <ion-icon src="./assets/icons/to-top.svg" class="to-bottom"></ion-icon>
         </ion-fab-button>
     </ion-fab>

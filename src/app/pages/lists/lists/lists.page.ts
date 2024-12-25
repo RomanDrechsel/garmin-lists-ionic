@@ -1,7 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { Component, ViewChild, WritableSignal } from "@angular/core";
+import { Component, ElementRef, ViewChild, WritableSignal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
+import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { List } from "src/app/services/lists/list";
@@ -17,9 +18,29 @@ import { PageBase } from "../../page-base";
 })
 export class ListsPage extends PageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;
+    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
+    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
+    @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
 
     public Lists: WritableSignal<List[]> = this.ListsService.Lists;
-    private disableClick = false;
+    private _disableClick = false;
+    private _scrollPosition: "top" | "bottom" | number = "top";
+
+    public get ScrollPosition(): "top" | "bottom" | number {
+        return this._scrollPosition;
+    }
+
+    public get ShowScrollButtons(): boolean {
+        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+    }
+
+    public get DisableScrollToTop(): boolean {
+        return this._scrollPosition == "top";
+    }
+
+    public get DisableScrollToBottom(): boolean {
+        return this._scrollPosition == "bottom";
+    }
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
@@ -44,12 +65,14 @@ export class ListsPage extends PageBase {
         const res = await this.ListsService.DeleteList(list);
         if (res !== undefined) {
             this.listsContainer.closeSlidingItems();
+            this.reload();
         }
     }
 
     public async emptyList(list: List) {
         if ((await this.ListsService.EmptyList(list)) === true) {
             this.listsContainer.closeSlidingItems();
+            this.reload();
         }
     }
 
@@ -64,7 +87,7 @@ export class ListsPage extends PageBase {
     }
 
     public gotoList(event: MouseEvent, list: List) {
-        if (!this.disableClick) {
+        if (!this._disableClick) {
             this.NavController.navigateForward(`/lists/items/${list.Uuid}`);
             event.stopImmediatePropagation();
         }
@@ -78,5 +101,23 @@ export class ListsPage extends PageBase {
 
     public UpdatedString(list: List): string {
         return this.Locale.getText("page_lists.updated", { date: DateUtils.formatDate(list.Updated ?? list.Created) });
+    }
+
+    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
+        if (event.detail.scrollTop == 0) {
+            this._scrollPosition = "top";
+        } else if (event.detail.scrollTop >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+            this._scrollPosition = "bottom";
+        } else {
+            this._scrollPosition = event.detail.scrollTop;
+        }
+    }
+
+    public ScrollToTop() {
+        this.mainContent?.scrollToTop(300);
+    }
+
+    public ScrollToBottom(instant: boolean = true) {
+        this.mainContent?.scrollToBottom(instant ? 0 : 300);
     }
 }

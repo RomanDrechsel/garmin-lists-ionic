@@ -36,12 +36,16 @@ export class ShowWatchLogsPage extends PageBase {
     private _deviceListener?: Subscription;
     private _scrollPosition: "top" | "bottom" | number = "top";
 
-    public get ShowScrollToTop(): boolean {
-        return this._scrollPosition != "top" && (this.logContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+    public get ShowScrollButtons(): boolean {
+        return (this.logContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
     }
 
-    public get ShowScrollToBottom(): boolean {
-        return this._scrollPosition != "bottom" && (this.logContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+    public get DisableScrollToTop(): boolean {
+        return this._scrollPosition == "top";
+    }
+
+    public get DisableScrollToBottom(): boolean {
+        return this._scrollPosition == "bottom";
     }
 
     public override async ionViewWillEnter() {
@@ -71,6 +75,9 @@ export class ShowWatchLogsPage extends PageBase {
                 this.DeviceLog = logs.join("\n");
                 this.cdr.detectChanges();
                 this.ScrollToBottom();
+                /* else, scroll buttons won't be shown */
+                await new Promise(resolve => setTimeout(resolve, 1));
+                this.cdr.detectChanges();
                 return;
             }
         }
