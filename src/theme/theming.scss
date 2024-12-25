@@ -115,6 +115,11 @@ ion-modal,
 ion-alert,
 ion-loading {
     backdrop-filter: blur(6px);
+    .alert-checkbox-group {
+        .alert-checkbox-label {
+            color: var(--color-text);
+        }
+    }
 }
 
 ion-alert {
