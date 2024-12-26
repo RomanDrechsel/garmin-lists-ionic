@@ -77,7 +77,7 @@
         "restore_confirm": "Möchtest du die Liste <strong>{{name}}</strong> wiederherstellen?",
         "restore_success": "Die Liste wurde wiederhergestellt.",
         "restore_error": "Die Liste konnte nicht wiederhergestellt werden!",
-        "restore_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> wiederherstellen?",
+        "restore_item_confirm": "Möchtest du denaPunkt <strong>{{name}}</strong> wiederherstellen?",
         "restore_item_success": "Der Punkt wurde wiederhergestellt.",
         "restore_item_error": "Der Punkt konnte nicht wiederhergestellt werden!",
         "empty_trash_confirm": "Möchstest du den Papierkorb leeren und die {{count}} Listen löschen?",

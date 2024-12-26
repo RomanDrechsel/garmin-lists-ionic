@@ -18,17 +18,26 @@ ion-content {
             }
 
             .itemcount {
-                padding: 4px 8px;
-                font-size: 0.8em;
-                color: var(--ion-color-primary-contrast);
-                border-radius: 12px;
-                background: var(--ion-color-primary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                margin-inline-start: 0;
+                padding-inline-start: 0.5em;
+
+                .count {
+                    padding: 4px 8px;
+                    font-size: 0.8em;
+                    color: var(--ion-color-primary-contrast);
+                    border-radius: 12px;
+                    background: var(--ion-color-primary);
+                }
             }
 
             .edit {
                 cursor: pointer;
-                margin-inline-start: 10px;
-                margin-inline-end: 4px;
+                margin: 0;
+                padding: 0.4em 0.3em 0.4em 0.3em;
 
                 &:hover {
                     color: var(--color);

@@ -27,7 +27,7 @@
             "thu": "星期四",
             "fri": "星期五",
             "sat": "星期六",
-            "sun": "星期天"
+            "sun": "星期日"
         }
     },
     "languages": {
@@ -36,7 +36,7 @@
         "de-DE": "德语",
         "es-ES": "西班牙语",
         "fr-FR": "法语",
-        "hi-IN": "北印度语",
+        "hi-IN": "印地语",
         "it-IT": "意大利语",
         "ja-JP": "日语",
         "uk-UA": "乌克兰语",
@@ -85,16 +85,17 @@
         "empty_trash_listitems_confirm": "确定要清空列表的回收站并删除{{count}}个条目吗？",
         "empty_trash_listitems_confirm_single": "确定要清空列表的回收站并删除条目吗？",
         "empty_trash_success": "回收站已清空。",
-        "empry_trash_error": "无法清空回收站！",
+        "empty_trash_error": "无法清空回收站！",
         "transmit_confirm": "确定要将列表传输到设备<strong>{{device}}</strong>吗？",
         "transmit_process": "列表正在传输中...",
         "transmit_success": "列表已成功传输",
         "transmit_error": "无法传输列表！",
         "transmit_send_btn": "发送到设备"
     },
+
     "service-connectiq": {
         "watch_outdated": "您的设备<strong>{{device}}</strong>上似乎使用的是旧版本的列表应用。<br /><br />请更新手表上的应用，以便使用所有功能。",
-        "watch_outdated_button": "前往Connect-IQ商店",
+        "watch_outdated_button": "前往Connect IQ商店",
         "watch_outdated_ignore": "忽略",
         "watch_outdated_dontremind": "此版本不再提醒"
     },
@@ -121,9 +122,9 @@
         "itemname": "名称",
         "itemnote": "备注",
         "hidden": "隐藏",
-        "hidden_info": "隐藏的列表项不会传输到您的手表，但将保留在智能手机上.<br /><br />这对于你临时不想显示某些点而是仍然不想删除它们很有用。它们可以稍后重用。",
+        "hidden_info": "隐藏的列表项不会传输到您的手表，但将保留在智能手机上。<br /><br />这对于你临时不想显示某些点而是仍然不想删除它们很有用。它们可以稍后重用。",
         "locked": "锁定",
-        "locked_info": "被锁定的列表项在清空列表时不会被删除.<br /><br />这简化了清理列表，当你希望定期重复某些点时。"
+        "locked_info": "被锁定的列表项在清空列表时不会被删除。<br /><br />这简化了清理列表，当你希望定期重复某些点时。"
     },
     "comp_sharelog": {
         "title": "保存日志",
@@ -188,13 +189,13 @@
     "page_devices": {
         "page_title": "我的设备",
         "known_devices": "已知设备",
-        "install_app": "你需要先在手表上安装列表应用。<br /><strong>点击这里</strong> 前往 Garmin ConnectIQ 商店。",
+        "install_app": "你需要先在手表上安装列表应用。<br /><strong>点击这里</strong> 前往 Garmin Connect IQ 商店。",
         "reload_btn": "重新加载设备",
         "toggle": "始终发送到该设备",
         "select_btn": "选择设备",
         "device_state": {
             "Ready": "设备已准备就绪",
-            "ServiceUnavailable": "ConnectIQ 服务不可用",
+            "ServiceUnavailable": "Connect IQ 服务不可用",
             "AppNotInstalled": "此设备上未安装应用",
             "CheckingApp": "正在检查设备...",
             "ConnectionLost": "设备已断开连接",
@@ -322,7 +323,7 @@
         "database_logs": "日志：",
         "memory": "内存使用：",
         "support": "我在空闲时间开发了这个应用，没有任何财务目的。<br />它是并将继续保持免费和开源。<br /><br />如果你喜欢它并愿意支持我，<br />为什么不请我喝杯咖啡呢？",
-        "review": "或者在 <strong>Garmin ConnectIQ 商店</strong> 中写个好评",
+        "review": "或者在 <strong>Garmin Connect IQ 商店</strong> 中写个好评",
         "review_google": "或在 <strong>Google Play</strong> 上",
         "thanks": "谢谢！",
         "website": "查看我的其他项目，访问我的网站："
