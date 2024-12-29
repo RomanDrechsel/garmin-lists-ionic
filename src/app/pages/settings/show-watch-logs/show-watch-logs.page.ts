@@ -55,6 +55,8 @@ export class ShowWatchLogsPage extends PageBase {
             this.Router.navigate([], { queryParams: {}, replaceUrl: true });
             this.DeviceLog = logs.join("\n");
             this.cdr.detectChanges();
+            await new Promise(resolve => setTimeout(resolve, 1));
+            this.cdr.detectChanges();
             this.ScrollToBottom();
         }
         this._deviceListener = this.ConnectIQ.onDeviceChanged$.subscribe(async () => {
@@ -100,7 +102,6 @@ export class ShowWatchLogsPage extends PageBase {
         } else {
             this._scrollPosition = event.detail.scrollTop;
         }
-        console.log(this._scrollPosition);
     }
 
     public ScrollToTop() {

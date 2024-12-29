@@ -8,7 +8,7 @@ import { TranslateModule } from "@ngx-translate/core";
     imports: [IonProgressBar, CommonModule, TranslateModule, IonToolbar, IonButtons, IonMenuButton, IonBackButton, IonTitle, IonHeader],
     templateUrl: "./main-toolbar.component.html",
     styleUrl: "./main-toolbar.component.scss",
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainToolbarComponent {
     @Input("title") pageTitle: string = "";
@@ -20,8 +20,12 @@ export class MainToolbarComponent {
 
     private _showProgressbar: boolean = false;
 
-    public IsProgressbarShowing(): boolean {
+    public get ShowProgressbar(): boolean {
         return this._showProgressbar;
+    }
+
+    public get BackLink(): string | undefined {
+        return this.backBtn?.defaultHref;
     }
 
     public ToggleProgressbar(v: boolean) {
@@ -31,7 +35,9 @@ export class MainToolbarComponent {
         }
     }
 
-    public get BackLink(): string | undefined {
-        return this.backBtn?.defaultHref;
+    public Copy(toolbar?: MainToolbarComponent) {
+        if (toolbar) {
+            this.ToggleProgressbar(toolbar.ShowProgressbar);
+        }
     }
 }

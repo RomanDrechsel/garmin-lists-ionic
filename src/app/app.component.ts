@@ -69,10 +69,16 @@ export class AppComponent implements OnInit {
         }
     }
 
-    public onDebugDevices(checked: boolean) {
+    public onGarminSimulator(checked: boolean) {
         this.ConnectIQ.AlwaysTransmitToDevice = undefined;
-        this.ConnectIQ.Initialize(checked);
-        this.Preferences.Set(EPrefProperty.DebugDevices, checked);
+        this.ConnectIQ.Initialize({ simulator: checked });
+        this.Preferences.Set(EPrefProperty.DebugSimulator, checked);
+    }
+
+    public onGarminDebugApp(checked: boolean) {
+        this.ConnectIQ.AlwaysTransmitToDevice = undefined;
+        this.ConnectIQ.Initialize({ debug_app: checked });
+        this.Preferences.Set(EPrefProperty.DebugApp, checked);
     }
 
     public setAppPages(menu: MenuItem[] = []) {

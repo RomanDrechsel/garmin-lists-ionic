@@ -4,7 +4,7 @@ import { Browser } from "@capacitor/browser";
 import { Capacitor } from "@capacitor/core";
 import { NavController } from "@ionic/angular/standalone";
 import { BehaviorSubject, interval, Subscription } from "rxjs";
-import { DebugDevices, environment } from "../../../environments/environment";
+import { DebugDevices } from "../../../environments/environment";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { SelectGarminDevice } from "../../pages/devices/devices.page";
 import ConnectIQ from "../../plugins/connectiq/connect-iq";
@@ -38,7 +38,8 @@ export class ConnectIQService {
     private _devices: ConnectIQDevice[] = [];
     private _watchOutdatedNotice: number[] = [];
 
-    public isDebugMode = false;
+    public useGarminSimulator = false;
+    public useGarminDebugApp = false;
 
     private onInitializedSubject = new BehaviorSubject<void>(undefined);
     public onInitialized$ = this.onInitializedSubject.asObservable();
@@ -65,7 +66,7 @@ export class ConnectIQService {
      * initialize service
      * @param debug_devices use debug devices or live devices
      */
-    public async Initialize(debug_devices: boolean = true) {
+    public async Initialize(obj: { simulator?: boolean; debug_app?: boolean }) {
         const all_listeners = Array.from(this._watchListeners.values());
         for (let i = 0; i < all_listeners.length; i++) {
             for (let j = 0; j < all_listeners[i].length; j++) {
@@ -80,8 +81,9 @@ export class ConnectIQService {
             this.addListener(new DeviceErrorReportListener(this, this.NavController, this.Popup));
             this.addListener(new DeviceLogsListener(this, this.NavController, this.Popup));
             this._devices = [];
-            this.isDebugMode = debug_devices;
-            await ConnectIQ.Initialize({ live_devices: !debug_devices, live_app: environment.publicRelease });
+            this.useGarminSimulator = obj.simulator ?? this.useGarminSimulator;
+            this.useGarminDebugApp = obj.debug_app ?? this.useGarminDebugApp;
+            await ConnectIQ.Initialize({ simulator: this.useGarminSimulator, debug_app: this.useGarminDebugApp });
 
             const defaultTransmitDevice = await this.Preferences.Get<number>(EPrefProperty.AlwaysTransmitTo, -1);
             this._alwaysTransmitToDevice = await this.GetDevice(defaultTransmitDevice);

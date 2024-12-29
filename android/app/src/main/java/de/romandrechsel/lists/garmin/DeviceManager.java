@@ -30,7 +30,9 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
     private static final String AppIdRelease = "f9b0d002-4a4d-45ab-9330-bbed2c3af49f";
     public static String AppId = DeviceManager.AppIdRelease;
 
-    private static final String TAG = "DeviceManager";
+    private Boolean _useGarminSimulator = false;
+
+    private static final String TAG = "IQDeviceManager";
     public boolean sdkReady = false;
 
     private final List<DeviceInfo> devices = new ArrayList<>();
@@ -40,33 +42,42 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         this.Plugin = plugin;
     }
 
-    public void Initialize(Activity activity, @Nullable Boolean live_devices, @Nullable Boolean live_app)
+    public void Initialize(Activity activity, @Nullable Boolean simulator, @Nullable Boolean debug_app)
     {
         this.DisconnectAllDevices();
 
-        if (live_app != null && live_app)
-        {
-            DeviceManager.AppId = DeviceManager.AppIdRelease;
-        }
-        else
+        if (debug_app != null && debug_app)
         {
             DeviceManager.AppId = DeviceManager.AppIdDebug;
             Logger.Debug(TAG, "Using garmin debug app...");
         }
+        else
+        {
+            DeviceManager.AppId = DeviceManager.AppIdRelease;
+        }
 
-        if (live_devices != null && !live_devices)
+        if (simulator != null && simulator)
         {
             //get debugging devices
+            this._useGarminSimulator = true;
             this.connectIQ = ConnectIQ.getInstance(activity, ConnectIQ.IQConnectType.TETHERED);
             this.connectIQ.setAdbPort(7381);
-            Logger.Debug(TAG, "Initialize debug devices...");
+            Logger.Debug(TAG, "Initialize simulator devices...");
         }
         else
         {
             //get live devices
+            this._useGarminSimulator = false;
             this.connectIQ = ConnectIQ.getInstance(activity, ConnectIQ.IQConnectType.WIRELESS);
         }
         this.connectIQ.initialize(activity, true, this);
+        try
+        {
+            this.connectIQ.unregisterAllForEvents();
+        }
+        catch (InvalidStateException ignored)
+        {
+        }
     }
 
     @Override
@@ -137,7 +148,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         if (device != null)
         {
             device.SendJson(json, listener);
-            if (DeviceManager.IsDebug())
+            if (this._useGarminSimulator)
             {
                 this.debugLogResponse(device, json);
             }
@@ -259,6 +270,10 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
 
     private void debugLogResponse(DeviceInfo device, String json)
     {
+        if (device.device == null)
+        {
+            return;
+        }
         Object obj = new Gson().fromJson(json, Object.class);
         if (obj instanceof LinkedTreeMap)
         {

@@ -37,7 +37,7 @@ public class ConnectIQPlugin extends Plugin
         Activity activity = this.getActivity();
         if (activity != null)
         {
-            this.Manager.Initialize(activity, call.getBoolean("live_devices", true), call.getBoolean("live_app", true));
+            this.Manager.Initialize(activity, call.getBoolean("simulator", false), call.getBoolean("debug_app", false));
         }
         this.emitJsEvent("INIT", new JSObject());
         call.resolve();
