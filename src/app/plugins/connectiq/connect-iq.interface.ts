@@ -1,10 +1,11 @@
 import { Plugin, PluginListenerHandle } from "@capacitor/core";
 import { DeviceEventArgs } from "./event-args/device-event-args";
 import { DevicesEventArgs } from "./event-args/devices-event-args";
+import { InitializeEventArgs } from "./event-args/initialize-event-args";
 import { TransmitDataEventArgs } from "./event-args/transmit-data-event-args";
 
 export interface IConnectIQ extends Plugin {
-    Initialize(opts: { simulator: boolean; debug_app: boolean }): Promise<void>;
+    Initialize(opts: { simulator: boolean; debug_app: boolean }): Promise<InitializeEventArgs>;
 
     GetDevices(opts: { force_reload: boolean }): Promise<DevicesEventArgs>;
 

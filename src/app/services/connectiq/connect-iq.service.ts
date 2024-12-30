@@ -64,7 +64,7 @@ export class ConnectIQService {
 
     /**
      * initialize service
-     * @param debug_devices use debug devices or live devices
+     * @param obj use debug devices or live devices, and use garmin simulator or live phone
      */
     public async Initialize(obj: { simulator?: boolean; debug_app?: boolean }) {
         const all_listeners = Array.from(this._watchListeners.values());
@@ -81,13 +81,21 @@ export class ConnectIQService {
             this.addListener(new DeviceErrorReportListener(this, this.NavController, this.Popup));
             this.addListener(new DeviceLogsListener(this, this.NavController, this.Popup));
             this._devices = [];
-            this.useGarminSimulator = obj.simulator ?? this.useGarminSimulator;
-            this.useGarminDebugApp = obj.debug_app ?? this.useGarminDebugApp;
-            await ConnectIQ.Initialize({ simulator: this.useGarminSimulator, debug_app: this.useGarminDebugApp });
-
-            const defaultTransmitDevice = await this.Preferences.Get<number>(EPrefProperty.AlwaysTransmitTo, -1);
-            this._alwaysTransmitToDevice = await this.GetDevice(defaultTransmitDevice);
-            this.onInitializedSubject.next();
+            Logger.Debug(`Start initializing ConnectIQ service...`);
+            const init = await ConnectIQ.Initialize({ simulator: obj.simulator ?? false, debug_app: obj.debug_app ?? false });
+            if (init.success === true) {
+                this.useGarminDebugApp = init.debug_app ?? false;
+                this.useGarminSimulator = init.simulator ?? false;
+                const defaultTransmitDevice = await this.Preferences.Get<number>(EPrefProperty.AlwaysTransmitTo, -1);
+                if (defaultTransmitDevice > -1) {
+                    this._alwaysTransmitToDevice = await this.GetDevice(defaultTransmitDevice);
+                } else {
+                    this._alwaysTransmitToDevice = undefined;
+                }
+                this.onInitializedSubject.next();
+            }
+        } else {
+            Logger.Important(`Not on a native device, skipping initialization of ConnectIQ service`);
         }
     }
 

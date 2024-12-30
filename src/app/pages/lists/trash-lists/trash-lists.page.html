@@ -15,7 +15,9 @@
                         <div class="listname">{{list.Name}}</div>
                         <ion-note color="medium" class="date">{{DeletedString(list)}}</ion-note>
                     </div>
-                    <div class="itemcount" slot="end">{{list.ItemsCount}}</div>
+                    <div class="itemcount" slot="end">
+                        <div class="count">{{list.ItemsCount}}</div>
+                    </div>
                 </ion-item>
                 <ion-item-options side="end" (ionSwipe)="onSwipeLeft(list)">
                     <ion-item-option color="secondary" expandable="true" (click)="restoreList(list)">

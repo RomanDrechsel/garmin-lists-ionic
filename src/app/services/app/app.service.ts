@@ -75,7 +75,7 @@ export class AppService {
         await this.Admob.Initialize();
         await this.Admob.ShowBanner();
 
-        const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, false) : false;
+        const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, true) : false;
         const garmin_debugapp = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugApp, false) : false;
         await this.ConnectIQ.Initialize({ simulator: garmin_simulator, debug_app: garmin_debugapp });
 

@@ -23,6 +23,13 @@ import de.romandrechsel.lists.logging.Logger;
 
 public class DeviceManager implements ConnectIQ.ConnectIQListener
 {
+    public interface IInitlializeListener
+    {
+        void Success(Boolean simulator, Boolean debug_app);
+
+        void Failed(String message);
+    }
+
     @NonNull
     public ConnectIQPlugin Plugin;
     public ConnectIQ connectIQ;
@@ -37,13 +44,17 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
 
     private final List<DeviceInfo> devices = new ArrayList<>();
 
+    @Nullable
+    private IInitlializeListener _initListener = null;
+
     public DeviceManager(@NonNull ConnectIQPlugin plugin)
     {
         this.Plugin = plugin;
     }
 
-    public void Initialize(Activity activity, @Nullable Boolean simulator, @Nullable Boolean debug_app)
+    public void Initialize(Activity activity, @Nullable Boolean simulator, @Nullable Boolean debug_app, @Nullable IInitlializeListener listener)
     {
+        this._initListener = listener;
         this.DisconnectAllDevices();
 
         if (debug_app != null && debug_app)
@@ -71,6 +82,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
             this.connectIQ = ConnectIQ.getInstance(activity, ConnectIQ.IQConnectType.WIRELESS);
         }
         this.connectIQ.initialize(activity, true, this);
+
         try
         {
             this.connectIQ.unregisterAllForEvents();
@@ -85,20 +97,32 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
     {
         this.sdkReady = true;
         this.listDevices();
+        Logger.Debug(TAG, "ConnectIQ initialization successful");
+        if (this._initListener != null)
+        {
+            this._initListener.Success(this._useGarminSimulator, AppId.equals(AppIdDebug));
+            this._initListener = null;
+        }
     }
 
     @Override
     public void onInitializeError(ConnectIQ.IQSdkErrorStatus errStatus)
     {
-        Logger.Error("ConnectIQ", "ConnectIQ initialization failed: " + errStatus.toString());
+        Logger.Error(TAG, "ConnectIQ initialization failed: " + errStatus.toString());
         this.sdkReady = false;
         this.DisconnectAllDevices();
+        if (this._initListener != null)
+        {
+            this._initListener.Failed(errStatus.toString());
+            this._initListener = null;
+        }
     }
 
     @Override
     public void onSdkShutDown()
     {
         this.sdkReady = false;
+        Logger.Debug(TAG, "ConnectIQ shut down");
         this.DisconnectAllDevices();
     }
 
