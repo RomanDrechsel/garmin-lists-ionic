@@ -22,6 +22,7 @@
 
                 ion-item {
                     --background-hover: #ffffff;
+                    --background: var(--ion-background-color);
 
                     ::part(label) {
                         margin-inline-start: 0;

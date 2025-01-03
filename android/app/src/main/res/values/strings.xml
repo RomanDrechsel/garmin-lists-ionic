@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">Lists</string>
     <string name="title_activity_main">Lists</string>
-    <string name="package_name">de.romandrechsel.lists</string>
-    <string name="custom_url_scheme">de.romandrechsel.lists</string>
+    <string name="package_name" translatable="false">de.romandrechsel.lists</string>
+    <string name="custom_url_scheme" translatable="false">de.romandrechsel.lists</string>
     <string name="app_name_debug">Lists Debug</string>
-    <string name="admob_app_id">ca-app-pub-4693945059643494~4603335580</string>
+    <string name="admob_app_id" translatable="false">ca-app-pub-4693945059643494~4603335580</string>
 </resources>

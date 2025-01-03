@@ -1,8 +1,9 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ViewChild, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonText, ItemReorderEventDetail } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonText, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
+import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
@@ -24,38 +25,56 @@ import { PageBase } from "../../page-base";
 })
 export class ListItemsPage extends PageBase {
     @ViewChild("itemsContainer") private itemsContainer?: IonList;
+    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
+    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
+    @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
 
     public List?: List | null = undefined;
-    private disableClick = false;
-    private preferencesSubscription?: Subscription;
-    private listSubscriptiion?: Subscription;
-    private useTrash = true;
+    private _disableClick = false;
+    private _preferencesSubscription?: Subscription;
+    private _listSubscriptiion?: Subscription;
+    private _useTrash = true;
+    private _scrollPosition: "top" | "bottom" | number = "top";
 
     private readonly Route = inject(ActivatedRoute);
+
+    public get ScrollPosition(): "top" | "bottom" | number {
+        return this._scrollPosition;
+    }
+
+    public get ShowScrollButtons(): boolean {
+        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+    }
+
+    public get DisableScrollToTop(): boolean {
+        return this._scrollPosition == "top";
+    }
+
+    public get DisableScrollToBottom(): boolean {
+        return this._scrollPosition == "bottom";
+    }
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
             this.List = await this.ListsService.GetList(listid);
-            if (this.List) {
-                this.cdr.detectChanges();
-            }
+            this.reload();
             this.appComponent.setAppPages(this.ModifyMainMenu());
         }
-        this.useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true);
-        this.preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
+        this._useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true);
+        this._preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
             if (prop.prop == EPrefProperty.TrashListitems) {
-                this.useTrash = prop.value as boolean;
+                this._useTrash = prop.value as boolean;
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
 
-        this.listSubscriptiion = this.ListsService.onListChanged$.subscribe(async list => {
+        this._listSubscriptiion = this.ListsService.onListChanged$.subscribe(async list => {
             if (list && list.equals(this.List) && list.isPeek == false) {
                 this.List = list;
                 this.appComponent.setAppPages(this.ModifyMainMenu());
-                this.cdr.detectChanges();
+                this.reload();
             }
         });
     }
@@ -70,8 +89,8 @@ export class ListItemsPage extends PageBase {
     public override async ionViewWillLeave() {
         await super.ionViewWillLeave();
         await this.Preferences.Remove(EPrefProperty.OpenedList);
-        this.preferencesSubscription?.unsubscribe();
-        this.listSubscriptiion?.unsubscribe();
+        this._preferencesSubscription?.unsubscribe();
+        this._listSubscriptiion?.unsubscribe();
     }
 
     public get PageTitle(): string {
@@ -91,7 +110,7 @@ export class ListItemsPage extends PageBase {
     }
 
     public editItem(item: Listitem) {
-        if (this.List && !this.disableClick) {
+        if (this.List && !this._disableClick) {
             this.ListsService.EditListitem(this.List, item);
         }
     }
@@ -137,9 +156,9 @@ export class ListItemsPage extends PageBase {
     public async HandleReorder(event: CustomEvent<ItemReorderEventDetail>) {
         if (this.List) {
             await this.ListsService.ReorderListitems(this.List, event.detail.complete(this.List.Items) as Listitem[]);
-            this.disableClick = true;
+            this._disableClick = true;
             setTimeout(() => {
-                this.disableClick = false;
+                this._disableClick = false;
             }, 300);
         }
     }
@@ -157,7 +176,7 @@ export class ListItemsPage extends PageBase {
 
     public async EditList(): Promise<boolean> {
         if (this.List) {
-            this.ListsService.EditList(this.List, false);
+            this.ListsService.EditList(this.List);
             return true;
         }
         return false;
@@ -174,7 +193,7 @@ export class ListItemsPage extends PageBase {
                         return true;
                     },
                 }),
-                MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: this.List.Uuid, disabled: !this.useTrash }),
+                MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: this.List.Uuid, disabled: !this._useTrash }),
                 MenuitemFactory(EMenuItemType.EditList, { onClick: () => this.EditList() }),
                 MenuitemFactory(EMenuItemType.EmptyList, { onClick: () => this.EmptyList(), disabled: this.List.Items.length <= 0 }),
                 MenuitemFactory(EMenuItemType.DeleteList, { onClick: () => this.DeleteList() }),
@@ -182,5 +201,23 @@ export class ListItemsPage extends PageBase {
         } else {
             return [];
         }
+    }
+
+    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
+        if (event.detail.scrollTop == 0) {
+            this._scrollPosition = "top";
+        } else if (event.detail.scrollTop >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+            this._scrollPosition = "bottom";
+        } else {
+            this._scrollPosition = event.detail.scrollTop;
+        }
+    }
+
+    public ScrollToTop() {
+        this.mainContent?.scrollToTop(300);
+    }
+
+    public ScrollToBottom(instant: boolean = true) {
+        this.mainContent?.scrollToBottom(instant ? 0 : 300);
     }
 }

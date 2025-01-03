@@ -28,7 +28,7 @@ export class DevicesPage extends PageBase {
     private initListener?: Subscription;
     private stateListener?: Subscription;
 
-    private Route = inject(ActivatedRoute);
+    private readonly Route = inject(ActivatedRoute);
 
     public get installHint(): boolean {
         return this.SelectedDevice?.State == "AppNotInstalled";

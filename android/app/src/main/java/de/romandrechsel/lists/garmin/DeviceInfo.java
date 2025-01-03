@@ -26,7 +26,7 @@ import de.romandrechsel.lists.utils.DeviceUtils;
 
 public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQApplicationEventListener
 {
-    private static final String TAG = "Device";
+    private static final String TAG = "IQDevice";
 
     public enum DeviceState
     {Initializing, Ready, AppNotInstalled, CheckingApp, NotConnected, ConnectionLost, NotPaired, InvalidState, ServiceUnavailable}
@@ -47,7 +47,9 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
     @NonNull
     private final DeviceManager Manager;
 
+    @Nullable
     public IQDevice device = null;
+    @Nullable
     public IQApp deviceApp = null;
 
     @NonNull
@@ -74,16 +76,19 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
                     public void onApplicationInfoReceived(IQApp iqApp)
                     {
                         DeviceInfo.this.deviceApp = iqApp;
-                        DeviceInfo.this.setState(DeviceState.Ready);
-
-                        try
+                        if (DeviceInfo.this.state != DeviceState.Ready)
                         {
-                            DeviceInfo.this.Manager.connectIQ.registerForAppEvents(iqDevice, iqApp, DeviceInfo.this);
-                        }
-                        catch (InvalidStateException ex)
-                        {
-                            Logger.Error(TAG, "Could not register for app events, invalid state:", ex);
-                            DeviceInfo.this.setState(DeviceState.InvalidState);
+                            DeviceInfo.this.setState(DeviceState.Ready);
+                            try
+                            {
+                                DeviceInfo.this.Manager.connectIQ.registerForAppEvents(iqDevice, iqApp, DeviceInfo.this);
+                                Logger.Debug(TAG, "Listening for ConnectIQ app messages for device " + DeviceInfo.this);
+                            }
+                            catch (InvalidStateException ex)
+                            {
+                                Logger.Error(TAG, "Could not register for ConnectIQ app events for device " + DeviceInfo.this + ", invalid state", ex);
+                                DeviceInfo.this.setState(DeviceState.InvalidState);
+                            }
                         }
                     }
 
@@ -123,7 +128,7 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
     }
 
     @Override
-    public void onMessageReceived(IQDevice iqDevice, IQApp iqApp, List<Object> list, ConnectIQ.IQMessageStatus iqMessageStatus)
+    public void onMessageReceived(IQDevice iqDevice, IQApp iqApp, List<Object> data, ConnectIQ.IQMessageStatus iqMessageStatus)
     {
         if (iqDevice.getDeviceIdentifier() != this.getDeviceIdentifier() || !iqApp.getApplicationId().equals(this.deviceApp.getApplicationId()))
         {
@@ -132,18 +137,20 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
             return;
         }
 
-        if (iqMessageStatus != ConnectIQ.IQMessageStatus.SUCCESS || list == null)
+        if (iqMessageStatus != ConnectIQ.IQMessageStatus.SUCCESS || data == null)
         {
             Logger.Error(TAG, "Could not receive data from device " + this + ": " + iqMessageStatus.name());
         }
         else
         {
-            Map<String, Object> data = (HashMap<String, Object>) list.get(0);
-            if (data != null)
+            Map<String, Object> map = (HashMap<String, Object>) data.get(0);
+            String json = new Gson().toJson(map);
+            Logger.Debug(TAG, "Received data from device " + this + ": " + json.length() + " bytes");
+            if (map != null)
             {
                 JSObject event_args = new JSObject();
                 event_args.put("device", this.toJSObject());
-                event_args.put("message", new Gson().toJson(data));
+                event_args.put("message", new Gson().toJson(map));
                 this.Manager.Plugin.emitJsEvent("RECEIVE", event_args);
             }
         }
@@ -151,48 +158,38 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
 
     public void setDevice(IQDevice device)
     {
-        this.disconnect();
+        if (device != this.device)
+        {
+            this.disconnect();
 
-        this.device = device;
-        this.setState(DeviceState.Initializing);
+            this.device = device;
+            this.setState(DeviceState.Initializing);
 
-        try
-        {
-            this.onDeviceStatusChanged(device, this.Manager.connectIQ.getDeviceStatus(device));
-            this.Manager.connectIQ.registerForDeviceEvents(device, this);
-        }
-        catch (InvalidStateException e)
-        {
-            Log.e(TAG, "ConnectIQ not in valid state!");
-            this.setState(DeviceState.InvalidState);
-        }
-        catch (ServiceUnavailableException e)
-        {
-            Log.e(TAG, "ConnectIQ Service unavailable!");
-            this.setState(DeviceState.ServiceUnavailable);
+            try
+            {
+                this.onDeviceStatusChanged(device, this.Manager.connectIQ.getDeviceStatus(device));
+                this.Manager.connectIQ.registerForDeviceEvents(device, this);
+            }
+            catch (InvalidStateException e)
+            {
+                Log.e(TAG, "ConnectIQ not in valid state!");
+                this.setState(DeviceState.InvalidState);
+            }
+            catch (ServiceUnavailableException e)
+            {
+                Log.e(TAG, "ConnectIQ Service unavailable!");
+                this.setState(DeviceState.ServiceUnavailable);
+            }
         }
     }
 
     public void disconnect()
     {
-        if (this.deviceApp != null)
-        {
-            try
-            {
-                this.Manager.connectIQ.unregisterForApplicationEvents(this.device, this.deviceApp);
-            }
-            catch (InvalidStateException e)
-            {
-                this.setState(DeviceState.InvalidState);
-            }
-            this.deviceApp = null;
-        }
-
         if (this.device != null)
         {
             try
             {
-                this.Manager.connectIQ.unregisterForDeviceEvents(this.device);
+                this.Manager.connectIQ.unregisterForEvents(this.device);
             }
             catch (InvalidStateException e)
             {
@@ -210,6 +207,11 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
      */
     public void Send(@Nullable Object payload, @Nullable IMessageSendListener sendListener)
     {
+        if (this.device == null)
+        {
+            Logger.Debug(TAG, "Could not send to undefined device");
+            return;
+        }
         Map<String, Object> data;
         if (payload != null && !DeviceUtils.IsStringKeyMap(payload))
         {
@@ -316,7 +318,14 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
 
     public long getDeviceIdentifier()
     {
-        return this.device.getDeviceIdentifier();
+        if (this.device != null)
+        {
+            return this.device.getDeviceIdentifier();
+        }
+        else
+        {
+            return -1;
+        }
     }
 
     public JSObject toJSObject()
@@ -338,7 +347,14 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
     @Override
     public String toString()
     {
-        return this.getDeviceIdentifier() + " (" + this.device.getFriendlyName() + ")";
+        if (this.device != null)
+        {
+            return this.getDeviceIdentifier() + " (" + this.device.getFriendlyName() + ")";
+        }
+        else
+        {
+            return "undefined";
+        }
     }
 
     private void setState(DeviceState state)

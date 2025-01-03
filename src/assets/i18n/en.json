@@ -36,6 +36,7 @@
         "de-DE": "German",
         "es-ES": "Spanish",
         "fr-FR": "French",
+        "hi-IN": "Hindi",
         "it-IT": "Italian",
         "ja-JP": "Japanese",
         "uk-UA": "Ukrainian",
@@ -118,7 +119,11 @@
         "title_new": "Create new item",
         "title_edit": "Edit item",
         "itemname": "Description",
-        "itemnote": "Note"
+        "itemnote": "Note",
+        "hidden": "Hidden",
+        "hidden_info": "Hidden list items are not transferred to your watch but remain on the smartphone.<br /><br />This is useful if you temporarily do not want to display certain items, but you do not want to delete them either. They can be reused later.",
+        "locked": "Locked",
+        "locked_info": "Locked list items are not deleted when the list is cleared.<br /><br />This simplifies tidying up the list if you regularly want to reuse certain items."
     },
     "comp_sharelog": {
         "title": "Store log",
@@ -126,7 +131,7 @@
         "text_web": "The logfile <strong>{{filename}}</strong> will be stored on your disk.",
         "store": "Store in Documents on your device",
         "share": "Share",
-        "email": "Send me via e-mail",
+        "email": "Send as e-mail to developer",
         "share_email": {
             "title": "{{package}} / {{platform}} - logfile {{file}} ({{size}})",
             "text": "Please describe me the problems in more detailed way, so I can understand them a little bit better:\n\n"
@@ -140,12 +145,15 @@
         "meta_settings_note": "Log settings, language, etc.",
         "meta_storage": "Storage information",
         "meta_storage_note": "Number and size of lists and logs on the device",
-        "watch": "Attach logs of the watch"
+        "watch": "Attach logs of the watch",
+        "error_report_confirm": "The error report has been received.<br /><br />Would you like to forward it to me as a bug report??"
     },
     "comp_watchlogs": {
         "title": "Transmit logs",
         "text": "To transfer the logs from your watch, you must first start the app on your watch<br /><br /><strong>{{name}}</strong><br /><br />If the app is running, the logs should be transferred automatically.",
-        "withoutlogs": "Continue without logs"
+        "withoutlogs": "Continue without logs",
+        "openApp": "Open app",
+        "logs_received_confirm": "The logs have been received.<br /><br />Would you like to see them now?"
     },
     "page_lists": {
         "page_title": "My lists",

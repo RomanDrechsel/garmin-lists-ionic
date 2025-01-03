@@ -1,5 +1,5 @@
 import { HttpClient, provideHttpClient } from "@angular/common/http";
-import { APP_INITIALIZER, enableProdMode, importProvidersFrom, isDevMode } from "@angular/core";
+import { enableProdMode, importProvidersFrom, inject, isDevMode, provideAppInitializer } from "@angular/core";
 import { bootstrapApplication } from "@angular/platform-browser";
 import { RouteReuseStrategy, provideRouter } from "@angular/router";
 import { provideServiceWorker } from "@angular/service-worker";
@@ -17,7 +17,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 export function initializeFactory(init: AppService) {
-    return () => init.InitializeApp();
+    init.InitializeApp();
 }
 
 if (environment.production) {
@@ -48,11 +48,6 @@ bootstrapApplication(AppComponent, {
                 },
             }),
         ]),
-        {
-            provide: APP_INITIALIZER,
-            useFactory: initializeFactory,
-            deps: [AppService],
-            multi: true,
-        },
+        provideAppInitializer(() => initializeFactory(inject(AppService))),
     ],
 }).catch(err => console.log(err));

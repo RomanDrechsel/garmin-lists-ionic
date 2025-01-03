@@ -2,9 +2,9 @@ html {
     --ion-default-font: "Roboto", Helvetica, Arial, sans-serif !important;
 }
 
-ion-app {
+/*ion-app {
     margin-bottom: 56px;
-}
+}*/
 
 ion-list {
     &.list-md {
@@ -39,24 +39,33 @@ ion-fab {
 
     ion-fab-button {
         --box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
-    }
 
-    ion-fab-button[data-label] {
-        position: relative;
-    }
+        &[data-label] {
+            position: relative;
+        }
 
-    ion-fab-button[data-label]::after {
-        cursor: pointer;
-        content: attr(data-label);
-        position: absolute;
-        z-index: 20;
-        right: 50px;
-        bottom: 6px;
-        background-color: var(--color-popup-background);
-        padding: 5px 15px;
-        border-radius: 15px;
-        color: var(--color-text);
-        box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
+        &[data-label]::after {
+            cursor: pointer;
+            content: attr(data-label);
+            position: absolute;
+            z-index: 20;
+            right: 50px;
+            bottom: 6px;
+            background-color: var(--color-popup-background);
+            padding: 5px 15px;
+            border-radius: 15px;
+            color: var(--color-text);
+            box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
+        }
+
+        &.fab-button-disabled {
+            opacity: 1;
+            --background: var(--ion-color-secondary-tint);
+
+            ion-icon {
+                fill: var(--color-text-disabled);
+            }
+        }
     }
 }
 
@@ -90,12 +99,27 @@ ion-select {
             color: var(--color-highlight) !important;
         }
     }
+
+    .input-bottom {
+        .counter {
+            --ion-color-step-550: var(--ion-color-medium);
+        }
+    }
+}
+
+ion-toggle {
+    --handle-background: var(--color-toggle-handle-background);
 }
 
 ion-modal,
 ion-alert,
 ion-loading {
     backdrop-filter: blur(6px);
+    .alert-checkbox-group {
+        .alert-checkbox-label {
+            color: var(--color-text);
+        }
+    }
 }
 
 ion-alert {
@@ -142,19 +166,33 @@ ion-backdrop {
 
 ion-action-sheet {
     backdrop-filter: blur(2px);
+
+    .action-sheet-wrapper {
+        .action-sheet-container {
+            --background: var(--color-action-sheet-background);
+        }
+    }
+
+    .action-sheet-button {
+        span {
+            color: var(--color-text);
+        }
+    }
 }
 
 ion-icon.info-icon {
     color: var(--color-info);
     fill: var(--color-info);
-    padding: 12px;
-    height: 28px;
-    width: 28px;
-    margin-inline-start: 6px;
+    padding: 10px 16px;
+    height: 24px;
+    width: 24px;
     margin-block: 0;
 }
 
 ion-checkbox {
+    --border-color: var(--color-control-border);
+    --checkbox-background: var(--color-control-background);
+
     &::part(container) {
         position: absolute;
         top: 14px;
@@ -171,6 +209,10 @@ ion-datetime {
         flex-wrap: wrap;
         justify-content: end;
     }
+}
+
+ion-picker {
+    --ion-background-color-rgb: var(--color-picker-rgb);
 }
 
 .no-wrap {

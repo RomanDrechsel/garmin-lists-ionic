@@ -18,9 +18,23 @@
 }
 
 #logtext {
-    font-family: 'RobotoMono', monospace;
+    font-family: "RobotoMono", monospace;
     padding: 10px 6px 100px 6px;
     font-size: 0.7em;
     white-space: pre-wrap;
     color: var(--color-text);
+}
+
+ion-fab {
+    flex-direction: row;
+    gap: 1em;
+    display: flex;
+
+    ion-fab-button {
+        ion-icon {
+            &.to-bottom {
+                rotate: 180deg;
+            }
+        }
+    }
 }

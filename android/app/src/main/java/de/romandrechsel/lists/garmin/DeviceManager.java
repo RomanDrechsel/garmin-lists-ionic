@@ -23,9 +23,11 @@ import de.romandrechsel.lists.logging.Logger;
 
 public class DeviceManager implements ConnectIQ.ConnectIQListener
 {
-    public interface IAppLogsResponse
+    public interface IInitlializeListener
     {
-        void onAppLogsResponse(@Nullable List<String> logs);
+        void Success(Boolean simulator, Boolean debug_app);
+
+        void Failed(String message);
     }
 
     @NonNull
@@ -35,64 +37,91 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
     private static final String AppIdRelease = "f9b0d002-4a4d-45ab-9330-bbed2c3af49f";
     public static String AppId = DeviceManager.AppIdRelease;
 
-    private static final String TAG = "DeviceManager";
+    private Boolean _useGarminSimulator = false;
+
+    private static final String TAG = "IQDeviceManager";
     public boolean sdkReady = false;
 
     private final List<DeviceInfo> devices = new ArrayList<>();
+
+    @Nullable
+    private IInitlializeListener _initListener = null;
 
     public DeviceManager(@NonNull ConnectIQPlugin plugin)
     {
         this.Plugin = plugin;
     }
 
-    public void Initialize(Activity activity, @Nullable Boolean live_devices, @Nullable Boolean live_app)
+    public void Initialize(Activity activity, @Nullable Boolean simulator, @Nullable Boolean debug_app, @Nullable IInitlializeListener listener)
     {
+        this._initListener = listener;
         this.DisconnectAllDevices();
 
-        if (live_app != null && live_app)
-        {
-            DeviceManager.AppId = DeviceManager.AppIdRelease;
-        }
-        else
+        if (debug_app != null && debug_app)
         {
             DeviceManager.AppId = DeviceManager.AppIdDebug;
             Logger.Debug(TAG, "Using garmin debug app...");
         }
+        else
+        {
+            DeviceManager.AppId = DeviceManager.AppIdRelease;
+        }
 
-        if (live_devices != null && !live_devices)
+        if (simulator != null && simulator)
         {
             //get debugging devices
+            this._useGarminSimulator = true;
             this.connectIQ = ConnectIQ.getInstance(activity, ConnectIQ.IQConnectType.TETHERED);
             this.connectIQ.setAdbPort(7381);
-            Logger.Debug(TAG, "Initialize debug devices...");
+            Logger.Debug(TAG, "Initialize simulator devices...");
         }
         else
         {
             //get live devices
+            this._useGarminSimulator = false;
             this.connectIQ = ConnectIQ.getInstance(activity, ConnectIQ.IQConnectType.WIRELESS);
         }
         this.connectIQ.initialize(activity, true, this);
+
+        try
+        {
+            this.connectIQ.unregisterAllForEvents();
+        }
+        catch (InvalidStateException ignored)
+        {
+        }
     }
 
     @Override
     public void onSdkReady()
     {
         this.sdkReady = true;
-        this.listDevices();
+        Logger.Debug(TAG, "ConnectIQ initialization successful");
+        if (this._initListener != null)
+        {
+            this._initListener.Success(this._useGarminSimulator, AppId.equals(AppIdDebug));
+            this._initListener = null;
+        }
     }
 
     @Override
     public void onInitializeError(ConnectIQ.IQSdkErrorStatus errStatus)
     {
-        Logger.Error("ConnectIQ", "ConnectIQ initialization failed: " + errStatus.toString());
+        Logger.Error(TAG, "ConnectIQ initialization failed: " + errStatus.toString());
         this.sdkReady = false;
         this.DisconnectAllDevices();
+        if (this._initListener != null)
+        {
+            this._initListener.Failed(errStatus.toString());
+            this._initListener = null;
+        }
     }
 
     @Override
     public void onSdkShutDown()
     {
         this.sdkReady = false;
+        Logger.Debug(TAG, "ConnectIQ shut down");
         this.DisconnectAllDevices();
     }
 
@@ -142,7 +171,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         if (device != null)
         {
             device.SendJson(json, listener);
-            if (DeviceManager.IsDebug())
+            if (this._useGarminSimulator)
             {
                 this.debugLogResponse(device, json);
             }
@@ -239,7 +268,14 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
             }
         }
 
-        Logger.Notice(TAG, this.devices.size() + " device(s) found");
+        if (this.devices.size() == 1)
+        {
+            Logger.Notice(TAG, "1 device found");
+        }
+        else
+        {
+            Logger.Notice(TAG, this.devices.size() + " device(s) found");
+        }
     }
 
     /**
@@ -264,6 +300,10 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
 
     private void debugLogResponse(DeviceInfo device, String json)
     {
+        if (device.device == null)
+        {
+            return;
+        }
         Object obj = new Gson().fromJson(json, Object.class);
         if (obj instanceof LinkedTreeMap)
         {

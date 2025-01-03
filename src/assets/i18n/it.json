@@ -10,14 +10,14 @@
     "delete": "Elimina",
     "change": "Modifica",
     "select": "Seleziona",
-    "share": "Condiverti",
+    "share": "Condividi",
     "date": {
         "date_add": "",
         "today": "Oggi",
         "yesterday": "Ieri",
         "sec_short": "Sec.",
         "min_short": "Min.",
-        "hour_short": "Ore",
+        "hour_short": "Ora",
         "hours_short": "Ore",
         "ago": "{{date}} fa",
         "weekday": {
@@ -36,6 +36,7 @@
         "de-DE": "Tedesco",
         "es-ES": "Spagnolo",
         "fr-FR": "Francese",
+        "hi-IN": "Hindi",
         "it-IT": "Italiano",
         "ja-JP": "Giapponese",
         "uk-UA": "Ucraino",
@@ -50,12 +51,12 @@
         "devices": "Dispositivi",
         "settings": "Impostazioni",
         "privacy": "Privacy",
-        "appinfos": "Informazioni sull'app",
+        "appinfos": "Informazioni sull'applicazione",
         "empty_trash": "Svuota cestino"
     },
     "service-lists": {
         "delete_confirm": "Vuoi davvero eliminare la lista <strong>{{name}}</strong>?",
-        "delete_confirm_watch": "Elimina anche dalla lista dell'orologio",
+        "delete_confirm_watch": "Elimina anche dall'orologio",
         "delete_error": "La lista non può essere eliminata!",
         "delete_success": "La lista è stata eliminata.",
         "delete_item_confirm": "Vuoi davvero eliminare il punto <strong>{{name}}</strong>?",
@@ -64,27 +65,27 @@
         "empty_confirm": "Vuoi davvero eliminare tutti i punti non bloccati della lista <strong>{{name}}</strong>?",
         "empty_success": "Tutti i punti della lista sono stati eliminati.",
         "empty_error": "I punti della lista non possono essere eliminati!",
-        "undo_warning": "<br /><br /><strong>Attenzione:</strong> Questo non può essere annullato!",
-        "erase_confirm": "Vuoi davvero eliminare definitivamente la lista <strong>{{name}}</strong>?",
-        "erase_success": "La lista è stata eliminata definitivamente.",
-        "erase_error": "La lista non può essere eliminata!",
-        "erase_item_confirm": "Vuoi davvero eliminare definitivamente il punto <strong>{{name}}</strong>?",
-        "erase_item_success": "Il punto è stato eliminato definitivamente.",
-        "erase_item_error": "Il punto non può essere eliminato!",
+        "undo_warning": "<br /><br /><strong>Attenzione:</strong> Questa azione non può essere annullata!",
+        "erase_confirm": "Vuoi davvero cancellare definitivamente la lista <strong>{{name}}</strong>?",
+        "erase_success": "La lista è stata cancellata definitivamente.",
+        "erase_error": "La lista non può essere cancellata!",
+        "erase_item_confirm": "Vuoi davvero cancellare definitivamente il punto <strong>{{name}}</strong>?",
+        "erase_item_success": "Il punto è stato cancellato definitivamente.",
+        "erase_item_error": "Il punto non può essere cancellato!",
         "restore_confirm": "Vuoi davvero ripristinare la lista <strong>{{name}}</strong>?",
         "restore_success": "La lista è stata ripristinata.",
         "restore_error": "La lista non può essere ripristinata!",
         "restore_item_confirm": "Vuoi davvero ripristinare il punto <strong>{{name}}</strong>?",
         "restore_item_success": "Il punto è stato ripristinato.",
         "restore_item_error": "Il punto non può essere ripristinato!",
-        "empty_trash_confirm": "Vuoi davvero svuotare il cestino e eliminare le {{count}} liste?",
-        "empty_trash_confirm_single": "Vuoi davvero svuotare il cestino e eliminare la lista?",
-        "empty_trash_listitems_confirm": "Vuoi davvero svuotare il cestino della lista e eliminare i {{count}} punti?",
-        "empty_trash_listitems_confirm_single": "Vuoi davvero svuotare il cestino della lista e eliminare il punto?",
+        "empty_trash_confirm": "Vuoi davvero svuotare il cestino e cancellare le {{count}} liste?",
+        "empty_trash_confirm_single": "Vuoi davvero svuotare il cestino e cancellare la lista?",
+        "empty_trash_listitems_confirm": "Vuoi davvero svuotare il cestino della lista e cancellare i {{count}} punti?",
+        "empty_trash_listitems_confirm_single": "Vuoi davvero svuotare il cestino della lista e cancellare il punto?",
         "empty_trash_success": "Il cestino è stato svuotato.",
         "empty_trash_error": "Il cestino non può essere svuotato!",
-        "transmit_confirm": "Vuoi trasferire la lista sul tuo dispositivo <strong>{{device}}</strong>?",
-        "transmit_process": "La lista viene trasmessa...",
+        "transmit_confirm": "Vuoi trasferire la lista al tuo dispositivo <strong>{{device}}</strong>?",
+        "transmit_process": "La lista viene trasferita...",
         "transmit_success": "La lista è stata trasferita con successo.",
         "transmit_error": "La lista non può essere trasferita!",
         "transmit_send_btn": "Invia al dispositivo"
@@ -116,7 +117,11 @@
         "title_new": "Aggiungi un punto alla lista",
         "title_edit": "Modifica il punto della lista",
         "itemname": "Nome",
-        "itemnote": "Nota"
+        "itemnote": "Nota",
+        "hidden": "Nascosto",
+        "hidden_info": "I punti della lista nascosti non vengono trasferiti al tuo orologio, ma rimangono sul telefono.<br /><br />Questo è utile se desideri temporaneamente nascondere alcuni punti senza eliminarli. Possono essere riutilizzati in seguito.",
+        "locked": "Bloccato",
+        "locked_info": "I punti della lista bloccati non vengono eliminati quando la lista viene svuotata.<br /><br />Questo semplifica l'ordine nella lista se desideri ripetere regolarmente alcuni punti."
     },
     "comp_sharelog": {
         "title": "Salva il log",
@@ -124,7 +129,7 @@
         "text_web": "Il log <strong>{{filename}}</strong> verrà salvato sul tuo computer.",
         "store": "Salva in Documenti",
         "share": "Condividi",
-        "email": "Inviami via e-mail",
+        "email": "Inviare allo sviluppatore via e-mail",
         "share_email": {
             "title": "{{package}} / {{platform}} - File di log {{file}} ({{size}})",
             "text": "Per favore, descrivi i problemi in modo più dettagliato così posso capirli:\n\n"
@@ -138,12 +143,15 @@
         "meta_settings_note": "Impostazioni del log, lingua, ecc.",
         "meta_storage": "Informazioni di archiviazione",
         "meta_storage_note": "Numero/dimensione delle liste e dei log sul dispositivo",
-        "watch": "Aggiungi i log dell'orologio"
+        "watch": "Aggiungi i log dell'orologio",
+        "error_report_confirm": "La segnalazione è stata ricevuta.<br /><br />Vuoi inoltrarla a me come segnalazione di bug?"
     },
     "comp_watchlogs": {
         "title": "Trasferisci i log",
         "text": "Per trasferire i log dal tuo orologio, devi prima avviare l'app sul tuo orologio<br /><br /><strong>{{name}}</strong><br /><br />Se l'app è in esecuzione, i log verranno trasferiti automaticamente.",
-        "withoutlogs": "Procedi senza log"
+        "withoutlogs": "Procedi senza log",
+        "openApp": "Aprire l'applicazione",
+        "logs_received_confirm": "I registri sono stati ricevuti.<br /><br />Vuoi visualizzarli ora?"
     },
     "page_lists": {
         "page_title": "Le mie liste",
@@ -166,9 +174,9 @@
     },
     "page_trash": {
         "page_title": "Cestino",
-        "erase": "Elimina",
+        "erase": "Cancella",
         "restore": "Ripristina",
-        "deleted": "eliminato: {{date}}",
+        "deleted": "cancellato: {{date}}",
         "empty": "Il cestino è vuoto."
     },
     "page_trashitem": {
@@ -178,7 +186,7 @@
     "page_devices": {
         "page_title": "I miei dispositivi",
         "known_devices": "Dispositivi noti",
-        "install_app": "Devi prima installare l'app Lista sul tuo orologio.<br /><strong>Clicca qui</strong> per andare allo store Garmin ConnectIQ.",
+        "install_app": "Devi prima installare l'app Lista sul tuo orologio.<br /><strong>Clicca qui</strong> per andare allo store Garmin Connect IQ.",
         "reload_btn": "Carica nuovamente i dispositivi",
         "toggle": "Invia sempre a questo dispositivo",
         "select_btn": "Seleziona dispositivo",
@@ -194,11 +202,11 @@
     "page_settings": {
         "page_title": "Impostazioni",
         "language": "Lingua dell'app",
-        "language_hint": "Il tedesco è la mia lingua madre. Se trovi errori di ortografia, segnalali per favore a <span class=\"no-wrap\">{{email}}</span>",
-        "translation_error_confirm": "Vuoi segnalare un errore di ortografia?",
+        "language_hint": "Il tedesco è la mia lingua madre. Se trovi errori di traduzione, segnalali per favore a <span class=\"no-wrap\">{{email}}</span>",
+        "translation_error_confirm": "Vuoi segnalare un errore di traduzione?",
         "translation_error_title": "Errore nella traduzione italiana",
         "logging": "Impostazioni del logging",
-        "logging_note": "Gestione e configurazione degli entry dei log",
+        "logging_note": "Gestione e configurazione delle voci di log",
         "confirm": "Impostazioni di conferma",
         "confirm_note": "Configurazione delle richieste di conferma dell'utente",
         "trash": "Cestino",
@@ -206,7 +214,6 @@
         "transmission": "Impostazioni di trasmissione",
         "transmission_note": "Configurazione per il trasferimento delle liste sul tuo orologio"
     },
-
     "page_settings_logs": {
         "page_title": "Logging",
         "mode": "Modo log",
@@ -221,22 +228,22 @@
         "show": "Mostra log",
         "show_watch": "Mostra i log dell'orologio",
         "show_watch_note": "Mostra i log dell'orologio. L'app deve essere in esecuzione sull'orologio.",
-        "size": "Dimensione:\n{{size}} / {{files}} file(i)",
-        "deleteall": "Elimina tutti i log",
-        "deleteall_confirm": "Si desidera eliminare i {{count}} file di log?",
-        "deleteall_confirm_single": "Si desidera eliminare questo file di log?",
-        "deleteall_done": "{{count}} file di log eliminati.",
-        "deleteall_done_single": "Un file di log eliminato."
+        "size": "Dimensione:\n{{size}} / {{files}} file",
+        "deleteall": "Cancella tutti i log",
+        "deleteall_confirm": "Vuoi cancellare i {{count}} file di log?",
+        "deleteall_confirm_single": "Vuoi cancellare questo file di log?",
+        "deleteall_done": "{{count}} file di log cancellati.",
+        "deleteall_done_single": "Un file di log cancellato."
     },
     "page_settings_showlogs": {
         "page_title": "Logs",
         "log_onemore": "Un altro log",
         "log_more": "{{count}} altri log",
         "log_empty": "Il log non è stato caricato.",
-        "btn_delete": "Elimina log",
+        "btn_delete": "Cancella log",
         "btn_save": "Salva log",
-        "confirm_delete": "Si desidera eliminare il log <strong>{{filename}}</strong>?",
-        "toast_deleted": "Il log è stato eliminato.",
+        "confirm_delete": "Vuoi cancellare il log <strong>{{filename}}</strong>?",
+        "toast_deleted": "Il log è stato cancellato.",
         "select_logs": "Seleziona file di log:",
         "logfile": "File di log",
         "select_logday_title": "Seleziona i giorni dei file di log:",
@@ -244,7 +251,7 @@
         "no_log_note": "Per {{date}} non sono stati trovati file di log."
     },
     "page_settings_showwatchlogs": {
-        "page_title": "Logs dell'orologio",
+        "page_title": "Log dell'orologio",
         "select_watch": "Seleziona dispositivo",
         "no_watch": "Nessun dispositivo trovato",
         "no_log": "Nessun file di log trovato!",
@@ -258,22 +265,22 @@
     "page_lists_transmission": {
         "page_title": "Trasmissione all'orologio",
         "openontransmit": "Avvia app durante il trasferimento",
-        "openontransmit_note": "Chiedi alla tua orologio se vuoi avviare l'app quando trasferisci una lista.",
-        "deletelist": "Elimina automaticamente le liste dall'orologio",
-        "deletelist_note": "Quando elimini una lista sul tuo smartphone, elimina anche la lista sull'orologio."
+        "openontransmit_note": "Chiedi al tuo orologio se vuoi avviare l'app quando trasferisci una lista.",
+        "deletelist": "Cancella automaticamente le liste dall'orologio",
+        "deletelist_note": "Quando cancelli una lista sul tuo smartphone, cancella anche la lista sull'orologio."
     },
     "page_settings_trash": {
         "page_title": "Cestino",
         "use_trash": "Usa il cestino",
-        "use_trash_note": "Sposta le liste nel cestino anziché eliminarle definitivamente quando le elimini.",
+        "use_trash_note": "Sposta le liste nel cestino anziché cancellarle definitivamente quando le elimini.",
         "use_trash_listitem": "Usa il cestino per gli elementi della lista",
-        "use_trash_listitem_note": "Sposta gli elementi della lista nel cestino anziché eliminarli definitivamente.<br />Per ogni lista viene utilizzato un cestino separato.",
+        "use_trash_listitem_note": "Sposta gli elementi della lista nel cestino anziché cancellarli definitivamente.<br />Per ogni lista viene utilizzato un cestino separato.",
         "instock": "Mantieni in magazzino",
         "instock_oneday": "un giorno",
         "instock_oneweek": "una settimana",
         "instock_onemonth": "un mese",
         "instock_hundredentries": "ultimi 100 elementi",
-        "instock_note": "Quanto tempo desideri mantenere gli elementi nel cestino prima della loro eliminazione automatica?",
+        "instock_note": "Quanto tempo desideri mantenere gli elementi nel cestino prima della loro cancellazione automatica?",
         "confirm_cleartrash": "Vuoi svuotare il cestino?<br /><br /><strong>Attenzione:</strong> Questa azione non può essere annullata!",
         "confirm_cleartrash_ok": "Svuota cestino",
         "confirm_cleartrash_cancel": "Non svuotare il cestino",
@@ -290,10 +297,10 @@
         "stats": "Statistiche:",
         "database_lists": "Liste:",
         "database_trash": "Cestino:",
-        "database_logs": "Logs:",
+        "database_logs": "Log:",
         "memory": "Consumo di memoria:",
         "support": "Ho sviluppato questa app nel mio tempo libero e senza scopi commerciali.<br />Rimane gratuita e open source.<br /><br />Se ti piace e vuoi supportarmi,<br />perché non mi compri un caffè?",
-        "review": "Oppure lascia una recensione positiva nel <strong>Garmin ConnectIQ Store</strong>",
+        "review": "Oppure lascia una recensione positiva nel <strong>Garmin Connect IQ Store</strong>",
         "review_google": "o su <strong>Google Play</strong>",
         "thanks": "Grazie!",
         "website": "Per i miei altri progetti, visita il mio sito web:"

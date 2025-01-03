@@ -1,7 +1,5 @@
 package de.romandrechsel.lists.garmin;
 
-import android.app.Activity;
-
 import androidx.annotation.NonNull;
 
 import com.getcapacitor.JSObject;
@@ -34,13 +32,33 @@ public class ConnectIQPlugin extends Plugin
     @PluginMethod
     public void Initialize(PluginCall call)
     {
-        Activity activity = this.getActivity();
-        if (activity != null)
+        this.Manager.Initialize(this.getActivity(), call.getBoolean("simulator", false), call.getBoolean("debug_app", false), new DeviceManager.IInitlializeListener()
         {
-            this.Manager.Initialize(activity, call.getBoolean("live_devices", true), call.getBoolean("live_app", true));
-        }
-        this.emitJsEvent("INIT", new JSObject());
-        call.resolve();
+            @Override
+            public void Success(Boolean simulator, Boolean debug_app)
+            {
+                JSObject ret = new JSObject();
+                ret.put("success", true);
+                if (simulator)
+                {
+                    ret.put("simulator", true);
+                }
+                if (debug_app)
+                {
+                    ret.put("debug_app", true);
+                }
+                call.resolve(ret);
+            }
+
+            @Override
+            public void Failed(String message)
+            {
+                JSObject ret = new JSObject();
+                ret.put("success", false);
+                ret.put("message", message);
+                call.resolve(ret);
+            }
+        });
     }
 
     @PluginMethod

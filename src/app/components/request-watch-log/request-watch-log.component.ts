@@ -19,7 +19,7 @@ export class RequestWatchLogComponent implements AfterViewInit {
     private _transactionId?: number = undefined;
 
     public async ngAfterViewInit(): Promise<void> {
-        const logs = await this.requestLog(this.Params.device);
+        const logs = await this.requestLog();
         if (logs) {
             this.modalCtrl.dismiss(logs, "confirm");
         } else {
@@ -39,12 +39,16 @@ export class RequestWatchLogComponent implements AfterViewInit {
         this.modalCtrl.dismiss(["Log request canceled"], "confirm");
     }
 
-    private async requestLog(device: ConnectIQDevice): Promise<string[]> {
+    public openApp() {
+        this.ConnectIQ.openApp(this.Params.device);
+    }
+
+    private async requestLog(): Promise<string[]> {
         return new Promise<string[]>(async resolve => {
             const tid = await this.ConnectIQ.SendToDevice({
-                device: device,
+                device: this.Params.device,
                 data: { type: "request", request: "logs" },
-                response: async message => {
+                response_callback: async message => {
                     if (message) {
                         if (message.Message?.logs) {
                             if (message.Message.logs instanceof Array) {
@@ -64,7 +68,6 @@ export class RequestWatchLogComponent implements AfterViewInit {
             } else if (tid === false) {
                 resolve(["Request to device failed"]);
             }
-            this.ConnectIQ.openApp(device);
         });
     }
 }

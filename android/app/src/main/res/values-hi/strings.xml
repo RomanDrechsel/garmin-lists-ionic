@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">सूचियाँ</string>
+    <string name="title_activity_main">सूचियाँ</string>
+    <string name="app_name_debug">सूचियाँ Debug</string>
+</resources>

@@ -1,7 +1,9 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonSelect, IonSelectOption, IonText, SelectCustomEvent } from "@ionic/angular/standalone";
+import { ActivatedRoute, Router } from "@angular/router";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonSelect, IonSelectOption, IonText, ScrollDetail, SelectCustomEvent } from "@ionic/angular/standalone";
+import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
@@ -18,17 +20,45 @@ import { PageBase } from "../../page-base";
     imports: [IonFabButton, IonFab, IonText, IonIcon, IonContent, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class ShowWatchLogsPage extends PageBase {
+    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
+    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
+    @ViewChild("logContent", { read: ElementRef, static: false }) logContent?: ElementRef;
+
     public Device?: ConnectIQDevice = undefined;
     public DeviceLog?: string;
 
     public availableDevices: ConnectIQDevice[] = [];
 
     private readonly WatchLogs = inject(WatchLoggingService);
+    private readonly Route = inject(ActivatedRoute);
+    private readonly Router = inject(Router);
 
     private _deviceListener?: Subscription;
+    private _scrollPosition: "top" | "bottom" | number = "top";
+
+    public get ShowScrollButtons(): boolean {
+        return (this.logContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+    }
+
+    public get DisableScrollToTop(): boolean {
+        return this._scrollPosition == "top";
+    }
+
+    public get DisableScrollToBottom(): boolean {
+        return this._scrollPosition == "bottom";
+    }
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
+        const logs = this.Route.snapshot.queryParams["watchLogs"];
+        if (logs) {
+            this.Router.navigate([], { queryParams: {}, replaceUrl: true });
+            this.DeviceLog = logs.join("\n");
+            this.cdr.detectChanges();
+            await new Promise(resolve => setTimeout(resolve, 1));
+            this.cdr.detectChanges();
+            this.ScrollToBottom();
+        }
         this._deviceListener = this.ConnectIQ.onDeviceChanged$.subscribe(async () => {
             await this.loadDevices();
         });
@@ -46,17 +76,40 @@ export class ShowWatchLogsPage extends PageBase {
             if (logs) {
                 this.DeviceLog = logs.join("\n");
                 this.cdr.detectChanges();
+                this.ScrollToBottom();
+                /* else, scroll buttons won't be shown */
+                await new Promise(resolve => setTimeout(resolve, 1));
+                this.cdr.detectChanges();
                 return;
             }
         }
         this.DeviceLog = undefined;
         this.cdr.detectChanges();
+        this.ScrollToBottom();
     }
 
     public async onChangeDevice(event: SelectCustomEvent) {
         if (!this.Device?.equals(event.detail.value)) {
             await this.loadLog();
         }
+    }
+
+    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
+        if (event.detail.scrollTop == 0) {
+            this._scrollPosition = "top";
+        } else if (event.detail.scrollTop >= (this.logContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.logContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+            this._scrollPosition = "bottom";
+        } else {
+            this._scrollPosition = event.detail.scrollTop;
+        }
+    }
+
+    public ScrollToTop() {
+        this.mainContent?.scrollToTop(300);
+    }
+
+    public ScrollToBottom(instant: boolean = true) {
+        this.mainContent?.scrollToBottom(instant ? 0 : 300);
     }
 
     private async loadDevices() {

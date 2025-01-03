@@ -11,7 +11,7 @@
 <div class="inner-content ion-padding">
     <form (ngSubmit)="onSubmit()" [formGroup]="Form">
         <ion-input [label]="'comp-listeditor.listname' | translate" labelPlacement="floating" fill="outline" counter="true" maxlength="100" autocapitalize="sentence" autofocus="true" spellcheck="true" enterkeyhint="enter" required="true" formControlName="listname" #listname></ion-input>
-        <ion-accordion-group *ngIf="ExtendedView" [value]="ResetActive ? 'reset' : undefined" #resetAccordion>
+        <ion-accordion-group [value]="ResetActive ? 'reset' : undefined" #resetAccordion>
             <ion-accordion toggleIcon="none" value="reset">
                 <div slot="header">
                     <ion-item lines="none">
@@ -40,6 +40,10 @@
 
         <ion-button class="ion-float-end" [disabled]="!Form.valid" (click)="onSubmit()">
             {{ Confirm }}
+        </ion-button>
+
+        <ion-button *ngIf="Params?.list" class="ion-float-end" (click)="onDelete()">
+            {{ "delete" | translate }}
         </ion-button>
     </form>
 </div>

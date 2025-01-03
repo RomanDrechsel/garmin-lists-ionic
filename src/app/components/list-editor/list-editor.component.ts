@@ -41,10 +41,6 @@ export class ListEditorComponent {
         });
     }
 
-    public get ExtendedView(): boolean {
-        return this.Params?.extended ?? false;
-    }
-
     public get ResetActive(): boolean {
         return this._listReset?.active ?? false;
     }
@@ -139,14 +135,12 @@ export class ListEditorComponent {
             this._listReset = { interval: "weekly", active: false, hour: 0, minute: 0, day: 1, weekday: this.Locale.CurrentLanguage.firstDayOfWeek };
         }
         this.Form.get("listname")?.setValue(this.Params?.list?.Name);
-        if (this.Params?.extended == true) {
-            this.reset.checked = this._listReset.active;
-            this.toggleReset(undefined);
-        }
+        this.reset.checked = this._listReset.active;
+        this.toggleReset(undefined);
     }
 
     public ionViewDidEnter() {
-        if (this.Params?.extended != true) {
+        if (!this.Params?.list) {
             this.listname.setFocus();
         }
     }
@@ -168,6 +162,12 @@ export class ListEditorComponent {
         return this.modalCtrl.dismiss(list, "confirm");
     }
 
+    public async onDelete() {
+        if (this.Params?.list && (await this.ListsService.DeleteList(this.Params.list))) {
+            this.cancel();
+        }
+    }
+
     public cancel() {
         return this.modalCtrl.dismiss(null, "cancel");
     }
@@ -184,10 +184,9 @@ export class ListEditorComponent {
 
     public async resetInfo(event: any) {
         event?.stopImmediatePropagation();
-        await this.Popups.Alert.Show({
+        await this.Popups.Alert.Info({
             message: "comp-listeditor.reset_info",
             translate: true,
-            cssClass: "info",
         });
     }
 
@@ -228,5 +227,4 @@ export const ListEditor = async function (modalController: ModalController, para
 
 export declare type EditorParams = {
     list?: List;
-    extended?: boolean;
 };

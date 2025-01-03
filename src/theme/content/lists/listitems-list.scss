@@ -1,18 +1,8 @@
+@use "src/theme/content/lists/list.scss";
+
 ion-list {
-    margin-bottom: 90px;
-
     ion-item {
-        --padding-top: 6px;
-        --padding-bottom: 6px;
-        --padding-start: 6px;
-        --ripple-color: var(--ion-color-primary);
-        --background-hover: var(--ion-color-primary);
-        --background-hover-opacity: 0.1;
-        --min-height: 30px;
-        cursor: pointer;
-
         ion-reorder {
-            margin-inline-end: 0;
             margin-inline-start: 10px;
         }
 
@@ -39,7 +29,6 @@ ion-list {
         }
 
         .details {
-            width: 100%;
             margin-block: 6px;
 
             .item {
@@ -56,44 +45,11 @@ ion-list {
         }
 
         &.hidden {
-
             .details .item,
             .details .note,
             .listpoint-indicator {
                 opacity: 0.3;
             }
         }
-    }
-}
-
-.nolist {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-
-    ion-img {
-        max-width: 300px;
-        max-height: 300px;
-        width: 50%;
-        height: auto;
-        opacity: 0.3;
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    ion-text {
-        font-size: 1.4em;
-        font-weight: 600;
-        white-space: pre-line;
-    }
-
-    .icon {
-        padding-bottom: 40px;
-    }
-
-    .text {
-        margin-bottom: 15%;
     }
 }

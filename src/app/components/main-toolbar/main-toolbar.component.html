@@ -3,12 +3,12 @@
         <ion-buttons slot="start" *ngIf="backButton">
             <ion-back-button [defaultHref]="backButton" text="" #backbutton></ion-back-button>
         </ion-buttons>
-        <ion-title [ngClass]="{'back': backButton != '', 'menu': menuButton == 'true'}">
+        <ion-title [ngClass]="{ back: backButton != '', menu: menuButton == 'true' }">
             <ng-content></ng-content>
         </ion-title>
         <ion-buttons slot="end" *ngIf="menuButton == 'true'">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-progress-bar type="indeterminate" *ngIf="IsProgressbarShowing()"></ion-progress-bar>
+        <ion-progress-bar type="indeterminate" *ngIf="ShowProgressbar"></ion-progress-bar>
     </ion-toolbar>
 </ion-header>

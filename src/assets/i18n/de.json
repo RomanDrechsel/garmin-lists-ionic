@@ -36,6 +36,7 @@
         "de-DE": "Deutsch",
         "es-ES": "Spanisch",
         "fr-FR": "Französisch",
+        "hi-IN": "Hindi",
         "it-IT": "Italienisch",
         "ja-JP": "Japanisch",
         "uk-UA": "Ukrainisch",
@@ -76,7 +77,7 @@
         "restore_confirm": "Möchtest du die Liste <strong>{{name}}</strong> wiederherstellen?",
         "restore_success": "Die Liste wurde wiederhergestellt.",
         "restore_error": "Die Liste konnte nicht wiederhergestellt werden!",
-        "restore_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> wiederherstellen?",
+        "restore_item_confirm": "Möchtest du denaPunkt <strong>{{name}}</strong> wiederherstellen?",
         "restore_item_success": "Der Punkt wurde wiederhergestellt.",
         "restore_item_error": "Der Punkt konnte nicht wiederhergestellt werden!",
         "empty_trash_confirm": "Möchstest du den Papierkorb leeren und die {{count}} Listen löschen?",
@@ -95,7 +96,7 @@
         "watch_outdated": "Du scheinst auf deinem Gerät <strong>{{device}}</strong> eine alte Version der Listen-App zu verwenden.<br /><br />Bitte aktuallisiere die App auf deiner Uhr, um alle Funktionen nutzen zu können.",
         "watch_outdated_button": "Zum Connect-IQ Store",
         "watch_outdated_ignore": "Ignorieren",
-        "watch_outdated_dontremind": "für diese Version nicht wieder benachrichtigen"
+        "watch_outdated_dontremind": "Für diese Version nicht wieder benachrichtigen"
     },
     "comp-listeditor": {
         "title_new": "Neue Liste anlegen",
@@ -118,7 +119,11 @@
         "title_new": "Listenpunkt anlegen",
         "title_edit": "Listenpunkt bearbeiten",
         "itemname": "Bezeichnung",
-        "itemnote": "Notiz"
+        "itemnote": "Notiz",
+        "hidden": "Versteckt",
+        "hidden_info": "Versteckte Listenpunkte werden nicht mit auf Deine Uhr übertragen, bleiben aber auf dem Smartphone erhalten.<br /><br />Dies ist nützlich, wenn Du zeitweise bestimmte Punkte nicht anzeigen willst, aber sie trotzdem nicht löschen möchtest. Sie können später wiederverwendet werden.",
+        "locked": "Gesperrt",
+        "locked_info": "Gesperrte Listenpunkte werden beim Leeren der Liste nicht gelöscht.<br /><br />Dies vereinfacht das Aufräumen der Liste, wenn Du bestimmte Punkte regelmäßig wiederholen möchtest."
     },
     "comp_sharelog": {
         "title": "Log Speichern",
@@ -126,7 +131,7 @@
         "text_web": "Das Log <strong>{{filename}}</strong> wird auf Deinem Rechner gespeichert.",
         "store": "In Documents speichern",
         "share": "Teilen",
-        "email": "Mir Per E-Mail senden",
+        "email": "Per E-Mail an Entwickler senden",
         "share_email": {
             "title": "{{package}} / {{platform}} - Log-Datei {{file}} ({{size}})",
             "text": "Bitte schildere mir die Probleme etwas ausführlicher, damit ich sie nachvollziehen kann:\n\n"
@@ -140,12 +145,15 @@
         "meta_settings_note": "Log-Einstellungen, Sprache, etc.",
         "meta_storage": "Speicher Informationen",
         "meta_storage_note": "Anzahl/Größe der Listen und Logs auf dem Gerät",
-        "watch": "Logs der Uhr anhängen"
+        "watch": "Logs der Uhr anhängen",
+        "error_report_confirm": "Der Fehlerbericht wurde empfangen.<br /><br />Möchtest du ihn als Fehlerbericht an mich weiterleiten?"
     },
     "comp_watchlogs": {
         "title": "Logs übertragen",
         "text": "Um die Logs von Deiner Uhr zu übertragen, musst du zuerst die App auf deiner Uhr<br /><br /><strong>{{name}}</strong><br /><br /> starten. Wenn du App läuft, sollten die Logs automatisch übertragen werden.",
-        "withoutlogs": "Ohne Logs fortfahren"
+        "withoutlogs": "Ohne Logs fortfahren",
+        "openApp": "App öffnen",
+        "logs_received_confirm": "Die Logs wurden empfangen.<br /><br />Möchtest du sie jetzt anzeigen?"
     },
     "page_lists": {
         "page_title": "Meine Listen",

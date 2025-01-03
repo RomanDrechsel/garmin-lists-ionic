@@ -37,7 +37,10 @@ export abstract class PageBase {
 
     public async ionViewDidEnter() {
         this.appComponent.setAppPages(this.ModifyMainMenu());
-        AppService.AppToolbar = this.Toolbar;
+        if (this.Toolbar != AppService.AppToolbar) {
+            AppService.AppToolbar?.Copy(this.Toolbar);
+            AppService.AppToolbar = this.Toolbar;
+        }
     }
 
     public async ionViewWillLeave() {}
@@ -46,5 +49,12 @@ export abstract class PageBase {
 
     public ModifyMainMenu(): MenuItem[] {
         return [];
+    }
+
+    protected async reload() {
+        this.cdr.detectChanges();
+        /* else, scroll buttons won't be shown */
+        await new Promise(resolve => setTimeout(resolve, 1));
+        this.cdr.detectChanges();
     }
 }

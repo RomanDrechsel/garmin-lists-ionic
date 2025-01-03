@@ -4,6 +4,11 @@ import { LocalizationService } from "../localization/localization.service";
 export class Alert {
     public constructor(private Controller: AlertController, private Locale: LocalizationService) {}
 
+    /**
+     * show a alert popup
+     * @param opts options for the alert
+     * @returns false, if the user canceled the popup, else true (or an array of the values of the inputs)
+     */
     public async Show(opts: { message: string; buttons?: (string | AlertButton)[]; header?: string; inputs?: AlertInput[]; translate?: boolean; ok_action?: () => Promise<void>; cssClass?: string }): Promise<any> {
         //at least an ok button
         if (!opts.buttons || opts.buttons.length == 0) {
@@ -67,6 +72,11 @@ export class Alert {
         }
     }
 
+    /**
+     * display a yes/no alert popup
+     * @param opts options for the alert
+     * @returns false if the user selected "no", else true or an array of the values of the inputs
+     */
     public async YesNo(opts: { message: string; header?: string; button_no?: AlertButton | string; button_yes?: AlertButton | string; button_yes_alternative?: AlertButton | string; inputs?: AlertInput[]; translate?: boolean }): Promise<any> {
         if (opts.translate) {
             opts.button_yes ??= "yes";
@@ -90,6 +100,21 @@ export class Alert {
         return this.Show(args);
     }
 
+    /**
+     * displays a simple info dialog with a text
+     * @params opts options of the popup
+     */
+    public async Info(opts: { message: string; translate?: boolean }) {
+        await this.Show({ message: opts.message, translate: opts.translate, cssClass: "info" });
+    }
+
+    /**
+     * creates an AlertButton the the given parameters
+     * @param btn the button to create, resp. the label
+     * @param role the role of the button, either "cancel" or "confirm"
+     * @param handler? the function to call when the button is clicked
+     * @returns the created button
+     */
     private static createButton(btn: string | AlertButton, role: "cancel" | "confirm", handler?: () => Promise<void>): AlertButton {
         let ret: AlertButton;
         if (typeof btn === "string") {

@@ -1,5 +1,33 @@
 @use "src/theme/content/lists/listitems-list.scss";
 
-app-page-empty {
-    --text-color: #cccccc;
+.nolist {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    ion-img {
+        max-width: 300px;
+        max-height: 300px;
+        width: 50%;
+        height: auto;
+        opacity: 0.3;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    ion-text {
+        font-size: 1.4em;
+        font-weight: 600;
+        white-space: pre-line;
+    }
+
+    .icon {
+        padding-bottom: 40px;
+    }
+
+    .text {
+        margin-bottom: 15%;
+    }
 }

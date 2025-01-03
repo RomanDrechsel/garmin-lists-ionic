@@ -1,49 +1,47 @@
-ion-list {
-    margin-bottom: 90px;
+@use "src/theme/content/lists/list.scss";
 
-    ion-item {
-        --padding-top: 6px;
-        --padding-bottom: 6px;
-        --ripple-color: var(--ion-color-primary);
-        --background-hover: var(--ion-color-primary);
-        --background-hover-opacity: 0.1;
-        --inner-padding-start: 6px;
-        --inner-padding-end: 6px;
-        --padding-start: 6px;
-        cursor: pointer;
+ion-content {
+    background: var(--color-lists-background);
 
-        ion-reorder {
-            margin-inline-start: 0;
-        }
+    ion-list {
+        ion-item {
+            .details {
+                --color: var(--ion-color-tertiary);
 
-        .details {
-            width: 100%;
-            --color: var(--ion-color-tertiary);
+                .listname {
+                    font-size: 1.4em;
+                }
 
-            .listname {
-                font-size: 1.4em;
+                ion-note {
+                    --padding-top: 0;
+                }
             }
 
-            ion-note {
-                --padding-top: 0;
+            .itemcount {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                margin-inline-start: 0;
+                padding-inline-start: 0.5em;
+
+                .count {
+                    padding: 4px 8px;
+                    font-size: 0.8em;
+                    color: var(--ion-color-primary-contrast);
+                    border-radius: 12px;
+                    background: var(--ion-color-primary);
+                }
             }
-        }
 
-        .itemcount {
-            padding: 4px 8px;
-            font-size: 0.8em;
-            color: var(--ion-color-primary-contrast);
-            border-radius: 12px;
-            background: var(--ion-color-primary);
-        }
+            .edit {
+                cursor: pointer;
+                margin: 0;
+                padding: 0.4em 0.3em 0.4em 0.3em;
 
-        .edit {
-            cursor: pointer;
-            margin-inline-start: 10px;
-            margin-inline-end: 4px;
-
-            &:hover {
-                color: var(--color);
+                &:hover {
+                    color: var(--color);
+                }
             }
         }
     }

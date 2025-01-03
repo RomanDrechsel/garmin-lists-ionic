@@ -17,7 +17,7 @@
         "yesterday": "昨日",
         "sec_short": "秒",
         "min_short": "分",
-        "hour_short": "時間",
+        "hour_short": "時",
         "hours_short": "時間",
         "ago": "{{date}}前",
         "weekday": {
@@ -36,6 +36,7 @@
         "de-DE": "ドイツ語",
         "es-ES": "スペイン語",
         "fr-FR": "フランス語",
+        "hi-IN": "ヒンディー語",
         "it-IT": "イタリア語",
         "ja-JP": "日本語",
         "uk-UA": "ウクライナ語",
@@ -118,7 +119,11 @@
         "title_new": "リスト項目を追加",
         "title_edit": "リスト項目を編集",
         "itemname": "名称",
-        "itemnote": "メモ"
+        "itemnote": "メモ",
+        "hidden": "隠す",
+        "hidden_info": "隠されたリスト項目は、ウォッチには転送されませんが、スマートフォンでは保持されます。<br /><br />これは、特定の項目を一時的に表示しないときにも、削除したくない場合に役立ちます。後で再利用できます。",
+        "locked": "ロック",
+        "locked_info": "ロックされたリスト項目は、リストをクリアする際に削除されません。<br /><br />これにより、特定の項目を定期的に繰り返す場合でも、リストの整理が簡単になります。"
     },
     "comp_sharelog": {
         "title": "ログを保存",
@@ -126,7 +131,7 @@
         "text_web": "ログ <strong>{{filename}}</strong> はあなたのPCに保存されます。",
         "store": "ドキュメントに保存",
         "share": "共有",
-        "email": "Eメールで送信",
+        "email": "開発者に電子メールで送信する",
         "share_email": {
             "title": "{{package}} / {{platform}} - ログファイル {{file}} ({{size}})",
             "text": "問題の詳細を教えてください：\n\n"
@@ -140,12 +145,15 @@
         "meta_settings_note": "ログ設定、言語など",
         "meta_storage": "ストレージ情報",
         "meta_storage_note": "デバイス上のリストやログの数・サイズ",
-        "watch": "ウォッチのログを添付"
+        "watch": "ウォッチのログを添付",
+        "error_report_confirm": "バグレポートは受け取りました。<br /><br />バグレポートとして転送しますか？"
     },
     "comp_watchlogs": {
         "title": "ログを転送",
         "text": "ウォッチからログを転送するには、まずウォッチでアプリ<br /><br /><strong>{{name}}</strong><br /><br />を起動する必要があります。アプリが起動すると、ログが自動的に転送されます。",
-        "withoutlogs": "ログなしで続行"
+        "withoutlogs": "ログなしで続行",
+        "openApp": "アプリを開く",
+        "logs_received_confirm": "ログが届きました。<br /><br />今すぐご覧になりますか？"
     },
     "page_lists": {
         "page_title": "マイリスト",
@@ -199,7 +207,7 @@
     "page_settings": {
         "page_title": "設定",
         "language": "アプリの言語",
-        "language_hint": "このアプリケーションは人工知能を使って翻訳されています。エラーが発生した場合は、 <span class=\"no-wrap\">{{email}}</span>。",
+        "language_hint": "このアプリケーションは人工知能を使って翻訳されています。エラーが発生した場合は、 <span class=\"no-wrap\">{{email}}</span> に連絡してください。",
         "translation_error_confirm": "翻訳エラーを報告しますか？",
         "translation_error_title": "日本語訳の誤り",
         "logging": "ログ設定",
