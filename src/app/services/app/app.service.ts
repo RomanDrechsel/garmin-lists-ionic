@@ -70,22 +70,29 @@ export class AppService {
         AppService.Popups = this._popups;
         await Logger.Initialize(this.Logger);
         await Locale.Initialize(this.Locale);
-        await this.ListsService.Initialize();
 
-        await this.Admob.Initialize();
-        await this.Admob.ShowBanner();
+        //no await ...
+        (async () => {
+            await this.ListsService.Initialize();
+            const loadList = await this.Preferences.Get<string>(EPrefProperty.OpenedList, "");
+            if (loadList.length > 0) {
+                this.NavController.navigateForward(`/lists/items/${loadList}`);
+            }
+        })();
 
-        const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, true) : false;
-        const garmin_debugapp = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugApp, false) : false;
-        await this.ConnectIQ.Initialize({ simulator: garmin_simulator, debug_app: garmin_debugapp });
+        //no await ...
+        (async () => {
+            const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, true) : false;
+            const garmin_debugapp = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugApp, false) : false;
+            await this.ConnectIQ.Initialize({ simulator: garmin_simulator, debug_app: garmin_debugapp });
+        })();
 
-        const loadList = await this.Preferences.Get<string>(EPrefProperty.OpenedList, "");
-        if (loadList.length > 0) {
-            await this.NavController.navigateForward(`/lists/items/${loadList}`);
-        }
         window.setTimeout(async () => {
             await this.Preferences.Set(EPrefProperty.FirstStart, false);
         }, 5000);
+
+        //no await...
+        this.Admob.Initialize();
     }
 
     /**
@@ -139,7 +146,10 @@ export class AppService {
             meta.Settings = {
                 LogMode: this.Logger.LogLevelShort,
                 AppLanguage: this.Locale.CurrentLanguage.locale,
-                AdmobStatus: await this.Admob.Status(),
+                AdmobStatus: {
+                    Initialized: this.Admob.Initialized,
+                    Status: await this.Admob.getConsentStatus(),
+                },
             };
         }
 
@@ -182,7 +192,10 @@ export declare type AppMetaInfo = {
     Settings?: {
         LogMode: string;
         AppLanguage: string;
-        AdmobStatus: string;
+        AdmobStatus: {
+            Initialized: boolean;
+            Status: any;
+        };
     };
     Device?: {
         Identifier: string;

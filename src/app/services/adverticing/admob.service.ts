@@ -1,8 +1,9 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { AdMob, AdMobBannerSize, AdmobConsentDebugGeography, AdmobConsentInfo, AdmobConsentRequestOptions, AdmobConsentStatus, BannerAdOptions, BannerAdPluginEvents, BannerAdPosition, BannerAdSize } from "@capacitor-community/admob";
 import { Keyboard } from "@capacitor/keyboard";
 import { environment } from "../../../environments/environment";
 import { Logger } from "../logging/logger";
+import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 
 @Injectable({
     providedIn: "root",
@@ -14,13 +15,25 @@ export class AdmobService {
     /** last height of the banner in px */
     private _bannerHeight: number = 56;
 
+    private _isInitialized: boolean = false;
+
+    private readonly Preferences = inject(PreferencesService);
+
+    public get Initialized(): boolean {
+        return this._isInitialized;
+    }
+
     public async Initialize() {
+        this._isInitialized = false;
+
         await AdMob.initialize({
             initializeForTesting: environment.publicRelease !== true,
             testingDevices: ["edfcf89c-603c-45fa-a1c8-f77b771ee68c"],
         });
 
         await this.RequestConsent(false);
+        this._bannerHeight = await this.Preferences.Get(EPrefProperty.AdmobBannerHeight, this._bannerHeight);
+        this.resizeContainer(this._bannerHeight);
 
         AdMob.addListener(BannerAdPluginEvents.Loaded, () => {
             Logger.Debug(`Admob banner loaded`);
@@ -28,12 +41,6 @@ export class AdmobService {
         });
 
         AdMob.addListener(BannerAdPluginEvents.SizeChanged, (size: AdMobBannerSize) => {
-            /*if (this._bannerHeight != size.height) {
-                Logger.Debug(`Admob banner size changed: `, size);
-            }*/
-            if (size.height != 0) {
-                this._bannerHeight = size.height;
-            }
             this.resizeContainer(size.height);
         });
 
@@ -56,6 +63,10 @@ export class AdmobService {
         Keyboard.addListener("keyboardDidHide", async () => {
             await this.resumeBanner();
         });
+
+        this._isInitialized = true;
+
+        await this.ShowBanner();
     }
 
     /**
@@ -104,24 +115,20 @@ export class AdmobService {
         }
 
         if ((await AdMob.trackingAuthorizationStatus()).status == "authorized") {
-            const consentInfo = await this.getConsentStatus();
-            let status = consentInfo.status;
-            if (consentInfo.isConsentFormAvailable && (status === AdmobConsentStatus.REQUIRED || force_form)) {
-                status = (await AdMob.showConsentForm()).status;
+            let consentInfo = await this.getConsentStatus();
+            const before = consentInfo.status;
+            if (consentInfo.isConsentFormAvailable && (consentInfo.status === AdmobConsentStatus.REQUIRED || force_form)) {
+                Logger.Debug(`Show Admob ConsentForm...`);
+                consentInfo = await AdMob.showConsentForm();
             }
-            Logger.Debug(`Admob consent status: ${status}`);
-            return status === AdmobConsentStatus.OBTAINED || status == AdmobConsentStatus.NOT_REQUIRED;
+            if (before !== consentInfo.status) {
+                Logger.Debug(`Admob consent status changed: `, consentInfo);
+            }
+
+            return consentInfo.status === AdmobConsentStatus.OBTAINED || consentInfo.status == AdmobConsentStatus.NOT_REQUIRED;
         } else {
             return false;
         }
-    }
-
-    /**
-     * returns the tracking authorizationStatus
-     * @returns
-     */
-    public async Status(): Promise<string> {
-        return (await AdMob.trackingAuthorizationStatus()).status;
     }
 
     /**
@@ -129,7 +136,7 @@ export class AdmobService {
      *
      * @returns  object containing the current consent status.
      */
-    private async getConsentStatus(): Promise<AdmobConsentInfo> {
+    public async getConsentStatus(): Promise<AdmobConsentInfo> {
         let options: AdmobConsentRequestOptions = {};
         if (environment.publicRelease !== true) {
             options = {
@@ -154,6 +161,13 @@ export class AdmobService {
     private resizeContainer(height: number) {
         const container = document.querySelector("ion-app") as HTMLElement;
         if (container) {
+            if (height > 0) {
+                if (this._bannerHeight !== height) {
+                    Logger.Debug(`Admob banner height changed to ${height}px`);
+                }
+                this._bannerHeight = height;
+                this.Preferences.Set(EPrefProperty.AdmobBannerHeight, height);
+            }
             container.style.marginBottom = height + "px";
         }
     }

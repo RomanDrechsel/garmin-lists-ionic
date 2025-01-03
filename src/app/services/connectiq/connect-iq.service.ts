@@ -67,6 +67,7 @@ export class ConnectIQService {
      * @param obj use debug devices or live devices, and use garmin simulator or live phone
      */
     public async Initialize(obj: { simulator?: boolean; debug_app?: boolean }) {
+        Logger.Debug(`Start initializing ConnectIQ service...`);
         const all_listeners = Array.from(this._watchListeners.values());
         for (let i = 0; i < all_listeners.length; i++) {
             for (let j = 0; j < all_listeners[i].length; j++) {
@@ -81,8 +82,7 @@ export class ConnectIQService {
             this.addListener(new DeviceErrorReportListener(this, this.NavController, this.Popup));
             this.addListener(new DeviceLogsListener(this, this.NavController, this.Popup));
             this._devices = [];
-            Logger.Debug(`Start initializing ConnectIQ service...`);
-            const init = await ConnectIQ.Initialize({ simulator: obj.simulator ?? false, debug_app: obj.debug_app ?? false });
+            const init = await ConnectIQ.Initialize({ simulator: obj.simulator ?? this.useGarminSimulator, debug_app: obj.debug_app ?? this.useGarminDebugApp });
             if (init.success === true) {
                 this.useGarminDebugApp = init.debug_app ?? false;
                 this.useGarminSimulator = init.simulator ?? false;
@@ -144,7 +144,7 @@ export class ConnectIQService {
             this._alwaysTransmitToDevice = devices.find(d => d.Identifier == defaultTransmitDevice);
         }
         if (this._alwaysTransmitToDevice) {
-            Logger.Debug(`Lists will be transmited to device ${this._alwaysTransmitToDevice.Identifier} by default`);
+            Logger.Debug(`Lists will be transmited to device ${this._alwaysTransmitToDevice.toLog()} by default`);
         }
         this._devices = devices;
         AppService.AppToolbar?.ToggleProgressbar(false);
@@ -188,7 +188,7 @@ export class ConnectIQService {
      */
     public async openStore() {
         //await ConnectIQ.OpenStore();
-        await Browser.open({ url: `https://apps.garmin.com/${Locale.currentLang().locale}/apps/${this.Config.GarminAppStoreId}` });
+        await Browser.open({ url: `${Locale.currentLang().GarminAppStore()}/${this.Config.GarminAppStoreId}` });
     }
 
     /**
@@ -317,7 +317,7 @@ export class ConnectIQService {
     }
 
     private async checkDeviceVersion(device: DeviceEventArgs) {
-        if (device.state == "Ready" && !this._watchOutdatedNotice.includes(device.id)) {
+        if (device.state == "Ready" && (device.version ?? 0) > 0 && !this._watchOutdatedNotice.includes(device.id)) {
             this._watchOutdatedNotice.push(device.id);
             type ignore_device = { device: number; version: number; check: number };
             let all_ignore = await this.Preferences.Get<ignore_device[] | undefined>(EPrefProperty.IgnoreWatchOutdated, undefined);

@@ -96,7 +96,6 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
     public void onSdkReady()
     {
         this.sdkReady = true;
-        this.listDevices();
         Logger.Debug(TAG, "ConnectIQ initialization successful");
         if (this._initListener != null)
         {
@@ -269,7 +268,14 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
             }
         }
 
-        Logger.Notice(TAG, this.devices.size() + " device(s) found");
+        if (this.devices.size() == 1)
+        {
+            Logger.Notice(TAG, "1 device found");
+        }
+        else
+        {
+            Logger.Notice(TAG, this.devices.size() + " device(s) found");
+        }
     }
 
     /**

@@ -51,10 +51,10 @@ export class LocalizationService {
                 new Culture({ localeFile: "de", locale: "de-DE", name: "Deutsch", locale_regex: /^de[-_][0-9A-Za-z]{2,}$/i, gdpr: "de" }, this),
                 new Culture({ localeFile: "es", locale: "es-ES", name: "Español", locale_regex: /^es[-_][0-9A-Za-z]{2,}$/i, gdpr: "es" }, this),
                 new Culture({ localeFile: "fr", locale: "fr-FR", name: "Français", locale_regex: /^fr[-_][0-9A-Za-z]{2,}$/i, gdpr: "fr" }, this),
-                new Culture({ localeFile: "hi", locale: "hi-IN", name: "हिंदी", locale_regex: /^hi[-_][0-9A-Za-z]{2,}$/i, gdpr: "hi", icon: "in" }, this),
+                new Culture({ localeFile: "hi", locale: "hi-IN", name: "हिंदी", locale_regex: /^hi[-_][0-9A-Za-z]{2,}$/i, gdpr: "hi", icon: "in", localizedAppStore: false }, this),
                 new Culture({ localeFile: "it", locale: "it-IT", name: "Italiano", locale_regex: /^it[-_][0-9A-Za-z]{2,}$/i, gdpr: "it" }, this),
                 new Culture({ localeFile: "jp", locale: "ja-JP", name: "日本語", locale_regex: /^ja[-_][0-9A-Za-z]{2,}$/i, gdpr: "jp" }, this),
-                new Culture({ localeFile: "uk", locale: "uk-UA", name: "Українська", locale_regex: /^uk[-_][0-9A-Za-z]{2,}$/i, gdpr: "uk", icon: "ua" }, this),
+                new Culture({ localeFile: "uk", locale: "uk-UA", name: "Українська", locale_regex: /^uk[-_][0-9A-Za-z]{2,}$/i, gdpr: "uk", icon: "ua", localizedAppStore: false }, this),
                 new Culture({ localeFile: "zhs", locale: "zh-CN", name: "中文（简体）", firstDayOfWeek: 0, locale_regex: /^(zh-CN|zh-SG|zh-MY)$/i, gdpr: "zhs", icon: "cn" }, this),
                 new Culture({ localeFile: "zht", locale: "zh-TW", name: "繁體中文", h24: false, locale_regex: /^(zh-TW|zh-HK|zh-MO)$/i, gdpr: "zht", icon: "tw" }, this),
             ];
@@ -161,8 +161,9 @@ export class Culture {
     public localizationKey?: string;
     private _icon: string;
     private _localizationService?: LocalizationService;
+    private _hasLocalizedGarminAppStore = false;
 
-    public constructor(obj: { localeFile: string; locale: string; locale_regex?: RegExp; name: string; firstDayOfWeek?: number; h24?: boolean; gdpr?: string; icon?: string; localizationKey?: string }, service: LocalizationService) {
+    public constructor(obj: { localeFile: string; locale: string; locale_regex?: RegExp; name: string; firstDayOfWeek?: number; h24?: boolean; gdpr?: string; icon?: string; localizationKey?: string; localizedAppStore?: boolean }, service: LocalizationService) {
         this.localeFile = obj.localeFile;
         this.locale = obj.locale;
         this.locale_regex = obj.locale_regex;
@@ -173,6 +174,7 @@ export class Culture {
         this.localizationKey = obj.localizationKey;
         this._icon = obj.icon ?? obj.localeFile;
         this._localizationService = service;
+        this._hasLocalizedGarminAppStore = obj.localizedAppStore ?? true;
     }
 
     public get Icon() {
@@ -191,5 +193,13 @@ export class Culture {
 
     public Match(locale: string): boolean {
         return this.locale == locale || (this.locale_regex ? this.locale_regex.test(locale) : false);
+    }
+
+    public GarminAppStore(): string {
+        if (this._hasLocalizedGarminAppStore) {
+            return `https://apps.garmin.com/${this.locale}/apps/`;
+        }
+
+        return "https://apps.garmin.com/apps/";
     }
 }

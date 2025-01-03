@@ -26,6 +26,7 @@ export enum EPrefProperty {
     "DebugApp" = "LISTS_DebugApp",
     "OpenedList" = "LISTS_OpenedList",
     "IgnoreWatchOutdated" = "LISTS_IgnoreWatchOutdated",
+    "AdmobBannerHeight" = "LISTS_AdmobBannerHeight",
 }
 
 @Injectable({
