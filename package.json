@@ -1,6 +1,6 @@
 {
     "name": "lists",
-    "version": "2025.01.0201",
+    "version": "2025.01.0802",
     "author": "Roman Drechsel",
     "homepage": "https://roman-drechsel.de",
     "scripts": {
@@ -59,8 +59,8 @@
         "@capacitor/cli": "6.2.0",
         "@ionic/angular-toolkit": "12.1.1",
         "@types/jasmine": "5.1.5",
-        "@typescript-eslint/eslint-plugin": "8.19.0",
-        "@typescript-eslint/parser": "8.19.0",
+        "@typescript-eslint/eslint-plugin": "8.19.1",
+        "@typescript-eslint/parser": "8.19.1",
         "eslint-plugin-import": "2.31.0",
         "eslint-plugin-jsdoc": "50.6.1",
         "eslint-plugin-prefer-arrow": "1.2.3",

@@ -48,10 +48,7 @@ export class StoreLogComponent {
 
     public async storeFile() {
         if (this.attachWatchLogs?.checked && !this.Params.watch_logs_included) {
-            const logs = await this.WatchLogs.RequestGarminWatchLogs();
-            if (logs) {
-                await this.addToLog(logs);
-            }
+            await this.WatchLogs.RequestGarminWatchLogs();
         }
 
         if (this.Params.file && this.Params.file.Exists) {

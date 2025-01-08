@@ -3,6 +3,7 @@ import { ModalController } from "@ionic/angular/standalone";
 import { RequestWatchLogs } from "../../components/request-watch-log/request-watch-log.component";
 import { ConnectIQDevice } from "../connectiq/connect-iq-device";
 import { ConnectIQService } from "../connectiq/connect-iq.service";
+import { Logger } from "./logger";
 
 @Injectable({
     providedIn: "root",
@@ -45,6 +46,9 @@ export class WatchLoggingService {
             logs = logs.concat(["-----------------"]);
             ret = ret.concat(logs);
         }
+
+        Logger.Important(`Watch Logs:\n${ret.join("\n")}`);
+
         return ret;
     }
 }
