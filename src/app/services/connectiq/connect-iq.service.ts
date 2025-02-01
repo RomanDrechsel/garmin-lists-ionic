@@ -46,6 +46,8 @@ export class ConnectIQService {
     private onDeviceChangedSubject = new BehaviorSubject<ConnectIQDevice | undefined>(undefined);
     public onDeviceChanged$ = this.onDeviceChangedSubject.asObservable();
 
+    private _onlineDevices: number = 0;
+
     private readonly Preferences = inject(PreferencesService);
     private readonly Config = inject(ConfigService);
     private readonly Router = inject(Router);
@@ -62,6 +64,10 @@ export class ConnectIQService {
         return this._alwaysTransmitToDevice;
     }
 
+    public get OnlineDevices(): number {
+        return this._onlineDevices;
+    }
+
     /**
      * initialize service
      * @param obj use debug devices or live devices, and use garmin simulator or live phone
@@ -75,6 +81,7 @@ export class ConnectIQService {
             }
         }
         this._watchListeners.clear();
+        this._onlineDevices = 0;
 
         if (Capacitor.isNativePlatform()) {
             this.addListener(new PluginLogsListener(this));
@@ -126,6 +133,7 @@ export class ConnectIQService {
                             } else {
                                 device = ConnectIQDevice.FromEventArgs(d, this);
                             }
+
                             devices.push(device);
                         });
                     }
@@ -194,8 +202,24 @@ export class ConnectIQService {
     /**
      * opens the app on the watch
      */
-    public async openApp(device: ConnectIQDevice): Promise<void> {
+    public async openApp(device?: ConnectIQDevice, show_toast?: boolean): Promise<boolean> {
+        if (!device || device.State != "Ready") {
+            device = await this.GetDefaultDevice({ btn_text: this.Locale.getText("service-connectiq.openapp_btn") });
+        }
+
+        if (!device || device.State != "Ready") {
+            if (show_toast) {
+                await this.Popup.Toast.Error("service-connectiq.openapp_nodevice", undefined, true);
+            }
+
+            return false;
+        }
+
         await ConnectIQ.OpenApp({ device_id: String(device.Identifier) });
+        if (show_toast) {
+            await this.Popup.Toast.Success("service-connectiq.openapp_success", undefined, true);
+        }
+        return true;
     }
 
     public async SendToDevice(obj: { device?: ConnectIQDevice | number; data: any; response_callback?: (message?: ConnectIQDeviceMessage) => Promise<void>; timeout?: number }): Promise<number | boolean> {
@@ -310,10 +334,15 @@ export class ConnectIQService {
         return false;
     }
 
-    public UpdateDevice(device: DeviceEventArgs) {
-        this._devices.find(d => d.Identifier == device.id)?.Update(device);
-        this.onDeviceChangedSubject.next(ConnectIQDevice.FromEventArgs(device, this));
-        this.checkDeviceVersion(device);
+    public async UpdateDevice(device_args: DeviceEventArgs) {
+        let device = this._devices.find(d => d.Identifier == device_args.id);
+        if (!device) {
+            device = ConnectIQDevice.FromEventArgs(device_args, this);
+        }
+        device.Update(device_args);
+        await this.calcOnlineDevices();
+        this.onDeviceChangedSubject.next(device);
+        this.checkDeviceVersion(device_args);
     }
 
     private async checkDeviceVersion(device: DeviceEventArgs) {
@@ -376,5 +405,22 @@ export class ConnectIQService {
                 await this.Preferences.Remove(EPrefProperty.IgnoreWatchOutdated);
             }
         }
+    }
+
+    private async calcOnlineDevices(devices: ConnectIQDevice[] | undefined = undefined): Promise<number> {
+        if (!devices || devices.length == 0) {
+            devices = await this.getDevices();
+        }
+
+        let count = 0;
+        devices.forEach(d => {
+            if (d.State == "Ready") {
+                count++;
+            }
+        });
+
+        this._onlineDevices = count;
+        console.log(`Found ${count} online device(s)`);
+        return count;
     }
 }

@@ -52,7 +52,8 @@
         "settings": "Paramètres",
         "privacy": "Confidentialité",
         "appinfos": "Infos sur l'application",
-        "empty_trash": "Vider la corbeille"
+        "empty_trash": "Vider la corbeille",
+        "openapp": "Ouvrir l'application"
     },
     "service-lists": {
         "store_list_error": "La liste n'a pas pu être enregistrée !",
@@ -96,7 +97,10 @@
         "watch_outdated": "Il semble que vous utilisiez une ancienne version de l'application Liste sur votre appareil <strong>{{device}}</strong>.<br /><br />Veuillez mettre à jour l'application sur votre montre pour profiter de toutes les fonctionnalités.",
         "watch_outdated_button": "Aller au Connect-IQ Store",
         "watch_outdated_ignore": "Ignorer",
-        "watch_outdated_dontremind": "Ne plus me rappeler pour cette version"
+        "watch_outdated_dontremind": "Ne plus me rappeler pour cette version",
+        "openapp_btn": "Ouvrir l'application",
+        "openapp_nodevice": "Aucun appareil actif trouvé !",
+        "openapp_success": "Application ouverte sur la montre."
     },
     "comp-listeditor": {
         "title_new": "Créer une nouvelle liste",

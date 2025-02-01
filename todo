@@ -4,6 +4,7 @@ https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
 ADB
 https://wiki.ubuntuusers.de/adb/
 
-TODO: migrate to Capacitor 7
 TODO: ListsPage / ListitemsPage: Loading background while lists are loading
-TODO: Menu-Item Open App
+TEST: Menu-Item Open App
+TODO: DevicesPage: only select online devices in SelectGarminDevice();
+TODO: migrate to Capacitor 7
