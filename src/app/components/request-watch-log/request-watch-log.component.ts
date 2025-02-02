@@ -3,6 +3,7 @@ import { AfterViewInit, Component, inject } from "@angular/core";
 import { IonButton, IonButtons, IonHeader, IonIcon, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { ConnectIQDevice } from "../../services/connectiq/connect-iq-device";
+import { ConnectIQMessageType } from "../../services/connectiq/connect-iq-message-type";
 import { ConnectIQService } from "../../services/connectiq/connect-iq.service";
 
 @Component({
@@ -47,6 +48,7 @@ export class RequestWatchLogComponent implements AfterViewInit {
         return new Promise<string[]>(async resolve => {
             const tid = await this.ConnectIQ.SendToDevice({
                 device: this.Params.device,
+                messageType: ConnectIQMessageType.RequestWatchLogs,
                 data: { type: "request", request: "logs" },
                 response_callback: async message => {
                     if (message) {

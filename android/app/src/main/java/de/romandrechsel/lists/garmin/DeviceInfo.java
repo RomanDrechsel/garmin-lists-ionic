@@ -17,6 +17,7 @@ import com.getcapacitor.JSObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
     {Initializing, Ready, AppNotInstalled, CheckingApp, NotConnected, ConnectionLost, NotPaired, InvalidState, ServiceUnavailable}
 
     public enum EMessageSendResult
-    {Success, NotSend, Timeout, Failed, DeviceNotFound, InvalidState, ServiceUnavailable, InvalidPayload}
+    {Success, NotSend, Timeout, Failed, DeviceNotFound, InvalidState, ServiceUnavailable, MessageEmpty, InvalidPayload}
 
     public interface IMessageSendListener
     {
@@ -202,65 +203,77 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
     /**
      * sends an object to a device
      *
-     * @param payload      data object
+     * @param message_type type of the message, will always be in line 0 of the send string array
+     * @param data         data object
      * @param sendListener listener for send success or failure
      */
-    public void Send(@Nullable Object payload, @Nullable IMessageSendListener sendListener)
+    public void Send(@Nullable String message_type, @Nullable Object data, @Nullable IMessageSendListener sendListener)
     {
         if (this.device == null)
         {
             Logger.Debug(TAG, "Could not send to undefined device");
             return;
         }
-        Map<String, Object> data;
-        if (payload != null && !DeviceUtils.IsStringKeyMap(payload))
+
+        ArrayList<String> send;
+        if (data != null)
         {
-            data = new HashMap<>();
-            data.put("payload", payload);
-        }
-        else if (payload != null)
-        {
-            data = (Map<String, Object>) payload;
+            send = DeviceUtils.MakeStringArray(data);
         }
         else
         {
-            data = new HashMap<>();
+            send = new ArrayList<>();
         }
 
-        this.transmitToDevice(data, sendListener);
+        if (message_type != null && !message_type.isEmpty())
+        {
+            send.add(0, message_type);
+        }
+
+        if (send.isEmpty())
+        {
+            if (sendListener != null)
+            {
+                sendListener.onMessageSendResult(EMessageSendResult.MessageEmpty, null);
+            }
+        }
+        else
+        {
+            this.transmitToDevice(send, sendListener);
+        }
     }
 
     /**
      * sends a json object to a device
      *
+     * @param message_type type of the message, will always be in line 0 of the send string array
      * @param json         json data string
      * @param sendListener listener for send success or failure
      */
-    public void SendJson(@Nullable String json, @Nullable IMessageSendListener sendListener)
+    public void SendJson(@Nullable String message_type, @Nullable String json, @Nullable IMessageSendListener sendListener)
     {
-        if (json == null)
-        {
-            Logger.Error(TAG, "Could not send json to device " + this + ": no string provided");
-            if (sendListener != null)
-            {
-                sendListener.onMessageSendResult(EMessageSendResult.InvalidPayload, null);
-            }
-        }
         Object obj;
-        try
+        if (json != null)
         {
-            obj = new Gson().fromJson(json, Object.class);
-        }
-        catch (JsonSyntaxException ex)
-        {
-            Logger.Error(TAG, "Could not deserialize data: " + ex.getMessage());
-            if (sendListener != null)
+            try
             {
-                sendListener.onMessageSendResult(EMessageSendResult.InvalidPayload, null);
+                obj = new Gson().fromJson(json, Object.class);
             }
-            return;
+            catch (JsonSyntaxException ex)
+            {
+                Logger.Error(TAG, "Could not deserialize json data: " + ex.getMessage());
+                if (sendListener != null)
+                {
+                    sendListener.onMessageSendResult(EMessageSendResult.InvalidPayload, null);
+                }
+                return;
+            }
         }
-        this.Send(obj, sendListener);
+        else
+        {
+            obj = null;
+        }
+        this.Send(message_type, obj, sendListener);
     }
 
     /**
@@ -366,10 +379,11 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
     /**
      * transmits data to the device
      *
-     * @param data     data map of type Map<String, Object>
+     * @param data     data map of type Array<String>
+     *                 other formats are known to fail to send on some devices
      * @param listener listener for result
      */
-    private void transmitToDevice(@NonNull Map<String, Object> data, @Nullable IMessageSendListener listener)
+    private void transmitToDevice(@NonNull ArrayList<String> data, @Nullable IMessageSendListener listener)
     {
         final Handler timeoutHandler = new Handler(Looper.getMainLooper());
         final boolean[] messageSent = {false};

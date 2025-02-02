@@ -165,7 +165,8 @@
         "empty": "Vaciar",
         "upload": "Subir",
         "updated": "Última actualización: {{date}}",
-        "add_new_hint": "Crear nueva lista."
+        "add_new_hint": "Crear nueva lista.",
+        "loading": "Se cargan las listas..."
     },
     "page_listitems": {
         "page_title": "Lista no encontrada",
@@ -184,7 +185,8 @@
         "erase": "Eliminar",
         "restore": "Restaurar",
         "deleted": "Eliminado: {{date}}",
-        "empty": "La papelera está vacía."
+        "empty": "La papelera está vacía.",
+        "loading": "Se carga la papelera de reciclaje..."
     },
     "page_trashitem": {
         "page_title": "Papelera de lista",

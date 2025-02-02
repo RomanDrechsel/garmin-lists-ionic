@@ -14,6 +14,8 @@ import com.garmin.android.connectiq.exception.ServiceUnavailableException;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -156,7 +158,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         return false;
     }
 
-    public void SendToDevice(@Nullable Long deviceId, @Nullable String json, @Nullable DeviceInfo.IMessageSendListener listener)
+    public void SendToDevice(@Nullable Long deviceId, @Nullable String message_type, @Nullable String json, @Nullable DeviceInfo.IMessageSendListener listener)
     {
         if (deviceId == null)
         {
@@ -167,10 +169,21 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
             }
             return;
         }
+
         DeviceInfo device = this.getDevice(deviceId);
         if (device != null)
         {
-            device.SendJson(json, listener);
+            if (json == null || json.isEmpty())
+            {
+                Logger.Error(TAG, "Could not send empty json to device " + device);
+                if (listener != null)
+                {
+                    listener.onMessageSendResult(DeviceInfo.EMessageSendResult.NotSend, null);
+                }
+                return;
+            }
+
+            device.SendJson(message_type, json, listener);
             if (this._useGarminSimulator)
             {
                 this.debugLogResponse(device, json);
@@ -298,7 +311,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         return DeviceManager.AppId.equals(DeviceManager.AppIdDebug);
     }
 
-    private void debugLogResponse(DeviceInfo device, String json)
+    private void debugLogResponse(@NotNull DeviceInfo device, @NotNull String json)
     {
         if (device.device == null)
         {
@@ -325,7 +338,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
                             data.put("tid", tid);
                             List<Object> list = List.of(data);
                             device.onMessageReceived(device.device, device.deviceApp, list, ConnectIQ.IQMessageStatus.SUCCESS);
-                        }, 10000);
+                        }, 5000);
                     }
                 }
             }

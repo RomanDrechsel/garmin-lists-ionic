@@ -164,7 +164,8 @@
         "empty": "空にする",
         "upload": "転送",
         "updated": "最終更新日: {{date}}",
-        "add_new_hint": "新しいリストを作成します。"
+        "add_new_hint": "新しいリストを作成します。",
+        "loading": "リストを読み込んでいます…"
     },
     "page_listitems": {
         "page_title": "リストが見つかりません",
@@ -183,7 +184,8 @@
         "erase": "削除",
         "restore": "復元",
         "deleted": "削除日: {{date}}",
-        "empty": "ゴミ箱は空です。"
+        "empty": "ゴミ箱は空です。",
+        "loading": "ごみ箱を読み込んでいます…"
     },
     "page_trashitem": {
         "page_title": "ゴミ箱",

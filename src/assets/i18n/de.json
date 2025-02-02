@@ -164,7 +164,8 @@
         "empty": "Leeren",
         "upload": "Übertragen",
         "updated": "letzte Änderung: {{date}}",
-        "add_new_hint": "Lege eine neue Liste an."
+        "add_new_hint": "Lege eine neue Liste an.",
+        "loading": "Listen werden geladen..."
     },
     "page_listitems": {
         "page_title": "Liste nicht gefunden",
@@ -183,7 +184,8 @@
         "erase": "Entfernen",
         "restore": "Wiederherstellen",
         "deleted": "gelöscht: {{date}}",
-        "empty": "Der Papierkorb ist leer."
+        "empty": "Der Papierkorb ist leer.",
+        "loading": "Der Papierkorb wird geladen..."
     },
     "page_trashitem": {
         "page_title": "Papierkorb",

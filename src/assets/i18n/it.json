@@ -162,7 +162,8 @@
         "empty": "Svuota",
         "upload": "Trasferisci",
         "updated": "ultimo aggiornamento: {{date}}",
-        "add_new_hint": "Crea una nuova lista."
+        "add_new_hint": "Crea una nuova lista.",
+        "loading": "Le liste stanno caricando..."
     },
     "page_listitems": {
         "page_title": "Lista non trovata",
@@ -181,7 +182,8 @@
         "erase": "Cancella",
         "restore": "Ripristina",
         "deleted": "cancellato: {{date}}",
-        "empty": "Il cestino è vuoto."
+        "empty": "Il cestino è vuoto.",
+        "loading": "Il cestino sta caricando..."
     },
     "page_trashitem": {
         "page_title": "Cestino",

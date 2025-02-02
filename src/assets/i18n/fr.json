@@ -164,7 +164,8 @@
         "empty": "Vider",
         "upload": "Transférer",
         "updated": "Dernière modification : {{date}}",
-        "add_new_hint": "Créer une nouvelle liste."
+        "add_new_hint": "Créer une nouvelle liste.",
+        "loading": "Les listes sont chargées..."
     },
     "page_listitems": {
         "page_title": "Liste introuvable",
@@ -183,7 +184,8 @@
         "erase": "Supprimer",
         "restore": "Restaurer",
         "deleted": "Supprimé : {{date}}",
-        "empty": "La corbeille est vide."
+        "empty": "La corbeille est vide.",
+        "loading": "La corbeille est en cours de chargement..."
     },
     "page_trashitem": {
         "page_title": "Corbeille",

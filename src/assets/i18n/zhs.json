@@ -165,7 +165,8 @@
         "empty": "清空",
         "upload": "传输",
         "updated": "最后修改：{{date}}",
-        "add_new_hint": "新建一个列表。"
+        "add_new_hint": "新建一个列表。",
+        "loading": "列表正在加载..."
     },
     "page_listitems": {
         "page_title": "列表未找到",
@@ -184,7 +185,8 @@
         "erase": "删除",
         "restore": "恢复",
         "deleted": "删除时间：{{date}}",
-        "empty": "回收站为空。"
+        "empty": "回收站为空。",
+        "loading": "回收站正在加载..."
     },
     "page_trashitem": {
         "page_title": "回收站",

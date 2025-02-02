@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
 import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
@@ -17,7 +17,7 @@ import { PageBase } from "../../page-base";
     templateUrl: "./trash-listitems.page.html",
     styleUrls: ["./trash-listitems.page.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, CommonModule, IonFab, IonFabButton, TranslateModule, MainToolbarComponent, PageEmptyComponent],
+    imports: [IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, IonImg, CommonModule, IonFab, IonFabButton, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListitemsPage extends PageBase {
     @ViewChild("itemsContainer") private itemsContainer!: IonList;
@@ -30,6 +30,8 @@ export class TrashListitemsPage extends PageBase {
     private _trashChangedSubscription?: Subscription;
 
     private _scrollPosition: "top" | "bottom" | number = "top";
+
+    private _trashInitialized = false;
 
     private Route = inject(ActivatedRoute);
 
@@ -49,17 +51,24 @@ export class TrashListitemsPage extends PageBase {
         return this._scrollPosition == "bottom";
     }
 
+    public get TrashInitialized(): boolean {
+        return this._trashInitialized;
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
+        this._trashInitialized = false;
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
             this.Trash = await this.ListsService.GetListitemTrash(listid);
+            this._trashInitialized = true;
             this.reload();
         }
 
         this._trashChangedSubscription = this.ListsService.onTrashItemsDatasetChanged$.subscribe(trash => {
             if (trash) {
                 this.Trash = trash;
+                this._trashInitialized = true;
                 this.reload();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }

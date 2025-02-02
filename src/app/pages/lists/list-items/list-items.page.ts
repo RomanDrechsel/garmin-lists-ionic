@@ -35,6 +35,8 @@ export class ListItemsPage extends PageBase {
     private _listSubscriptiion?: Subscription;
     private _useTrash = true;
     private _scrollPosition: "top" | "bottom" | number = "top";
+    private _listTitle?: string = undefined;
+    private _listInitialized = false;
 
     private readonly Route = inject(ActivatedRoute);
 
@@ -54,11 +56,33 @@ export class ListItemsPage extends PageBase {
         return this._scrollPosition == "bottom";
     }
 
+    public get ListInitialized(): boolean {
+        return this._listInitialized;
+    }
+
+    public get PageTitle(): string {
+        if (this.List === undefined) {
+            if (this._listTitle && this._listTitle.length > 0) {
+                return this._listTitle;
+            } else {
+                return Locale.getText("page_listitems.loading");
+            }
+        } else {
+            return this.List?.Name ?? Locale.getText("page_listitems.page_title");
+        }
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
+        this._listInitialized = false;
+        const listtitle = this.Route.snapshot.queryParamMap.get("title");
+        if (listtitle) {
+            this._listTitle = listtitle;
+        }
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
             this.List = await this.ListsService.GetList(listid);
+            this._listInitialized = true;
             this.reload();
             this.appComponent.setAppPages(this.ModifyMainMenu());
         }
@@ -74,6 +98,7 @@ export class ListItemsPage extends PageBase {
             if (list && list.equals(this.List) && list.isPeek == false) {
                 this.List = list;
                 this.appComponent.setAppPages(this.ModifyMainMenu());
+                this._listInitialized = true;
                 this.reload();
             }
         });
@@ -91,14 +116,6 @@ export class ListItemsPage extends PageBase {
         await this.Preferences.Remove(EPrefProperty.OpenedList);
         this._preferencesSubscription?.unsubscribe();
         this._listSubscriptiion?.unsubscribe();
-    }
-
-    public get PageTitle(): string {
-        if (this.List === undefined) {
-            return Locale.getText("page_listitems.loading");
-        } else {
-            return this.List?.Name ?? Locale.getText("page_listitems.page_title");
-        }
     }
 
     public onSwipeRight(item: Listitem) {

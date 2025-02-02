@@ -164,7 +164,8 @@
         "empty": "清空",
         "upload": "傳輸",
         "updated": "最後更新：{{date}}",
-        "add_new_hint": "新增一個新的清單。"
+        "add_new_hint": "新增一個新的清單。",
+        "loading": "列表正在加載..."
     },
     "page_listitems": {
         "page_title": "清單未找到",
@@ -183,7 +184,8 @@
         "erase": "移除",
         "restore": "恢復",
         "deleted": "已刪除: {{date}}",
-        "empty": "垃圾桶是空的。"
+        "empty": "垃圾桶是空的。",
+        "loading": "回收站正在加載..."
     },
     "page_trashitem": {
         "page_title": "垃圾桶",

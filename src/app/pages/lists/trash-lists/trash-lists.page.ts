@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, ViewChild } from "@angular/core";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
 import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
@@ -15,7 +15,7 @@ import { PageBase } from "../../page-base";
     selector: "app-trash-lists",
     templateUrl: "./trash-lists.page.html",
     styleUrls: ["./trash-lists.page.scss"],
-    imports: [IonContent, IonText, IonNote, IonItem, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
+    imports: [IonContent, IonText, IonNote, IonItem, IonImg, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListsPage extends PageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;
@@ -26,6 +26,7 @@ export class TrashListsPage extends PageBase {
     public Lists: List[] = [];
     private _trashChangedSubscription?: Subscription;
     private _scrollPosition: "top" | "bottom" | number = "top";
+    private _trashInitialized = false;
 
     public get ScrollPosition(): "top" | "bottom" | number {
         return this._scrollPosition;
@@ -43,14 +44,23 @@ export class TrashListsPage extends PageBase {
         return this._scrollPosition == "bottom";
     }
 
+    public get TrashInitialized(): boolean {
+        return this._trashInitialized;
+    }
+
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
+        this._trashInitialized = false;
         this._trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => {
             this.Lists = lists ?? [];
+            if (lists) {
+                this._trashInitialized = true;
+            }
             this.reload();
             this.appComponent.setAppPages(this.ModifyMainMenu());
         });
         this.Lists = await this.ListsService.GetTrash();
+        this._trashInitialized = true;
     }
 
     public override async ionViewDidLeave() {

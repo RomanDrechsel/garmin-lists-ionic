@@ -25,6 +25,7 @@ import { PopupsService } from "../popups/popups.service";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 import { Logger } from "./../logging/logger";
 import { ConnectIQDevice } from "./connect-iq-device";
+import { ConnectIQMessageType } from "./connect-iq-message-type";
 
 @Injectable({
     providedIn: "root",
@@ -222,7 +223,7 @@ export class ConnectIQService {
         return true;
     }
 
-    public async SendToDevice(obj: { device?: ConnectIQDevice | number; data: any; response_callback?: (message?: ConnectIQDeviceMessage) => Promise<void>; timeout?: number }): Promise<number | boolean> {
+    public async SendToDevice(obj: { device?: ConnectIQDevice | number; messageType: ConnectIQMessageType; data: any; response_callback?: (message?: ConnectIQDeviceMessage) => Promise<void>; timeout?: number }): Promise<number | boolean> {
         if (typeof obj.device === "number") {
             obj.device = await this.GetDevice(obj.device);
         } else if (!obj.device) {
@@ -247,7 +248,7 @@ export class ConnectIQService {
             obj.data.tid = listener.TId;
         }
 
-        if ((await ConnectIQ.SendToDevice({ device_id: String(obj.device.Identifier), json: JSON.stringify(obj.data) })).success) {
+        if ((await ConnectIQ.SendToDevice({ device_id: String(obj.device.Identifier), type: obj.messageType, json: JSON.stringify(obj.data) })).success) {
             AppService.AppToolbar?.ToggleProgressbar(false);
             return listener?.TId ?? true;
         } else {
