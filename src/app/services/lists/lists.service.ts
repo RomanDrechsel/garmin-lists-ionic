@@ -533,7 +533,7 @@ export class ListsService {
             if (!confirm || (await this.Popups.Alert.YesNo({ message: locale["service-lists.transmit_confirm"], button_yes: locale["yes"], button_no: locale["no"] }))) {
                 const toast = await this.Popups.Toast.Notice("service-lists.transmit_process", Toast.DURATION_INFINITE);
                 AppService.AppToolbar?.ToggleProgressbar(true);
-                const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: list.toDeviceObj() });
+                const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: list.toDeviceObject() });
                 toast.dismiss();
                 AppService.AppToolbar?.ToggleProgressbar(false);
                 if (resp !== false) {

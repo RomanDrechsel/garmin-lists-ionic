@@ -1,10 +1,12 @@
 package de.romandrechsel.lists.utils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import de.romandrechsel.lists.garmin.DeviceMessageSerializeException;
@@ -73,11 +75,36 @@ public class DeviceUtils
     }
 
     @NotNull
-    private static String MakeString(@NonNull Object obj) throws DeviceMessageSerializeException
+    private static String MakeString(@Nullable Object obj) throws DeviceMessageSerializeException
     {
-        if (obj.getClass().isPrimitive())
+        if (obj == null)
+        {
+            return "";
+        }
+        
+        Class<?> obj_class = obj.getClass();
+        ArrayList<Class<?>> check = new ArrayList<>(List.of(
+                Long.class,
+                Double.class,
+                Integer.class,
+                Float.class,
+                Character.class,
+                Short.class
+        ));
+        if (obj_class.isPrimitive() || check.contains(obj_class))
         {
             return obj.toString();
+        }
+        else if (obj_class == Boolean.class)
+        {
+            if ((boolean) obj)
+            {
+                return "true";
+            }
+            else
+            {
+                return "false";
+            }
         }
         else if (obj instanceof String)
         {

@@ -234,41 +234,35 @@ export class List {
      * create an object to send to a device
      * @returns device object representation
      */
-    public toDeviceObj(): any {
-        let items: any[] = [];
-        let order = 0;
-        this.Items.forEach(item => {
-            const obj = item.toDeviceObject();
-            if (obj) {
-                obj.order = order++;
-                items.push(obj);
-            }
-        });
+    public toDeviceObject(): any {
+        const ret: { [key: string]: any } = {};
+        ret["uuid"] = this._uuid;
+        ret["name"] = this._name;
+        ret["date"] = this._updated;
+        ret["order"] = this._order;
 
-        let reset: any = undefined;
-        if (this._reset && this._reset.active) {
-            reset = {
-                active: this._reset.active,
-                interval: this._reset.interval.charAt(0),
-                hour: this._reset.hour,
-                minute: this._reset.minute,
-            };
-            if (this._reset.interval == "weekly") {
-                reset.weekday = this._reset.weekday;
-            } else if (this._reset.interval == "monthly") {
-                reset.day = this._reset.day;
+        if (this._items) {
+            let order = 0;
+
+            for (let i = 0; i < this._items.length; i++) {
+                this._items[i].Order = order++;
+                this._items[i].toDeviceObject(ret);
             }
         }
 
-        return {
-            type: "list",
-            uuid: this._uuid,
-            name: this._name,
-            date: this._updated,
-            order: this._order,
-            items: items,
-            reset: reset,
-        };
+        if (this._reset && this._reset.active) {
+            ret["reset_active"] = this._reset.active;
+            ret["reset_interval"] = this._reset.interval;
+            ret["reset_hour"] = this._reset.hour;
+            ret["reset_minute"] = this._reset.minute;
+            if (this._reset.interval == "weekly") {
+                ret["reset_weekday"] = this._reset.weekday;
+            } else if (this._reset.interval == "monthly") {
+                ret["reset_day"] = this._reset.day;
+            }
+        }
+
+        return ret;
     }
 
     /**
