@@ -252,7 +252,7 @@ export class List {
 
         if (this._reset && this._reset.active) {
             ret["reset_active"] = this._reset.active;
-            ret["reset_interval"] = this._reset.interval;
+            ret["reset_interval"] = this._reset.interval?.charAt(0) ?? undefined;
             ret["reset_hour"] = this._reset.hour;
             ret["reset_minute"] = this._reset.minute;
             if (this._reset.interval == "weekly") {

@@ -3,6 +3,9 @@ package de.romandrechsel.lists.utils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -45,9 +48,9 @@ public class DeviceUtils
                 }
             }
         }
-        else if (obj instanceof Map<?, ?> map)
+        else if (obj instanceof JsonObject json)
         {
-            for (Map.Entry<?, ?> entry : map.entrySet())
+            for (Map.Entry<?, ?> entry : json.entrySet())
             {
                 try
                 {
@@ -81,7 +84,12 @@ public class DeviceUtils
         {
             return "";
         }
-        
+
+        if (obj instanceof JsonPrimitive prim)
+        {
+            return prim.getAsString();
+        }
+
         Class<?> obj_class = obj.getClass();
         ArrayList<Class<?>> check = new ArrayList<>(List.of(
                 Long.class,
@@ -93,7 +101,7 @@ public class DeviceUtils
         ));
         if (obj_class.isPrimitive() || check.contains(obj_class))
         {
-            return obj.toString();
+            return String.valueOf(obj);
         }
         else if (obj_class == Boolean.class)
         {
