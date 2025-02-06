@@ -59,7 +59,9 @@ export class ListsPage extends PageBase {
         const sub = this._listObserver?.subscribe(lists => {
             if (lists) {
                 this._listsInitialized = true;
-                sub?.unsubscribe();
+                setTimeout(() => {
+                    sub?.unsubscribe();
+                }, 1);
                 this._listObserver = undefined;
             }
         });

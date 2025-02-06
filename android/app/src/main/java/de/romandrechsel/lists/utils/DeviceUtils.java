@@ -68,6 +68,10 @@ public class DeviceUtils
                 }
             }
         }
+        else if (obj instanceof JsonPrimitive prim)
+        {
+            ret.add(prim.getAsString());
+        }
 
         if (error_occured)
         {

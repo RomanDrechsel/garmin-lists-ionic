@@ -235,6 +235,10 @@ export class ConnectIQService {
             return false;
         }
 
+        if (!obj.data) {
+            obj.data = {};
+        }
+
         AppService.AppToolbar?.ToggleProgressbar(true);
         let listener: TransactionListener | undefined;
         if (obj.response_callback) {

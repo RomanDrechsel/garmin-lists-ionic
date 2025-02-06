@@ -16,7 +16,7 @@ import com.garmin.android.connectiq.exception.ServiceUnavailableException;
 import com.getcapacitor.JSObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.LongSerializationPolicy;
 
@@ -261,7 +261,7 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
             try
             {
                 Gson gson = new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.STRING).create(); //parse long numbers as string
-                obj = gson.fromJson(json, JsonObject.class);
+                obj = gson.fromJson(json, JsonElement.class);
             }
             catch (JsonSyntaxException ex)
             {

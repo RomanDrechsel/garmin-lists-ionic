@@ -700,7 +700,7 @@ export class ListsService {
                         this.Popups.Toast.Success("service-lists.delete_success");
                         Logger.Notice(`Removed list ${list.toLog()}`);
                         if (delete_on_watch) {
-                            this.ConnectIQ.SendToDevice({ device: undefined, messageType: ConnectIQMessageType.DeleteList, data: { uuid: uuid } });
+                            this.ConnectIQ.SendToDevice({ device: undefined, messageType: ConnectIQMessageType.DeleteList, data: uuid });
                         }
                         AppService.AppToolbar?.ToggleProgressbar(false);
                         return true;

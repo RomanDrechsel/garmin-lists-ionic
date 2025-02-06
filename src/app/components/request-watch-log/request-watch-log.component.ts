@@ -49,7 +49,7 @@ export class RequestWatchLogComponent implements AfterViewInit {
             const tid = await this.ConnectIQ.SendToDevice({
                 device: this.Params.device,
                 messageType: ConnectIQMessageType.RequestWatchLogs,
-                data: { type: "request", request: "logs" },
+                data: undefined,
                 response_callback: async message => {
                     if (message) {
                         if (message.Message?.logs) {
