@@ -21,9 +21,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.LongSerializationPolicy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.romandrechsel.lists.logging.Logger;
 import de.romandrechsel.lists.utils.DeviceUtils;
@@ -147,15 +145,18 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
         }
         else
         {
-            Map<String, Object> map = (HashMap<String, Object>) data.get(0);
-            String json = new Gson().toJson(map);
-            Logger.Debug(TAG, "Received data from device " + this + ": " + json.length() + " bytes");
-            if (map != null)
+            DeviceMessage msg = DeviceUtils.DeserializeStringArray(data.get(0));
+            if (msg != null)
             {
+                Logger.Debug(TAG, "Received data from device " + this + ": " + msg.Size + " bytes");
                 JSObject event_args = new JSObject();
                 event_args.put("device", this.toJSObject());
-                event_args.put("message", new Gson().toJson(map));
+                event_args.put("message", msg.Json());
                 this.Manager.Plugin.emitJsEvent("RECEIVE", event_args);
+            }
+            else
+            {
+                Logger.Error(TAG, "Received invalid data from device " + this);
             }
         }
     }
@@ -221,7 +222,7 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
         ArrayList<String> send;
         if (data != null)
         {
-            send = DeviceUtils.MakeStringArray(data);
+            send = DeviceUtils.SeralizeToStringArray(data);
         }
         else
         {

@@ -12,20 +12,21 @@ import com.garmin.android.connectiq.IQDevice;
 import com.garmin.android.connectiq.exception.InvalidStateException;
 import com.garmin.android.connectiq.exception.ServiceUnavailableException;
 import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.LongSerializationPolicy;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import de.romandrechsel.lists.logging.Logger;
 
 public class DeviceManager implements ConnectIQ.ConnectIQListener
 {
-    public interface IInitlializeListener
+    public interface IInitializeListener
     {
         void Success(Boolean simulator, Boolean debug_app);
 
@@ -47,14 +48,14 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
     private final List<DeviceInfo> devices = new ArrayList<>();
 
     @Nullable
-    private IInitlializeListener _initListener = null;
+    private IInitializeListener _initListener = null;
 
     public DeviceManager(@NonNull ConnectIQPlugin plugin)
     {
         this.Plugin = plugin;
     }
 
-    public void Initialize(Activity activity, @Nullable Boolean simulator, @Nullable Boolean debug_app, @Nullable IInitlializeListener listener)
+    public void Initialize(Activity activity, @Nullable Boolean simulator, @Nullable Boolean debug_app, @Nullable IInitializeListener listener)
     {
         this._initListener = listener;
         this.DisconnectAllDevices();
@@ -184,7 +185,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
             }
 
             device.SendJson(message_type, json, listener);
-            if (this._useGarminSimulator)
+            if (this._useGarminSimulator && message_type != null && message_type.equals("req_logs"))
             {
                 this.debugLogResponse(device, json);
             }
@@ -317,31 +318,25 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         {
             return;
         }
-        Object obj = new Gson().fromJson(json, Object.class);
-        if (obj instanceof LinkedTreeMap)
+        Gson gson = new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.STRING).create();
+        Object obj = gson.fromJson(json, JsonElement.class);
+        if (obj instanceof JsonObject jsonobj)
         {
-            LinkedTreeMap<String, Object> map = ((LinkedTreeMap<String, Object>) obj);
-            if (map.containsKey("type"))
+            String tid = jsonobj.has("tid") ? jsonobj.get("tid").getAsString() : null;
+            new Handler(Looper.getMainLooper()).postDelayed(() ->
             {
-                String type = (String) map.get("type");
-                if (type != null && type.equals("request"))
+                List<Object> resp = new ArrayList<>();
+                if (tid != null)
                 {
-                    String request = map.containsKey("request") ? (String) map.get("request") : null;
-                    Double tid = map.containsKey("tid") ? (Double) map.get("tid") : null;
-                    if (request != null && request.equals("logs"))
-                    {
-                        new Handler(Looper.getMainLooper()).postDelayed(() ->
-                        {
-                            List<String> logs = Arrays.asList("Hallo", "Welt", "!");
-                            HashMap<String, Object> data = new HashMap<>();
-                            data.put("logs", logs);
-                            data.put("tid", tid);
-                            List<Object> list = List.of(data);
-                            device.onMessageReceived(device.device, device.deviceApp, list, ConnectIQ.IQMessageStatus.SUCCESS);
-                        }, 5000);
-                    }
+                    resp.add("tid=" + tid);
                 }
-            }
+                resp.add("0=Hallo");
+                resp.add("1=Welt");
+                resp.add("2=!");
+                resp.add("3=");
+                resp.add("4");
+                device.onMessageReceived(device.device, device.deviceApp, resp, ConnectIQ.IQMessageStatus.SUCCESS);
+            }, 5000);
         }
     }
 }

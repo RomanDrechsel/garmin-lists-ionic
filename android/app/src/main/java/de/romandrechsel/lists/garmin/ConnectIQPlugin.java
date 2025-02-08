@@ -32,7 +32,7 @@ public class ConnectIQPlugin extends Plugin
     @PluginMethod
     public void Initialize(PluginCall call)
     {
-        this.Manager.Initialize(this.getActivity(), call.getBoolean("simulator", false), call.getBoolean("debug_app", false), new DeviceManager.IInitlializeListener()
+        this.Manager.Initialize(this.getActivity(), call.getBoolean("simulator", false), call.getBoolean("debug_app", false), new DeviceManager.IInitializeListener()
         {
             @Override
             public void Success(Boolean simulator, Boolean debug_app)

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.romandrechsel.lists.garmin.DeviceMessage;
 import de.romandrechsel.lists.garmin.DeviceMessageSerializeException;
 import de.romandrechsel.lists.logging.Logger;
 
@@ -20,7 +21,7 @@ public class DeviceUtils
     private static final String TAG = "DeviceUtil";
 
     @NonNull
-    public static ArrayList<String> MakeStringArray(@NonNull Object obj)
+    public static ArrayList<String> SeralizeToStringArray(@NonNull Object obj)
     {
         ArrayList<String> ret = new ArrayList<>();
         boolean error_occured = false;
@@ -79,6 +80,44 @@ public class DeviceUtils
         }
 
         return ret;
+    }
+
+    @Nullable
+    public static DeviceMessage DeserializeStringArray(Object obj)
+    {
+        DeviceMessage msg = new DeviceMessage();
+        if (obj instanceof ArrayList<?> arr)
+        {
+            for (Object arr_obj : arr)
+            {
+                try
+                {
+                    String item = String.valueOf(arr_obj);
+                    msg.Size += item.length() * 2;
+
+                    String[] split = item.split("=", 2);
+                    if (split.length == 1)
+                    {
+                        msg.Message.put(split[0], null);
+                    }
+                    else
+                    {
+                        msg.Message.put(split[0], split[1]);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(TAG, "Could not deserialize " + arr_obj.getClass(), arr_obj);
+                    return null;
+                }
+            }
+        }
+        else
+        {
+
+        }
+
+        return msg;
     }
 
     @NotNull

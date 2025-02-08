@@ -6,7 +6,8 @@ https://wiki.ubuntuusers.de/adb/
 
 TEST: ListsPage / ListitemsPage: Loading background while lists are loading
 TEST: Menu-Item Open App
-WIP: only send Array<String> to watch
-BUG: request-watch-logs-component always opens up after a few seconds
-BUG: wrong image on request-logs page, when no device is connected
+TEST: only send Array<String> to watch
+WIP: wrong image on request-logs page, when no device is connected
+BUG: Lists-Loading Screen, when changing back zu lists page no lists are loaded
+TODO: Remove Add-Button, while lists are loading
 TODO: migrate to Capacitor 7

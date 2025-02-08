@@ -42,8 +42,13 @@ export class WatchLoggingService {
         let ret: string[] = ["-----------------"];
         for (let i = 0; i < devices.length; i++) {
             let logs = [`Garmin Device ${i}:`, devices[i].toString()];
-            logs = logs.concat(await RequestWatchLogs(this.ModalCtrl, { device: devices[i] }));
-            logs = logs.concat(["-----------------"]);
+            if (devices[i].State != "Ready" && devices.length == 1) {
+                logs = logs.concat(["-----------------", "Device is not ready!", "-----------------"]);
+                break;
+            } else if (devices[i].State == "Ready") {
+                logs = logs.concat(await RequestWatchLogs(this.ModalCtrl, { device: devices[i] }));
+                logs = logs.concat(["-----------------"]);
+            }
             ret = ret.concat(logs);
         }
 

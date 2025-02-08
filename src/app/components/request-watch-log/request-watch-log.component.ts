@@ -20,12 +20,7 @@ export class RequestWatchLogComponent implements AfterViewInit {
     private _transactionId?: number = undefined;
 
     public async ngAfterViewInit(): Promise<void> {
-        const logs = await this.requestLog();
-        if (logs) {
-            this.modalCtrl.dismiss(logs, "confirm");
-        } else {
-            this.modalCtrl.dismiss(undefined, "cancel");
-        }
+        await this.requestLog();
     }
 
     public cancel() {
@@ -40,28 +35,29 @@ export class RequestWatchLogComponent implements AfterViewInit {
         this.modalCtrl.dismiss(["Log request canceled"], "confirm");
     }
 
-    public openApp() {
-        this.ConnectIQ.openApp(this.Params.device);
+    public async openApp() {
+        await this.ConnectIQ.openApp(this.Params.device);
     }
 
-    private async requestLog(): Promise<string[]> {
-        return new Promise<string[]>(async resolve => {
+    private async requestLog(): Promise<void> {
+        const logs = await new Promise<string[]>(async resolve => {
             const tid = await this.ConnectIQ.SendToDevice({
                 device: this.Params.device,
                 messageType: ConnectIQMessageType.RequestWatchLogs,
                 data: undefined,
                 response_callback: async message => {
-                    if (message) {
-                        if (message.Message?.logs) {
-                            if (message.Message.logs instanceof Array) {
-                                resolve(message.Message.logs as string[]);
-                                return;
+                    if (message?.Message) {
+                        let logs: string[] = [];
+                        Object.entries(message.Message).forEach(([key, value]) => {
+                            if (key != "tid") {
+                                logs.push(`${value}`);
                             }
-                        }
-                        resolve(["Invalid device response", message?.Message]);
+                        });
+                        resolve(logs);
                         return;
                     }
-                    resolve(["Device not responding"]);
+                    resolve(["Invalid device response", message?.Message]);
+                    return;
                 },
                 timeout: 300,
             });
@@ -71,6 +67,12 @@ export class RequestWatchLogComponent implements AfterViewInit {
                 resolve(["Request to device failed"]);
             }
         });
+
+        if (logs) {
+            this.modalCtrl.dismiss(logs, "confirm");
+        } else {
+            this.modalCtrl.dismiss(undefined, "cancel");
+        }
     }
 }
 

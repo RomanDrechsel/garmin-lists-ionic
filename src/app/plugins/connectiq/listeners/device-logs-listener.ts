@@ -22,16 +22,22 @@ export class DeviceLogsListener extends ConnectIQListener<DeviceMessageEventArgs
 
     protected async Callback(obj: DeviceMessageEventArgs): Promise<void> {
         const data = new ConnectIQDeviceMessage(obj, this._service);
-        if (data.Message.type && data.Message.type == "logs" && data.Message.logs && Array.isArray(data.Message.logs)) {
+        if (data.Message.type && data.Message.type == "logs") {
+            let logs: string[] = [];
+            Object.entries(data.Message).forEach(([key, value]) => {
+                if (key != "type") {
+                    logs.push(`${value}`);
+                }
+            });
             let logreport = ["", "===========", `Received logs from device ${data.Device}:`];
-            logreport.push(...data.Message.logs);
+            logreport.push(...logs);
             logreport.push("===========", "");
             Logger.Important(logreport.join("\n"));
 
             if (await this._popup.Alert.YesNo({ message: "comp_watchlogs.logs_received_confirm", translate: true })) {
                 await this._navController.navigateForward("settings/watch-logs", {
                     queryParams: {
-                        watchLogs: data.Message.logs,
+                        watchLogs: logs,
                     },
                 });
             }
