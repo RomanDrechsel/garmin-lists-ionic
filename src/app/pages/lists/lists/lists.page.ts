@@ -37,6 +37,9 @@ export class ListsPage extends PageBase {
     }
 
     public get ShowScrollButtons(): boolean {
+        if (!this._listsInitialized) {
+            return false;
+        }
         return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
     }
 
@@ -54,7 +57,6 @@ export class ListsPage extends PageBase {
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
-        this._listsInitialized = false;
         this.ListsService.PurgeListDetails();
         const sub = this._listObserver?.subscribe(lists => {
             if (lists) {

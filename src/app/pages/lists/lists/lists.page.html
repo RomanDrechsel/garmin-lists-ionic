@@ -37,7 +37,7 @@
         </ion-list>
     </div>
 
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="ListsInitialized">
         <ion-fab-button [ariaLabel]="'add'|translate" (click)="addList()">
             <ion-icon src="./assets/icons/add.svg"></ion-icon>
         </ion-fab-button>

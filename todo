@@ -7,7 +7,7 @@ https://wiki.ubuntuusers.de/adb/
 TEST: ListsPage / ListitemsPage: Loading background while lists are loading
 TEST: Menu-Item Open App
 TEST: only send Array<String> to watch
-WIP: wrong image on request-logs page, when no device is connected
-BUG: Lists-Loading Screen, when changing back zu lists page no lists are loaded
-TODO: Remove Add-Button, while lists are loading
+TODO: comp_watchlogs.text add text and translate
+TODO: Admob ConsentInfo reset
+https://github.com/capacitor-community/admob?tab=readme-ov-file#resetconsentinfo
 TODO: migrate to Capacitor 7

@@ -40,6 +40,9 @@ export class TrashListitemsPage extends PageBase {
     }
 
     public get ShowScrollButtons(): boolean {
+        if (!this._trashInitialized) {
+            return false;
+        }
         return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
     }
 
