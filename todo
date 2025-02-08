@@ -7,7 +7,4 @@ https://wiki.ubuntuusers.de/adb/
 TEST: ListsPage / ListitemsPage: Loading background while lists are loading
 TEST: Menu-Item Open App
 TEST: only send Array<String> to watch
-TODO: comp_watchlogs.text add text and translate
-TODO: Admob ConsentInfo reset
-https://github.com/capacitor-community/admob?tab=readme-ov-file#resetconsentinfo
 TODO: migrate to Capacitor 7
