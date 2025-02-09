@@ -115,11 +115,13 @@ export class TrashListsPage extends PageBase {
         }
     }
 
-    public ScrollToTop() {
-        this.mainContent?.scrollToTop(300);
+    public async ScrollToTop() {
+        await this.mainContent?.scrollToTop(300);
+        this.cdr.detectChanges();
     }
 
-    public ScrollToBottom(instant: boolean = true) {
-        this.mainContent?.scrollToBottom(instant ? 0 : 300);
+    public async ScrollToBottom(instant: boolean = true) {
+        await this.mainContent?.scrollToBottom(instant ? 0 : 300);
+        this.cdr.detectChanges();
     }
 }
