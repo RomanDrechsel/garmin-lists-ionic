@@ -7,4 +7,4 @@ https://wiki.ubuntuusers.de/adb/
 TEST: ListsPage / ListitemsPage: Loading background while lists are loading
 TEST: Menu-Item Open App
 TEST: only send Array<String> to watch
-TODO: migrate to Capacitor 7
+TEST: migrate to Capacitor 7
