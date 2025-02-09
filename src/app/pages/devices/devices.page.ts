@@ -23,7 +23,7 @@ export class DevicesPage extends PageBase {
     public ListUuid?: string;
     public Devices: ConnectIQDevice[] = [];
 
-    public static SubmitButton?: { callback?: (device?: ConnectIQDevice) => Promise<void>; submitRoute?: string; buttonText?: string };
+    public static SubmitButton?: { callback?: (device?: ConnectIQDevice) => Promise<void>; submitRoute?: string; buttonText?: string; only_online_device?: boolean };
 
     private initListener?: Subscription;
     private stateListener?: Subscription;
@@ -151,11 +151,12 @@ export class DevicesPage extends PageBase {
     }
 }
 
-export const SelectGarminDevice = function (args: { router: Router; callback: (device?: ConnectIQDevice) => Promise<void>; submitRoute?: string; buttonText?: string }) {
+export const SelectGarminDevice = function (args: { router: Router; callback: (device?: ConnectIQDevice) => Promise<void>; submitRoute?: string; buttonText?: string; only_online_device?: boolean }) {
     DevicesPage.SubmitButton = {
         callback: args.callback,
         submitRoute: args.submitRoute,
         buttonText: args.buttonText,
+        only_online_device: args.only_online_device,
     };
     args.router.navigate(["/devices"]);
 };

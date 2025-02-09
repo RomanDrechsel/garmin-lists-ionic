@@ -52,7 +52,8 @@
         "settings": "設定",
         "privacy": "隱私",
         "appinfos": "應用資訊",
-        "empty_trash": "清空垃圾桶"
+        "empty_trash": "清空垃圾桶",
+        "openapp": "打開應用"
     },
     "service-lists": {
         "store_list_error": "無法儲存清單！",
@@ -96,7 +97,10 @@
         "watch_outdated": "您在裝置 <strong>{{device}}</strong> 上似乎使用的是舊版本的清單應用。<br /><br />請更新手錶上的應用，以使用所有功能。",
         "watch_outdated_button": "前往 Connect-IQ 商店",
         "watch_outdated_ignore": "忽略",
-        "watch_outdated_dontremind": "不再提醒此版本"
+        "watch_outdated_dontremind": "不再提醒此版本",
+        "openapp_btn": "打開應用",
+        "openapp_nodevice": "未找到活動設備！",
+        "openapp_success": "應用已在手錶上打開。"
     },
     "comp-listeditor": {
         "title_new": "新增清單",
@@ -150,7 +154,7 @@
     },
     "comp_watchlogs": {
         "title": "傳輸日誌",
-        "text": "要傳輸手錶上的日誌，請首先在手錶上啟動應用<br /><br /><strong>{{name}}</strong><br /><br />。應用啟動後，日誌將自動傳輸。",
+        "text": "要傳輸手錶上的日誌，請首先在手錶上啟動應用<br /><br /><strong>{{name}}</strong><br /><br />。應用啟動後，日誌將自動傳輸。不過，這可能需要幾秒鐘。",
         "withoutlogs": "無日誌繼續",
         "openApp": "開啟應用程式",
         "logs_received_confirm": "記錄已收到。<br /><br />您想現在就查看嗎？"
@@ -160,7 +164,8 @@
         "empty": "清空",
         "upload": "傳輸",
         "updated": "最後更新：{{date}}",
-        "add_new_hint": "新增一個新的清單。"
+        "add_new_hint": "新增一個新的清單。",
+        "loading": "列表正在加載..."
     },
     "page_listitems": {
         "page_title": "清單未找到",
@@ -179,7 +184,8 @@
         "erase": "移除",
         "restore": "恢復",
         "deleted": "已刪除: {{date}}",
-        "empty": "垃圾桶是空的。"
+        "empty": "垃圾桶是空的。",
+        "loading": "回收站正在加載..."
     },
     "page_trashitem": {
         "page_title": "垃圾桶",

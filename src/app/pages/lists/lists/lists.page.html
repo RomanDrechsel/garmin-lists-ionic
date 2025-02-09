@@ -1,9 +1,9 @@
 <app-main-toolbar>{{'page_lists.page_title'|translate}}</app-main-toolbar>
 
 <ion-content fixed-slot-placement="before" scrollEvents="true" scrollX="false" (ionScroll)="onScroll($event)" #mainContent>
-    <div *ngIf="Lists().length > 0; else noLists" class="list-content" #listContent>
+    <div *ngIf="Lists() && Lists()!.length > 0; else noLists" class="list-content" #listContent>
         <ion-list #listsContainer>
-            <ion-reorder-group [disabled]="Lists().length <= 1" (ionItemReorder)="handleReorder($any($event))">
+            <ion-reorder-group [disabled]="Lists()!.length <= 1" (ionItemReorder)="handleReorder($any($event))">
                 <ion-item-sliding *ngFor="let list of Lists()">
                     <ion-item-options side="start" (ionSwipe)="onSwipeRight(list)">
                         <ion-item-option color="danger" (click)="emptyList(list)" *ngIf="list.ItemsCount > 0">
@@ -37,7 +37,7 @@
         </ion-list>
     </div>
 
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="ListsInitialized">
         <ion-fab-button [ariaLabel]="'add'|translate" (click)="addList()">
             <ion-icon src="./assets/icons/add.svg"></ion-icon>
         </ion-fab-button>
@@ -54,5 +54,16 @@
 </ion-content>
 
 <ng-template #noLists>
-    <app-page-add-new> {{'page_lists.add_new_hint'|translate}} </app-page-add-new>
+    <app-page-add-new *ngIf="ListsInitialized; else notInit"> {{'page_lists.add_new_hint'|translate}} </app-page-add-new>
+</ng-template>
+
+<ng-template #notInit>
+    <app-page-empty>
+        <div slot="image">
+            <ion-img src="./assets/icons/hourglass.svg"></ion-img>
+        </div>
+        <div slot="text">
+            <div [innerHTML]="'page_lists.loading'|translate"></div>
+        </div>
+    </app-page-empty>
 </ng-template>

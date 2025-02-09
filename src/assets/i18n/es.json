@@ -52,7 +52,8 @@
         "settings": "Configuración",
         "privacy": "Privacidad",
         "appinfos": "Información de la Aplicación",
-        "empty_trash": "Vaciar Papelera"
+        "empty_trash": "Vaciar Papelera",
+        "openapp": "Abrir app"
     },
 
     "service-lists": {
@@ -97,7 +98,10 @@
         "watch_outdated": "Parece que estás utilizando una versión antigua de la aplicación de listas en tu dispositivo <strong>{{device}}</strong><br /><br /> Por favor, actualiza la app en tu reloj para poder utilizar todas las funciones.",
         "watch_outdated_button": "Ir al Store Connect-IQ",
         "watch_outdated_ignore": "Ignorar",
-        "watch_outdated_dontremind": "No recordarme esta versión"
+        "watch_outdated_dontremind": "No recordarme esta versión",
+        "openapp_btn": "Abrir app",
+        "openapp_nodevice": "¡No se encontró dispositivo activo!",
+        "openapp_success": "App abierta en el reloj."
     },
     "comp-listeditor": {
         "title_new": "Crear nueva lista",
@@ -151,7 +155,7 @@
     },
     "comp_watchlogs": {
         "title": "Transferir logs",
-        "text": "Para transferir los logs de tu reloj, primero debes iniciar la aplicación en tu reloj<br /><br /><strong>{{name}}</strong><br /><br /> Si la app está ejecutándose, los logs se transferirán automáticamente.",
+        "text": "Para transferir los logs de tu reloj, primero debes iniciar la aplicación en tu reloj<br /><br /><strong>{{name}}</strong><br /><br /> Si la app está ejecutándose, los logs se transferirán automáticamente. Sin embargo, esto puede tardar unos segundos.",
         "withoutlogs": "Continuar sin logs",
         "openApp": "Abrir la aplicación",
         "logs_received_confirm": "Los registros han sido recibidos.<br /><br />¿Deseas verlos ahora?"
@@ -161,7 +165,8 @@
         "empty": "Vaciar",
         "upload": "Subir",
         "updated": "Última actualización: {{date}}",
-        "add_new_hint": "Crear nueva lista."
+        "add_new_hint": "Crear nueva lista.",
+        "loading": "Se cargan las listas..."
     },
     "page_listitems": {
         "page_title": "Lista no encontrada",
@@ -180,7 +185,8 @@
         "erase": "Eliminar",
         "restore": "Restaurar",
         "deleted": "Eliminado: {{date}}",
-        "empty": "La papelera está vacía."
+        "empty": "La papelera está vacía.",
+        "loading": "Se carga la papelera de reciclaje..."
     },
     "page_trashitem": {
         "page_title": "Papelera de lista",

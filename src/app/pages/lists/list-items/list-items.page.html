@@ -41,7 +41,7 @@
         </ion-list>
     </div>
 
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="ListInitialized">
         <ion-fab-button (click)="AddItem()" [ariaLabel]="'add'|translate">
             <ion-icon src="./assets/icons/add.svg"></ion-icon>
         </ion-fab-button>
@@ -57,7 +57,7 @@
     </ion-fab>
 
     <ng-template #noItems>
-        <app-page-add-new *ngIf="List"> {{'page_listitems.add_new_hint'|translate}} </app-page-add-new>
+        <app-page-add-new *ngIf="List; else notInit"> {{'page_listitems.add_new_hint'|translate}} </app-page-add-new>
     </ng-template>
 </ion-content>
 
@@ -72,4 +72,15 @@
             </div>
         </app-page-empty>
     </div>
+</ng-template>
+
+<ng-template #notInit>
+    <app-page-empty>
+        <div slot="image">
+            <ion-img src="./assets/icons/hourglass.svg"></ion-img>
+        </div>
+        <div slot="text">
+            <div [innerHTML]="'page_listitems.loading'|translate"></div>
+        </div>
+    </app-page-empty>
 </ng-template>

@@ -1,20 +1,23 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, ViewChild, WritableSignal } from "@angular/core";
+import { toObservable } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
 import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
+import { Observable } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { List } from "src/app/services/lists/list";
 import { DateUtils } from "../../../classes/utils/date-utils";
 import { PageAddNewComponent } from "../../../components/page-add-new/page-add-new.component";
+import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { PageBase } from "../../page-base";
 
 @Component({
     selector: "app-lists",
     templateUrl: "./lists.page.html",
     styleUrls: ["./lists.page.scss"],
-    imports: [IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonReorderGroup, IonList, IonContent, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule],
+    imports: [IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonReorderGroup, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent],
 })
 export class ListsPage extends PageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;
@@ -22,15 +25,21 @@ export class ListsPage extends PageBase {
     @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
     @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
 
-    public Lists: WritableSignal<List[]> = this.ListsService.Lists;
+    public Lists: WritableSignal<List[] | undefined> = this.ListsService.Lists;
+    private _listObserver?: Observable<List[] | undefined> = toObservable(this.ListsService.Lists);
     private _disableClick = false;
     private _scrollPosition: "top" | "bottom" | number = "top";
+
+    private _listsInitialized = false;
 
     public get ScrollPosition(): "top" | "bottom" | number {
         return this._scrollPosition;
     }
 
     public get ShowScrollButtons(): boolean {
+        if (!this._listsInitialized) {
+            return false;
+        }
         return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
     }
 
@@ -42,9 +51,22 @@ export class ListsPage extends PageBase {
         return this._scrollPosition == "bottom";
     }
 
+    public get ListsInitialized(): boolean {
+        return this._listsInitialized;
+    }
+
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
         this.ListsService.PurgeListDetails();
+        const sub = this._listObserver?.subscribe(lists => {
+            if (lists) {
+                this._listsInitialized = true;
+                setTimeout(() => {
+                    sub?.unsubscribe();
+                }, 1);
+                this._listObserver = undefined;
+            }
+        });
     }
 
     public onSwipeRight(list: List) {
@@ -88,7 +110,7 @@ export class ListsPage extends PageBase {
 
     public gotoList(event: MouseEvent, list: List) {
         if (!this._disableClick) {
-            this.NavController.navigateForward(`/lists/items/${list.Uuid}`);
+            this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { title: list.Name } });
             event.stopImmediatePropagation();
         }
     }
@@ -113,11 +135,13 @@ export class ListsPage extends PageBase {
         }
     }
 
-    public ScrollToTop() {
-        this.mainContent?.scrollToTop(300);
+    public async ScrollToTop() {
+        await this.mainContent?.scrollToTop(300);
+        this.cdr.detectChanges();
     }
 
-    public ScrollToBottom(instant: boolean = true) {
-        this.mainContent?.scrollToBottom(instant ? 0 : 300);
+    public async ScrollToBottom(instant: boolean = true) {
+        await this.mainContent?.scrollToBottom(instant ? 0 : 300);
+        this.cdr.detectChanges();
     }
 }

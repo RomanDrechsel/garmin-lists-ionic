@@ -8,6 +8,7 @@ import { ListEditor } from "../../components/list-editor/list-editor.component";
 import { ListItemEditor } from "../../components/list-item-editor/list-item-editor.component";
 import { AppService } from "../app/app.service";
 import { ConnectIQDevice } from "../connectiq/connect-iq-device";
+import { ConnectIQMessageType } from "../connectiq/connect-iq-message-type";
 import { ConnectIQService } from "../connectiq/connect-iq.service";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
@@ -41,7 +42,7 @@ export class ListsService {
     private _keepInTrashStock: KeepInTrash.Enum = KeepInTrash.Default;
     private _removeOldTrashEntriesTimer?: Subscription;
 
-    public readonly Lists: WritableSignal<List[]> = signal([]);
+    public readonly Lists: WritableSignal<List[] | undefined> = signal(undefined);
     private readonly _listIndex: Map<string, List> = new Map();
 
     private onTrashItemsDatasetChangedSubject = new BehaviorSubject<ListitemTrashModel | undefined>(undefined);
@@ -95,18 +96,17 @@ export class ListsService {
      * @returns array of all lists
      */
     public async GetLists(reload: boolean = false): Promise<List[]> {
-        if (reload || this.Lists().length == 0) {
+        if (reload || this.Lists()?.length == 0) {
             AppService.AppToolbar?.ToggleProgressbar(true);
             const lists = await this.ListsProvider.GetLists(true);
             this._listIndex.clear();
             lists.forEach(l => {
                 this._listIndex.set(l.Uuid, l);
             });
-
             this.orderLists(lists);
             AppService.AppToolbar?.ToggleProgressbar(false);
         }
-        return this.Lists();
+        return this.Lists()!;
     }
 
     /**
@@ -533,7 +533,7 @@ export class ListsService {
             if (!confirm || (await this.Popups.Alert.YesNo({ message: locale["service-lists.transmit_confirm"], button_yes: locale["yes"], button_no: locale["no"] }))) {
                 const toast = await this.Popups.Toast.Notice("service-lists.transmit_process", Toast.DURATION_INFINITE);
                 AppService.AppToolbar?.ToggleProgressbar(true);
-                const resp = await this.ConnectIQ.SendToDevice({ device: device, data: list.toDeviceObj() });
+                const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: list.toDeviceObject() });
                 toast.dismiss();
                 AppService.AppToolbar?.ToggleProgressbar(false);
                 if (resp !== false) {
@@ -572,7 +572,7 @@ export class ListsService {
      * purges all details of lists in memory
      */
     public PurgeListDetails() {
-        this.Lists().forEach(l => {
+        this.Lists()?.forEach(l => {
             l.PurgeDetails();
         });
     }
@@ -700,7 +700,7 @@ export class ListsService {
                         this.Popups.Toast.Success("service-lists.delete_success");
                         Logger.Notice(`Removed list ${list.toLog()}`);
                         if (delete_on_watch) {
-                            this.ConnectIQ.SendToDevice({ device: undefined, data: { type: "dellist", uuid: uuid } });
+                            this.ConnectIQ.SendToDevice({ device: undefined, messageType: ConnectIQMessageType.DeleteList, data: uuid });
                         }
                         AppService.AppToolbar?.ToggleProgressbar(false);
                         return true;
@@ -818,7 +818,7 @@ export class ListsService {
         const list = await this.TrashProvider.GetList(uuid);
         if (list) {
             //move it to the end...
-            list.Order = this.Lists().length;
+            list.Order = this.Lists()?.length ?? 0;
 
             if (await this.ListsProvider.StoreList(list, true)) {
                 if (await this.TrashProvider.EraseLists(list.Uuid, false)) {

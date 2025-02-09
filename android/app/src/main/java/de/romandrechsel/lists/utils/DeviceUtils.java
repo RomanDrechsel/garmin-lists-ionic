@@ -1,37 +1,169 @@
 package de.romandrechsel.lists.utils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import de.romandrechsel.lists.garmin.DeviceMessage;
+import de.romandrechsel.lists.garmin.DeviceMessageSerializeException;
+import de.romandrechsel.lists.logging.Logger;
 
 public class DeviceUtils
 {
-    /**
-     * checks if an object is of type Map<String, Object>
-     *
-     * @param obj object to be checked
-     * @return returns the true, if it is of type Map<String, Object>, otherwise false
-     */
-    @Nullable
-    public static boolean IsStringKeyMap(Object obj)
+    private static final String TAG = "DeviceUtil";
+
+    @NonNull
+    public static ArrayList<String> SeralizeToStringArray(@NonNull Object obj)
     {
-        if (obj instanceof Map<?, ?> map)
+        ArrayList<String> ret = new ArrayList<>();
+        boolean error_occured = false;
+
+        if (obj.getClass().isPrimitive())
         {
-            boolean isStringObjectMap = true;
-            for (Map.Entry<?, ?> entry : map.entrySet())
+            ret.add(obj.toString());
+        }
+        else if (obj instanceof String)
+        {
+            ret.add((String) obj);
+        }
+        else if (obj instanceof ArrayList)
+        {
+            for (Object val : (ArrayList<Object>) obj)
             {
-                if (!(entry.getKey() instanceof String))
+                try
                 {
-                    isStringObjectMap = false;
-                    break;
+                    ret.add(DeviceUtils.MakeString(val));
+                }
+                catch (DeviceMessageSerializeException ex)
+                {
+                    error_occured = true;
+                    Logger.Error(TAG, ex.getMessage());
                 }
             }
+        }
+        else if (obj instanceof JsonObject json)
+        {
+            for (Map.Entry<?, ?> entry : json.entrySet())
+            {
+                try
+                {
+                    var key = DeviceUtils.MakeString(entry.getKey());
+                    var val = DeviceUtils.MakeString(entry.getValue());
+                    if (!key.isEmpty())
+                    {
+                        ret.add(key + "=" + val);
+                    }
+                }
+                catch (DeviceMessageSerializeException ex)
+                {
+                    Logger.Error(TAG, ex.getMessage());
+                    error_occured = true;
+                }
+            }
+        }
+        else if (obj instanceof JsonPrimitive prim)
+        {
+            ret.add(prim.getAsString());
+        }
 
-            return isStringObjectMap;
+        if (error_occured)
+        {
+            ret.add(0, "error=true");
+        }
+
+        return ret;
+    }
+
+    @Nullable
+    public static DeviceMessage DeserializeStringArray(Object obj)
+    {
+        DeviceMessage msg = new DeviceMessage();
+        if (obj instanceof ArrayList<?> arr)
+        {
+            for (Object arr_obj : arr)
+            {
+                try
+                {
+                    String item = String.valueOf(arr_obj);
+                    msg.Size += item.length() * 2;
+
+                    String[] split = item.split("=", 2);
+                    if (split.length == 1)
+                    {
+                        msg.Message.put(split[0], null);
+                    }
+                    else
+                    {
+                        msg.Message.put(split[0], split[1]);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(TAG, "Could not deserialize " + arr_obj.getClass(), arr_obj);
+                    return null;
+                }
+            }
         }
         else
         {
-            return false;
+
+        }
+
+        return msg;
+    }
+
+    @NotNull
+    private static String MakeString(@Nullable Object obj) throws DeviceMessageSerializeException
+    {
+        if (obj == null)
+        {
+            return "";
+        }
+
+        if (obj instanceof JsonPrimitive prim)
+        {
+            return prim.getAsString();
+        }
+
+        Class<?> obj_class = obj.getClass();
+        ArrayList<Class<?>> check = new ArrayList<>(List.of(
+                Long.class,
+                Double.class,
+                Integer.class,
+                Float.class,
+                Character.class,
+                Short.class
+        ));
+        if (obj_class.isPrimitive() || check.contains(obj_class))
+        {
+            return String.valueOf(obj);
+        }
+        else if (obj_class == Boolean.class)
+        {
+            if ((boolean) obj)
+            {
+                return "true";
+            }
+            else
+            {
+                return "false";
+            }
+        }
+        else if (obj instanceof String)
+        {
+            return (String) obj;
+        }
+        else
+        {
+            throw new DeviceMessageSerializeException("Could not serialize " + obj.getClass() + ": " + obj);
         }
     }
 }

@@ -52,7 +52,8 @@
         "settings": "Paramètres",
         "privacy": "Confidentialité",
         "appinfos": "Infos sur l'application",
-        "empty_trash": "Vider la corbeille"
+        "empty_trash": "Vider la corbeille",
+        "openapp": "Ouvrir l'application"
     },
     "service-lists": {
         "store_list_error": "La liste n'a pas pu être enregistrée !",
@@ -96,7 +97,10 @@
         "watch_outdated": "Il semble que vous utilisiez une ancienne version de l'application Liste sur votre appareil <strong>{{device}}</strong>.<br /><br />Veuillez mettre à jour l'application sur votre montre pour profiter de toutes les fonctionnalités.",
         "watch_outdated_button": "Aller au Connect-IQ Store",
         "watch_outdated_ignore": "Ignorer",
-        "watch_outdated_dontremind": "Ne plus me rappeler pour cette version"
+        "watch_outdated_dontremind": "Ne plus me rappeler pour cette version",
+        "openapp_btn": "Ouvrir l'application",
+        "openapp_nodevice": "Aucun appareil actif trouvé !",
+        "openapp_success": "Application ouverte sur la montre."
     },
     "comp-listeditor": {
         "title_new": "Créer une nouvelle liste",
@@ -150,7 +154,7 @@
     },
     "comp_watchlogs": {
         "title": "Transférer les journaux",
-        "text": "Pour transférer les journaux de votre montre, vous devez d'abord lancer l'application sur votre montre<br /><br /><strong>{{name}}</strong>.<br /><br />Les journaux devraient se transférer automatiquement une fois l'application lancée.",
+        "text": "Pour transférer les journaux de votre montre, vous devez d'abord lancer l'application sur votre montre<br /><br /><strong>{{name}}</strong>.<br /><br />Les journaux devraient se transférer automatiquement une fois l'application lancée. Cela peut toutefois prendre quelques secondes.",
         "withoutlogs": "Continuer sans journaux",
         "openApp": "Ouvrir l'application",
         "logs_received_confirm": "Les journaux ont été reçus.<br /><br />Voulez-vous les afficher maintenant ?"
@@ -160,7 +164,8 @@
         "empty": "Vider",
         "upload": "Transférer",
         "updated": "Dernière modification : {{date}}",
-        "add_new_hint": "Créer une nouvelle liste."
+        "add_new_hint": "Créer une nouvelle liste.",
+        "loading": "Les listes sont chargées..."
     },
     "page_listitems": {
         "page_title": "Liste introuvable",
@@ -179,7 +184,8 @@
         "erase": "Supprimer",
         "restore": "Restaurer",
         "deleted": "Supprimé : {{date}}",
-        "empty": "La corbeille est vide."
+        "empty": "La corbeille est vide.",
+        "loading": "La corbeille est en cours de chargement..."
     },
     "page_trashitem": {
         "page_title": "Corbeille",

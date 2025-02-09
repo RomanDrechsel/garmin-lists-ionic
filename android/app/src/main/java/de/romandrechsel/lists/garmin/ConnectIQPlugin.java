@@ -32,7 +32,7 @@ public class ConnectIQPlugin extends Plugin
     @PluginMethod
     public void Initialize(PluginCall call)
     {
-        this.Manager.Initialize(this.getActivity(), call.getBoolean("simulator", false), call.getBoolean("debug_app", false), new DeviceManager.IInitlializeListener()
+        this.Manager.Initialize(this.getActivity(), call.getBoolean("simulator", false), call.getBoolean("debug_app", false), new DeviceManager.IInitializeListener()
         {
             @Override
             public void Success(Boolean simulator, Boolean debug_app)
@@ -115,9 +115,10 @@ public class ConnectIQPlugin extends Plugin
     public void SendToDevice(PluginCall call)
     {
         Long device_id = HelperUtils.toLong(call.getString("device_id", null));
+        String message_type = call.getString("type", null);
         String json = call.getString("json", null);
 
-        this.Manager.SendToDevice(device_id, json, (result, iq_status) ->
+        this.Manager.SendToDevice(device_id, message_type, json, (result, iq_status) ->
         {
             JSObject ret = new JSObject();
             ret.put("success", result == DeviceInfo.EMessageSendResult.Success);

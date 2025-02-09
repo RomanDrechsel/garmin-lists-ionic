@@ -11,6 +11,7 @@ export enum EMenuItemType {
     "EmptyItemTrash",
     "Devices",
     "Settings",
+    "OpenApp",
     "AppInfo",
     "Privacy",
 }
@@ -42,6 +43,8 @@ export const MenuitemFactory = function (itemtype: EMenuItemType, options?: { ti
         case EMenuItemType.Settings:
             url = options?.url_addition ? StringUtils.concat(["/settings", options.url_addition], "/") : "/settings";
             return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.settings", Icon: "./assets/icons/menu/settings.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
+        case EMenuItemType.OpenApp:
+            return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.openapp", Icon: "./assets/icons/menu/openapp.svg", Url: "", Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };
         case EMenuItemType.AppInfo:
             url = options?.url_addition ? StringUtils.concat(["/appinfo", options.url_addition], "/") : "/appinfo";
             return { Id: itemtype, TitleId: options?.title_id ?? "mainmenu.appinfos", Icon: "./assets/icons/menu/appinfos.svg", Url: url, Disabled: options?.disabled ?? false, Hidden: options?.hidden ?? false, onClick: options?.onClick };

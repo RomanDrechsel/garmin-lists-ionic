@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, ViewChild, inject } from "@angular/core";
 import { NavController } from "@ionic/angular/standalone";
+import { Subscription } from "rxjs";
 import { AppComponent } from "../app.component";
 import { MenuItem } from "../classes/menu-items";
 import { MainToolbarComponent } from "../components/main-toolbar/main-toolbar.component";
@@ -31,8 +32,17 @@ export abstract class PageBase {
     protected readonly Config = inject(ConfigService);
     protected readonly cdr = inject(ChangeDetectorRef);
 
+    private _deviceChangedSubscription?: Subscription;
+    private _onlineDevices: number = 0;
+
     public async ionViewWillEnter() {
         this.Popups.Loading.Hide();
+        this._deviceChangedSubscription = this.ConnectIQ.onDeviceChanged$.subscribe(async () => {
+            if (this._onlineDevices != this.ConnectIQ.OnlineDevices) {
+                this._onlineDevices = this.ConnectIQ.OnlineDevices;
+                this.appComponent.setAppPages(this.ModifyMainMenu());
+            }
+        });
     }
 
     public async ionViewDidEnter() {
@@ -43,7 +53,10 @@ export abstract class PageBase {
         }
     }
 
-    public async ionViewWillLeave() {}
+    public async ionViewWillLeave() {
+        this._deviceChangedSubscription?.unsubscribe();
+        this._deviceChangedSubscription = undefined;
+    }
 
     public async ionViewDidLeave() {}
 

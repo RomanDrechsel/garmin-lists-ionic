@@ -52,7 +52,8 @@
         "settings": "Einstellungen",
         "privacy": "Datenschutz",
         "appinfos": "App Informationen",
-        "empty_trash": "Papierkorb leeren"
+        "empty_trash": "Papierkorb leeren",
+        "openapp": "App öffnen"
     },
     "service-lists": {
         "store_list_error": "Die Liste konnte nicht gespeichert werden!",
@@ -96,7 +97,10 @@
         "watch_outdated": "Du scheinst auf deinem Gerät <strong>{{device}}</strong> eine alte Version der Listen-App zu verwenden.<br /><br />Bitte aktuallisiere die App auf deiner Uhr, um alle Funktionen nutzen zu können.",
         "watch_outdated_button": "Zum Connect-IQ Store",
         "watch_outdated_ignore": "Ignorieren",
-        "watch_outdated_dontremind": "Für diese Version nicht wieder benachrichtigen"
+        "watch_outdated_dontremind": "Für diese Version nicht wieder benachrichtigen",
+        "openapp_btn": "App öffnen",
+        "openapp_nodevice": "Kein aktives Gerät gefunden!",
+        "openapp_success": "App auf der Uhr geöffnet."
     },
     "comp-listeditor": {
         "title_new": "Neue Liste anlegen",
@@ -150,7 +154,7 @@
     },
     "comp_watchlogs": {
         "title": "Logs übertragen",
-        "text": "Um die Logs von Deiner Uhr zu übertragen, musst du zuerst die App auf deiner Uhr<br /><br /><strong>{{name}}</strong><br /><br /> starten. Wenn du App läuft, sollten die Logs automatisch übertragen werden.",
+        "text": "Um die Logs von Deiner Uhr zu übertragen, musst du zuerst die App auf deiner Uhr<br /><br /><strong>{{name}}</strong><br /><br /> starten. Wenn du App läuft, sollten die Logs automatisch übertragen werden. Dies kann aber ein paar Sekunden dauern.",
         "withoutlogs": "Ohne Logs fortfahren",
         "openApp": "App öffnen",
         "logs_received_confirm": "Die Logs wurden empfangen.<br /><br />Möchtest du sie jetzt anzeigen?"
@@ -160,7 +164,8 @@
         "empty": "Leeren",
         "upload": "Übertragen",
         "updated": "letzte Änderung: {{date}}",
-        "add_new_hint": "Lege eine neue Liste an."
+        "add_new_hint": "Lege eine neue Liste an.",
+        "loading": "Listen werden geladen..."
     },
     "page_listitems": {
         "page_title": "Liste nicht gefunden",
@@ -179,7 +184,8 @@
         "erase": "Entfernen",
         "restore": "Wiederherstellen",
         "deleted": "gelöscht: {{date}}",
-        "empty": "Der Papierkorb ist leer."
+        "empty": "Der Papierkorb ist leer.",
+        "loading": "Der Papierkorb wird geladen..."
     },
     "page_trashitem": {
         "page_title": "Papierkorb",

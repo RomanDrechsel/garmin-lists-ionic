@@ -28,7 +28,7 @@ export class AdmobService {
 
         await AdMob.initialize({
             initializeForTesting: environment.publicRelease !== true,
-            testingDevices: ["edfcf89c-603c-45fa-a1c8-f77b771ee68c"],
+            testingDevices: ["83906043-1167-4ca6-8f7c-10ca1ad1abe1"],
         });
 
         await this.RequestConsent(false);
@@ -103,29 +103,37 @@ export class AdmobService {
 
     /**
      * Requests consent for personalized advertising.     *
-     * @param force_form If true, forces the consent form to be shown even if it's not required.
+     * @param reset_consent If true, forces the consent form to be shown even if it's not required.
      * @returns true if consent is obtained or not required, false otherwise.
      */
-    public async RequestConsent(force_form: boolean = true): Promise<boolean> {
+    public async RequestConsent(reset_consent: boolean = true): Promise<boolean> {
         const authorizationStatus = (await AdMob.trackingAuthorizationStatus()).status;
         Logger.Debug(`Admob tracking authorization status: ${authorizationStatus}`);
 
-        if (authorizationStatus === "notDetermined" || force_form) {
+        if (authorizationStatus === "notDetermined" || reset_consent) {
             await AdMob.requestTrackingAuthorization();
         }
 
         if ((await AdMob.trackingAuthorizationStatus()).status == "authorized") {
             let consentInfo = await this.getConsentStatus();
-            const before = consentInfo.status;
-            if (consentInfo.isConsentFormAvailable && (consentInfo.status === AdmobConsentStatus.REQUIRED || force_form)) {
-                Logger.Debug(`Show Admob ConsentForm...`);
-                consentInfo = await AdMob.showConsentForm();
-            }
-            if (before !== consentInfo.status) {
-                Logger.Debug(`Admob consent status changed: `, consentInfo);
+            if (consentInfo.status == AdmobConsentStatus.NOT_REQUIRED) {
+                Logger.Debug(`Admob constent status: ${consentInfo.status}`);
+            } else {
+                const before = consentInfo.status;
+                if (consentInfo.isConsentFormAvailable && (consentInfo.status === AdmobConsentStatus.REQUIRED || reset_consent)) {
+                    Logger.Debug(`Show Admob ConsentForm...`);
+                    if (reset_consent) {
+                        await AdMob.resetConsentInfo();
+                        return this.RequestConsent(false);
+                    }
+                    consentInfo = await AdMob.showConsentForm();
+                }
+                if (before !== consentInfo.status) {
+                    Logger.Debug(`Admob consent status changed: ${before} -> ${consentInfo.status}`);
+                }
             }
 
-            return consentInfo.status === AdmobConsentStatus.OBTAINED || consentInfo.status == AdmobConsentStatus.NOT_REQUIRED;
+            return consentInfo.status === AdmobConsentStatus.OBTAINED || consentInfo.status === AdmobConsentStatus.NOT_REQUIRED;
         } else {
             return false;
         }
@@ -141,7 +149,7 @@ export class AdmobService {
         if (environment.publicRelease !== true) {
             options = {
                 debugGeography: AdmobConsentDebugGeography.EEA,
-                testDeviceIdentifiers: ["edfcf89c-603c-45fa-a1c8-f77b771ee68c"],
+                testDeviceIdentifiers: ["83906043-1167-4ca6-8f7c-10ca1ad1abe1"],
             };
         }
         return AdMob.requestConsentInfo(options);

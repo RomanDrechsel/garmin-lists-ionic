@@ -136,7 +136,6 @@ export class AppService {
                 Resolution: `${this.DeviceWidth}x${this.DeviceHeight}`,
                 Manufacturer: deviceinfo.manufacturer,
                 isVirtual: deviceinfo.isVirtual,
-                DiskFree: deviceinfo.realDiskFree,
                 MemoryUsed: deviceinfo.memUsed,
                 WebViewVersion: deviceinfo.webViewVersion,
             };
@@ -209,7 +208,6 @@ export declare type AppMetaInfo = {
         };
         Manufacturer: string;
         isVirtual: boolean;
-        DiskFree: number | undefined;
         MemoryUsed: number | undefined;
         WebViewVersion: string;
     };

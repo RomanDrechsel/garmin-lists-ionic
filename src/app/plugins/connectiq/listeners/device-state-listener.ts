@@ -9,8 +9,8 @@ export class DeviceStateListener extends ConnectIQListener<DeviceEventArgs> {
 
     protected async Callback(device: DeviceEventArgs): Promise<void> {
         if (device) {
+            await this._service.UpdateDevice(device);
             Logger.Debug("Device state changed: ", device);
-            this._service.UpdateDevice(device);
         }
     }
 }

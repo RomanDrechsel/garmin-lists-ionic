@@ -3,6 +3,7 @@ import { ModalController } from "@ionic/angular/standalone";
 import { RequestWatchLogs } from "../../components/request-watch-log/request-watch-log.component";
 import { ConnectIQDevice } from "../connectiq/connect-iq-device";
 import { ConnectIQService } from "../connectiq/connect-iq.service";
+import { Logger } from "./logger";
 
 @Injectable({
     providedIn: "root",
@@ -41,10 +42,18 @@ export class WatchLoggingService {
         let ret: string[] = ["-----------------"];
         for (let i = 0; i < devices.length; i++) {
             let logs = [`Garmin Device ${i}:`, devices[i].toString()];
-            logs = logs.concat(await RequestWatchLogs(this.ModalCtrl, { device: devices[i] }));
-            logs = logs.concat(["-----------------"]);
+            if (devices[i].State != "Ready" && devices.length == 1) {
+                logs = logs.concat(["-----------------", "Device is not ready!", "-----------------"]);
+                break;
+            } else if (devices[i].State == "Ready") {
+                logs = logs.concat(await RequestWatchLogs(this.ModalCtrl, { device: devices[i] }));
+                logs = logs.concat(["-----------------"]);
+            }
             ret = ret.concat(logs);
         }
+
+        Logger.Important(`Watch Logs:\n${ret.join("\n")}`);
+
         return ret;
     }
 }

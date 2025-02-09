@@ -11,7 +11,7 @@ export interface IConnectIQ extends Plugin {
 
     GetDevice(opts: { device_id: string }): Promise<DeviceEventArgs>;
 
-    SendToDevice(opts: { device_id: string; json: String }): Promise<TransmitDataEventArgs>;
+    SendToDevice(opts: { device_id: string; type?: string; json: String }): Promise<TransmitDataEventArgs>;
 
     OpenStore(): Promise<void>;
 

@@ -52,7 +52,8 @@
         "settings": "Impostazioni",
         "privacy": "Privacy",
         "appinfos": "Informazioni sull'applicazione",
-        "empty_trash": "Svuota cestino"
+        "empty_trash": "Svuota cestino",
+        "openapp": "Apri app"
     },
     "service-lists": {
         "delete_confirm": "Vuoi davvero eliminare la lista <strong>{{name}}</strong>?",
@@ -94,7 +95,10 @@
         "watch_outdated": "Sembra che tu stia utilizzando una versione obsoleta dell'app Liste sul tuo dispositivo <strong>{{device}}</strong>.<br /><br />Per favore, aggiorna l'app sul tuo orologio per poter utilizzare tutte le funzioni.",
         "watch_outdated_button": "Vai al Connect-IQ Store",
         "watch_outdated_ignore": "Ignora",
-        "watch_outdated_dontremind": "non notificarmi più per questa versione"
+        "watch_outdated_dontremind": "non notificarmi più per questa versione",
+        "openapp_btn": "Apri app",
+        "openapp_nodevice": "Nessun dispositivo attivo trovato!",
+        "openapp_success": "App aperta sull'orologio."
     },
     "comp-listeditor": {
         "title_new": "Crea una nuova lista",
@@ -148,7 +152,7 @@
     },
     "comp_watchlogs": {
         "title": "Trasferisci i log",
-        "text": "Per trasferire i log dal tuo orologio, devi prima avviare l'app sul tuo orologio<br /><br /><strong>{{name}}</strong><br /><br />Se l'app è in esecuzione, i log verranno trasferiti automaticamente.",
+        "text": "Per trasferire i log dal tuo orologio, devi prima avviare l'app sul tuo orologio<br /><br /><strong>{{name}}</strong><br /><br />Se l'app è in esecuzione, i log verranno trasferiti automaticamente. Tuttavia, questa operazione potrebbe richiedere alcuni secondi.",
         "withoutlogs": "Procedi senza log",
         "openApp": "Aprire l'applicazione",
         "logs_received_confirm": "I registri sono stati ricevuti.<br /><br />Vuoi visualizzarli ora?"
@@ -158,7 +162,8 @@
         "empty": "Svuota",
         "upload": "Trasferisci",
         "updated": "ultimo aggiornamento: {{date}}",
-        "add_new_hint": "Crea una nuova lista."
+        "add_new_hint": "Crea una nuova lista.",
+        "loading": "Le liste stanno caricando..."
     },
     "page_listitems": {
         "page_title": "Lista non trovata",
@@ -177,7 +182,8 @@
         "erase": "Cancella",
         "restore": "Ripristina",
         "deleted": "cancellato: {{date}}",
-        "empty": "Il cestino è vuoto."
+        "empty": "Il cestino è vuoto.",
+        "loading": "Il cestino sta caricando..."
     },
     "page_trashitem": {
         "page_title": "Cestino",

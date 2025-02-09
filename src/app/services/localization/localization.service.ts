@@ -55,7 +55,7 @@ export class LocalizationService {
                 new Culture({ localeFile: "it", locale: "it-IT", name: "Italiano", locale_regex: /^it[-_][0-9A-Za-z]{2,}$/i, gdpr: "it" }, this),
                 new Culture({ localeFile: "jp", locale: "ja-JP", name: "日本語", locale_regex: /^ja[-_][0-9A-Za-z]{2,}$/i, gdpr: "jp" }, this),
                 new Culture({ localeFile: "uk", locale: "uk-UA", name: "Українська", locale_regex: /^uk[-_][0-9A-Za-z]{2,}$/i, gdpr: "uk", icon: "ua", localizedAppStore: false }, this),
-                new Culture({ localeFile: "zhs", locale: "zh-CN", name: "中文（简体）", firstDayOfWeek: 0, locale_regex: /^(zh-CN|zh-SG|zh-MY)$/i, gdpr: "zhs", icon: "cn" }, this),
+                new Culture({ localeFile: "zhs", locale: "zh-CN", name: "中文（简体）", firstDayOfWeek: 0, locale_regex: /^(zh-CN|zh-SG|zh-MY)$/i, gdpr: "zhs", icon: "sg" }, this),
                 new Culture({ localeFile: "zht", locale: "zh-TW", name: "繁體中文", h24: false, locale_regex: /^(zh-TW|zh-HK|zh-MO)$/i, gdpr: "zht", icon: "tw" }, this),
             ];
         }

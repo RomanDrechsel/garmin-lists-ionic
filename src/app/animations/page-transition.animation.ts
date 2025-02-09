@@ -6,52 +6,33 @@ export const PageTransitionAnimation = (baseEl: HTMLElement, opts?: any): Animat
 
     try {
         if (opts.direction == "forward") {
-            const forwardAnimation = animationCtrl.create()
+            const fadeAnimation = animationCtrl
+                .create()
                 .addElement(opts.enteringEl)
-                .duration(duration * 0.8)
+                .duration(duration * 1.5)
                 .iterations(1)
-                .fromTo('opacity', 0.5, 1);
+                .fromTo("opacity", 0, 1);
 
-            const forward2Animation = animationCtrl.create()
+            const forwardAnimation = animationCtrl.create().addElement(opts.enteringEl).duration(duration).iterations(1).fromTo("transform", "translateX(100%)", "translateX(0)");
+
+            const leavingAnimation = animationCtrl.create().addElement(opts.leavingEl).duration(duration).iterations(1).fromTo("transform", "translateX(0)", "translateX(-100%)");
+
+            return animationCtrl.create().addAnimation([fadeAnimation, forwardAnimation, leavingAnimation]);
+        } else {
+            const fadeAnimation = animationCtrl
+                .create()
                 .addElement(opts.enteringEl)
-                .duration(duration)
+                .duration(duration * 1.5)
                 .iterations(1)
-                .fromTo('transform', 'translateX(100%)', 'translateX(0)');
+                .fromTo("opacity", 0, 1);
 
-            const leavingAnimation = animationCtrl.create()
-                .addElement(opts.leavingEl)
-                .duration(duration)
-                .iterations(1)
-                .fromTo('transform', 'translateX(0)', 'translateX(-100%)');
+            const backwardsAnimation = animationCtrl.create().addElement(opts.enteringEl).duration(duration).iterations(1).fromTo("transform", "translateX(-100%)", "translateX(0)");
 
-            return animationCtrl.create().addAnimation([forwardAnimation, forward2Animation, leavingAnimation]);
+            const leavingAnimation = animationCtrl.create().addElement(opts.leavingEl).duration(duration).iterations(1).fromTo("transform", "translateX(0)", "translateX(100%)").fromTo("opacity", 1, 0);
+
+            return animationCtrl.create().addAnimation([fadeAnimation, backwardsAnimation, leavingAnimation]);
         }
-        else {
-            const backwardsAnimation = animationCtrl.create()
-                .addElement(opts.enteringEl)
-                .duration(duration * 0.8)
-                .iterations(1)
-                .fromTo('opacity', 0.5, 1);
-
-            const backwards2Animation = animationCtrl.create()
-                .addElement(opts.enteringEl)
-                .duration(duration)
-                .iterations(1)
-                .fromTo('transform', 'translateX(-100%)', 'translateX(0)');
-
-
-
-            const leavingAnimation = animationCtrl.create()
-                .addElement(opts.leavingEl)
-                .duration(duration)
-                .iterations(1)
-                .fromTo('transform', 'translateX(0)', 'translateX(100%)')
-                .fromTo('opacity', 1, 0);
-
-            return animationCtrl.create().addAnimation([backwardsAnimation, backwards2Animation, leavingAnimation]);
-        }
-    }
-    catch (error) {
+    } catch (error) {
         return animationCtrl.create();
     }
 };

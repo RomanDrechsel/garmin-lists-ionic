@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, ViewChild } from "@angular/core";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
 import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
@@ -15,7 +15,7 @@ import { PageBase } from "../../page-base";
     selector: "app-trash-lists",
     templateUrl: "./trash-lists.page.html",
     styleUrls: ["./trash-lists.page.scss"],
-    imports: [IonContent, IonText, IonNote, IonItem, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
+    imports: [IonContent, IonText, IonNote, IonItem, IonImg, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListsPage extends PageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;
@@ -26,12 +26,16 @@ export class TrashListsPage extends PageBase {
     public Lists: List[] = [];
     private _trashChangedSubscription?: Subscription;
     private _scrollPosition: "top" | "bottom" | number = "top";
+    private _trashInitialized = false;
 
     public get ScrollPosition(): "top" | "bottom" | number {
         return this._scrollPosition;
     }
 
     public get ShowScrollButtons(): boolean {
+        if (!this._trashInitialized) {
+            return false;
+        }
         return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
     }
 
@@ -43,14 +47,23 @@ export class TrashListsPage extends PageBase {
         return this._scrollPosition == "bottom";
     }
 
+    public get TrashInitialized(): boolean {
+        return this._trashInitialized;
+    }
+
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
+        this._trashInitialized = false;
         this._trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => {
             this.Lists = lists ?? [];
+            if (lists) {
+                this._trashInitialized = true;
+            }
             this.reload();
             this.appComponent.setAppPages(this.ModifyMainMenu());
         });
         this.Lists = await this.ListsService.GetTrash();
+        this._trashInitialized = true;
     }
 
     public override async ionViewDidLeave() {
@@ -102,11 +115,13 @@ export class TrashListsPage extends PageBase {
         }
     }
 
-    public ScrollToTop() {
-        this.mainContent?.scrollToTop(300);
+    public async ScrollToTop() {
+        await this.mainContent?.scrollToTop(300);
+        this.cdr.detectChanges();
     }
 
-    public ScrollToBottom(instant: boolean = true) {
-        this.mainContent?.scrollToBottom(instant ? 0 : 300);
+    public async ScrollToBottom(instant: boolean = true) {
+        await this.mainContent?.scrollToBottom(instant ? 0 : 300);
+        this.cdr.detectChanges();
     }
 }

@@ -153,16 +153,18 @@ export class Listitem {
      * create an object to send to a device
      * @returns device object representation
      */
-    public toDeviceObject() {
+    public toDeviceObject(obj?: { [key: string]: any }): { [key: string]: any } | undefined {
         if (!this.Hidden) {
-            return {
-                item: this._item,
-                note: this._note,
-                order: this._order,
-            };
-        } else {
-            return null;
+            if (!obj) {
+                obj = {};
+            }
+
+            obj[`item${this._order}_item`] = this._item;
+            if (this._note) {
+                obj[`item${this._order}_note`] = this._note;
+            }
         }
+        return obj;
     }
 
     /**

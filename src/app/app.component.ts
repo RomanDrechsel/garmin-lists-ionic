@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ViewChild, inject, isDevMode } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit, ViewChild, inject, isDevMode } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { App } from "@capacitor/app";
 import { StatusBar } from "@capacitor/status-bar";
@@ -19,13 +19,14 @@ import { EPrefProperty, PreferencesService } from "./services/storage/preference
 export class AppComponent implements OnInit {
     public appPages: MenuItem[] = [];
     public systemPages: MenuItem[] = MenuitemFactoryList([EMenuItemType.Settings, EMenuItemType.AppInfo, EMenuItemType.Privacy]);
-    private useTrash: boolean = true;
+    private _useTrash: boolean = true;
 
     public readonly ConnectIQ = inject(ConnectIQService);
     private readonly Platform = inject(Platform);
     private readonly Preferences = inject(PreferencesService);
     private readonly App = inject(AppService);
     private readonly NavController = inject(NavController);
+    private readonly cdr = inject(ChangeDetectorRef);
 
     @ViewChild("router_outlet") private routerOutlet!: IonRouterOutlet;
 
@@ -51,11 +52,11 @@ export class AppComponent implements OnInit {
 
         this.Preferences.onPrefChanged$.subscribe(prop => {
             if (prop.prop == EPrefProperty.TrashLists) {
-                this.useTrash = prop.value as boolean;
+                this._useTrash = prop.value as boolean;
                 this.setAppPages();
             }
         });
-        this.useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true);
+        this._useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true);
         this.setAppPages();
     }
 
@@ -83,7 +84,16 @@ export class AppComponent implements OnInit {
 
     public setAppPages(menu: MenuItem[] = []) {
         let required = MenuitemFactoryList([EMenuItemType.Lists, EMenuItemType.Devices]);
-        required.push(MenuitemFactory(EMenuItemType.ListsTrash, { disabled: !this.useTrash }));
+        required.push(
+            MenuitemFactory(EMenuItemType.OpenApp, {
+                disabled: this.ConnectIQ.OnlineDevices == 0,
+                onClick: () => {
+                    this.MainMenu?.close();
+                    return this.ConnectIQ.openApp(undefined, true);
+                },
+            }),
+        );
+        required.push(MenuitemFactory(EMenuItemType.ListsTrash, { disabled: !this._useTrash }));
         for (let i = required.length - 1; i >= 0; i--) {
             if (!menu?.find(m => m.Id == required[i].Id)) {
                 menu?.unshift(required[i]);
@@ -91,6 +101,7 @@ export class AppComponent implements OnInit {
         }
         menu = menu.filter(m => m.Hidden !== true);
         this.appPages = menu;
+        this.cdr.detectChanges();
     }
 
     private async tapBackToExit() {
