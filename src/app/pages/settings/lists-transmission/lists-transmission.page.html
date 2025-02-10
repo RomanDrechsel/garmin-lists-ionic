@@ -1,7 +1,6 @@
 <app-main-toolbar back="/settings">{{'page_lists_transmission.page_title'|translate}}</app-main-toolbar>
 <ion-content>
     <ion-list>
-
         <!-- open app on transmitting list -->
         <ion-item lines="full">
             <ion-toggle label-placement="start" [checked]="OpenAppOnTransmit" (ionChange)="onOpenAppOnTransmitChanged($event.target.checked)">
@@ -18,5 +17,12 @@
             </ion-toggle>
         </ion-item>
 
+        <!-- syncronize lists -->
+        <ion-item lines="full">
+            <ion-toggle label-placement="start" [checked]="SyncListOnDevice" (ionChange)="onSyncListOnDeviceChanged($event.target.checked)">
+                <div class="text" [innerHTML]="'page_lists_transmission.synclist'|translate"></div>
+                <ion-note [innerHTML]="'page_lists_transmission.synclist_note'|translate"></ion-note>
+            </ion-toggle>
+        </ion-item>
     </ion-list>
 </ion-content>

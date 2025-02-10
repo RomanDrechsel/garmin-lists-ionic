@@ -295,7 +295,9 @@
         "openontransmit": "App beim Übertragen starten",
         "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst.",
         "deletelist": "Listen automatisch von der Uhr löschen",
-        "deletelist_note": "Beim Löschen einer Liste auf dem Smartphone die Liste auch auf deiner Uhr löschen."
+        "deletelist_note": "Beim Löschen einer Liste auf dem Smartphone die Liste auch auf deiner Uhr löschen.",
+        "synclist": "Listen automatisch synchronisieren",
+        "synclist_note": "Bei Änderungen an einer Liste diese sofort mit der Uhr synchronisieren."
     },
     "page_settings_trash": {
         "page_title": "Papierkorb",

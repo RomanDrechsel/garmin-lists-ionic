@@ -16,6 +16,7 @@ import { PageBase } from "../../page-base";
 export class ListsTransmissionPage extends PageBase {
     private _openAppOnTransfer: boolean = false;
     private _deleteListOnDevice: boolean = false;
+    private _syncListOnDevice: boolean = false;
 
     public get OpenAppOnTransmit(): boolean {
         return this._openAppOnTransfer;
@@ -35,18 +36,36 @@ export class ListsTransmissionPage extends PageBase {
         this.Preferences.Set(EPrefProperty.DeleteListOnDevice, v);
     }
 
+    public get SyncListOnDevice(): boolean {
+        return this._syncListOnDevice;
+    }
+
+    public set SyncListOnDevice(v: boolean) {
+        this._syncListOnDevice = v;
+        this.Preferences.Set(EPrefProperty.SyncListOnDevice, v);
+        if (v) {
+            //only ask once, and not if the user enabled syncing
+            this.Preferences.Set(EPrefProperty.SyncListOnDeviceAsked, true);
+        }
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
         this._openAppOnTransfer = await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, false);
         this._deleteListOnDevice = await this.Preferences.Get<boolean>(EPrefProperty.DeleteListOnDevice, false);
+        this._syncListOnDevice = await this.Preferences.Get<boolean>(EPrefProperty.SyncListOnDevice, false);
         this.cdr.detectChanges();
     }
 
-    public async onOpenAppOnTransmitChanged(checked: boolean) {
+    public onOpenAppOnTransmitChanged(checked: boolean) {
         this.OpenAppOnTransmit = checked;
     }
 
     public onDeleteListOnDeviceChanged(checked: boolean) {
         this.DeleteListOnDevice = checked;
+    }
+
+    public onSyncListOnDeviceChanged(checked: boolean) {
+        this.SyncListOnDevice = checked;
     }
 }
