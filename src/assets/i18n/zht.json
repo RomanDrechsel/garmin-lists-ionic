@@ -295,7 +295,9 @@
         "openontransmit": "傳輸時啟動應用",
         "openontransmit_note": "當你傳輸清單時，在手錶上詢問是否啟動應用。",
         "deletelist": "自動從手錶中刪除清單",
-        "deletelist_note": "在手機上刪除清單時，同時從手錶中刪除。"
+        "deletelist_note": "在手機上刪除清單時，同時從手錶中刪除。",
+        "synclist": "自動同步清單",
+        "synclist_note": "清單變更後，立即與手錶同步。"
     },
     "page_settings_trash": {
         "page_title": "垃圾桶",

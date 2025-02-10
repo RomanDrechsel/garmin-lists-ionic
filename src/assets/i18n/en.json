@@ -294,8 +294,10 @@
         "page_title": "Transmission to watch",
         "openontransmit": "Open app after transmitting a list",
         "openontransmit_note": "Request on your watch whether the app should be opened when you transfer a list.",
-        "deletelist": "Automatically delete lists from the watch",
-        "deletelist_note": "When deleting a list on your smartphone, also delete the list on your watch."
+        "deletelist": "Automatically delete lists on the watch",
+        "deletelist_note": "When deleting a list on your smartphone, also delete the list on your watch.",
+        "synclist": "Automatically sync lists with the watch",
+        "synclist_note": "Immediately sync changes to a list with the watch."
     },
     "page_settings_trash": {
         "page_title": "Trash",

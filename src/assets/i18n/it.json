@@ -273,7 +273,9 @@
         "openontransmit": "Avvia app durante il trasferimento",
         "openontransmit_note": "Chiedi al tuo orologio se vuoi avviare l'app quando trasferisci una lista.",
         "deletelist": "Cancella automaticamente le liste dall'orologio",
-        "deletelist_note": "Quando cancelli una lista sul tuo smartphone, cancella anche la lista sull'orologio."
+        "deletelist_note": "Quando cancelli una lista sul tuo smartphone, cancella anche la lista sull'orologio.",
+        "synclist": "Sincronizza automaticamente le liste",
+        "synclist_note": "Sincronizza immediatamente una lista con l'orologio quando vengono apportate modifiche."
     },
     "page_settings_trash": {
         "page_title": "Cestino",

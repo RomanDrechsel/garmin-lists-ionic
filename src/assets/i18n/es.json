@@ -296,7 +296,9 @@
         "openontransmit": "Abrir la app al enviar lista",
         "openontransmit_note": "Pida permiso para abrir la app en el reloj cuando se envíe una lista.",
         "deletelist": "Eliminar lista del reloj",
-        "deletelist_note": "Elimine la lista del smartphone al mismo tiempo que la elimina del reloj."
+        "deletelist_note": "Elimine la lista del smartphone al mismo tiempo que la elimina del reloj.",
+        "synclist": "Sincronizar listas automáticamente",
+        "synclist_note": "Sincronizar una lista con el reloj inmediatamente cuando se realicen cambios."
     },
     "page_settings_trash": {
         "page_title": "Papelera",

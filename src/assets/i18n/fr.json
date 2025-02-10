@@ -295,7 +295,9 @@
         "openontransmit": "Démarrer l'application lors de la transmission",
         "openontransmit_note": "Demander à votre montre si elle doit démarrer l'application lors de la transmission d'une liste.",
         "deletelist": "Supprimer automatiquement les listes de la montre",
-        "deletelist_note": "Lors de la suppression d'une liste sur le smartphone, la supprimer également de la montre."
+        "deletelist_note": "Lors de la suppression d'une liste sur le smartphone, la supprimer également de la montre.",
+        "synclist": "Synchroniser les listes automatiquement",
+        "synclist_note": "Synchroniser immédiatement une liste avec la montre lorsqu'elle est modifiée."
     },
     "page_settings_trash": {
         "page_title": "Corbeille",

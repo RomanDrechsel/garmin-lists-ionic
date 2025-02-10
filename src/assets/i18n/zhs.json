@@ -296,7 +296,9 @@
         "openontransmit": "传输时启动应用",
         "openontransmit_note": "传输列表时在手表上提示是否启动应用。",
         "deletelist": "自动从手表删除列表",
-        "deletelist_note": "在手机上删除列表时也从手表删除。"
+        "deletelist_note": "在手机上删除列表时也从手表删除。",
+        "synclist": "リストを自動同期",
+        "synclist_note": "リストを変更するとすぐに時計と同期します。"
     },
     "page_settings_trash": {
         "page_title": "回收站",

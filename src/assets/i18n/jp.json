@@ -295,7 +295,9 @@
         "openontransmit": "転送時にアプリを起動",
         "openontransmit_note": "リスト転送時にウォッチ上でアプリを起動するかどうかを確認します。",
         "deletelist": "ウォッチからリストを自動削除",
-        "deletelist_note": "スマートフォンでリストを削除するときに、ウォッチ上のリストも削除します。"
+        "deletelist_note": "スマートフォンでリストを削除するときに、ウォッチ上のリストも削除します。",
+        "synclist": "リストを自動的に同期する",
+        "synclist_note": "リストに変更があった場合、すぐに時計と同期する。"
     },
     "page_settings_trash": {
         "page_title": "ゴミ箱",
