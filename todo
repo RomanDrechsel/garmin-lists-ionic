@@ -5,4 +5,12 @@ ADB
 https://wiki.ubuntuusers.de/adb/
 
 WIP: Sync lists with watch
-TODO: Translate page_lists_transmission.synclist / page_lists_transmission.synclist_note
+WIP: Create new List -> checkbox for syncing list
+TODO: sync list on create
+TODO: sync list on edit list
+TODO: sync list on add item
+TODO: sync list on edit item
+TODO: sync list on delete item
+TODO: sync list on reorder items
+TODO: sync list on empty list
+TODO: sync list on delete list

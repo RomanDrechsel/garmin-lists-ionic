@@ -10,19 +10,38 @@
         }
     }
 
-    ion-accordion-group {
-        ion-accordion {
-            ion-item {
-                --background-hover: #ffffff;
-                --padding-start: 6px;
+    ion-item {
+        --background-hover: #ffffff;
+        --padding-start: 2px;
+        --inner-padding-end: 0;
+
+        ion-checkbox {
+            &::part(label) {
+                margin-inline-start: 24px !important;
+                margin-top: 4px;
             }
 
+            &::part(container) {
+                top: 8px;
+            }
+        }
+
+        ion-icon {
+            &.info-icon {
+                padding-inline-end: 6px;
+            }
+        }
+    }
+
+    ion-accordion-group {
+        ion-accordion {
             ion-list {
-                margin-inline: 34px auto;
+                margin-inline: 24px auto;
 
                 ion-item {
                     --background-hover: #ffffff;
                     --background: var(--ion-background-color);
+                    --padding-start: 0;
 
                     ::part(label) {
                         margin-inline-start: 0;

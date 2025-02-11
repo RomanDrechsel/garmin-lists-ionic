@@ -38,6 +38,15 @@
             </ion-accordion>
         </ion-accordion-group>
 
+        <ion-item lines="none">
+            <ion-checkbox labelPlacement="end" justify="start" [checked]="ResetActive" (ionChange)="toggleReset($event)" #reset>
+                <ion-text>{{ "comp-listeditor.reset" | translate }}</ion-text>
+                <br />
+                <ion-note>{{ "comp-listeditor.reset_note" | translate }}</ion-note>
+            </ion-checkbox>
+            <ion-icon src="/assets/icons/info.svg" slot="end" (click)="resetInfo($event)" class="info-icon"></ion-icon>
+        </ion-item>
+
         <ion-button class="ion-float-end" [disabled]="!Form.valid" (click)="onSubmit()">
             {{ Confirm }}
         </ion-button>
