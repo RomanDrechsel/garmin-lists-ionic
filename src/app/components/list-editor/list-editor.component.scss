@@ -35,28 +35,37 @@
 
     ion-accordion-group {
         ion-accordion {
-            ion-list {
-                margin-inline: 24px auto;
+            &.list-settings {
+                ion-item[slot="header"] {
+                    --ion-color-base: var(--color-popup-background) !important;
+                    --ion-color-base-rgb: var(--color-popup-background-rgb) !important;
+                    --ion-color-shade: var(--color-popup-background) !important;
+                    --ion-color-tint: var(--color-popup-background) !important;
+                }
 
-                ion-item {
-                    --background-hover: #ffffff;
-                    --background: var(--ion-background-color);
-                    --padding-start: 0;
+                ion-list {
+                    margin-inline: 24px auto;
 
-                    ::part(label) {
-                        margin-inline-start: 0;
+                    ion-item {
+                        --background-hover: #ffffff;
+                        --background: var(--ion-background-color);
+                        --padding-start: 0;
 
-                        ion-note {
-                            white-space: wrap !important;
+                        ::part(label) {
+                            margin-inline-start: 0;
+
+                            ion-note {
+                                white-space: wrap !important;
+                            }
                         }
-                    }
 
-                    &.select-resetdate {
-                        cursor: pointer;
-                    }
+                        &.select-resetdate {
+                            cursor: pointer;
+                        }
 
-                    ion-select {
-                        width: 100%;
+                        ion-select {
+                            width: 100%;
+                        }
                     }
                 }
             }

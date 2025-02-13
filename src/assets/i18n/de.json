@@ -106,13 +106,16 @@
         "title_new": "Neue Liste anlegen",
         "title_edit": "Liste bearbeiten",
         "listname": "Bezeichnung",
+        "settings": "Einstellungen",
         "reset": "Liste automatisch zurücksetzen",
         "reset_note": "Setzt alle Listenpunkte auf der Uhr in einem bestimmten Interval auf nicht-erledigt.",
         "reset_info": "Auf deiner Uhr werden alle Listenpunkte dieser Liste in einem bestimmten Intervall wieder auf \"nicht erledigt\" gesetzt.<br /><br />Dies eignet sich zum Beispiel für wiederkehrende Aufgaben wie Hausarbeiten oder andere regelmäßige Tätigkeiten.",
         "reset_interval": "Intervall",
         "reset_daily": "Täglich",
         "reset_weekly": "Wöchentlich",
-        "reset_monthly": "Monatlich"
+        "reset_monthly": "Monatlich",
+        "sync": "Liste automatisch synchronisieren",
+        "sync_note": ""
     },
     "comp-select-interval": {
         "last": "letzter",

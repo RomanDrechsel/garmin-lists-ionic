@@ -11,9 +11,39 @@
 <div class="inner-content ion-padding">
     <form (ngSubmit)="onSubmit()" [formGroup]="Form">
         <ion-input [label]="'comp-listeditor.listname' | translate" labelPlacement="floating" fill="outline" counter="true" maxlength="100" autocapitalize="sentence" autofocus="true" spellcheck="true" enterkeyhint="enter" required="true" formControlName="listname" #listname></ion-input>
-        <ion-accordion-group [value]="ResetActive ? 'reset' : undefined" #resetAccordion>
-            <ion-accordion toggleIcon="none" value="reset">
-                <div slot="header">
+        <ion-accordion-group>
+            <ion-accordion class="list-settings">
+                <ion-item slot="header" color="light">
+                    <ion-label>{{ "comp-listeditor.settings" | translate }}</ion-label>
+                </ion-item>
+                <div slot="content">
+                    <ion-accordion-group [value]="ResetActive ? 'reset' : undefined" #resetAccordion>
+                        <ion-accordion toggleIcon="none" value="reset">
+                            <div slot="header">
+                                <ion-item lines="none">
+                                    <ion-checkbox labelPlacement="end" justify="start" [checked]="ResetActive" (ionChange)="toggleReset($event)" #reset>
+                                        <ion-text>{{ "comp-listeditor.reset" | translate }}</ion-text>
+                                        <br />
+                                        <ion-note>{{ "comp-listeditor.reset_note" | translate }}</ion-note>
+                                    </ion-checkbox>
+                                    <ion-icon src="/assets/icons/info.svg" slot="end" (click)="resetInfo($event)" class="info-icon"></ion-icon>
+                                </ion-item>
+                            </div>
+                            <ion-list slot="content">
+                                <ion-item lines="none">
+                                    <ion-select [label]="'comp-listeditor.reset_interval' | translate" label-placement="stacked" [value]="ResetInteval" (ionChange)="onResetIntervalChanged($event.target.value)" #resetinterval>
+                                        <ion-select-option value="daily">{{ "comp-listeditor.reset_daily" | translate }}</ion-select-option>
+                                        <ion-select-option value="weekly">{{ "comp-listeditor.reset_weekly" | translate }}</ion-select-option>
+                                        <ion-select-option value="monthly">{{ "comp-listeditor.reset_monthly" | translate }}</ion-select-option>
+                                    </ion-select>
+                                </ion-item>
+                                <ion-item (click)="selectResetDate()" class="select-resetdate">
+                                    <ion-text>{{ ResetString }}</ion-text>
+                                </ion-item>
+                            </ion-list>
+                        </ion-accordion>
+                    </ion-accordion-group>
+
                     <ion-item lines="none">
                         <ion-checkbox labelPlacement="end" justify="start" [checked]="ResetActive" (ionChange)="toggleReset($event)" #reset>
                             <ion-text>{{ "comp-listeditor.reset" | translate }}</ion-text>
@@ -23,29 +53,8 @@
                         <ion-icon src="/assets/icons/info.svg" slot="end" (click)="resetInfo($event)" class="info-icon"></ion-icon>
                     </ion-item>
                 </div>
-                <ion-list slot="content">
-                    <ion-item lines="none">
-                        <ion-select [label]="'comp-listeditor.reset_interval' | translate" label-placement="stacked" [value]="ResetInteval" (ionChange)="onResetIntervalChanged($event.target.value)" #resetinterval>
-                            <ion-select-option value="daily">{{ "comp-listeditor.reset_daily" | translate }}</ion-select-option>
-                            <ion-select-option value="weekly">{{ "comp-listeditor.reset_weekly" | translate }}</ion-select-option>
-                            <ion-select-option value="monthly">{{ "comp-listeditor.reset_monthly" | translate }}</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-                    <ion-item (click)="selectResetDate()" class="select-resetdate">
-                        <ion-text>{{ ResetString }}</ion-text>
-                    </ion-item>
-                </ion-list>
             </ion-accordion>
         </ion-accordion-group>
-
-        <ion-item lines="none">
-            <ion-checkbox labelPlacement="end" justify="start" [checked]="ResetActive" (ionChange)="toggleReset($event)" #reset>
-                <ion-text>{{ "comp-listeditor.reset" | translate }}</ion-text>
-                <br />
-                <ion-note>{{ "comp-listeditor.reset_note" | translate }}</ion-note>
-            </ion-checkbox>
-            <ion-icon src="/assets/icons/info.svg" slot="end" (click)="resetInfo($event)" class="info-icon"></ion-icon>
-        </ion-item>
 
         <ion-button class="ion-float-end" [disabled]="!Form.valid" (click)="onSubmit()">
             {{ Confirm }}

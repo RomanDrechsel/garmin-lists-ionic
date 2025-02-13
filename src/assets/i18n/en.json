@@ -106,6 +106,7 @@
         "title_new": "Create new list",
         "title_edit": "Edit list",
         "listname": "Description",
+        "settings": "Settings",
         "reset": "Reset the list automatically",
         "reset_note": "Sets all list items in a certain interval to not done.",
         "reset_info": "On your watch, all items on this list will be reset to \"not done\" at a certain interval.<br /><br />This is suitable for recurring tasks such as household chores or other regular activities.",
