@@ -32,6 +32,7 @@ export class ListEditorComponent {
     private formBuilder = inject(FormBuilder);
 
     private _listReset?: ListReset = undefined;
+    private _listSync?: boolean;
 
     public Form: FormGroup;
 
@@ -186,6 +187,18 @@ export class ListEditorComponent {
         event?.stopImmediatePropagation();
         await this.Popups.Alert.Info({
             message: "comp-listeditor.reset_info",
+            translate: true,
+        });
+    }
+
+    public toggleSync(event: any) {
+        this._listSync = event.detail.checked;
+    }
+
+    public async syncInfo(event: any) {
+        event?.stopImmediatePropagation();
+        await this.Popups.Alert.Info({
+            message: "comp-listeditor.sync_info",
             translate: true,
         });
     }

@@ -114,8 +114,9 @@
         "reset_daily": "Täglich",
         "reset_weekly": "Wöchentlich",
         "reset_monthly": "Monatlich",
-        "sync": "Liste automatisch synchronisieren",
-        "sync_note": ""
+        "sync": "Liste mit Uhr synchronisieren",
+        "sync_note": "Änderungen an der Liste und den Listenpunkten werden automatisch auf deine Uhr synchronisiert.",
+        "sync_info": "Wenn du Änderungen an der Liste vornimmst, z.B. das Hinzufügen oder Löschen von Listenpunkten, werden diese Änderungen im Hintergrund automatisch auf deine Uhr übertragen.<br /><br />Beachte bitte, dass dadurch die Akku-Ladung deiner Uhr schneller verbraucht werden kann."
     },
     "comp-select-interval": {
         "last": "letzter",

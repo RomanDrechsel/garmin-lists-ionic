@@ -113,7 +113,10 @@
         "reset_interval": "Interval",
         "reset_daily": "Daily",
         "reset_weekly": "Weekly",
-        "reset_monthly": "Monthly"
+        "reset_monthly": "Monthly",
+        "sync": "Sync list with watch",
+        "sync_note": "Changes to the list and list items will be automatically synced to your watch.",
+        "sync_info": "When you make changes to the list, such as adding or deleting list items, these changes will be automatically transferred to your watch in the background.<br /><br />Please note that this may cause your watch's battery to drain faster."
     },
     "comp-select-interval": {
         "last": "last",

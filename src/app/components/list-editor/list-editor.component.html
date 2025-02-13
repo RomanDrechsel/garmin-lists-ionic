@@ -45,12 +45,12 @@
                     </ion-accordion-group>
 
                     <ion-item lines="none">
-                        <ion-checkbox labelPlacement="end" justify="start" [checked]="ResetActive" (ionChange)="toggleReset($event)" #reset>
-                            <ion-text>{{ "comp-listeditor.reset" | translate }}</ion-text>
+                        <ion-checkbox labelPlacement="end" justify="start" [checked]="ResetActive" (ionChange)="toggleSync($event)" #reset>
+                            <ion-text>{{ "comp-listeditor.sync" | translate }}</ion-text>
                             <br />
-                            <ion-note>{{ "comp-listeditor.reset_note" | translate }}</ion-note>
+                            <ion-note>{{ "comp-listeditor.sync_note" | translate }}</ion-note>
                         </ion-checkbox>
-                        <ion-icon src="/assets/icons/info.svg" slot="end" (click)="resetInfo($event)" class="info-icon"></ion-icon>
+                        <ion-icon src="/assets/icons/info.svg" slot="end" (click)="syncInfo($event)" class="info-icon"></ion-icon>
                     </ion-item>
                 </div>
             </ion-accordion>
