@@ -11,6 +11,7 @@ export class List {
     private _itemsCount?: number;
     private _items?: Listitem[];
     private _deleted?: number;
+    private _sync: boolean = false;
     private _dirty: boolean = false;
 
     public constructor(obj: ListModel, itemcount?: number) {
@@ -33,6 +34,7 @@ export class List {
         this._itemsCount = this._items?.length ?? itemcount;
         this._reset = obj.reset;
         this._deleted = obj.deleted;
+        this._sync = obj.sync ?? false;
         this._dirty = true;
     }
 
@@ -137,6 +139,19 @@ export class List {
     /** when does the list get reset automagically? */
     public get Reset(): ListReset | undefined {
         return this._reset;
+    }
+
+    /** set, if the list should be automatiacally synced to watch */
+    public set Sync(sync: boolean) {
+        if (this._sync != sync) {
+            this._sync = sync;
+            this._dirty = true;
+        }
+    }
+
+    /** should the list be synced automatically to watch */
+    public get Sync(): boolean {
+        return this._sync;
     }
 
     /** are only peek information loaded */
@@ -283,6 +298,7 @@ export class List {
                 deleted: this._deleted ?? undefined,
                 order: this._order,
                 reset: this._reset,
+                sync: this._sync,
             };
 
             if (this._items && this._items.length > 0) {
@@ -358,6 +374,7 @@ export class List {
                 deleted: obj.deleted,
                 items: obj.items,
                 reset: obj.reset,
+                sync: obj.sync,
             },
             itemscount,
         );
@@ -375,6 +392,7 @@ export declare type ListModel = {
     updated?: number;
     deleted?: number;
     reset?: ListReset;
+    sync?: boolean;
     items?: ListitemModel[];
 };
 

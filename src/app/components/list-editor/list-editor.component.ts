@@ -7,6 +7,7 @@ import { List, ListReset } from "../../services/lists/list";
 import { ListsService } from "../../services/lists/lists.service";
 import { LocalizationService } from "../../services/localization/localization.service";
 import { PopupsService } from "../../services/popups/popups.service";
+import { EPrefProperty, PreferencesService } from "../../services/storage/preferences.service";
 import { SelectTimeInterval } from "../select-interval/select-interval.component";
 
 @Component({
@@ -21,6 +22,7 @@ export class ListEditorComponent {
     @ViewChild("resetAccordion", { read: IonAccordionGroup }) private resetAccordion!: IonAccordionGroup;
     @ViewChild("reset", { read: IonCheckbox }) private reset!: IonCheckbox;
     @ViewChild("resetinterval", { read: IonSelect }) private resetinterval!: IonSelect;
+    @ViewChild("sync", { read: IonCheckbox }) private sync!: IonCheckbox;
     public Params?: EditorParams;
 
     private readonly modalCtrl = inject(ModalController);
@@ -28,6 +30,7 @@ export class ListEditorComponent {
     private readonly Locale = inject(LocalizationService);
     private readonly Popups = inject(PopupsService);
     private readonly cdr = inject(ChangeDetectorRef);
+    private readonly Preferences = inject(PreferencesService);
 
     private formBuilder = inject(FormBuilder);
 
@@ -48,6 +51,10 @@ export class ListEditorComponent {
 
     public get ResetInteval(): "daily" | "weekly" | "monthly" {
         return this._listReset?.interval ?? "weekly";
+    }
+
+    public get SyncActive(): boolean {
+        return this._listSync ?? false;
     }
 
     public get ResetString(): string {
@@ -137,7 +144,7 @@ export class ListEditorComponent {
         }
         this.Form.get("listname")?.setValue(this.Params?.list?.Name);
         this.reset.checked = this._listReset.active;
-        this.toggleReset(undefined);
+        this.sync.checked = this.Params?.list?.Sync ?? (await this.Preferences.Get(EPrefProperty.SyncListOnDevice, false));
     }
 
     public ionViewDidEnter() {
@@ -160,6 +167,7 @@ export class ListEditorComponent {
             list = await this.ListsService.createNewListObj({ name: listname });
         }
         list.Reset = this._listReset;
+        list.Sync = this._listSync ?? false;
         return this.modalCtrl.dismiss(list, "confirm");
     }
 
@@ -192,7 +200,8 @@ export class ListEditorComponent {
     }
 
     public toggleSync(event: any) {
-        this._listSync = event.detail.checked;
+        this._listSync = event?.detail.checked ?? false;
+        event?.stopImmediatePropagation();
     }
 
     public async syncInfo(event: any) {

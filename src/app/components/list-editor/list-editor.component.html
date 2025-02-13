@@ -13,7 +13,7 @@
         <ion-input [label]="'comp-listeditor.listname' | translate" labelPlacement="floating" fill="outline" counter="true" maxlength="100" autocapitalize="sentence" autofocus="true" spellcheck="true" enterkeyhint="enter" required="true" formControlName="listname" #listname></ion-input>
         <ion-accordion-group>
             <ion-accordion class="list-settings">
-                <ion-item slot="header" color="light">
+                <ion-item slot="header">
                     <ion-label>{{ "comp-listeditor.settings" | translate }}</ion-label>
                 </ion-item>
                 <div slot="content">
@@ -45,7 +45,7 @@
                     </ion-accordion-group>
 
                     <ion-item lines="none">
-                        <ion-checkbox labelPlacement="end" justify="start" [checked]="ResetActive" (ionChange)="toggleSync($event)" #reset>
+                        <ion-checkbox labelPlacement="end" justify="start" [checked]="SyncActive" (ionChange)="toggleSync($event)" #sync>
                             <ion-text>{{ "comp-listeditor.sync" | translate }}</ion-text>
                             <br />
                             <ion-note>{{ "comp-listeditor.sync_note" | translate }}</ion-note>
