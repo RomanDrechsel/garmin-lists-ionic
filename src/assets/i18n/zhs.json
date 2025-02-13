@@ -107,13 +107,17 @@
         "title_new": "新建列表",
         "title_edit": "编辑列表",
         "listname": "名称",
+        "settings": "设置",
         "reset": "自动重置列表",
         "reset_note": "在一定时间间隔内将手表上的所有列表条目重置为未完成。",
         "reset_info": "在您的手表上，此列表的所有条目将会在固定的间隔内被重置为“未完成”。<br /><br />这适用于重复任务，如家庭清洁或其他定期活动。",
         "reset_interval": "间隔",
         "reset_daily": "每日",
         "reset_weekly": "每周",
-        "reset_monthly": "每月"
+        "reset_monthly": "每月",
+        "sync": "与手表同步列表",
+        "sync_note": "列表和列表项的更改将自动同步到你的手表。",
+        "sync_info": "当你对列表进行更改，例如添加或删除列表项时，这些更改会在后台自动同步到你的手表。<br /><br />请注意，这可能会加快手表的电量消耗。"
     },
     "comp-select-interval": {
         "last": "最后",

@@ -106,13 +106,17 @@
         "title_new": "新增清單",
         "title_edit": "編輯清單",
         "listname": "名稱",
+        "settings": "設定",
         "reset": "自動重置清單",
         "reset_note": "在手錶上以指定間隔將所有清單項目重置為未完成狀態。",
         "reset_info": "在手錶上，所有該清單的項目將按特定間隔重置為“未完成”。<br /><br />這適合用於如家務或其他定期任務的重複活動。",
         "reset_interval": "間隔",
         "reset_daily": "每天",
         "reset_weekly": "每週",
-        "reset_monthly": "每月"
+        "reset_monthly": "每月",
+        "sync": "與手錶同步列表",
+        "sync_note": "列表和列表項的更改將自動同步到你的手錶。",
+        "sync_info": "當你對列表進行更改，例如添加或刪除列表項時，這些更改會在後台自動同步到你的手錶。<br /><br />請注意，這可能會加快手錶的電量消耗。"
     },
     "comp-select-interval": {
         "last": "最後",

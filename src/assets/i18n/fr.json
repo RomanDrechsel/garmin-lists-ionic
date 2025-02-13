@@ -106,13 +106,17 @@
         "title_new": "Créer une nouvelle liste",
         "title_edit": "Modifier la liste",
         "listname": "Nom",
+        "settings": "Paramètres",
         "reset": "Réinitialisation automatique de la liste",
         "reset_note": "Réinitialise tous les éléments de la liste sur la montre à un intervalle défini.",
         "reset_info": "Sur votre montre, tous les éléments de cette liste seront réinitialisés à \"non terminé\" à un intervalle défini.<br /><br />Cela est utile pour les tâches récurrentes comme le ménage ou d'autres activités régulières.",
         "reset_interval": "Intervalle",
         "reset_daily": "Quotidiennement",
         "reset_weekly": "Hebdomadairement",
-        "reset_monthly": "Mensuellement"
+        "reset_monthly": "Mensuellement",
+        "sync": "Synchroniser la liste avec la montre",
+        "sync_note": "Les modifications apportées à la liste et aux éléments seront automatiquement synchronisées avec votre montre.",
+        "sync_info": "Lorsque vous modifiez la liste, par exemple en ajoutant ou en supprimant des éléments, ces changements seront automatiquement transférés en arrière-plan sur votre montre.<br /><br />Veuillez noter que cela peut entraîner une consommation plus rapide de la batterie de votre montre."
     },
     "comp-select-interval": {
         "last": "dernier",
