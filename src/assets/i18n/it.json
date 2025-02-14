@@ -279,7 +279,9 @@
         "deletelist": "Cancella automaticamente le liste dall'orologio",
         "deletelist_note": "Quando cancelli una lista sul tuo smartphone, cancella anche la lista sull'orologio.",
         "synclist": "Sincronizza automaticamente le liste",
-        "synclist_note": "Sincronizza immediatamente una lista con l'orologio quando vengono apportate modifiche."
+        "synclist_note": "Sincronizza immediatamente una lista con l'orologio quando vengono apportate modifiche.",
+        "synclist_disable_title": "Disabilitare la sincronizzazione?",
+        "synclist_disable": "Vuoi disattivare le impostazioni di sincronizzazione automatica per tutte le liste?<br /><br />Se riattivi questa impostazione in seguito, dovrai riconfigurare la sincronizzazione per ogni lista."
     },
     "page_settings_trash": {
         "page_title": "Cestino",

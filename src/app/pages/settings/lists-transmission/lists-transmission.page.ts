@@ -46,6 +46,8 @@ export class ListsTransmissionPage extends PageBase {
         if (v) {
             //only ask once, and not if the user enabled syncing
             this.Preferences.Set(EPrefProperty.SyncListOnDeviceAsked, true);
+        } else {
+            this.confirmRemoveSync();
         }
     }
 
@@ -67,5 +69,11 @@ export class ListsTransmissionPage extends PageBase {
 
     public onSyncListOnDeviceChanged(checked: boolean) {
         this.SyncListOnDevice = checked;
+    }
+
+    private async confirmRemoveSync() {
+        if (await this.Popups.Alert.YesNo({ message: "page_lists_transmission.synclist_disable", header: "page_lists_transmission.synclist_disable_title", translate: true })) {
+            await this.ListsService.PurgeAllSyncs();
+        }
     }
 }

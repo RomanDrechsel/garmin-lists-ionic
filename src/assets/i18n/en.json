@@ -301,7 +301,11 @@
         "deletelist": "Automatically delete lists on the watch",
         "deletelist_note": "When deleting a list on your smartphone, also delete the list on your watch.",
         "synclist": "Automatically sync lists with the watch",
-        "synclist_note": "Immediately sync changes to a list with the watch."
+        "synclist_note": "Immediately sync changes to a list with the watch.",
+        "synclist_disable_title": "Disable automatic synchronization?",
+        "synclist_disable": "Do you want to disable the automatic synchronization for all lists?<br /><br />If you enable this setting again later, you will need to reconfigure the synchronization for each list again.",
+        "synclist_done": "Undo Done Marking",
+        "synclist_done_note": "Should the done marking of list items on the watch be undone when a list is transferred?"
     },
     "page_settings_trash": {
         "page_title": "Trash",

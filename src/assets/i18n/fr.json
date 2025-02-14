@@ -301,7 +301,9 @@
         "deletelist": "Supprimer automatiquement les listes de la montre",
         "deletelist_note": "Lors de la suppression d'une liste sur le smartphone, la supprimer également de la montre.",
         "synclist": "Synchroniser les listes automatiquement",
-        "synclist_note": "Synchroniser immédiatement une liste avec la montre lorsqu'elle est modifiée."
+        "synclist_note": "Synchroniser immédiatement une liste avec la montre lorsqu'elle est modifiée.",
+        "synclist_disable_title": "Désactiver la synchronisation?",
+        "synclist_disable": "Voulez-vous désactiver les paramètres de synchronisation automatique pour toutes les listes ?<br /><br />Si vous réactivez ce paramètre plus tard, vous devrez reconfigurer la synchronisation pour chaque liste."
     },
     "page_settings_trash": {
         "page_title": "Corbeille",

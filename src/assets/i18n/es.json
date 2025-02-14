@@ -302,7 +302,11 @@
         "deletelist": "Eliminar lista del reloj",
         "deletelist_note": "Elimine la lista del smartphone al mismo tiempo que la elimina del reloj.",
         "synclist": "Sincronizar listas automáticamente",
-        "synclist_note": "Sincronizar una lista con el reloj inmediatamente cuando se realicen cambios."
+        "synclist_note": "Sincronizar una lista con el reloj inmediatamente cuando se realicen cambios.",
+        "synclist_disable_title": "¿Deshabilitar sincronización?",
+        "synclist_disable": "¿Quieres desactivar la configuración de sincronización automática para todas las listas?<br /><br />Si vuelves a activar esta configuración más tarde, tendrás que configurar la sincronización para cada lista nuevamente.",
+        "synclist_done": "Deshacer Marca de Hecho",
+        "synclist_done_note": "¿Debería deshacerse la marca de hecho de los elementos de la lista en el reloj cuando se transfiere una lista?"
     },
     "page_settings_trash": {
         "page_title": "Papelera",

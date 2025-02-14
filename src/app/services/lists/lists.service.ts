@@ -632,6 +632,18 @@ export class ListsService {
     }
 
     /**
+     * remove automatic synchronization from all lists
+     */
+    public async PurgeAllSyncs(): Promise<void> {
+        const lists = await this.GetLists(true);
+        for (let i = 0; i < lists.length; i++) {
+            lists[i].Sync = false;
+            await this.StoreList(lists[i], false, false, false);
+        }
+        Logger.Debug(`Removed automatic synchronization of all lists`);
+    }
+
+    /**
      * publish changes in a list with the signal
      * @param list list to be changed
      */

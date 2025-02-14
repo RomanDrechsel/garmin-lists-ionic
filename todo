@@ -5,6 +5,7 @@ ADB
 https://wiki.ubuntuusers.de/adb/
 
 TEST: Sync lists with watch
-TODO: if disable list sync in settings, ask if all syncs of all lists should be disabled
-TODO: settings, if Done-State of List item should be reset on sync
+TEST: if disable list sync in settings, ask if all syncs of all lists should be disabled
+WIP: settings, if Done-State of List item should be reset on sync
+TODO: Translate page_lists_transmission.synclist_done / page_lists_transmission.synclist_done_note
 TODO: change Transmit Settings: Only start app on manual transmit

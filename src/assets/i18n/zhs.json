@@ -302,7 +302,9 @@
         "deletelist": "自动从手表删除列表",
         "deletelist_note": "在手机上删除列表时也从手表删除。",
         "synclist": "リストを自動同期",
-        "synclist_note": "リストを変更するとすぐに時計と同期します。"
+        "synclist_note": "リストを変更するとすぐに時計と同期します。",
+        "synclist_disable_title": "取消同步？",
+        "synclist_disable": "是否要禁用所有列表的自动同步设置？<br /><br />如果稍后重新启用此设置，则需要为每个列表重新配置同步。"
     },
     "page_settings_trash": {
         "page_title": "回收站",
