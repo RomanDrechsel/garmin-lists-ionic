@@ -258,7 +258,6 @@ export class List {
 
         if (this._items) {
             let order = 0;
-
             for (let i = 0; i < this._items.length; i++) {
                 this._items[i].Order = order++;
                 this._items[i].toDeviceObject(ret);

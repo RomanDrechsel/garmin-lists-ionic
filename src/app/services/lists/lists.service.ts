@@ -174,13 +174,14 @@ export class ListsService {
      * @param list list to be edited
      * @param only_title if true, only the title will be edited
      */
-    public async EditList(list: List) {
+    public async EditList(list: List): Promise<void> {
         const ret = await ListEditor(this.ModalCtrl, { list: list });
         if (ret) {
-            if (await this.StoreList(list)) {
+            const store = await this.StoreList(list);
+            if (store === true) {
                 Logger.Notice(`Edited list ${list.toLog()}`);
                 this.putListInIndex(list);
-            } else {
+            } else if (store === false) {
                 this.Popups.Toast.Error("service-lists.store_list_error");
             }
         }
@@ -486,9 +487,9 @@ export class ListsService {
      * stores a list in backend up there are any changes
      * @param list list to be stored
      * @param force store the list, even if there are no changes
-     * @returns storage successful
+     * @returns storage successful, undefined if no storage was needed
      */
-    public async StoreList(list: List, force: boolean = false, fire_event: boolean = true, progressbar: boolean = true): Promise<boolean> {
+    public async StoreList(list: List, force: boolean = false, fire_event: boolean = true, progressbar: boolean = true): Promise<boolean | undefined> {
         if (progressbar) {
             AppService.AppToolbar?.ToggleProgressbar(true);
         }
@@ -500,7 +501,11 @@ export class ListsService {
             if (store === true && fire_event) {
                 this.onListChangedSubject.next(list);
             }
-            return true;
+            if (store !== undefined) {
+                //only sync, if the list was dirty
+                this.syncList(list);
+            }
+            return store;
         } else {
             return false;
         }
@@ -763,7 +768,7 @@ export class ListsService {
         AppService.AppToolbar?.ToggleProgressbar(true);
         if (!(await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) || (await this.TrashItemsProvider.StoreListitem(list.Uuid, item))) {
             list.RemoveItem(item);
-            return await this.StoreList(list);
+            return (await this.StoreList(list)) !== false;
         } else {
             AppService.AppToolbar?.ToggleProgressbar(true);
             return false;
@@ -827,9 +832,9 @@ export class ListsService {
                     Logger.Error(`Restored list ${list.toLog()} from trash, but could not erase it from trash`);
                 }
                 this.Popups.Toast.Success("service-lists.restore_success");
-
                 this.putListInIndex(list);
                 AppService.AppToolbar?.ToggleProgressbar(false);
+                this.syncList(list);
                 return true;
             }
         }
@@ -857,6 +862,7 @@ export class ListsService {
                 await this.TrashItemsProvider.EraseListitem(trash, item);
                 Logger.Debug(`Restored listitem ${ListitemTrashUtils.toLog(item)} from trash of list ${ListitemTrashUtils.toLog(trash)}`);
                 AppService.AppToolbar?.ToggleProgressbar(false);
+                this.syncList(list);
                 return true;
             }
         }
@@ -896,5 +902,33 @@ export class ListsService {
             this.Lists.set(lists);
         }
         return lists;
+        1;
+    }
+
+    /**
+     * sync changes to a list to the watch
+     * @param list List to be synced
+     */
+    private async syncList(list: List): Promise<void> {
+        if (!list.Sync) {
+            return;
+        }
+
+        const device = await this.ConnectIQ.GetDefaultDevice({ only_ready: true });
+        if (device) {
+            var payload = list.toDeviceObject();
+            if (!payload) {
+                Logger.Error(`Could not sync new list to watch, list serialization failed`);
+                return;
+            }
+
+            if (await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload })) {
+                Logger.Debug(`Sync list ${list.toLog()} to watch ${device.toLog()}`);
+            } else {
+                Logger.Error(`Failed to sync list ${list.toLog()} to watch ${device.toLog()}`);
+            }
+        } else {
+            Logger.Notice(`Could not sync list to watch, no default device`);
+        }
     }
 }

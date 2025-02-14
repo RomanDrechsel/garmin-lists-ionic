@@ -40,7 +40,7 @@ export class ListsProvider {
      * stores a list in backend if there are any changes
      * @param list list to be stored
      * @param force store the list, even if there are no changes
-     * @returns storage successful
+     * @returns storage successful, undefined if no store was needed
      */
     public async StoreList(list: List, force: boolean = false): Promise<boolean | undefined> {
         if (list.isPeek) {

@@ -18,11 +18,11 @@ import { SelectTimeInterval } from "../select-interval/select-interval.component
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListEditorComponent {
-    @ViewChild("listname", { read: IonInput }) private listname!: IonInput;
-    @ViewChild("resetAccordion", { read: IonAccordionGroup }) private resetAccordion!: IonAccordionGroup;
-    @ViewChild("reset", { read: IonCheckbox }) private reset!: IonCheckbox;
-    @ViewChild("resetinterval", { read: IonSelect }) private resetinterval!: IonSelect;
-    @ViewChild("sync", { read: IonCheckbox }) private sync!: IonCheckbox;
+    @ViewChild("listname", { read: IonInput }) private listname?: IonInput;
+    @ViewChild("resetAccordion", { read: IonAccordionGroup }) private resetAccordion?: IonAccordionGroup;
+    @ViewChild("reset", { read: IonCheckbox }) private reset?: IonCheckbox;
+    @ViewChild("resetinterval", { read: IonSelect }) private resetinterval?: IonSelect;
+    @ViewChild("sync", { read: IonCheckbox }) private sync?: IonCheckbox;
     public Params?: EditorParams;
 
     private readonly modalCtrl = inject(ModalController);
@@ -45,12 +45,27 @@ export class ListEditorComponent {
         });
     }
 
+    public set ResetActive(active: boolean) {
+        if (this._listReset) {
+            this._listReset.active = active;
+            this.cdr.detectChanges();
+        }
+    }
+
     public get ResetActive(): boolean {
         return this._listReset?.active ?? false;
     }
 
     public get ResetInteval(): "daily" | "weekly" | "monthly" {
         return this._listReset?.interval ?? "weekly";
+    }
+
+    public set SyncActive(active: boolean) {
+        this._listSync = active;
+        if (this.sync) {
+            this.sync.checked = active;
+            this.cdr.detectChanges();
+        }
     }
 
     public get SyncActive(): boolean {
@@ -143,13 +158,13 @@ export class ListEditorComponent {
             this._listReset = { interval: "weekly", active: false, hour: 0, minute: 0, day: 1, weekday: this.Locale.CurrentLanguage.firstDayOfWeek };
         }
         this.Form.get("listname")?.setValue(this.Params?.list?.Name);
-        this.reset.checked = this._listReset.active;
-        this.sync.checked = this.Params?.list?.Sync ?? (await this.Preferences.Get(EPrefProperty.SyncListOnDevice, false));
+        this.ResetActive = this._listReset.active;
+        this.SyncActive = this.Params?.list?.Sync ?? (await this.Preferences.Get(EPrefProperty.SyncListOnDevice, false));
     }
 
     public ionViewDidEnter() {
         if (!this.Params?.list) {
-            this.listname.setFocus();
+            this.listname?.setFocus();
         }
     }
 
