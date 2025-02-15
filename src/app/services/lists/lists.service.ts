@@ -40,10 +40,12 @@ export class ListsService {
     private readonly ConnectIQ = inject(ConnectIQService);
 
     private _keepInTrashStock: KeepInTrash.Enum = KeepInTrash.Default;
+    private _syncLists: boolean = false;
+    private _syncListsUndone: boolean = false;
     private _removeOldTrashEntriesTimer?: Subscription;
 
     public readonly Lists: WritableSignal<List[] | undefined> = signal(undefined);
-    private readonly _listIndex: Map<string, List> = new Map();
+    private readonly _listIndex: Map<string | number, List> = new Map();
 
     private onTrashItemsDatasetChangedSubject = new BehaviorSubject<ListitemTrashModel | undefined>(undefined);
     public onTrashItemsDatasetChanged$ = this.onTrashItemsDatasetChangedSubject.asObservable();
@@ -62,9 +64,13 @@ export class ListsService {
 
     public async Initialize() {
         this.KeepInTrashStock = await this.Preferences.Get<number>(EPrefProperty.TrashKeepinStock, this._keepInTrashStock);
+        this._syncLists = await this.Preferences.Get<boolean>(EPrefProperty.SyncListOnDevice, false);
+        this._syncListsUndone = await this.Preferences.Get<boolean>(EPrefProperty.UndoItemsOnDevice, false);
         this.Preferences.onPrefChanged$.subscribe(arg => {
             if (arg.prop == EPrefProperty.TrashKeepinStock) {
                 this.KeepInTrashStock = arg.value;
+            } else if (arg.prop == EPrefProperty.UndoItemsOnDevice) {
+                this._syncLists = arg.value;
             }
         });
         const count = (await this.GetLists(true)).length;
@@ -125,7 +131,7 @@ export class ListsService {
      * @param uuid unique id of the list
      * @returns List object
      */
-    public async GetList(uuid: string): Promise<List | undefined> {
+    public async GetList(uuid: string | number): Promise<List | undefined> {
         if (!this._listIndex.has(uuid) || this._listIndex.get(uuid)!.isPeek) {
             AppService.AppToolbar?.ToggleProgressbar(true);
             const list = await this.ListsProvider.GetList(uuid);
@@ -465,19 +471,19 @@ export class ListsService {
      * creates a unique identifier for a list or listitem
      * @returns unique id
      */
-    public async createUuid(list?: List): Promise<string> {
-        let uuid = HelperUtils.createUUID(20);
+    public async createUuid(list?: List): Promise<number> {
+        let uuid = HelperUtils.RandomNumber();
         if (list) {
             //create an uuid for a listitem
             const trash = await this.TrashItemsProvider.GetListitemsTrash(list.Uuid);
             while (list.Items.some(i => i.Uuid === uuid) || trash?.items.some(i => i.uuid === uuid)) {
-                uuid = HelperUtils.createUUID(20);
+                uuid = HelperUtils.RandomNumber();
             }
         } else {
             //create an uuid for a list
-            let uuid = HelperUtils.createUUID(20);
+            let uuid = HelperUtils.RandomNumber();
             while ((await this.ListsProvider.Exists(uuid)) || (await this.TrashProvider.Exists(uuid))) {
-                uuid = HelperUtils.createUUID(20);
+                uuid = HelperUtils.RandomNumber();
             }
         }
         return uuid;
@@ -516,8 +522,8 @@ export class ListsService {
      * @param list list to transfer (or the uuid)
      * @param device device to be transfered, if null the default device is used
      */
-    public async TransferList(list?: List | string, device?: ConnectIQDevice | number): Promise<boolean> {
-        if (typeof list === "string") {
+    public async TransferList(list?: List | string | number, device?: ConnectIQDevice | number): Promise<boolean> {
+        if (typeof list === "string" || typeof list === "number") {
             list = await this.GetList(list);
         }
         if (!list) {
@@ -705,7 +711,7 @@ export class ListsService {
      * @param uuid unique identifier of the list to be removed
      * @returns was the removal successful
      */
-    private async removeList(uuid: string, delete_on_watch: boolean = false): Promise<boolean> {
+    private async removeList(uuid: string | number, delete_on_watch: boolean = false): Promise<boolean> {
         if (this._listIndex.has(uuid)) {
             AppService.AppToolbar?.ToggleProgressbar(true);
             const list = await this.ListsProvider.GetList(uuid);
@@ -829,7 +835,7 @@ export class ListsService {
      * @param list list to restore
      * @returns was the restore successful
      */
-    private async restoreListFromTrash(uuid: string): Promise<boolean> {
+    private async restoreListFromTrash(uuid: string | number): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
         //Read list from trash backend
         const list = await this.TrashProvider.GetList(uuid);
@@ -887,7 +893,7 @@ export class ListsService {
      * erases a list from trash
      * @param uuid unique identifier of the list
      */
-    private async eraseListFromTrash(uuid: string): Promise<boolean> {
+    private async eraseListFromTrash(uuid: string | number): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
         const ret = (await this.TrashProvider.EraseLists(uuid)) > 0;
         AppService.AppToolbar?.ToggleProgressbar(false);
@@ -922,7 +928,7 @@ export class ListsService {
      * @param list List to be synced
      */
     private async syncList(list: List): Promise<void> {
-        if (!list.Sync) {
+        if (!this._syncLists || !list.Sync) {
             return;
         }
 
@@ -932,6 +938,10 @@ export class ListsService {
             if (!payload) {
                 Logger.Error(`Could not sync new list to watch, list serialization failed`);
                 return;
+            }
+
+            if (!this._syncListsUndone) {
+                payload["donot_undone"] = true;
             }
 
             if (await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload })) {

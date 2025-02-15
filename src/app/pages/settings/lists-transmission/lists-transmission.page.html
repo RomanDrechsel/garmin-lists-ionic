@@ -17,11 +17,19 @@
             </ion-toggle>
         </ion-item>
 
-        <!-- syncronize lists -->
+        <!-- synchronize lists -->
         <ion-item lines="full">
             <ion-toggle label-placement="start" [checked]="SyncListOnDevice" (ionChange)="onSyncListOnDeviceChanged($event.target.checked)">
                 <div class="text" [innerHTML]="'page_lists_transmission.synclist'|translate"></div>
                 <ion-note [innerHTML]="'page_lists_transmission.synclist_note'|translate"></ion-note>
+            </ion-toggle>
+        </ion-item>
+
+        <!-- mark listitems as undone on transmitting list -->
+        <ion-item lines="full">
+            <ion-toggle label-placement="start" [checked]="UndoItemsOnDevice" (ionChange)="onUndoItemsOnDeviceChanged($event.target.checked)">
+                <div class="text" [innerHTML]="'page_lists_transmission.synclist_undo'|translate"></div>
+                <ion-note [innerHTML]="'page_lists_transmission.synclist_undo_note'|translate"></ion-note>
             </ion-toggle>
         </ion-item>
     </ion-list>

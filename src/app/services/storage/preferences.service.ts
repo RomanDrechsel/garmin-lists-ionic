@@ -23,6 +23,7 @@ export enum EPrefProperty {
     "OpenAppOnTransmit" = "LISTS_OpenAppOnTransmit",
     "DeleteListOnDevice" = "LISTS_DeleteListOnDevice",
     "SyncListOnDevice" = "LISTS_SyncListOnDevice",
+    "UndoItemsOnDevice" = "LISTS_UndoItemsOnDevice",
     "SyncListOnDeviceAsked" = "LISTS_SyncListOnDeviceAsked",
     "DebugSimulator" = "LISTS_DebugSimulator",
     "DebugApp" = "LISTS_DebugApp",

@@ -17,6 +17,7 @@ export class ListsTransmissionPage extends PageBase {
     private _openAppOnTransfer: boolean = false;
     private _deleteListOnDevice: boolean = false;
     private _syncListOnDevice: boolean = false;
+    private _undoItemsOnDevice: boolean = false;
 
     public get OpenAppOnTransmit(): boolean {
         return this._openAppOnTransfer;
@@ -40,13 +41,24 @@ export class ListsTransmissionPage extends PageBase {
         return this._syncListOnDevice;
     }
 
+    public set UndoItemsOnDevice(v: boolean) {
+        this._undoItemsOnDevice = v;
+        this.Preferences.Set(EPrefProperty.UndoItemsOnDevice, v);
+    }
+
+    public get UndoItemsOnDevice(): boolean {
+        return this._undoItemsOnDevice;
+    }
+
     public set SyncListOnDevice(v: boolean) {
+        let changed = this._syncListOnDevice != v;
         this._syncListOnDevice = v;
         this.Preferences.Set(EPrefProperty.SyncListOnDevice, v);
-        if (v) {
+        if (changed) {
             //only ask once, and not if the user enabled syncing
             this.Preferences.Set(EPrefProperty.SyncListOnDeviceAsked, true);
-        } else {
+        }
+        if (!v) {
             this.confirmRemoveSync();
         }
     }
@@ -56,6 +68,7 @@ export class ListsTransmissionPage extends PageBase {
         this._openAppOnTransfer = await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, false);
         this._deleteListOnDevice = await this.Preferences.Get<boolean>(EPrefProperty.DeleteListOnDevice, false);
         this._syncListOnDevice = await this.Preferences.Get<boolean>(EPrefProperty.SyncListOnDevice, false);
+        this._undoItemsOnDevice = await this.Preferences.Get<boolean>(EPrefProperty.UndoItemsOnDevice, false);
         this.cdr.detectChanges();
     }
 
@@ -69,6 +82,10 @@ export class ListsTransmissionPage extends PageBase {
 
     public onSyncListOnDeviceChanged(checked: boolean) {
         this.SyncListOnDevice = checked;
+    }
+
+    public onUndoItemsOnDeviceChanged(checked: boolean) {
+        this.UndoItemsOnDevice = checked;
     }
 
     private async confirmRemoveSync() {

@@ -2,7 +2,7 @@ import { Logger } from "../logging/logger";
 import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
-    private _uuid: string;
+    private _uuid: string | number;
     private _name: string;
     private _created: number;
     private _updated: number;
@@ -38,8 +38,12 @@ export class List {
         this._dirty = true;
     }
 
-    /** get unique list id */
-    public get Uuid(): string {
+    /**
+     * get unique list id
+     * in newer versions, the uuid is a number
+     * in older versions it was a string
+     */
+    public get Uuid(): string | number {
         return this._uuid;
     }
 
@@ -384,7 +388,7 @@ export class List {
 }
 
 export declare type ListModel = {
-    uuid: string;
+    uuid: string | number;
     name: string;
     created: number;
     order: number;

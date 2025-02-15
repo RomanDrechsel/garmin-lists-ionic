@@ -304,8 +304,8 @@
         "synclist_note": "Bei Änderungen an einer Liste diese sofort mit der Uhr synchronisieren.",
         "synclist_disable_title": "Synchronisierung aufheben?",
         "synclist_disable": "Sollen die Einstellungen für die automatische Synchronisierung für alle Listen aufgehoben werden?<br /><br />Falls Du diese Einstellung später wieder aktivierst, musst du die Synchronisierung für jede Liste neu einstellen.",
-        "synclist_done": "Erledigt-Markierung aufheben",
-        "synclist_done_note": "Soll die Erledigt-Markierung von Listenpunkten auf der Uhr wieder aufgehoben werden, wenn eine Liste übertragen wird?"
+        "synclist_undo": "Erledigt-Markierung aufheben",
+        "synclist_undo_note": "Soll die Erledigt-Markierung von Listenpunkten auf der Uhr wieder aufgehoben werden, wenn eine Liste übertragen wird?"
     },
     "page_settings_trash": {
         "page_title": "Papierkorb",

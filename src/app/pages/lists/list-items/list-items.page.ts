@@ -84,7 +84,8 @@ export class ListItemsPage extends PageBase {
         }
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
-            this.List = await this.ListsService.GetList(listid);
+            const uuid = parseInt(listid);
+            this.List = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
             this._listInitialized = true;
             this.reload();
             this.appComponent.setAppPages(this.ModifyMainMenu());
@@ -93,7 +94,6 @@ export class ListItemsPage extends PageBase {
         this._preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
             if (prop.prop == EPrefProperty.TrashListitems) {
                 this._useTrash = prop.value as boolean;
-                this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
 
@@ -213,7 +213,7 @@ export class ListItemsPage extends PageBase {
                         return true;
                     },
                 }),
-                MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: this.List.Uuid, disabled: !this._useTrash }),
+                MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: `${this.List.Uuid}`, disabled: !this._useTrash }),
                 MenuitemFactory(EMenuItemType.EditList, { onClick: () => this.EditList() }),
                 MenuitemFactory(EMenuItemType.EmptyList, { onClick: () => this.EmptyList(), disabled: this.List.Items.length <= 0 }),
                 MenuitemFactory(EMenuItemType.DeleteList, { onClick: () => this.DeleteList() }),
