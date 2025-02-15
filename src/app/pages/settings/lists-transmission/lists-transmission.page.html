@@ -21,7 +21,8 @@
         <ion-item lines="full">
             <ion-toggle label-placement="start" [checked]="SyncListOnDevice" (ionChange)="onSyncListOnDeviceChanged($event.target.checked)">
                 <div class="text" [innerHTML]="'page_lists_transmission.synclist'|translate"></div>
-                <ion-note [innerHTML]="'page_lists_transmission.synclist_note'|translate"></ion-note>
+                <ion-note [innerHTML]="'page_lists_transmission.synclist_note'|translate"></ion-note><br />
+                <ion-note [innerHTML]="'page_lists_transmission.synclist_warning'|translate"></ion-note>
             </ion-toggle>
         </ion-item>
 

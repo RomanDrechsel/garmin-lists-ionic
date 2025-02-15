@@ -117,7 +117,7 @@
         "reset_monthly": "每月",
         "sync": "与手表同步列表",
         "sync_note": "列表和列表项的更改将自动同步到你的手表。",
-        "sync_info": "当你对列表进行更改，例如添加或删除列表项时，这些更改会在后台自动同步到你的手表。<br /><br />请注意，这可能会加快手表的电量消耗。"
+        "sync_info": "当你对列表进行更改，例如添加或删除列表项时，这些更改会在后台自动同步到你的手表。<br /><br />请注意，应用程序在手表上的存储空间有限，同步操作会更快地耗尽手表的电池。<br />请勿同时同步过多列表。"
     },
     "comp-select-interval": {
         "last": "最后",
@@ -297,14 +297,17 @@
     },
     "page_lists_transmission": {
         "page_title": "传输到手表",
-        "openontransmit": "传输时启动应用",
+        "openontransmit": "手动传输时启动应用程序",
         "openontransmit_note": "传输列表时在手表上提示是否启动应用。",
         "deletelist": "自动从手表删除列表",
         "deletelist_note": "在手机上删除列表时也从手表删除。",
         "synclist": "リストを自動同期",
+        "synclist_warning": "<strong>警告：</strong> 请注意，手表上的应用程序存储空间有限。不应同时同步过多的列表！",
         "synclist_note": "リストを変更するとすぐに時計と同期します。",
         "synclist_disable_title": "取消同步？",
-        "synclist_disable": "是否要禁用所有列表的自动同步设置？<br /><br />如果稍后重新启用此设置，则需要为每个列表重新配置同步。"
+        "synclist_disable": "是否要禁用所有列表的自动同步设置？<br /><br />如果稍后重新启用此设置，则需要为每个列表重新配置同步。",
+        "synclist_undo": "还原已完成标记",
+        "synclist_undo_note": "在传输列表时，是否应移除手表上的已完成标记？"
     },
     "page_settings_trash": {
         "page_title": "回收站",

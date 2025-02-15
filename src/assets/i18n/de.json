@@ -116,7 +116,8 @@
         "reset_monthly": "Monatlich",
         "sync": "Liste mit Uhr synchronisieren",
         "sync_note": "Änderungen an der Liste und den Listenpunkten werden automatisch auf deine Uhr synchronisiert.",
-        "sync_info": "Wenn du Änderungen an der Liste vornimmst, z.B. das Hinzufügen oder Löschen von Listenpunkten, werden diese Änderungen im Hintergrund automatisch auf deine Uhr übertragen.<br /><br />Beachte bitte, dass dadurch die Akku-Ladung deiner Uhr schneller verbraucht werden kann."
+        "sync_info": "Wenn du Änderungen an der Liste vornimmst, z.B. das Hinzufügen oder Löschen von Listenpunkten, werden diese Änderungen im Hintergrund automatisch auf deine Uhr übertragen.<br /><br />Beachte bitte, dass der Speicherplatz der App auf deiner Uhr begrenzt ist und dass durch die Synchronisierung die Akku-Ladung der Uhr schneller verbraucht werden kann.<br />Synchronisiere nicht zu viele Listen gleichzeitg.",
+        "sync_settings": "Um das automatische Synchronisieren zu aktivieren, musst du die entsprechende Option in den Einstellungen aktivieren.<br />Möchtest du zu den Einstellungen wechseln?"
     },
     "comp-select-interval": {
         "last": "letzter",
@@ -296,12 +297,13 @@
     },
     "page_lists_transmission": {
         "page_title": "Übertragung zu Uhr",
-        "openontransmit": "App beim Übertragen starten",
-        "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst.",
+        "openontransmit": "App beim manuellen Übertragen starten",
+        "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst?",
         "deletelist": "Listen automatisch von der Uhr löschen",
         "deletelist_note": "Beim Löschen einer Liste auf dem Smartphone die Liste auch auf deiner Uhr löschen.",
         "synclist": "Listen automatisch synchronisieren",
         "synclist_note": "Bei Änderungen an einer Liste diese sofort mit der Uhr synchronisieren.",
+        "synclist_warning": "<strong>Achtung:</strong> Bedenke, dass der Speicherplatz der App auf der Uhr begrenzt ist. Du solltest nicht zu viele Listen gleichzeitig synchronisieren!",
         "synclist_disable_title": "Synchronisierung aufheben?",
         "synclist_disable": "Sollen die Einstellungen für die automatische Synchronisierung für alle Listen aufgehoben werden?<br /><br />Falls Du diese Einstellung später wieder aktivierst, musst du die Synchronisierung für jede Liste neu einstellen.",
         "synclist_undo": "Erledigt-Markierung aufheben",

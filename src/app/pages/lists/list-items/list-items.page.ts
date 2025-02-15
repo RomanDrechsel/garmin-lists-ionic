@@ -32,11 +32,12 @@ export class ListItemsPage extends PageBase {
     public List?: List | null = undefined;
     private _disableClick = false;
     private _preferencesSubscription?: Subscription;
-    private _listSubscriptiion?: Subscription;
+    private _listSubscription?: Subscription;
     private _useTrash = true;
     private _scrollPosition: "top" | "bottom" | number = "top";
     private _listTitle?: string = undefined;
     private _listInitialized = false;
+    private _informedSyncForNewlist: string | number | undefined = undefined;
 
     private readonly Route = inject(ActivatedRoute);
 
@@ -97,7 +98,7 @@ export class ListItemsPage extends PageBase {
             }
         });
 
-        this._listSubscriptiion = this.ListsService.onListChanged$.subscribe(async list => {
+        this._listSubscription = this.ListsService.onListChanged$.subscribe(async list => {
             if (list && list.equals(this.List) && list.isPeek == false) {
                 this.List = list;
                 this.appComponent.setAppPages(this.ModifyMainMenu());
@@ -105,6 +106,14 @@ export class ListItemsPage extends PageBase {
                 this.reload();
             }
         });
+
+        if (this.List && this.List.Sync && this._informedSyncForNewlist != this.List.Uuid && (await this.Preferences.Get(EPrefProperty.SyncListOnDevice, false)) == false) {
+            const new_created = this.Route.snapshot.queryParamMap.get("created");
+            if (new_created) {
+                this._informedSyncForNewlist = this.List.Uuid;
+                await this.informSyncSettings();
+            }
+        }
     }
 
     public override async ionViewDidEnter() {
@@ -118,7 +127,7 @@ export class ListItemsPage extends PageBase {
         await super.ionViewWillLeave();
         await this.Preferences.Remove(EPrefProperty.OpenedList);
         this._preferencesSubscription?.unsubscribe();
-        this._listSubscriptiion?.unsubscribe();
+        this._listSubscription?.unsubscribe();
     }
 
     public onSwipeRight(item: Listitem) {
@@ -196,7 +205,11 @@ export class ListItemsPage extends PageBase {
 
     public async EditList(): Promise<boolean> {
         if (this.List) {
-            this.ListsService.EditList(this.List);
+            this.appComponent.CloseMenu();
+            const edit = await this.ListsService.EditList(this.List);
+            if (edit == true && this.List.Sync == true && (await this.Preferences.Get(EPrefProperty.SyncListOnDevice, false)) == false) {
+                await this.informSyncSettings();
+            }
             return true;
         }
         return false;
@@ -233,13 +246,24 @@ export class ListItemsPage extends PageBase {
         }
     }
 
-    public async ScrollToTop() {
+    public async ScrollToTop(): Promise<void> {
         await this.mainContent?.scrollToTop(300);
         this.cdr.detectChanges();
     }
 
-    public async ScrollToBottom(instant: boolean = true) {
+    public async ScrollToBottom(instant: boolean = true): Promise<void> {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
+    }
+
+    private async informSyncSettings(): Promise<void> {
+        if (
+            await this.Popups.Alert.YesNo({
+                message: "comp-listeditor.sync_settings",
+                translate: true,
+            })
+        ) {
+            this.NavController.navigateForward("/settings/lists-transmission");
+        }
     }
 }

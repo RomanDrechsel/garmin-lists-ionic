@@ -116,7 +116,8 @@
         "reset_monthly": "Monthly",
         "sync": "Sync list with watch",
         "sync_note": "Changes to the list and list items will be automatically synced to your watch.",
-        "sync_info": "When you make changes to the list, such as adding or deleting list items, these changes will be automatically transferred to your watch in the background.<br /><br />Please note that this may cause your watch's battery to drain faster."
+        "sync_info": "When you make changes to the list, such as adding or deleting list items, these changes will be automatically transferred to your watch in the background.<br /><br />Please note that the storage of the app on your watch is limited and that synchronisation can drain up the battery charge of the watch more quickly.<br />Do not synchronise too many lists at the same time.",
+        "sync_settings": "To activate automatic synchronisation, you must activate the corresponding option in the settings.<br />Would you like to go to the settings?"
     },
     "comp-select-interval": {
         "last": "last",
@@ -296,12 +297,13 @@
     },
     "page_lists_transmission": {
         "page_title": "Transmission to watch",
-        "openontransmit": "Open app after transmitting a list",
-        "openontransmit_note": "Request on your watch whether the app should be opened when you transfer a list.",
+        "openontransmit": "Open app after transmitting a lis manually",
+        "openontransmit_note": "Request on your watch whether the app should be opened when you transfer a list?",
         "deletelist": "Automatically delete lists on the watch",
         "deletelist_note": "When deleting a list on your smartphone, also delete the list on your watch.",
         "synclist": "Automatically sync lists with the watch",
         "synclist_note": "Immediately sync changes to a list with the watch.",
+        "synclist_warning": "<strong>Warning:</strong> Bear in mind that the app's storage on the watch is limited. You should not synchronize too many lists at the same time!",
         "synclist_disable_title": "Disable automatic synchronization?",
         "synclist_disable": "Do you want to disable the automatic synchronization for all lists?<br /><br />If you enable this setting again later, you will need to reconfigure the synchronization for each list again.",
         "synclist_undo": "Undo Done Marking",

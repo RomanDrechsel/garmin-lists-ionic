@@ -116,7 +116,7 @@
         "reset_monthly": "Mensuellement",
         "sync": "Synchroniser la liste avec la montre",
         "sync_note": "Les modifications apportées à la liste et aux éléments seront automatiquement synchronisées avec votre montre.",
-        "sync_info": "Lorsque vous modifiez la liste, par exemple en ajoutant ou en supprimant des éléments, ces changements seront automatiquement transférés en arrière-plan sur votre montre.<br /><br />Veuillez noter que cela peut entraîner une consommation plus rapide de la batterie de votre montre."
+        "sync_info": "Lorsque vous modifiez la liste, par exemple en ajoutant ou en supprimant des éléments, ces changements seront automatiquement transférés en arrière-plan sur votre montre.<br /><br />N'oublie pas que l'espace de stockage de l'application sur ta montre est limité et que la synchronisation risque d'épuiser plus rapidement la batterie de la montre.<br />Ne synchronise pas trop de listes en même temps."
     },
     "comp-select-interval": {
         "last": "dernier",
@@ -296,14 +296,17 @@
     },
     "page_lists_transmission": {
         "page_title": "Transmission à la montre",
-        "openontransmit": "Démarrer l'application lors de la transmission",
+        "openontransmit": "Lancer l'application lors du transfert manuel",
         "openontransmit_note": "Demander à votre montre si elle doit démarrer l'application lors de la transmission d'une liste.",
         "deletelist": "Supprimer automatiquement les listes de la montre",
         "deletelist_note": "Lors de la suppression d'une liste sur le smartphone, la supprimer également de la montre.",
         "synclist": "Synchroniser les listes automatiquement",
+        "synclist_warning": "<strong>Attention:</strong> N'oublie pas que l'espace de stockage de l'application sur la montre est limité. Tu ne devrais pas synchroniser trop de listes en même temps!",
         "synclist_note": "Synchroniser immédiatement une liste avec la montre lorsqu'elle est modifiée.",
         "synclist_disable_title": "Désactiver la synchronisation?",
-        "synclist_disable": "Voulez-vous désactiver les paramètres de synchronisation automatique pour toutes les listes ?<br /><br />Si vous réactivez ce paramètre plus tard, vous devrez reconfigurer la synchronisation pour chaque liste."
+        "synclist_disable": "Voulez-vous désactiver les paramètres de synchronisation automatique pour toutes les listes ?<br /><br />Si vous réactivez ce paramètre plus tard, vous devrez reconfigurer la synchronisation pour chaque liste.",
+        "synclist_undo": "Annuler le marquage comme terminé",
+        "synclist_undo_note": "Faut-il annuler le marquage comme terminé des éléments de la liste sur la montre lorsqu'une liste est transférée ?"
     },
     "page_settings_trash": {
         "page_title": "Corbeille",

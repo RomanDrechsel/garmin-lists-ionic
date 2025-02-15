@@ -159,6 +159,7 @@ export class Listitem {
                 obj = {};
             }
 
+            obj[`item${this._order}_uuid`] = this._uuid;
             obj[`item${this._order}_item`] = this._item;
             if (this._note) {
                 obj[`item${this._order}_note`] = this._note;

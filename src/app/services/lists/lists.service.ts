@@ -70,6 +70,8 @@ export class ListsService {
             if (arg.prop == EPrefProperty.TrashKeepinStock) {
                 this.KeepInTrashStock = arg.value;
             } else if (arg.prop == EPrefProperty.UndoItemsOnDevice) {
+                this._syncListsUndone = arg.value;
+            } else if (arg.prop == EPrefProperty.SyncListOnDevice) {
                 this._syncLists = arg.value;
             }
         });
@@ -168,7 +170,7 @@ export class ListsService {
             if (await this.StoreList(list)) {
                 Logger.Notice(`Created new list ${list.toLog()}`);
                 this.putListInIndex(list);
-                this.NavController.navigateForward(`/lists/items/${list.Uuid}`);
+                this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { created: true } });
             } else {
                 this.Popups.Toast.Error("service-lists.store_list_error");
             }
@@ -179,8 +181,9 @@ export class ListsService {
      * opens the list editor to edit the list
      * @param list list to be edited
      * @param only_title if true, only the title will be edited
+     * @returns true if the list was edited and stored, false is storage failed. undefined if no changes were made
      */
-    public async EditList(list: List): Promise<void> {
+    public async EditList(list: List): Promise<boolean | undefined> {
         const ret = await ListEditor(this.ModalCtrl, { list: list });
         if (ret) {
             const store = await this.StoreList(list);
@@ -190,7 +193,9 @@ export class ListsService {
             } else if (store === false) {
                 this.Popups.Toast.Error("service-lists.store_list_error");
             }
+            return store;
         }
+        return undefined;
     }
 
     /**
@@ -509,7 +514,7 @@ export class ListsService {
             }
             if (store !== undefined) {
                 //only sync, if the list was dirty
-                this.syncList(list);
+                this.syncListToWatch(list);
             }
             return store;
         } else {
@@ -544,7 +549,12 @@ export class ListsService {
             if (!confirm || (await this.Popups.Alert.YesNo({ message: locale["service-lists.transmit_confirm"], button_yes: locale["yes"], button_no: locale["no"] }))) {
                 const toast = await this.Popups.Toast.Notice("service-lists.transmit_process", Toast.DURATION_INFINITE);
                 AppService.AppToolbar?.ToggleProgressbar(true);
-                const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: list.toDeviceObject() });
+
+                const payload = list.toDeviceObject();
+                if (!this._syncListsUndone) {
+                    payload["donot_undone"] = true;
+                }
+                const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload });
                 toast.dismiss();
                 AppService.AppToolbar?.ToggleProgressbar(false);
                 if (resp !== false) {
@@ -647,6 +657,41 @@ export class ListsService {
             await this.StoreList(lists[i], false, false, false);
         }
         Logger.Debug(`Removed automatic synchronization of all lists`);
+    }
+
+    /**
+     * sync changes to a list to the watch
+     * @param list List to be synced
+     */
+    private async syncListToWatch(list: List): Promise<void> {
+        if (!this._syncLists || !list.Sync) {
+            return;
+        }
+
+        const device = await this.ConnectIQ.GetDefaultDevice({ only_ready: true });
+        if (device) {
+            if (list.isPeek) {
+                const fulllist = await this.GetList(list.Uuid);
+                list.copyDetails(fulllist);
+            }
+            var payload = list.toDeviceObject();
+            if (!payload) {
+                Logger.Error(`Could not sync new list to watch, list serialization failed`);
+                return;
+            }
+
+            if (!this._syncListsUndone) {
+                payload["donot_undone"] = true;
+            }
+
+            if (await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload })) {
+                Logger.Debug(`Sync list ${list.toLog()} to watch ${device.toLog()}`);
+            } else {
+                Logger.Error(`Failed to sync list ${list.toLog()} to watch ${device.toLog()}`);
+            }
+        } else {
+            Logger.Notice(`Could not sync list to watch, no default device`);
+        }
     }
 
     /**
@@ -852,7 +897,7 @@ export class ListsService {
                 this.Popups.Toast.Success("service-lists.restore_success");
                 this.putListInIndex(list);
                 AppService.AppToolbar?.ToggleProgressbar(false);
-                this.syncList(list);
+                this.syncListToWatch(list);
                 return true;
             }
         }
@@ -880,7 +925,7 @@ export class ListsService {
                 await this.TrashItemsProvider.EraseListitem(trash, item);
                 Logger.Debug(`Restored listitem ${ListitemTrashUtils.toLog(item)} from trash of list ${ListitemTrashUtils.toLog(trash)}`);
                 AppService.AppToolbar?.ToggleProgressbar(false);
-                this.syncList(list);
+                this.syncListToWatch(list);
                 return true;
             }
         }
@@ -921,36 +966,5 @@ export class ListsService {
         }
         return lists;
         1;
-    }
-
-    /**
-     * sync changes to a list to the watch
-     * @param list List to be synced
-     */
-    private async syncList(list: List): Promise<void> {
-        if (!this._syncLists || !list.Sync) {
-            return;
-        }
-
-        const device = await this.ConnectIQ.GetDefaultDevice({ only_ready: true });
-        if (device) {
-            var payload = list.toDeviceObject();
-            if (!payload) {
-                Logger.Error(`Could not sync new list to watch, list serialization failed`);
-                return;
-            }
-
-            if (!this._syncListsUndone) {
-                payload["donot_undone"] = true;
-            }
-
-            if (await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload })) {
-                Logger.Debug(`Sync list ${list.toLog()} to watch ${device.toLog()}`);
-            } else {
-                Logger.Error(`Failed to sync list ${list.toLog()} to watch ${device.toLog()}`);
-            }
-        } else {
-            Logger.Notice(`Could not sync list to watch, no default device`);
-        }
     }
 }

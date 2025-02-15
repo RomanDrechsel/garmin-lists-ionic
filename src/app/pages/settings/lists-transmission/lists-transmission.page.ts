@@ -51,13 +51,8 @@ export class ListsTransmissionPage extends PageBase {
     }
 
     public set SyncListOnDevice(v: boolean) {
-        let changed = this._syncListOnDevice != v;
         this._syncListOnDevice = v;
         this.Preferences.Set(EPrefProperty.SyncListOnDevice, v);
-        if (changed) {
-            //only ask once, and not if the user enabled syncing
-            this.Preferences.Set(EPrefProperty.SyncListOnDeviceAsked, true);
-        }
         if (!v) {
             this.confirmRemoveSync();
         }

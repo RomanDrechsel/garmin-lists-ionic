@@ -7,7 +7,7 @@ import { List, ListReset } from "../../services/lists/list";
 import { ListsService } from "../../services/lists/lists.service";
 import { LocalizationService } from "../../services/localization/localization.service";
 import { PopupsService } from "../../services/popups/popups.service";
-import { EPrefProperty, PreferencesService } from "../../services/storage/preferences.service";
+import { PreferencesService } from "../../services/storage/preferences.service";
 import { SelectTimeInterval } from "../select-interval/select-interval.component";
 
 @Component({
@@ -31,8 +31,7 @@ export class ListEditorComponent {
     private readonly Popups = inject(PopupsService);
     private readonly cdr = inject(ChangeDetectorRef);
     private readonly Preferences = inject(PreferencesService);
-
-    private formBuilder = inject(FormBuilder);
+    private readonly FormBuilder = inject(FormBuilder);
 
     private _listReset?: ListReset = undefined;
     private _listSync?: boolean;
@@ -40,7 +39,7 @@ export class ListEditorComponent {
     public Form: FormGroup;
 
     constructor() {
-        this.Form = this.formBuilder.group({
+        this.Form = this.FormBuilder.group({
             listname: ["", [Validators.required]],
         });
     }
@@ -159,7 +158,7 @@ export class ListEditorComponent {
         }
         this.Form.get("listname")?.setValue(this.Params?.list?.Name);
         this.ResetActive = this._listReset.active;
-        this.SyncActive = this.Params?.list?.Sync ?? (await this.Preferences.Get(EPrefProperty.SyncListOnDevice, false));
+        this.SyncActive = this.Params?.list?.Sync ?? false;
     }
 
     public ionViewDidEnter() {
