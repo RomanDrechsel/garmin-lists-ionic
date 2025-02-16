@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonText, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
+import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTextarea, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
 import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
@@ -21,13 +21,14 @@ import { PageBase } from "../../page-base";
     templateUrl: "./list-items.page.html",
     styleUrls: ["./list-items.page.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonImg, IonText, IonFabButton, IonFab, IonReorder, IonNote, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent],
+    imports: [IonImg, IonText, IonButton, IonTextarea, IonFabButton, IonFab, IonReorder, IonNote, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent],
 })
 export class ListItemsPage extends PageBase {
     @ViewChild("itemsContainer") private itemsContainer?: IonList;
     @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
     @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
     @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
+    @ViewChild("quickAdd") private quickAdd?: IonTextarea;
 
     public List?: List | null = undefined;
     private _disableClick = false;
@@ -38,6 +39,7 @@ export class ListItemsPage extends PageBase {
     private _listTitle?: string = undefined;
     private _listInitialized = false;
     private _informedSyncForNewlist: string | number | undefined = undefined;
+    private _quickAddFocus = false;
 
     private readonly Route = inject(ActivatedRoute);
 
@@ -46,10 +48,14 @@ export class ListItemsPage extends PageBase {
     }
 
     public get ShowScrollButtons(): boolean {
-        if (!this._listInitialized) {
+        if (!this._listInitialized || this._quickAddFocus) {
             return false;
         }
         return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+    }
+
+    public get ShowAddButton(): boolean {
+        return this._listInitialized && !this._quickAddFocus;
     }
 
     public get DisableScrollToTop(): boolean {
@@ -244,6 +250,25 @@ export class ListItemsPage extends PageBase {
         } else {
             this._scrollPosition = event.detail.scrollTop;
         }
+    }
+
+    public async QuickAddItem() {
+        if (this.List && this.quickAdd?.value && this.quickAdd.value.length > 0) {
+            await this.ListsService.AddNewListitem(this.List, { item: this.quickAdd.value });
+            this.quickAdd.value = "";
+        }
+    }
+
+    public async onQuickAddFocus() {
+        await this.ScrollToBottom();
+        this._quickAddFocus = true;
+    }
+
+    public async onQuickAddBlur() {
+        this._quickAddFocus = false;
+        new Promise(resolve => setTimeout(resolve, 500)).then(async () => {
+            await this.ScrollToBottom();
+        });
     }
 
     public async ScrollToTop(): Promise<void> {

@@ -275,6 +275,22 @@ export class ListsService {
     }
 
     /**
+     * adds an already created item to a list
+     * @param list list, the item sould be part of
+     * @param item listitem to be added
+     * @returns item-adding successful?
+     */
+    public async AddNewListitem(list: List, args: { item: string; note?: string; hidden?: boolean; locked?: boolean }): Promise<boolean | undefined> {
+        if (!list || !args) {
+            return false;
+        }
+
+        const item = await this.createNewListitemObj(list, args);
+        list.AddItem(item);
+        return await this.StoreList(list, false, true, false);
+    }
+
+    /**
      * opens the listitem editor to edit an item
      * @param list list, the item is part of
      * @param item item to be edited

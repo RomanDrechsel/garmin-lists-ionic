@@ -185,7 +185,8 @@
         "lock": "Sperren",
         "unlock": "Entsperren",
         "nolist": "Etwas ist schiefgelaufen :(<br /><br />Die Liste kann nicht angezeigt werden.",
-        "add_new_hint": "Lege einen neuen Punkt in der Liste an."
+        "add_new_hint": "Lege einen neuen Punkt in der Liste an.",
+        "quickadd": "Neuen Punkt anlegen..."
     },
     "page_trash": {
         "page_title": "Papierkorb",

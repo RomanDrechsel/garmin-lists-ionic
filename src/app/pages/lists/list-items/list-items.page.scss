@@ -31,3 +31,34 @@
         margin-bottom: 15%;
     }
 }
+
+.quick-add {
+    ion-textarea {
+        --placeholder-color: var(--ion-color-medium);
+        --placeholder-font-style: italic;
+        --placeholder-opacity: 0.8;
+        font-size: 1.1em;
+        --padding-top: 4px;
+        margin-top: 8px;
+
+        .quick-add-btn {
+            padding: 0 0 0.5em 0.5em;
+            margin-inline-start: 0;
+            margin-bottom: 0;
+
+            ion-button[slot="end"] {
+                width: 0.5em;
+                min-height: 0.5em;
+                --border-color: var(--ion-color-medium);
+                --padding-start: 4px;
+                --padding-end: 4px;
+                --padding-left: 4px;
+                --padding-right: 4px;
+
+                ion-icon[slot="icon-only"] {
+                    fill: var(--ion-color-medium);
+                }
+            }
+        }
+    }
+}

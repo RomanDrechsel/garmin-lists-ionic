@@ -185,7 +185,8 @@
         "lock": "Lock",
         "unlock": "Unlock",
         "nolist": "Something went wrong :(<br /><br />The list can not be displayed.",
-        "add_new_hint": "Create a new item in the list."
+        "add_new_hint": "Create a new item in the list.",
+        "quickadd": "Add new item..."
     },
     "page_trash": {
         "page_title": "Trash",
