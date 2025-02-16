@@ -7,6 +7,5 @@ https://wiki.ubuntuusers.de/adb/
 TEST: Sync lists with watch
 TEST: if disable list sync in settings, ask if all syncs of all lists should be disabled
 TEST: uuids as number
-TODO: translate comp-listeditor.sync_settings
-TODO: list-editor: other color for delete list button
+WIP: list-editor: other color for delete list button
 BUG: Wrong background on listitems page, when list is loading

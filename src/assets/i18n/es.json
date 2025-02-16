@@ -117,7 +117,8 @@
         "reset_monthly": "Mensual",
         "sync": "Sincronizar lista con el reloj",
         "sync_note": "Los cambios en la lista y en los elementos se sincronizarán automáticamente con tu reloj.",
-        "sync_info": "Cuando realices cambios en la lista, como agregar o eliminar elementos, estos cambios se transferirán automáticamente a tu reloj en segundo plano.<br /><br />Tenga en cuenta que el espacio de almacenamiento de la aplicación en su reloj es limitado y que la sincronización puede agotar la carga de la batería del reloj más rápidamente.<br />No sincronice demasiadas listas al mismo tiempo."
+        "sync_info": "Cuando realices cambios en la lista, como agregar o eliminar elementos, estos cambios se transferirán automáticamente a tu reloj en segundo plano.<br /><br />Tenga en cuenta que el espacio de almacenamiento de la aplicación en su reloj es limitado y que la sincronización puede agotar la carga de la batería del reloj más rápidamente.<br />No sincronice demasiadas listas al mismo tiempo.",
+        "sync_settings": "Para activar la sincronización automática, debes activar la opción correspondiente en la configuración.<br />¿Te gustaría ir a la configuración?"
     },
     "comp-select-interval": {
         "last": "Último",
