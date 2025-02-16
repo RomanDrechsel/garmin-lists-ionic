@@ -27,10 +27,21 @@ ion-list {
     }
 }
 
-ion-button,
-ion-fab-button {
-    --background: var(--ion-color-secondary);
-    --color: var(--ion-color-secondary-contrast);
+ion-button {
+    &.button-solid {
+        --background: var(--ion-color-secondary);
+        --color: var(--ion-color-secondary-contrast);
+    }
+
+    &.button-outline {
+        --border-color: var(--ion-color-secondary);
+        --color: var(--ion-color-secondary);
+    }
+}
+
+.buttons {
+    display: flex;
+    justify-content: end;
 }
 
 ion-fab {
@@ -39,6 +50,8 @@ ion-fab {
 
     ion-fab-button {
         --box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
+        --background: var(--ion-color-secondary);
+        --color: var(--ion-color-secondary-contrast);
 
         &[data-label] {
             position: relative;
@@ -48,19 +61,20 @@ ion-fab {
             cursor: pointer;
             content: attr(data-label);
             position: absolute;
+            padding: 0.6em 1em;
             z-index: 20;
             right: 50px;
-            bottom: 6px;
-            background-color: var(--color-popup-background);
-            padding: 5px 15px;
+            bottom: 4px;
+            background-color: var(--ion-color-secondary);
             border-radius: 15px;
-            color: var(--color-text);
+            color: var(--ion-color-secondary-contrast);
             box-shadow: 0 3px 5px -1px rgba(var(--color-shadow-rgb), 0.2), 0 6px 10px 0 rgba(var(--color-shadow-rgb), 0.14), 0 1px 18px 0 rgba(var(--color-shadow-rgb), 0.12);
         }
 
         &.fab-button-disabled {
             opacity: 1;
             --background: var(--ion-color-secondary-tint);
+            --color: var(--ion-color-secondary-contrast);
 
             ion-icon {
                 fill: var(--color-text-disabled);
@@ -143,6 +157,11 @@ ion-toolbar {
         ion-back-button {
             --color: var(--ion-color-primary-contrast);
         }
+    }
+
+    .toolbar-title {
+        text-overflow: inherit;
+        white-space: normal;
     }
 }
 

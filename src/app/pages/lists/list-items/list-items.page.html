@@ -62,7 +62,7 @@
 </ion-content>
 
 <ng-template #error>
-    <div class="nolist">
+    <div class="nolist" *ngIf="ListInitialized; else notInit">
         <app-page-empty>
             <div slot="image">
                 <ion-img src="./assets/icons/nolist.svg"></ion-img>

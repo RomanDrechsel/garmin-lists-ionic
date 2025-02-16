@@ -108,16 +108,15 @@
         "listname": "Bezeichnung",
         "settings": "Einstellungen",
         "reset": "Liste automatisch zurücksetzen",
-        "reset_note": "Setzt alle Listenpunkte auf der Uhr in einem bestimmten Interval auf nicht-erledigt.",
         "reset_info": "Auf deiner Uhr werden alle Listenpunkte dieser Liste in einem bestimmten Intervall wieder auf \"nicht erledigt\" gesetzt.<br /><br />Dies eignet sich zum Beispiel für wiederkehrende Aufgaben wie Hausarbeiten oder andere regelmäßige Tätigkeiten.",
         "reset_interval": "Intervall",
         "reset_daily": "Täglich",
         "reset_weekly": "Wöchentlich",
         "reset_monthly": "Monatlich",
         "sync": "Liste mit Uhr synchronisieren",
-        "sync_note": "Änderungen an der Liste und den Listenpunkten werden automatisch auf deine Uhr synchronisiert.",
         "sync_info": "Wenn du Änderungen an der Liste vornimmst, z.B. das Hinzufügen oder Löschen von Listenpunkten, werden diese Änderungen im Hintergrund automatisch auf deine Uhr übertragen.<br /><br />Beachte bitte, dass der Speicherplatz der App auf deiner Uhr begrenzt ist und dass durch die Synchronisierung die Akku-Ladung der Uhr schneller verbraucht werden kann.<br />Synchronisiere nicht zu viele Listen gleichzeitg.",
-        "sync_settings": "Um das automatische Synchronisieren zu aktivieren, musst du die entsprechende Option in den Einstellungen aktivieren.<br />Möchtest du zu den Einstellungen wechseln?"
+        "sync_settings": "Um das automatische Synchronisieren zu aktivieren, musst du die entsprechende Option in den Einstellungen aktivieren.<br />Möchtest du zu den Einstellungen wechseln?",
+        "delete": "Liste löschen"
     },
     "comp-select-interval": {
         "last": "letzter",
@@ -132,7 +131,8 @@
         "hidden": "Versteckt",
         "hidden_info": "Versteckte Listenpunkte werden nicht mit auf Deine Uhr übertragen, bleiben aber auf dem Smartphone erhalten.<br /><br />Dies ist nützlich, wenn Du zeitweise bestimmte Punkte nicht anzeigen willst, aber sie trotzdem nicht löschen möchtest. Sie können später wiederverwendet werden.",
         "locked": "Gesperrt",
-        "locked_info": "Gesperrte Listenpunkte werden beim Leeren der Liste nicht gelöscht.<br /><br />Dies vereinfacht das Aufräumen der Liste, wenn Du bestimmte Punkte regelmäßig wiederholen möchtest."
+        "locked_info": "Gesperrte Listenpunkte werden beim Leeren der Liste nicht gelöscht.<br /><br />Dies vereinfacht das Aufräumen der Liste, wenn Du bestimmte Punkte regelmäßig wiederholen möchtest.",
+        "delete": "Listenpunkt löschen"
     },
     "comp_sharelog": {
         "title": "Log Speichern",

@@ -106,16 +106,15 @@
         "listname": "Nome",
         "settings": "Impostazioni",
         "reset": "Reimposta automaticamente la lista",
-        "reset_note": "Imposta tutti i punti della lista sull'orologio su \"non completato\" in un determinato intervallo di tempo.",
         "reset_info": "Sull'orologio, tutti i punti di questa lista verranno impostati su \"non completato\" in un determinato intervallo di tempo.<br /><br />Questo è adatto, ad esempio, per compiti ricorrenti come le faccende domestiche o altre attività regolari.",
         "reset_interval": "Intervallo",
         "reset_daily": "Giornaliero",
         "reset_weekly": "Settimanale",
         "reset_monthly": "Mensile",
         "sync": "Sincronizza elenco con l'orologio",
-        "sync_note": "Le modifiche all'elenco e agli elementi verranno sincronizzate automaticamente con il tuo orologio.",
         "sync_info": "Quando apporti modifiche all'elenco, ad esempio aggiungendo o eliminando elementi, queste modifiche verranno trasferite automaticamente al tuo orologio in background.<br /><br />Si prega di notare che lo spazio di memoria dell'app sull'orologio è limitato e che la sincronizzazione può consumare più rapidamente la carica della batteria dell'orologio.<br />Non sincronizzare troppi elenchi contemporaneamente.",
-        "sync_settings": "Per attivare la sincronizzazione automatica, devi attivare l'opzione corrispondente nelle impostazioni.<br />Vuoi andare alle impostazioni?"
+        "sync_settings": "Per attivare la sincronizzazione automatica, devi attivare l'opzione corrispondente nelle impostazioni.<br />Vuoi andare alle impostazioni?",
+        "delete": "Cancellare la lista"
     },
     "comp-select-interval": {
         "last": "ultimo",
@@ -123,14 +122,15 @@
         "oclock": "ora"
     },
     "comp-listitemeditor": {
-        "title_new": "Aggiungi un punto alla lista",
-        "title_edit": "Modifica il punto della lista",
+        "title_new": "Aggiungere un elemento alla lista",
+        "title_edit": "Modificare un elemento dell'elenco",
         "itemname": "Nome",
         "itemnote": "Nota",
         "hidden": "Nascosto",
         "hidden_info": "I punti della lista nascosti non vengono trasferiti al tuo orologio, ma rimangono sul telefono.<br /><br />Questo è utile se desideri temporaneamente nascondere alcuni punti senza eliminarli. Possono essere riutilizzati in seguito.",
         "locked": "Bloccato",
-        "locked_info": "I punti della lista bloccati non vengono eliminati quando la lista viene svuotata.<br /><br />Questo semplifica l'ordine nella lista se desideri ripetere regolarmente alcuni punti."
+        "locked_info": "I punti della lista bloccati non vengono eliminati quando la lista viene svuotata.<br /><br />Questo semplifica l'ordine nella lista se desideri ripetere regolarmente alcuni punti.",
+        "delete": "Eliminare l'elemento"
     },
     "comp_sharelog": {
         "title": "Salva il log",

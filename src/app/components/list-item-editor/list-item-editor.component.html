@@ -1,6 +1,10 @@
 <ion-header>
     <ion-toolbar>
-        <ion-title>{{ Title }}</ion-title>
+        <ion-title>
+            <div class="ion-text-wrap">
+                {{ Title }}
+            </div>
+        </ion-title>
         <ion-buttons slot="end">
             <ion-button (click)="cancel()" [ariaLabel]="'cancel' | translate">
                 <ion-icon src="./assets/icons/close.svg" slot="icon-only"></ion-icon>
@@ -24,12 +28,14 @@
             </ion-checkbox>
             <ion-icon src="/assets/icons/info.svg" slot="end" class="info-icon" (click)="clickInfoLocked($event)"></ion-icon>
         </ion-item>
-        <ion-button class="ion-float-end" [disabled]="!Form.valid" (click)="onSubmit()">
-            {{ Confirm }}
-        </ion-button>
 
-        <ion-button *ngIf="Params?.list && Params?.item" class="ion-float-end" (click)="onDelete()">
-            {{ "delete" | translate }}
-        </ion-button>
+        <div class="buttons">
+            <ion-button *ngIf="Params?.list && Params?.item" class="ion-float-end" fill="outline" (click)="onDelete()">
+                {{ "comp-listitemeditor.delete" | translate }}
+            </ion-button>
+            <ion-button class="ion-float-end" [disabled]="!Form.valid" (click)="onSubmit()">
+                {{ Confirm }}
+            </ion-button>
+        </div>
     </form>
 </div>
