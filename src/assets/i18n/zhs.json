@@ -91,7 +91,9 @@
         "transmit_process": "列表正在传输中...",
         "transmit_success": "列表已成功传输",
         "transmit_error": "无法传输列表！",
-        "transmit_send_btn": "发送到设备"
+        "transmit_send_btn": "发送到设备",
+        "add_moreitems_success": "项目已添加。",
+        "add_moreitems_error": "无法添加项目！"
     },
 
     "service-connectiq": {
@@ -133,7 +135,8 @@
         "hidden_info": "隐藏的列表项不会传输到您的手表，但将保留在智能手机上。<br /><br />这对于你临时不想显示某些点而是仍然不想删除它们很有用。它们可以稍后重用。",
         "locked": "锁定",
         "locked_info": "被锁定的列表项在清空列表时不会被删除。<br /><br />这简化了清理列表，当你希望定期重复某些点时。",
-        "delete": "删除列表项"
+        "delete": "删除列表项",
+        "add_more": "添加另一个列表项目"
     },
     "comp_sharelog": {
         "title": "保存日志",

@@ -91,7 +91,9 @@
         "transmit_process": "清單正在傳送中...",
         "transmit_success": "清單已成功傳送。",
         "transmit_error": "無法傳送清單！",
-        "transmit_send_btn": "傳送到裝置"
+        "transmit_send_btn": "傳送到裝置",
+        "add_moreitems_success": "項目已添加。",
+        "add_moreitems_error": "無法添加項目！"
     },
     "service-connectiq": {
         "watch_outdated": "您在裝置 <strong>{{device}}</strong> 上似乎使用的是舊版本的清單應用。<br /><br />請更新手錶上的應用，以使用所有功能。",
@@ -132,7 +134,8 @@
         "hidden_info": "隱藏的清單項目不會傳輸到您的手錶，但將保留在智能手機上。<br /><br />這對於您暫時不想顯示某些項目但不想刪除它們很有用。它們可以稍後重用。",
         "locked": "鎖定",
         "locked_info": "被鎖定的清單項目在清空清單時不會被刪除。<br /><br />這簡化了清理清單，當您希望定期重複某些項目時。",
-        "delete": "刪除清單元素"
+        "delete": "刪除清單元素",
+        "add_more": "新增另一個清單項目"
     },
     "comp_sharelog": {
         "title": "儲存日誌",

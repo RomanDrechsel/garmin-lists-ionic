@@ -1,44 +1,34 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonItem, IonTextarea, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
+import { IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonItem, IonLabel, IonTextarea, IonTitle, IonToggle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { List } from "../../services/lists/list";
 import { Listitem } from "../../services/lists/listitem";
 import { ListsService } from "../../services/lists/lists.service";
 import { PopupsService } from "../../services/popups/popups.service";
+import { EPrefProperty, PreferencesService } from "../../services/storage/preferences.service";
 import { Locale } from "./../../services/localization/locale";
 
 @Component({
     selector: "app-list-item-editor",
-    imports: [IonTextarea, IonIcon, IonButton, IonButtons, IonTitle, IonItem, IonToolbar, IonHeader, IonCheckbox, CommonModule, TranslateModule, ReactiveFormsModule, FormsModule],
+    imports: [IonTextarea, IonIcon, IonButton, IonButtons, IonTitle, IonItem, IonToolbar, IonLabel, IonHeader, IonCheckbox, IonToggle, CommonModule, TranslateModule, ReactiveFormsModule, FormsModule],
     templateUrl: "./list-item-editor.component.html",
     styleUrl: "./list-item-editor.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListItemEditorComponent implements OnInit {
     @ViewChild("itemname") private itemname!: IonTextarea;
+    @ViewChild("addmore") private addmore?: IonToggle;
+
     public Params?: EditorParams;
     public Form: FormGroup;
 
     public readonly Popups = inject(PopupsService);
     private readonly ListsService = inject(ListsService);
+    private readonly Preferences = inject(PreferencesService);
 
-    constructor(private modalCtrl: ModalController, formbuilder: FormBuilder) {
-        this.Form = formbuilder.group({
-            item: ["", [Validators.required]],
-            note: [""],
-            hidden: [false],
-            locked: [false],
-        });
-    }
-
-    public ngOnInit() {
-        this.Form.get("item")?.setValue(this.Params?.item?.Item ?? "");
-        this.Form.get("note")?.setValue(this.Params?.item?.Note ?? "");
-        this.Form.get("locked")?.setValue(this.Params?.item?.Locked ?? false);
-        this.Form.get("hidden")?.setValue(this.Params?.item?.Hidden ?? false);
-    }
+    private _listAdded = false;
 
     public get Title(): string {
         if (this.Params?.item) {
@@ -56,13 +46,35 @@ export class ListItemEditorComponent implements OnInit {
         }
     }
 
+    constructor(private modalCtrl: ModalController, formbuilder: FormBuilder) {
+        this.Form = formbuilder.group({
+            item: ["", [Validators.required]],
+            note: [""],
+            hidden: [false],
+            locked: [false],
+        });
+    }
+
+    public async ngOnInit() {
+        this.Form.get("item")?.setValue(this.Params?.item?.Item ?? "");
+        this.Form.get("note")?.setValue(this.Params?.item?.Note ?? "");
+        this.Form.get("locked")?.setValue(this.Params?.item?.Locked ?? false);
+        this.Form.get("hidden")?.setValue(this.Params?.item?.Hidden ?? false);
+    }
+
+    public async ionViewWillEnter() {
+        if (this.addmore) {
+            this.addmore.checked = await this.Preferences.Get(EPrefProperty.AddMoreItemsDialog, false);
+        }
+    }
+
     public ionViewDidEnter() {
         if (this.Params?.item == undefined) {
             this.itemname.setFocus();
         }
     }
 
-    public async onSubmit() {
+    public async onSubmit(): Promise<boolean | undefined> {
         if (this.Params?.list == undefined) {
             this.cancel();
             return;
@@ -77,9 +89,9 @@ export class ListItemEditorComponent implements OnInit {
         let note = this.Form.get("note")?.value;
         if (note) {
             note = note.trim();
-        }
-        if (note.length <= 0) {
-            note = undefined;
+            if (note.length <= 0) {
+                note = undefined;
+            }
         }
 
         const hidden = (this.Form.get("hidden")?.value as boolean) ?? false;
@@ -96,7 +108,18 @@ export class ListItemEditorComponent implements OnInit {
             item = await this.ListsService.createNewListitemObj(this.Params!.list!, { item: title, note: note, hidden: hidden, locked: locked });
         }
 
-        return this.modalCtrl.dismiss(item, "confirm");
+        if (this.Params?.onAddItem) {
+            await this.Params.onAddItem(this.Params.list, item, this.addmore?.checked ?? false);
+            if (this.addmore?.checked) {
+                this.resetForm();
+                this._listAdded = true;
+                return false;
+            } else {
+                return this.modalCtrl.dismiss(true, "confirm");
+            }
+        } else {
+            return this.modalCtrl.dismiss(item, "confirm");
+        }
     }
 
     public async onDelete() {
@@ -106,7 +129,11 @@ export class ListItemEditorComponent implements OnInit {
     }
 
     public cancel() {
-        return this.modalCtrl.dismiss(null, "cancel");
+        if (this.Params?.onAddItem && this._listAdded) {
+            return this.modalCtrl.dismiss(true, "confirm");
+        } else {
+            return this.modalCtrl.dismiss(null, "cancel");
+        }
     }
 
     public async clickInfoHidden(event: any) {
@@ -123,6 +150,14 @@ export class ListItemEditorComponent implements OnInit {
             message: "comp-listitemeditor.locked_info",
             translate: true,
         });
+    }
+
+    public async onAddMoreChanged(checked: boolean) {
+        await this.Preferences.Set(EPrefProperty.AddMoreItemsDialog, checked);
+    }
+
+    private resetForm() {
+        this.Form.reset();
     }
 }
 
@@ -145,7 +180,23 @@ export const ListItemEditor = async function (modalController: ModalController, 
     return undefined;
 };
 
+export const ListItemEditorMultiple = async function (modalController: ModalController, params: EditorParams): Promise<boolean> {
+    const modal = await modalController.create({
+        component: ListItemEditorComponent,
+        componentProps: { Params: params },
+        animated: true,
+        backdropDismiss: true,
+        showBackdrop: true,
+        cssClass: "autosize-modal",
+    });
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+    return data;
+};
+
 type EditorParams = {
     list: List;
     item?: Listitem;
+    onAddItem?: (list: List, listitem: Listitem, add_more: boolean) => Promise<void>;
 };

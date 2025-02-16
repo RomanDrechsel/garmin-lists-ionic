@@ -91,7 +91,9 @@
         "transmit_process": "Die Liste wird übertragen...",
         "transmit_success": "Die Liste wurde erfolgreich übertragen",
         "transmit_error": "Die Liste konnte nicht übertragen werden!",
-        "transmit_send_btn": "An Gerät senden"
+        "transmit_send_btn": "An Gerät senden",
+        "add_moreitems_success": "Punkt hinzugefügt.",
+        "add_moreitems_error": "Punkte konnte nicht hinzugefügt werden!"
     },
     "service-connectiq": {
         "watch_outdated": "Du scheinst auf deinem Gerät <strong>{{device}}</strong> eine alte Version der Listen-App zu verwenden.<br /><br />Bitte aktuallisiere die App auf deiner Uhr, um alle Funktionen nutzen zu können.",
@@ -132,7 +134,8 @@
         "hidden_info": "Versteckte Listenpunkte werden nicht mit auf Deine Uhr übertragen, bleiben aber auf dem Smartphone erhalten.<br /><br />Dies ist nützlich, wenn Du zeitweise bestimmte Punkte nicht anzeigen willst, aber sie trotzdem nicht löschen möchtest. Sie können später wiederverwendet werden.",
         "locked": "Gesperrt",
         "locked_info": "Gesperrte Listenpunkte werden beim Leeren der Liste nicht gelöscht.<br /><br />Dies vereinfacht das Aufräumen der Liste, wenn Du bestimmte Punkte regelmäßig wiederholen möchtest.",
-        "delete": "Listenpunkt löschen"
+        "delete": "Listenpunkt löschen",
+        "add_more": "einen weiteren Punkt hinzufügen"
     },
     "comp_sharelog": {
         "title": "Log Speichern",

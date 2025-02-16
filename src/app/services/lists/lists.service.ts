@@ -5,7 +5,7 @@ import { BehaviorSubject, Subscription, interval } from "rxjs";
 import { HelperUtils } from "../../classes/utils/helper-utils";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { ListEditor } from "../../components/list-editor/list-editor.component";
-import { ListItemEditor } from "../../components/list-item-editor/list-item-editor.component";
+import { ListItemEditor, ListItemEditorMultiple } from "../../components/list-item-editor/list-item-editor.component";
 import { AppService } from "../app/app.service";
 import { ConnectIQDevice } from "../connectiq/connect-iq-device";
 import { ConnectIQMessageType } from "../connectiq/connect-iq-message-type";
@@ -252,18 +252,26 @@ export class ListsService {
         if (AppService.isMobileApp) {
             Keyboard.show();
         }
-        const item = await ListItemEditor(this.ModalCtrl, { list: list });
-        if (item) {
-            list.AddItem(item);
-            if (await this.StoreList(list, undefined, undefined, false)) {
-                Logger.Debug(`Created new listitem ${item.toLog()}`);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return undefined;
-        }
+        let added: boolean | undefined = undefined;
+        await ListItemEditorMultiple(this.ModalCtrl, {
+            list: list,
+            onAddItem: async (list: List, item: Listitem, add_more: boolean) => {
+                if (item) {
+                    list.AddItem(item);
+                }
+                if (added !== false) {
+                    added = await this.StoreList(list, false, true, false);
+                    if (add_more) {
+                        if (added) {
+                            this.Popups.Toast.Success("service-lists.add_moreitems_success", undefined, true);
+                        } else {
+                            this.Popups.Toast.Error("service-lists.add_moreitems_error", undefined, true);
+                        }
+                    }
+                }
+            },
+        });
+        return added;
     }
 
     /**

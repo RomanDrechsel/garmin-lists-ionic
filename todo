@@ -7,4 +7,4 @@ https://wiki.ubuntuusers.de/adb/
 TEST: Sync lists with watch
 TEST: if disable list sync in settings, ask if all syncs of all lists should be disabled
 TEST: uuids as number
-WIP: keep Add-item dialog open, when adding an item
+WIP: add new listitem line on listitem page

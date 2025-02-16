@@ -33,6 +33,9 @@
             <ion-button *ngIf="Params?.list && Params?.item" class="ion-float-end" fill="outline" (click)="onDelete()">
                 {{ "comp-listitemeditor.delete" | translate }}
             </ion-button>
+            <ion-toggle *ngIf="Params?.onAddItem" labelPlacement="end" #addmore (ionChange)="onAddMoreChanged($event.target.checked)">
+                <ion-label class="ion-text-wrap">{{ "comp-listitemeditor.add_more" | translate }}</ion-label>
+            </ion-toggle>
             <ion-button class="ion-float-end" [disabled]="!Form.valid" (click)="onSubmit()">
                 {{ Confirm }}
             </ion-button>

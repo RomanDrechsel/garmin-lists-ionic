@@ -89,7 +89,9 @@
         "transmit_process": "La lista viene trasferita...",
         "transmit_success": "La lista è stata trasferita con successo.",
         "transmit_error": "La lista non può essere trasferita!",
-        "transmit_send_btn": "Invia al dispositivo"
+        "transmit_send_btn": "Invia al dispositivo",
+        "add_moreitems_success": "Elemento aggiunto.",
+        "add_moreitems_error": "Impossibile aggiungere l'elemento!"
     },
     "service-connectiq": {
         "watch_outdated": "Sembra che tu stia utilizzando una versione obsoleta dell'app Liste sul tuo dispositivo <strong>{{device}}</strong>.<br /><br />Per favore, aggiorna l'app sul tuo orologio per poter utilizzare tutte le funzioni.",
@@ -130,7 +132,8 @@
         "hidden_info": "I punti della lista nascosti non vengono trasferiti al tuo orologio, ma rimangono sul telefono.<br /><br />Questo è utile se desideri temporaneamente nascondere alcuni punti senza eliminarli. Possono essere riutilizzati in seguito.",
         "locked": "Bloccato",
         "locked_info": "I punti della lista bloccati non vengono eliminati quando la lista viene svuotata.<br /><br />Questo semplifica l'ordine nella lista se desideri ripetere regolarmente alcuni punti.",
-        "delete": "Eliminare l'elemento"
+        "delete": "Eliminare l'elemento",
+        "add_more": "Aggiungere un altro elemento"
     },
     "comp_sharelog": {
         "title": "Salva il log",
