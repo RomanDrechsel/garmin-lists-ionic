@@ -21,7 +21,7 @@ public class DeviceUtils
     private static final String TAG = "DeviceUtil";
 
     @NonNull
-    public static ArrayList<String> SeralizeToStringArray(@NonNull Object obj)
+    public static ArrayList<String> SerializeToStringArray(@NonNull Object obj)
     {
         ArrayList<String> ret = new ArrayList<>();
         boolean error_occured = false;

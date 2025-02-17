@@ -222,7 +222,7 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
         ArrayList<String> send;
         if (data != null)
         {
-            send = DeviceUtils.SeralizeToStringArray(data);
+            send = DeviceUtils.SerializeToStringArray(data);
         }
         else
         {
@@ -409,7 +409,8 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
         {
             try
             {
-                Logger.Debug(TAG, "Trying to transmit data to device " + this + " ...");
+                Logger.Debug(TAG, "Trying to transmit data to device " + this + ": ", data);
+
                 this.Manager.connectIQ.sendMessage(this.device, this.deviceApp, data, (device, app, status) ->
                 {
                     messageSent[0] = true;
