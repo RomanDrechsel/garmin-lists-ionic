@@ -91,7 +91,7 @@ export class ListItemsPage extends PageBase {
         }
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
-            const uuid = parseInt(listid);
+            const uuid = Number(listid);
             this.List = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
             this._listInitialized = true;
             this.reload();
@@ -253,8 +253,9 @@ export class ListItemsPage extends PageBase {
     }
 
     public async QuickAddItem() {
-        if (this.List && this.quickAdd?.value && this.quickAdd.value.length > 0) {
-            await this.ListsService.AddNewListitem(this.List, { item: this.quickAdd.value });
+        if (this.List && this.quickAdd?.value && this.quickAdd.value.trim().length > 0) {
+            await this.ListsService.AddNewListitem(this.List, { item: this.quickAdd.value.trim() });
+            this.cdr.detectChanges();
             this.quickAdd.value = "";
         }
     }
