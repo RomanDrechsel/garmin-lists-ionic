@@ -1,14 +1,16 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, inject } from "@angular/core";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
+import { PluginListenerHandle } from "@capacitor/core";
+import { Keyboard } from "@capacitor/keyboard";
 import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { List, ListReset } from "../../services/lists/list";
 import { ListsService } from "../../services/lists/lists.service";
 import { LocalizationService } from "../../services/localization/localization.service";
 import { PopupsService } from "../../services/popups/popups.service";
-import { PreferencesService } from "../../services/storage/preferences.service";
 import { SelectTimeInterval } from "../select-interval/select-interval.component";
+import { AdmobService } from "./../../services/adverticing/admob.service";
 
 @Component({
     selector: "app-list-edit",
@@ -30,11 +32,13 @@ export class ListEditorComponent {
     private readonly Locale = inject(LocalizationService);
     private readonly Popups = inject(PopupsService);
     private readonly cdr = inject(ChangeDetectorRef);
-    private readonly Preferences = inject(PreferencesService);
     private readonly FormBuilder = inject(FormBuilder);
+    private readonly Admob = inject(AdmobService);
 
     private _listReset?: ListReset = undefined;
     private _listSync?: boolean;
+    private _keyboardUpListerner?: PluginListenerHandle;
+    private _keyboardDownListener?: PluginListenerHandle;
 
     public Form: FormGroup;
 
@@ -161,10 +165,20 @@ export class ListEditorComponent {
         this.SyncActive = this.Params?.list?.Sync ?? false;
     }
 
-    public ionViewDidEnter() {
+    public async ionViewDidEnter() {
+        this._keyboardUpListerner = await Keyboard.addListener("keyboardWillShow", info => this.Admob.OnKeyboardShow(info));
+        this._keyboardDownListener = await Keyboard.addListener("keyboardWillHide", () => this.Admob.OnKeyboardHide());
         if (!this.Params?.list) {
             this.listname?.setFocus();
+            await Keyboard.show();
         }
+    }
+
+    public ionViewWillLeave() {
+        this._keyboardUpListerner?.remove();
+        this._keyboardUpListerner = undefined;
+        this._keyboardDownListener?.remove();
+        this._keyboardDownListener = undefined;
     }
 
     public async onSubmit() {

@@ -7,7 +7,7 @@ https://wiki.ubuntuusers.de/adb/
 TEST: Sync lists with watch
 TEST: if disable list sync in settings, ask if all syncs of all lists should be disabled
 TEST: uuids as number
-WIP: add new listitem line on listitem page
-TODO: Keep add on Quickadd
+TEST: add new listitem line on listitem page
+WIP: Keep add on Quickadd
 TODO: Translate page_listitems.quickadd
 TODO: check darkmode

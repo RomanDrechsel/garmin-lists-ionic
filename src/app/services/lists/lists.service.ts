@@ -162,9 +162,6 @@ export class ListsService {
      * opens the list editor to create a new list
      */
     public async NewList() {
-        if (AppService.isMobileApp) {
-            await Keyboard.show();
-        }
         const list = await ListEditor(this.ModalCtrl, {});
         if (list) {
             if (await this.StoreList(list)) {

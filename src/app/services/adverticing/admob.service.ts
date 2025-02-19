@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { AdMob, AdMobBannerSize, AdmobConsentDebugGeography, AdmobConsentInfo, AdmobConsentRequestOptions, AdmobConsentStatus, BannerAdOptions, BannerAdPluginEvents, BannerAdPosition, BannerAdSize } from "@capacitor-community/admob";
-import { Keyboard } from "@capacitor/keyboard";
+import { KeyboardInfo } from "@capacitor/keyboard";
 import { environment } from "../../../environments/environment";
 import { Logger } from "../logging/logger";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
@@ -55,15 +55,6 @@ export class AdmobService {
             Logger.Debug(`Admob initialized in test mode`);
         }
 
-        Keyboard.addListener("keyboardWillShow", async info => {
-            if (window.innerHeight < 350) {
-                await this.HideBanner();
-            }
-        });
-        Keyboard.addListener("keyboardDidHide", async () => {
-            await this.resumeBanner();
-        });
-
         this._isInitialized = true;
 
         await this.ShowBanner();
@@ -72,7 +63,7 @@ export class AdmobService {
     /**
      * Shows the Admob banner if it's not already shown.
      */
-    public async ShowBanner() {
+    public async ShowBanner(): Promise<void> {
         if (this._bannerIsShown === false) {
             const options: BannerAdOptions = {
                 adId: "ca-app-pub-4693945059643494/5993520446",
@@ -94,7 +85,7 @@ export class AdmobService {
     /**
      * Hides the Admob banner if it's currently shown.
      */
-    public async HideBanner() {
+    public async HideBanner(): Promise<void> {
         if (this._bannerIsShown === true) {
             await AdMob.hideBanner();
         }
@@ -153,6 +144,23 @@ export class AdmobService {
             };
         }
         return AdMob.requestConsentInfo(options);
+    }
+
+    /**
+     * hide the ad, if the keyboard is too big
+     * @param info height of the keyboard
+     */
+    public async OnKeyboardShow(info: KeyboardInfo): Promise<void> {
+        if (window.innerHeight < 350) {
+            await this.HideBanner();
+        }
+    }
+
+    /**
+     * show the ad, if the keyboard is closed
+     */
+    public async OnKeyboardHide(): Promise<void> {
+        await this.resumeBanner();
     }
 
     /** resumes the banner */

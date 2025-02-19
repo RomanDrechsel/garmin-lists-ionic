@@ -257,6 +257,7 @@ export class ListItemsPage extends PageBase {
             await this.ListsService.AddNewListitem(this.List, { item: this.quickAdd.value.trim() });
             this.cdr.detectChanges();
             this.quickAdd.value = "";
+            this.quickAdd.setFocus();
         }
     }
 
