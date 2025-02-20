@@ -139,7 +139,7 @@ export class ListsPage extends PageBase {
     public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
         if (event.detail.scrollTop == 0) {
             this._scrollPosition = "top";
-        } else if (event.detail.scrollTop >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
             this._scrollPosition = "bottom";
         } else {
             this._scrollPosition = event.detail.scrollTop;

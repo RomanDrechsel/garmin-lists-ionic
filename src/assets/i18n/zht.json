@@ -185,7 +185,8 @@
         "lock": "鎖定",
         "unlock": "解鎖",
         "nolist": "出現錯誤 :(<br /><br />無法顯示清單。",
-        "add_new_hint": "在清單中創建一個新項目。"
+        "add_new_hint": "在清單中創建一個新項目。",
+        "quickadd": "建立新的列表元素..."
     },
     "page_trash": {
         "page_title": "垃圾桶",

@@ -39,8 +39,8 @@
                 </ion-item-sliding>
             </ion-reorder-group>
         </ion-list>
-        <ion-item lines="full" class="quick-add">
-            <ion-textarea placeholder="{{'page_listitems.quickadd'|translate}}" autoGrow="true" inputmode="text" spellcheck="true" maxlength="250" autocapitalize="sentence" rows="1" (ionFocus)="onQuickAddFocus()" (ionBlur)="onQuickAddBlur()" #quickAdd>
+        <ion-item lines="none" class="quick-add">
+            <ion-textarea placeholder="{{'page_listitems.quickadd'|translate}}" autoGrow="true" inputmode="text" spellcheck="true" maxlength="250" autocapitalize="sentence" rows="2" (ionFocus)="onQuickAddFocus()" (ionBlur)="onQuickAddBlur()" #quickAdd>
                 <ion-button fill="outline" color="medium" [ariaLabel]="'add'|translate" size="small" [disabled]="!quickAdd.value?.length" slot="end" (click)="QuickAddItem()">
                     <ion-icon slot="start" src="./assets/icons/add.svg"></ion-icon>
                     {{'add'|translate}}

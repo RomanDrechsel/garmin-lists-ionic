@@ -186,7 +186,8 @@
         "lock": "Bloquear",
         "unlock": "Desbloquear",
         "nolist": "Algo ha salido mal :(<br /><br />No se puede mostrar la lista.",
-        "add_new_hint": "Crear un nuevo elemento en la lista."
+        "add_new_hint": "Crear un nuevo elemento en la lista.",
+        "quickadd": "Crear nuevo elemento..."
     },
     "page_trash": {
         "page_title": "Papelera",

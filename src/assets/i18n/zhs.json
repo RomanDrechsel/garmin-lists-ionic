@@ -186,7 +186,8 @@
         "lock": "锁定",
         "unlock": "解锁",
         "nolist": "出了点问题:(<br /><br />无法显示列表。",
-        "add_new_hint": "在列表中添加新项。"
+        "add_new_hint": "在列表中添加新项。",
+        "quickadd": "创建新的列表元素..."
     },
     "page_trash": {
         "page_title": "回收站",

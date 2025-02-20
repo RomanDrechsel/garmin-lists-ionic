@@ -183,7 +183,8 @@
         "lock": "Blocca",
         "unlock": "Sblocca",
         "nolist": "Qualcosa è andato storto :(<br /><br />La lista non può essere visualizzata.",
-        "add_new_hint": "Aggiungi un nuovo elemento alla lista."
+        "add_new_hint": "Aggiungi un nuovo elemento alla lista.",
+        "quickadd": "Creare un nuovo elemento..."
     },
     "page_trash": {
         "page_title": "Cestino",

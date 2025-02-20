@@ -185,7 +185,8 @@
         "lock": "Verrouiller",
         "unlock": "Déverrouiller",
         "nolist": "Quelque chose s'est mal passé :(<br /><br />La liste ne peut pas être affichée.",
-        "add_new_hint": "Créer un nouvel élément dans la liste."
+        "add_new_hint": "Créer un nouvel élément dans la liste.",
+        "quickadd": "Créer un nouvel élément..."
     },
     "page_trash": {
         "page_title": "Corbeille",

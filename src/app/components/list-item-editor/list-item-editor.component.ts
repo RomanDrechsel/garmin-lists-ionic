@@ -1,8 +1,11 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
+import { PluginListenerHandle } from "@capacitor/core";
+import { Keyboard } from "@capacitor/keyboard";
 import { IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonItem, IonLabel, IonTextarea, IonTitle, IonToggle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
+import { AdmobService } from "../../services/adverticing/admob.service";
 import { List } from "../../services/lists/list";
 import { Listitem } from "../../services/lists/listitem";
 import { ListsService } from "../../services/lists/lists.service";
@@ -27,8 +30,11 @@ export class ListItemEditorComponent implements OnInit {
     public readonly Popups = inject(PopupsService);
     private readonly ListsService = inject(ListsService);
     private readonly Preferences = inject(PreferencesService);
+    private readonly Admob = inject(AdmobService);
 
     private _listAdded = false;
+    private _keyboardUpListerner?: PluginListenerHandle;
+    private _keyboardDownListener?: PluginListenerHandle;
 
     public get Title(): string {
         if (this.Params?.item) {
@@ -68,10 +74,19 @@ export class ListItemEditorComponent implements OnInit {
         }
     }
 
-    public ionViewDidEnter() {
+    public async ionViewDidEnter() {
+        this._keyboardUpListerner = await Keyboard.addListener("keyboardWillShow", info => this.Admob.OnKeyboardShow(info));
+        this._keyboardDownListener = await Keyboard.addListener("keyboardWillHide", () => this.Admob.OnKeyboardHide());
         if (this.Params?.item == undefined) {
             this.itemname.setFocus();
         }
+    }
+
+    public ionViewWillLeave() {
+        this._keyboardUpListerner?.remove();
+        this._keyboardUpListerner = undefined;
+        this._keyboardDownListener?.remove();
+        this._keyboardDownListener = undefined;
     }
 
     public async onSubmit(): Promise<boolean | undefined> {
