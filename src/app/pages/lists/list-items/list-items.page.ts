@@ -2,6 +2,8 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
+import { PluginListenerHandle } from "@capacitor/core";
+import { Keyboard } from "@capacitor/keyboard";
 import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTextarea, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
 import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
@@ -39,7 +41,9 @@ export class ListItemsPage extends PageBase {
     private _listTitle?: string = undefined;
     private _listInitialized = false;
     private _informedSyncForNewlist: string | number | undefined = undefined;
-    private _quickAddFocus = false;
+    private _keyboardShow = false;
+    private _keyboardShowListener?: PluginListenerHandle;
+    private _keyboardHideListener?: PluginListenerHandle;
 
     private readonly Route = inject(ActivatedRoute);
 
@@ -48,14 +52,14 @@ export class ListItemsPage extends PageBase {
     }
 
     public get ShowScrollButtons(): boolean {
-        if (!this._listInitialized || this._quickAddFocus) {
+        if (!this._listInitialized || this._keyboardShow) {
             return false;
         }
         return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
     }
 
     public get ShowAddButton(): boolean {
-        return this._listInitialized && !this._quickAddFocus;
+        return this._listInitialized && !this._keyboardShow;
     }
 
     public get DisableScrollToTop(): boolean {
@@ -127,6 +131,8 @@ export class ListItemsPage extends PageBase {
         if (this.List) {
             await this.Preferences.Set(EPrefProperty.OpenedList, this.List.Uuid);
         }
+        this._keyboardHideListener = await Keyboard.addListener("keyboardWillShow", () => (this._keyboardShow = true));
+        this._keyboardHideListener = await Keyboard.addListener("keyboardWillHide", () => (this._keyboardShow = false));
     }
 
     public override async ionViewWillLeave() {
@@ -134,6 +140,10 @@ export class ListItemsPage extends PageBase {
         await this.Preferences.Remove(EPrefProperty.OpenedList);
         this._preferencesSubscription?.unsubscribe();
         this._listSubscription?.unsubscribe();
+        this._keyboardShowListener?.remove();
+        this._keyboardShowListener = undefined;
+        this._keyboardHideListener?.remove();
+        this._keyboardHideListener = undefined;
     }
 
     public onSwipeRight(item: Listitem) {
@@ -252,27 +262,17 @@ export class ListItemsPage extends PageBase {
         }
     }
 
-    public async QuickAddItem() {
+    public async QuickAddItem(event: MouseEvent) {
         if (this.List && this.quickAdd?.value && this.quickAdd.value.trim().length > 0) {
+            event.stopImmediatePropagation();
             await this.ListsService.AddNewListitem(this.List, { item: this.quickAdd.value.trim() });
+            await this.ScrollToBottom(true);
+            this.cdr.detectChanges();
             this.quickAdd.value = undefined;
             this.quickAdd.setFocus();
-            this.cdr.detectChanges();
             return false;
         }
         return true;
-    }
-
-    public async onQuickAddFocus() {
-        await this.ScrollToBottom();
-        this._quickAddFocus = true;
-    }
-
-    public async onQuickAddBlur() {
-        this._quickAddFocus = false;
-        new Promise(resolve => setTimeout(resolve, 500)).then(async () => {
-            await this.ScrollToBottom();
-        });
     }
 
     public async ScrollToTop(): Promise<void> {

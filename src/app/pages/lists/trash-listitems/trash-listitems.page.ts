@@ -33,6 +33,8 @@ export class TrashListitemsPage extends PageBase {
 
     private _trashInitialized = false;
 
+    private _listUuid?: string = undefined;
+
     private Route = inject(ActivatedRoute);
 
     public get ScrollPosition(): "top" | "bottom" | number {
@@ -58,11 +60,20 @@ export class TrashListitemsPage extends PageBase {
         return this._trashInitialized;
     }
 
+    public get BackLink(): string {
+        if (this._listUuid) {
+            return `/lists/items/${this._listUuid}`;
+        } else {
+            return "/lists";
+        }
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
         this._trashInitialized = false;
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
+            this._listUuid = listid;
             this.Trash = await this.ListsService.GetListitemTrash(listid);
             this._trashInitialized = true;
             this.reload();

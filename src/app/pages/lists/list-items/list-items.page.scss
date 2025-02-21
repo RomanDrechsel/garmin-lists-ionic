@@ -39,18 +39,18 @@
         --placeholder-color: var(--ion-color-medium);
         --placeholder-font-style: italic;
         --placeholder-opacity: 0.8;
-        --padding-top: 0.5em;
-        --padding-bottom: 0.5em;
+        --padding-top: 0.7em;
+        --padding-bottom: 0.7em;
         --padding-end: 0;
         --padding-start: 4px;
         --min-height: 1.5em;
         --highlight-color-focused: var(--ion-color-primary);
         --highlight-height: 5px;
-        font-size: 1.3em;
+        font-size: 1.1em;
         min-height: 1.5em;
 
         ion-button[slot="end"] {
-            margin-top: -0.2em;
+            margin-top: -0.4em;
         }
     }
 }

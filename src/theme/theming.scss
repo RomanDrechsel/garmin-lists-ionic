@@ -16,6 +16,7 @@ ion-list {
     ion-item {
         --background: var(--color-item-background);
         --color: var(--color-text);
+        --background-hover: var(--color-item-background);
 
         ion-icon {
             fill: var(--color-text-tint);
@@ -235,6 +236,23 @@ ion-picker {
     --ion-background-color-rgb: var(--color-picker-rgb);
 }
 
+ion-accordion {
+    [slot="header"] {
+        ion-icon[slot="end"] {
+            color: var(--ion-color-medium);
+        }
+    }
+}
+
 .no-wrap {
     white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+    ion-button {
+        &.button-outline {
+            --border-color: var(--ion-color-secondary);
+            --color: var(--ion-color-secondary-contrast);
+        }
+    }
 }
