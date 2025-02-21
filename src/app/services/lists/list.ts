@@ -2,7 +2,7 @@ import { Logger } from "../logging/logger";
 import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
-    private _uuid: string;
+    private _uuid: string | number;
     private _name: string;
     private _created: number;
     private _updated: number;
@@ -11,6 +11,7 @@ export class List {
     private _itemsCount?: number;
     private _items?: Listitem[];
     private _deleted?: number;
+    private _sync: boolean = false;
     private _dirty: boolean = false;
 
     public constructor(obj: ListModel, itemcount?: number) {
@@ -33,11 +34,16 @@ export class List {
         this._itemsCount = this._items?.length ?? itemcount;
         this._reset = obj.reset;
         this._deleted = obj.deleted;
+        this._sync = obj.sync ?? false;
         this._dirty = true;
     }
 
-    /** get unique list id */
-    public get Uuid(): string {
+    /**
+     * get unique list id
+     * in newer versions, the uuid is a number
+     * in older versions it was a string
+     */
+    public get Uuid(): string | number {
         return this._uuid;
     }
 
@@ -137,6 +143,19 @@ export class List {
     /** when does the list get reset automagically? */
     public get Reset(): ListReset | undefined {
         return this._reset;
+    }
+
+    /** set, if the list should be automatiacally synced to watch */
+    public set Sync(sync: boolean) {
+        if (this._sync != sync) {
+            this._sync = sync;
+            this._dirty = true;
+        }
+    }
+
+    /** should the list be synced automatically to watch */
+    public get Sync(): boolean {
+        return this._sync;
     }
 
     /** are only peek information loaded */
@@ -243,7 +262,6 @@ export class List {
 
         if (this._items) {
             let order = 0;
-
             for (let i = 0; i < this._items.length; i++) {
                 this._items[i].Order = order++;
                 this._items[i].toDeviceObject(ret);
@@ -283,6 +301,7 @@ export class List {
                 deleted: this._deleted ?? undefined,
                 order: this._order,
                 reset: this._reset,
+                sync: this._sync,
             };
 
             if (this._items && this._items.length > 0) {
@@ -358,6 +377,7 @@ export class List {
                 deleted: obj.deleted,
                 items: obj.items,
                 reset: obj.reset,
+                sync: obj.sync,
             },
             itemscount,
         );
@@ -368,13 +388,14 @@ export class List {
 }
 
 export declare type ListModel = {
-    uuid: string;
+    uuid: string | number;
     name: string;
     created: number;
     order: number;
     updated?: number;
     deleted?: number;
     reset?: ListReset;
+    sync?: boolean;
     items?: ListitemModel[];
 };
 

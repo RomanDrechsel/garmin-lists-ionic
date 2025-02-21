@@ -103,7 +103,7 @@ export class ListsBackendService {
         try {
             const newuri = (await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(list), encoding: Encoding.UTF8, recursive: true })).uri;
             if (newuri) {
-                await this.RemoveLists(list.uuid, backend, [filename]);
+                await this.RemoveLists(`${list.uuid}`, backend, [filename]);
             }
 
             return true;
@@ -191,7 +191,7 @@ export class ListsBackendService {
         let error = 0;
         for (let i = 0; i < allfiles.length; i++) {
             const file = allfiles[i];
-            if (uuids.some(uuid => file.Filename.startsWith(uuid))) {
+            if (uuids.some(uuid => file.Filename.startsWith(`${uuid}`))) {
                 if (await FileUtils.DeleteFile(file.Path)) {
                     Logger.Debug(`Removed file ${file.Path} (${FileUtils.File.FormatSize(file.Size)}) from ${backend ?? ""} backend`);
                     del++;
@@ -280,7 +280,7 @@ export class ListsBackendService {
      * @param backend backend identifier in which the files should be checked
      * @returns does a file with this pattern exist
      */
-    public async ListExists(uuid: string, backend?: string): Promise<boolean> {
+    public async ListExists(uuid: string | number, backend?: string): Promise<boolean> {
         const regex = new RegExp(ListsBackendService.createFilenamePattern(uuid));
         const allfiles = await this.getAllFiles(backend, false);
         for (let i = 0; i < allfiles.length; i++) {
@@ -323,7 +323,7 @@ export class ListsBackendService {
      * @param backend backend identifier to be fetched
      * @returns size in bytes and total number of files in the backend
      */
-    public async GetSize(backend?: string): Promise<{ size: number; files: number; }> {
+    public async GetSize(backend?: string): Promise<{ size: number; files: number }> {
         const allfiles = await this.getAllFiles(backend, false);
         return { size: allfiles.reduce((a, b) => a + b.Size, 0), files: allfiles.length };
     }
@@ -343,7 +343,7 @@ export class ListsBackendService {
      * @returns filename pattern as string
      * @returns filename pattern as string
      */
-    public static createFilenamePattern(uuid: string): string {
+    public static createFilenamePattern(uuid: string | number): string {
         return `^${uuid}(\\.json$|-.*\\.json$)`;
     }
 

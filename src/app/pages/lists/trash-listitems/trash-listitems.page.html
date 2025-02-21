@@ -1,4 +1,4 @@
-<app-main-toolbar back="/lists">{{'page_trashitem.page_title'|translate}}</app-main-toolbar>
+<app-main-toolbar back="{{BackLink}}">{{'page_trashitem.page_title'|translate}}</app-main-toolbar>
 
 <ion-content fixed-slot-placement="before" scrollEvents="true" scrollX="false" (ionScroll)="onScroll($event)" #mainContent>
     <div *ngIf="Trash && Trash.items.length > 0; else empty" class="list-content" #listContent>

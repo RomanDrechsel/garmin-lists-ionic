@@ -175,20 +175,27 @@ export class ConnectIQService {
 
     /**
      * Returns the most probable device, or let the user select one, if the device is uncertain
+     * @param args btn_text: label of the select-button of the select device page, if no device is found
+     *             only_ready: only return a device, if his state is "Ready"
+     *             select_device_if_undefined: select a device, if the default device is undefined or not Ready
      * @returns device object
      */
-    public async GetDefaultDevice(args?: { btn_text?: string }): Promise<ConnectIQDevice | undefined> {
+    public async GetDefaultDevice(args?: { only_ready?: boolean; select_device_if_undefined?: boolean; btn_text?: string }): Promise<ConnectIQDevice | undefined> {
         if (this._alwaysTransmitToDevice && Capacitor.isNativePlatform()) {
-            return this._alwaysTransmitToDevice;
-        } else {
-            const online = this._devices.filter(d => d.State == "Ready");
-            if (online.length == 1) {
-                return online[0];
-            } else {
-                return new Promise<ConnectIQDevice | undefined>(resolve => {
-                    SelectGarminDevice({ router: this.Router, callback: async (device?: ConnectIQDevice) => resolve(device), submitRoute: undefined, buttonText: args?.btn_text });
-                });
+            if (this._alwaysTransmitToDevice.State == "Ready" || !args?.only_ready) {
+                return this._alwaysTransmitToDevice;
             }
+        }
+
+        const online = this._devices.filter(d => d.State == "Ready");
+        if (online.length == 1) {
+            return online[0];
+        } else if (args?.select_device_if_undefined !== false) {
+            return new Promise<ConnectIQDevice | undefined>(resolve => {
+                SelectGarminDevice({ router: this.Router, callback: async (device?: ConnectIQDevice) => resolve(device), submitRoute: undefined, buttonText: args?.btn_text });
+            });
+        } else {
+            return undefined;
         }
     }
 

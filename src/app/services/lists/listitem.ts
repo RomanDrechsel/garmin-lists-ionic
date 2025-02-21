@@ -1,7 +1,7 @@
 import { Logger } from "../logging/logger";
 
 export class Listitem {
-    private _uuid: string;
+    private _uuid: number | string;
     private _order: number;
     private _created: number;
     private _updated: number;
@@ -26,7 +26,7 @@ export class Listitem {
     }
 
     /** get unique id in backend */
-    public get Uuid(): string {
+    public get Uuid(): string | number {
         return this._uuid;
     }
 
@@ -159,6 +159,7 @@ export class Listitem {
                 obj = {};
             }
 
+            obj[`item${this._order}_uuid`] = this._uuid;
             obj[`item${this._order}_item`] = this._item;
             if (this._note) {
                 obj[`item${this._order}_note`] = this._note;
@@ -211,7 +212,7 @@ export class Listitem {
         if (!other) {
             return false;
         }
-        return other.Uuid == this.Uuid;
+        return other.Uuid === this.Uuid;
     }
 
     /**
@@ -247,7 +248,7 @@ export class Listitem {
 }
 
 export declare type ListitemModel = {
-    uuid: string;
+    uuid: number | string;
     item: string;
     note?: string;
     order: number;

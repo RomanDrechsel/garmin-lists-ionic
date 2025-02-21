@@ -1,4 +1,5 @@
 import { CapacitorConfig } from "@capacitor/cli";
+import { KeyboardResize, KeyboardStyle } from "@capacitor/keyboard";
 
 const config: CapacitorConfig = {
     appId: "de.romandrechsel.lists.dev",
@@ -24,6 +25,11 @@ const config: CapacitorConfig = {
         },
         StatusBar: {
             overlaysWebView: false,
+        },
+        Keyboard: {
+            resize: KeyboardResize.Body,
+            style: KeyboardStyle.Default,
+            resizeOnFullScreen: true,
         },
     },
     android: {

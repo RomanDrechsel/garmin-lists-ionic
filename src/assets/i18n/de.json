@@ -78,7 +78,7 @@
         "restore_confirm": "Möchtest du die Liste <strong>{{name}}</strong> wiederherstellen?",
         "restore_success": "Die Liste wurde wiederhergestellt.",
         "restore_error": "Die Liste konnte nicht wiederhergestellt werden!",
-        "restore_item_confirm": "Möchtest du denaPunkt <strong>{{name}}</strong> wiederherstellen?",
+        "restore_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> wiederherstellen?",
         "restore_item_success": "Der Punkt wurde wiederhergestellt.",
         "restore_item_error": "Der Punkt konnte nicht wiederhergestellt werden!",
         "empty_trash_confirm": "Möchstest du den Papierkorb leeren und die {{count}} Listen löschen?",
@@ -91,7 +91,9 @@
         "transmit_process": "Die Liste wird übertragen...",
         "transmit_success": "Die Liste wurde erfolgreich übertragen",
         "transmit_error": "Die Liste konnte nicht übertragen werden!",
-        "transmit_send_btn": "An Gerät senden"
+        "transmit_send_btn": "An Gerät senden",
+        "add_moreitems_success": "Punkt hinzugefügt.",
+        "add_moreitems_error": "Punkte konnte nicht hinzugefügt werden!"
     },
     "service-connectiq": {
         "watch_outdated": "Du scheinst auf deinem Gerät <strong>{{device}}</strong> eine alte Version der Listen-App zu verwenden.<br /><br />Bitte aktuallisiere die App auf deiner Uhr, um alle Funktionen nutzen zu können.",
@@ -106,13 +108,17 @@
         "title_new": "Neue Liste anlegen",
         "title_edit": "Liste bearbeiten",
         "listname": "Bezeichnung",
+        "settings": "Einstellungen",
         "reset": "Liste automatisch zurücksetzen",
-        "reset_note": "Setzt alle Listenpunkte auf der Uhr in einem bestimmten Interval auf nicht-erledigt.",
         "reset_info": "Auf deiner Uhr werden alle Listenpunkte dieser Liste in einem bestimmten Intervall wieder auf \"nicht erledigt\" gesetzt.<br /><br />Dies eignet sich zum Beispiel für wiederkehrende Aufgaben wie Hausarbeiten oder andere regelmäßige Tätigkeiten.",
         "reset_interval": "Intervall",
         "reset_daily": "Täglich",
         "reset_weekly": "Wöchentlich",
-        "reset_monthly": "Monatlich"
+        "reset_monthly": "Monatlich",
+        "sync": "Liste mit Uhr synchronisieren",
+        "sync_info": "Wenn du Änderungen an der Liste vornimmst, z.B. das Hinzufügen oder Löschen von Listenpunkten, werden diese Änderungen im Hintergrund automatisch auf deine Uhr übertragen.<br /><br />Beachte bitte, dass der Speicherplatz der App auf deiner Uhr begrenzt ist und dass durch die Synchronisierung die Akku-Ladung der Uhr schneller verbraucht werden kann.<br />Synchronisiere nicht zu viele Listen gleichzeitg.",
+        "sync_settings": "Um das automatische Synchronisieren zu aktivieren, musst du die entsprechende Option in den Einstellungen aktivieren.<br />Möchtest du zu den Einstellungen wechseln?",
+        "delete": "Liste löschen"
     },
     "comp-select-interval": {
         "last": "letzter",
@@ -127,7 +133,9 @@
         "hidden": "Versteckt",
         "hidden_info": "Versteckte Listenpunkte werden nicht mit auf Deine Uhr übertragen, bleiben aber auf dem Smartphone erhalten.<br /><br />Dies ist nützlich, wenn Du zeitweise bestimmte Punkte nicht anzeigen willst, aber sie trotzdem nicht löschen möchtest. Sie können später wiederverwendet werden.",
         "locked": "Gesperrt",
-        "locked_info": "Gesperrte Listenpunkte werden beim Leeren der Liste nicht gelöscht.<br /><br />Dies vereinfacht das Aufräumen der Liste, wenn Du bestimmte Punkte regelmäßig wiederholen möchtest."
+        "locked_info": "Gesperrte Listenpunkte werden beim Leeren der Liste nicht gelöscht.<br /><br />Dies vereinfacht das Aufräumen der Liste, wenn Du bestimmte Punkte regelmäßig wiederholen möchtest.",
+        "delete": "Listenpunkt löschen",
+        "add_more": "einen weiteren Punkt hinzufügen"
     },
     "comp_sharelog": {
         "title": "Log Speichern",
@@ -177,7 +185,8 @@
         "lock": "Sperren",
         "unlock": "Entsperren",
         "nolist": "Etwas ist schiefgelaufen :(<br /><br />Die Liste kann nicht angezeigt werden.",
-        "add_new_hint": "Lege einen neuen Punkt in der Liste an."
+        "add_new_hint": "Lege einen neuen Punkt in der Liste an.",
+        "quickadd": "Neuen Punkt anlegen..."
     },
     "page_trash": {
         "page_title": "Papierkorb",
@@ -292,10 +301,17 @@
     },
     "page_lists_transmission": {
         "page_title": "Übertragung zu Uhr",
-        "openontransmit": "App beim Übertragen starten",
-        "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst.",
+        "openontransmit": "App beim manuellen Übertragen starten",
+        "openontransmit_note": "Auf deiner Uhr nachfragen, ob die App gestartet werden soll, wenn du eine Liste überträgst?",
         "deletelist": "Listen automatisch von der Uhr löschen",
-        "deletelist_note": "Beim Löschen einer Liste auf dem Smartphone die Liste auch auf deiner Uhr löschen."
+        "deletelist_note": "Beim Löschen einer Liste auf dem Smartphone die Liste auch auf deiner Uhr löschen.",
+        "synclist": "Listen automatisch synchronisieren",
+        "synclist_note": "Bei Änderungen an einer Liste diese sofort mit der Uhr synchronisieren.",
+        "synclist_warning": "<strong>Achtung:</strong> Bedenke, dass der Speicherplatz der App auf der Uhr begrenzt ist. Du solltest nicht zu viele Listen gleichzeitig synchronisieren!",
+        "synclist_disable_title": "Synchronisierung aufheben?",
+        "synclist_disable": "Sollen die Einstellungen für die automatische Synchronisierung für alle Listen aufgehoben werden?<br /><br />Falls Du diese Einstellung später wieder aktivierst, musst du die Synchronisierung für jede Liste neu einstellen.",
+        "synclist_undo": "Erledigt-Markierung aufheben",
+        "synclist_undo_note": "Soll die Erledigt-Markierung von Listenpunkten auf der Uhr wieder aufgehoben werden, wenn eine Liste übertragen wird?"
     },
     "page_settings_trash": {
         "page_title": "Papierkorb",

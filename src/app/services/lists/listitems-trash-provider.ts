@@ -9,7 +9,7 @@ export class ListitemsTrashProvider {
 
     private _maxEntryCount: number = -1;
 
-    public constructor(private readonly Backend: ListsBackendService, private readonly _datasetChangedSubject: BehaviorSubject<ListitemTrashModel | undefined>) { }
+    public constructor(private readonly Backend: ListsBackendService, private readonly _datasetChangedSubject: BehaviorSubject<ListitemTrashModel | undefined>) {}
 
     /**
      * keep a maximum number of listitems in every list trash
@@ -26,16 +26,16 @@ export class ListitemsTrashProvider {
 
     /**
      * stores one or more listitems in the trash of the list
-     * @param listId Unique identifier of the list
+     * @param listUuid Unique identifier of the list
      * @param items listitem or array of listitems
      * @returns was the storage successful?
      */
-    public async StoreListitem(listId: string, items: Listitem | Listitem[]): Promise<boolean> {
+    public async StoreListitem(listUuid: string | number, items: Listitem | Listitem[]): Promise<boolean> {
         if (!Array.isArray(items)) {
             items = [items];
         }
 
-        const trash = (await this.Backend.GetListitemTrash(listId, this.StoragePath)) ?? { uuid: listId, items: [] };
+        const trash = (await this.Backend.GetListitemTrash(`${listUuid}`, this.StoragePath)) ?? { uuid: listUuid, items: [] };
         items.forEach(i => {
             i.Deleted = Date.now();
             trash.items.push(i.toBackend());
@@ -54,8 +54,8 @@ export class ListitemsTrashProvider {
      * @param uuid unique identifier of the list
      * @returns ListitemTrashModel
      */
-    public GetListitemsTrash(uuid: string): Promise<ListitemTrashModel | undefined> {
-        return this.Backend.GetListitemTrash(uuid, this.StoragePath);
+    public GetListitemsTrash(uuid: string | number): Promise<ListitemTrashModel | undefined> {
+        return this.Backend.GetListitemTrash(`${uuid}`, this.StoragePath);
     }
 
     /**
@@ -136,7 +136,7 @@ export class ListitemsTrashProvider {
      * returns the total size of all files in the backend
      * @returns size in bytes and number of entries
      */
-    public async BackendSize(): Promise<{ size: number; files: number; }> {
+    public async BackendSize(): Promise<{ size: number; files: number }> {
         return this.Backend.GetSize(this.StoragePath);
     }
 

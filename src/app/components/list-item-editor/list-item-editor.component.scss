@@ -1,6 +1,6 @@
 :host {
     display: block;
-    max-height: 80%;
+    max-height: 90%;
 
     ion-header {
         ion-toolbar {
@@ -28,7 +28,25 @@
         }
     }
 
-    ion-button {
+    .buttons {
         margin-top: 20px;
+        column-gap: 1em;
+
+        ion-toggle {
+            font-size: 0.8em;
+            line-height: 0.9em;
+            --handle-width: 1.3em;
+            --handle-height: 1.3em;
+            --handle-max-height: auto;
+
+            &::part(label) {
+                margin-inline-start: 0.5em;
+            }
+
+            &::part(track) {
+                width: 28px;
+                height: 10px;
+            }
+        }
     }
 }

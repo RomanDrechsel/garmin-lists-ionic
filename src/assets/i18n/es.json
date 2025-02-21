@@ -92,7 +92,9 @@
         "transmit_process": "La lista está siendo transmitida...",
         "transmit_success": "La lista fue transmitida correctamente.",
         "transmit_error": "¡No se pudo transmitir la lista!",
-        "transmit_send_btn": "Enviar a dispositivo"
+        "transmit_send_btn": "Enviar a dispositivo",
+        "add_moreitems_success": "Elemento añadido.",
+        "add_moreitems_error": "¡No se pudo añadir el elemento!"
     },
     "service-connectiq": {
         "watch_outdated": "Parece que estás utilizando una versión antigua de la aplicación de listas en tu dispositivo <strong>{{device}}</strong><br /><br /> Por favor, actualiza la app en tu reloj para poder utilizar todas las funciones.",
@@ -107,13 +109,17 @@
         "title_new": "Crear nueva lista",
         "title_edit": "Editar lista",
         "listname": "Nombre de la lista",
+        "settings": "Configuración",
         "reset": "Reiniciar lista automáticamente",
-        "reset_note": "Restablece todos los elementos de la lista en el reloj a no completados en un determinado intervalo.",
         "reset_info": "En tu reloj, se restablecerán todos los elementos de esta lista en un determinado intervalo a no completados.<br /><br /> Esto es útil para tareas repetitivas como hacer la casa o otras actividades regulares.",
         "reset_interval": "Intervalo",
         "reset_daily": "Diario",
         "reset_weekly": "Semanal",
-        "reset_monthly": "Mensual"
+        "reset_monthly": "Mensual",
+        "sync": "Sincronizar lista con el reloj",
+        "sync_info": "Cuando realices cambios en la lista, como agregar o eliminar elementos, estos cambios se transferirán automáticamente a tu reloj en segundo plano.<br /><br />Tenga en cuenta que el espacio de almacenamiento de la aplicación en su reloj es limitado y que la sincronización puede agotar la carga de la batería del reloj más rápidamente.<br />No sincronice demasiadas listas al mismo tiempo.",
+        "sync_settings": "Para activar la sincronización automática, debes activar la opción correspondiente en la configuración.<br />¿Te gustaría ir a la configuración?",
+        "delete": "Eliminar lista"
     },
     "comp-select-interval": {
         "last": "Último",
@@ -128,7 +134,9 @@
         "hidden": "Oculto",
         "hidden_info": "Los elementos de lista ocultos no se transfieren a tu reloj, pero permanecen en el teléfono inteligente.<br /><br />Esto es útil si temporalmente no deseas mostrar ciertos elementos, pero tampoco deseas eliminarlos. Pueden ser reutilizados más tarde.",
         "locked": "Bloqueado",
-        "locked_info": "Los elementos de lista bloqueados no se eliminan al vaciar la lista.<br /><br />Esto facilita el orden de la lista si deseas repetir ciertos elementos regularmente."
+        "locked_info": "Los elementos de lista bloqueados no se eliminan al vaciar la lista.<br /><br />Esto facilita el orden de la lista si deseas repetir ciertos elementos regularmente.",
+        "delete": "Borrar el elemento",
+        "add_more": "Añadir otro elemento"
     },
     "comp_sharelog": {
         "title": "Guardar log",
@@ -178,7 +186,8 @@
         "lock": "Bloquear",
         "unlock": "Desbloquear",
         "nolist": "Algo ha salido mal :(<br /><br />No se puede mostrar la lista.",
-        "add_new_hint": "Crear un nuevo elemento en la lista."
+        "add_new_hint": "Crear un nuevo elemento en la lista.",
+        "quickadd": "Crear nuevo elemento..."
     },
     "page_trash": {
         "page_title": "Papelera",
@@ -293,10 +302,17 @@
     },
     "page_lists_transmission": {
         "page_title": "Enviar lista a reloj",
-        "openontransmit": "Abrir la app al enviar lista",
-        "openontransmit_note": "Pida permiso para abrir la app en el reloj cuando se envíe una lista.",
+        "openontransmit": "Iniciar la aplicación durante la transferencia manual",
+        "openontransmit_note": "Pregúntale a tu reloj si la aplicación debe iniciarse cuando transfieras una lista.",
         "deletelist": "Eliminar lista del reloj",
-        "deletelist_note": "Elimine la lista del smartphone al mismo tiempo que la elimina del reloj."
+        "deletelist_note": "Elimine la lista del smartphone al mismo tiempo que la elimina del reloj.",
+        "synclist": "Sincronizar listas automáticamente",
+        "synclist_warning": "<strong>Aviso:</strong> Ten en cuenta que el espacio de almacenamiento de la aplicación en el reloj es limitado. No sincronices demasiadas listas al mismo tiempo.",
+        "synclist_note": "Sincronizar una lista con el reloj inmediatamente cuando se realicen cambios.",
+        "synclist_disable_title": "¿Deshabilitar sincronización?",
+        "synclist_disable": "¿Quieres desactivar la configuración de sincronización automática para todas las listas?<br /><br />Si vuelves a activar esta configuración más tarde, tendrás que configurar la sincronización para cada lista nuevamente.",
+        "synclist_done": "Deshacer Marca de Hecho",
+        "synclist_done_note": "¿Debería deshacerse la marca de hecho de los elementos de la lista en el reloj cuando se transfiere una lista?"
     },
     "page_settings_trash": {
         "page_title": "Papelera",

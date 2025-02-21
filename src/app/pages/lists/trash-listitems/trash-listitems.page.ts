@@ -20,7 +20,7 @@ import { PageBase } from "../../page-base";
     imports: [IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, IonImg, CommonModule, IonFab, IonFabButton, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListitemsPage extends PageBase {
-    @ViewChild("itemsContainer") private itemsContainer!: IonList;
+    @ViewChild("itemsContainer") private itemsContainer?: IonList;
     public Trash?: ListitemTrashModel;
 
     @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
@@ -32,6 +32,8 @@ export class TrashListitemsPage extends PageBase {
     private _scrollPosition: "top" | "bottom" | number = "top";
 
     private _trashInitialized = false;
+
+    private _listUuid?: string = undefined;
 
     private Route = inject(ActivatedRoute);
 
@@ -58,11 +60,20 @@ export class TrashListitemsPage extends PageBase {
         return this._trashInitialized;
     }
 
+    public get BackLink(): string {
+        if (this._listUuid) {
+            return `/lists/items/${this._listUuid}`;
+        } else {
+            return "/lists";
+        }
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
         this._trashInitialized = false;
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
+            this._listUuid = listid;
             this.Trash = await this.ListsService.GetListitemTrash(listid);
             this._trashInitialized = true;
             this.reload();
@@ -100,7 +111,7 @@ export class TrashListitemsPage extends PageBase {
             await this.ListsService.EraseListitemFromTrash(this.Trash, item);
             this.reload();
         }
-        this.itemsContainer.closeSlidingItems();
+        this.itemsContainer?.closeSlidingItems();
     }
 
     public async restoreItem(item: ListitemModel) {
@@ -108,7 +119,7 @@ export class TrashListitemsPage extends PageBase {
             await this.ListsService.RestoreListitemFromTrash(this.Trash, item);
             this.reload();
         }
-        this.itemsContainer.closeSlidingItems();
+        this.itemsContainer?.closeSlidingItems();
     }
 
     public async emptyTrash(): Promise<boolean> {
