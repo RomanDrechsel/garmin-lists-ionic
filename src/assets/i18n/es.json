@@ -163,9 +163,8 @@
     },
     "comp_watchlogs": {
         "title": "Transferir logs",
-        "text": "Para transferir los logs de tu reloj, primero debes iniciar la aplicación en tu reloj<br /><br /><strong>{{name}}</strong><br /><br /> Si la app está ejecutándose, los logs se transferirán automáticamente. Sin embargo, esto puede tardar unos segundos.",
+        "text": "Los registros están siendo transmitidos desde el dispositivo<br /><br /><strong>{{name}}</strong><br /><br />Esto puede tardar unos segundos.",
         "withoutlogs": "Continuar sin logs",
-        "openApp": "Abrir la aplicación",
         "logs_received_confirm": "Los registros han sido recibidos.<br /><br />¿Deseas verlos ahora?"
     },
     "page_lists": {

@@ -719,6 +719,7 @@ export class ListsService {
             if (!this._syncListsUndone) {
                 payload["donot_undone"] = true;
             }
+            payload["sync"] = true;
 
             if (await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload })) {
                 Logger.Debug(`Sync list ${list.toLog()} to watch ${device.toLog()}`);
