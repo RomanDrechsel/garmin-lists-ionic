@@ -35,6 +35,10 @@ export class RequestWatchLogComponent implements AfterViewInit {
         this.modalCtrl.dismiss(["Log request canceled"], "confirm");
     }
 
+    public async openApp() {
+        await this.ConnectIQ.openApp(this.Params.device);
+    }
+
     private async requestLog(): Promise<void> {
         const logs = await new Promise<string[]>(async resolve => {
             const tid = await this.ConnectIQ.SendToDevice({

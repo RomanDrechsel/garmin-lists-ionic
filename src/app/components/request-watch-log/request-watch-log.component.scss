@@ -3,7 +3,14 @@
     max-height: 80%;
 
     .buttons {
+        display: flex;
         justify-content: right;
-        padding: 2em 0.5em 0.5em 0;
+        flex-direction: row;
+        padding: 0 6px 6px 0;
+        gap: 1em;
+
+        ion-button {
+            max-width: 45%;
+        }
     }
 }
