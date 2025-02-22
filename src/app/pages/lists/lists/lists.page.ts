@@ -114,7 +114,7 @@ export class ListsPage extends PageBase {
                     translate: true,
                 })
             ) {
-                this.NavController.navigateForward("/settings/lists-transmission");
+                this.NavController.navigateForward("/settings/lists-transmission", { queryParams: { syncList: list } });
             }
         }
     }
