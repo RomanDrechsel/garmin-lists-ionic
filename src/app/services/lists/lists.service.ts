@@ -675,21 +675,36 @@ export class ListsService {
         const lists = await this.GetLists(true);
         for (let i = 0; i < lists.length; i++) {
             lists[i].Sync = false;
-            await this.StoreList(lists[i], false, false, false);
+            await this.StoreList(lists[i], false, true, false);
         }
         Logger.Debug(`Removed automatic synchronization of all lists`);
     }
 
     /**
+     * sync a list to the watch
+     * @param obj config for list sync
+     */
+    public async SyncList(obj: { list: List | string | number; only_if_definitive_device?: boolean; force_if_sync_is_disabled?: boolean }): Promise<void> {
+        const list_to_sync = obj.list instanceof List ? obj.list : await this.GetList(obj.list);
+        if (!list_to_sync) {
+            Logger.Error(`Could not sync list ${obj.list} to watch, does not exist`);
+            return;
+        }
+        return this.syncListToWatch(list_to_sync, obj.only_if_definitive_device, obj.force_if_sync_is_disabled);
+    }
+
+    /**
      * sync changes to a list to the watch
      * @param list List to be synced
+     * @param only_if_definitive_device only sync list, if the device is unambiguous
+     * @param force_in_sync_is_disabled force sync even if list-sync is disabled
      */
-    private async syncListToWatch(list: List): Promise<void> {
-        if (!this._syncLists || !list.Sync) {
+    private async syncListToWatch(list: List, only_if_definitive_device: boolean = false, force_in_sync_is_disabled: boolean = false): Promise<void> {
+        if ((!this._syncLists || !list.Sync) && !force_in_sync_is_disabled) {
             return;
         }
 
-        const device = await this.ConnectIQ.GetDefaultDevice({ only_ready: true });
+        const device = await this.ConnectIQ.GetDefaultDevice({ only_ready: true, select_device_if_undefined: !only_if_definitive_device });
         if (device) {
             if (list.isPeek) {
                 const fulllist = await this.GetList(list.Uuid);
