@@ -309,9 +309,7 @@
         "synclist_warning": "<strong>警告:</strong> 請記住，手錶上應用程式的儲存空間有限。您不應同時同步處理太多清單！",
         "synclist_note": "清單變更後，立即與手錶同步。",
         "synclist_disable_title": "取消同步？",
-        "synclist_disable": "是否要禁用所有列表的自動同步設置？<br /><br />如果稍後重新啟用此設置，則需要為每個列表重新配置同步。",
-        "synclist_undo": "取消已完成的標記",
-        "synclist_undo_note": "轉移清單時，是否應該再次取消時鐘上已完成的清單項目標記？"
+        "synclist_disable": "是否要禁用所有列表的自動同步設置？<br /><br />如果稍後重新啟用此設置，則需要為每個列表重新配置同步。"
     },
     "page_settings_trash": {
         "page_title": "垃圾桶",

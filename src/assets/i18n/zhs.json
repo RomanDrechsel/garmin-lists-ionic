@@ -310,9 +310,7 @@
         "synclist_warning": "<strong>警告：</strong> 请注意，手表上的应用程序存储空间有限。不应同时同步过多的列表！",
         "synclist_note": "リストを変更するとすぐに時計と同期します。",
         "synclist_disable_title": "取消同步？",
-        "synclist_disable": "是否要禁用所有列表的自动同步设置？<br /><br />如果稍后重新启用此设置，则需要为每个列表重新配置同步。",
-        "synclist_undo": "还原已完成标记",
-        "synclist_undo_note": "在传输列表时，是否应移除手表上的已完成标记？"
+        "synclist_disable": "是否要禁用所有列表的自动同步设置？<br /><br />如果稍后重新启用此设置，则需要为每个列表重新配置同步。"
     },
     "page_settings_trash": {
         "page_title": "回收站",

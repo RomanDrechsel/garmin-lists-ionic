@@ -310,9 +310,7 @@
         "synclist_warning": "<strong>Aviso:</strong> Ten en cuenta que el espacio de almacenamiento de la aplicación en el reloj es limitado. No sincronices demasiadas listas al mismo tiempo.",
         "synclist_note": "Sincronizar una lista con el reloj inmediatamente cuando se realicen cambios.",
         "synclist_disable_title": "¿Deshabilitar sincronización?",
-        "synclist_disable": "¿Quieres desactivar la configuración de sincronización automática para todas las listas?<br /><br />Si vuelves a activar esta configuración más tarde, tendrás que configurar la sincronización para cada lista nuevamente.",
-        "synclist_done": "Deshacer Marca de Hecho",
-        "synclist_done_note": "¿Debería deshacerse la marca de hecho de los elementos de la lista en el reloj cuando se transfiere una lista?"
+        "synclist_disable": "¿Quieres desactivar la configuración de sincronización automática para todas las listas?<br /><br />Si vuelves a activar esta configuración más tarde, tendrás que configurar la sincronización para cada lista nuevamente."
     },
     "page_settings_trash": {
         "page_title": "Papelera",

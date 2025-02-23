@@ -21,7 +21,6 @@ export class ListsTransmissionPage extends PageBase {
     private _openAppOnTransfer: boolean = false;
     private _deleteListOnDevice: boolean = false;
     private _syncListOnDevice: boolean = false;
-    private _undoItemsOnDevice: boolean = false;
 
     private _listToSync: List | string | null = null;
 
@@ -47,15 +46,6 @@ export class ListsTransmissionPage extends PageBase {
         return this._syncListOnDevice;
     }
 
-    public set UndoItemsOnDevice(v: boolean) {
-        this._undoItemsOnDevice = v;
-        this.Preferences.Set(EPrefProperty.UndoItemsOnDevice, v);
-    }
-
-    public get UndoItemsOnDevice(): boolean {
-        return this._undoItemsOnDevice;
-    }
-
     public set SyncListOnDevice(v: boolean) {
         this._syncListOnDevice = v;
         this.Preferences.Set(EPrefProperty.SyncListOnDevice, v);
@@ -68,7 +58,6 @@ export class ListsTransmissionPage extends PageBase {
         this._openAppOnTransfer = await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, false);
         this._deleteListOnDevice = await this.Preferences.Get<boolean>(EPrefProperty.DeleteListOnDevice, false);
         this._syncListOnDevice = await this.Preferences.Get<boolean>(EPrefProperty.SyncListOnDevice, false);
-        this._undoItemsOnDevice = await this.Preferences.Get<boolean>(EPrefProperty.UndoItemsOnDevice, false);
 
         this._listToSync = this.Route.snapshot.queryParamMap.get("syncList");
 
@@ -89,10 +78,6 @@ export class ListsTransmissionPage extends PageBase {
         if (checked && this._listToSync) {
             await this.ListsService.SyncList({ list: this._listToSync, only_if_definitive_device: true, force_if_sync_is_disabled: true });
         }
-    }
-
-    public onUndoItemsOnDeviceChanged(checked: boolean) {
-        this.UndoItemsOnDevice = checked;
     }
 
     private async confirmRemoveSync() {

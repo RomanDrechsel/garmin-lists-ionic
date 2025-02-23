@@ -309,9 +309,7 @@
         "synclist_warning": "<strong>Attention:</strong> N'oublie pas que l'espace de stockage de l'application sur la montre est limité. Tu ne devrais pas synchroniser trop de listes en même temps!",
         "synclist_note": "Synchroniser immédiatement une liste avec la montre lorsqu'elle est modifiée.",
         "synclist_disable_title": "Désactiver la synchronisation?",
-        "synclist_disable": "Voulez-vous désactiver les paramètres de synchronisation automatique pour toutes les listes ?<br /><br />Si vous réactivez ce paramètre plus tard, vous devrez reconfigurer la synchronisation pour chaque liste.",
-        "synclist_undo": "Annuler le marquage comme terminé",
-        "synclist_undo_note": "Faut-il annuler le marquage comme terminé des éléments de la liste sur la montre lorsqu'une liste est transférée ?"
+        "synclist_disable": "Voulez-vous désactiver les paramètres de synchronisation automatique pour toutes les listes ?<br /><br />Si vous réactivez ce paramètre plus tard, vous devrez reconfigurer la synchronisation pour chaque liste."
     },
     "page_settings_trash": {
         "page_title": "Corbeille",
