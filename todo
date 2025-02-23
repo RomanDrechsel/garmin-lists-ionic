@@ -8,4 +8,4 @@ TEST: Sync lists with watch
 TEST: if disable list sync in settings, ask if all syncs of all lists should be disabled
 TEST: uuids as number
 TEST: add new listitem line on listitem page
-TODO: change text on request watch logs component, the watch response now even if the app is not open
+TEST: Logs can't be send in background

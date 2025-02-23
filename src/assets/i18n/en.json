@@ -162,8 +162,9 @@
     },
     "comp_watchlogs": {
         "title": "Transmit logs",
-        "text": "The logs are being transmitted from the device<br /><br /><strong>{{name}}</strong><br /><br />This may take a few seconds.",
+        "text": "To transfer the logs from your watch, you must first start the app on your watch<br /><br /><strong>{{name}}</strong><br /><br />If the app is running, the logs should be transferred automatically. This may take a few seconds.",
         "withoutlogs": "Continue without logs",
+        "openApp": "Open app",
         "logs_received_confirm": "The logs have been received.<br /><br />Would you like to see them now?"
     },
     "page_lists": {
@@ -308,9 +309,7 @@
         "synclist_note": "Immediately sync changes to a list with the watch.",
         "synclist_warning": "<strong>Warning:</strong> Bear in mind that the app's storage on the watch is limited. You should not synchronize too many lists at the same time!",
         "synclist_disable_title": "Disable automatic synchronization?",
-        "synclist_disable": "Do you want to disable the automatic synchronization for all lists?<br /><br />If you enable this setting again later, you will need to reconfigure the synchronization for each list again.",
-        "synclist_undo": "Undo Done Marking",
-        "synclist_undo_note": "Should the done marking of list items on the watch be undone when a list is transferred?"
+        "synclist_disable": "Do you want to disable the automatic synchronization for all lists?<br /><br />If you enable this setting again later, you will need to reconfigure the synchronization for each list again."
     },
     "page_settings_trash": {
         "page_title": "Trash",

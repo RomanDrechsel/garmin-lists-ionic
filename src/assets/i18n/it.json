@@ -160,8 +160,9 @@
     },
     "comp_watchlogs": {
         "title": "Trasferisci i log",
-        "text": "I log vengono trasmessi dal dispositivo<br /><br /><strong>{{name}}</strong><br /><br />Questo potrebbe richiedere alcuni secondi.",
+        "text": "Per trasferire i log dal tuo orologio, devi prima avviare l'app sul tuo orologio<br /><br /><strong>{{name}}</strong><br /><br />Se l'app è in esecuzione, i log verranno trasferiti automaticamente. Tuttavia, questa operazione potrebbe richiedere alcuni secondi.",
         "withoutlogs": "Procedi senza log",
+        "openApp": "Aprire l'applicazione",
         "logs_received_confirm": "I registri sono stati ricevuti.<br /><br />Vuoi visualizzarli ora?"
     },
     "page_lists": {
@@ -286,9 +287,7 @@
         "synclist_warning": "<strong>Attenzione:</strong> Tenere presente che lo spazio di memoria dell'app sull'orologio è limitato. Non è consigliabile sincronizzare troppi elenchi contemporaneamente!",
         "synclist_note": "Sincronizza immediatamente una lista con l'orologio quando vengono apportate modifiche.",
         "synclist_disable_title": "Disabilitare la sincronizzazione?",
-        "synclist_disable": "Vuoi disattivare le impostazioni di sincronizzazione automatica per tutte le liste?<br /><br />Se riattivi questa impostazione in seguito, dovrai riconfigurare la sincronizzazione per ogni lista.",
-        "synclist_undo": "Annulla il contrassegno di completamento",
-        "synclist_undo_note": "Rimuovere il contrassegno di completamento dagli elementi dell'elenco sull'orologio quando un elenco viene trasferito?"
+        "synclist_disable": "Vuoi disattivare le impostazioni di sincronizzazione automatica per tutte le liste?<br /><br />Se riattivi questa impostazione in seguito, dovrai riconfigurare la sincronizzazione per ogni lista."
     },
     "page_settings_trash": {
         "page_title": "Cestino",

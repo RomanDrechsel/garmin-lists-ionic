@@ -41,7 +41,6 @@ export class ListsService {
 
     private _keepInTrashStock: KeepInTrash.Enum = KeepInTrash.Default;
     private _syncLists: boolean = false;
-    private _syncListsUndone: boolean = false;
     private _removeOldTrashEntriesTimer?: Subscription;
 
     public readonly Lists: WritableSignal<List[] | undefined> = signal(undefined);
@@ -65,12 +64,9 @@ export class ListsService {
     public async Initialize() {
         this.KeepInTrashStock = await this.Preferences.Get<number>(EPrefProperty.TrashKeepinStock, this._keepInTrashStock);
         this._syncLists = await this.Preferences.Get<boolean>(EPrefProperty.SyncListOnDevice, false);
-        this._syncListsUndone = await this.Preferences.Get<boolean>(EPrefProperty.UndoItemsOnDevice, false);
         this.Preferences.onPrefChanged$.subscribe(arg => {
             if (arg.prop == EPrefProperty.TrashKeepinStock) {
                 this.KeepInTrashStock = arg.value;
-            } else if (arg.prop == EPrefProperty.UndoItemsOnDevice) {
-                this._syncListsUndone = arg.value;
             } else if (arg.prop == EPrefProperty.SyncListOnDevice) {
                 this._syncLists = arg.value;
             }
@@ -572,16 +568,13 @@ export class ListsService {
                 AppService.AppToolbar?.ToggleProgressbar(true);
 
                 const payload = list.toDeviceObject();
-                if (!this._syncListsUndone) {
-                    payload["donot_undone"] = true;
-                }
                 const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload });
                 toast.dismiss();
                 AppService.AppToolbar?.ToggleProgressbar(false);
                 if (resp !== false) {
                     Logger.Debug(`Transfered list ${list.toLog()} to device ${device.toLog()}`);
                     this.Popups.Toast.Success("service-lists.transmit_success");
-                    if (await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, true)) {
+                    if (await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, false)) {
                         this.ConnectIQ.openApp(device);
                     }
                     return true;
@@ -714,10 +707,6 @@ export class ListsService {
             if (!payload) {
                 Logger.Error(`Could not sync new list to watch, list serialization failed`);
                 return;
-            }
-
-            if (!this._syncListsUndone) {
-                payload["donot_undone"] = true;
             }
             payload["sync"] = true;
 

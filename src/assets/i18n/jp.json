@@ -53,7 +53,7 @@
         "privacy": "プライバシー",
         "appinfos": "アプリ情報",
         "empty_trash": "ゴミ箱を空にする",
-        "openapp_btn": "アプリを開く"
+        "openapp": "アプリを開く"
     },
     "service-lists": {
         "store_list_error": "リストを保存できませんでした！",
@@ -162,8 +162,9 @@
     },
     "comp_watchlogs": {
         "title": "ログを転送",
-        "text": "ログはデバイス<br /><br /><strong>{{name}}</strong><br /><br />から送信されています。<br /> これには数秒かかる場合があります。",
+        "text": "ウォッチからログを転送するには、まずウォッチでアプリ<br /><br /><strong>{{name}}</strong><br /><br />を起動する必要があります。アプリが起動すると、ログが自動的に転送されます。ただし、これには数秒かかる場合がある。",
         "withoutlogs": "ログなしで続行",
+        "openApp": "アプリを開く",
         "logs_received_confirm": "ログが届きました。<br /><br />今すぐご覧になりますか？"
     },
     "page_lists": {
@@ -308,9 +309,7 @@
         "synclist_warning": "<strong>警告:</strong> ウォッチ上のアプリのストレージ容量には限りがあります。同時に多くのリストを同期しないようにしてください！",
         "synclist_note": "リストに変更があった場合、すぐに時計と同期する。",
         "synclist_disable_title": "同期を無効にしますか？",
-        "synclist_disable": "すべてのリストの自動同期設定を無効にしますか？<br /><br />この設定を後で再度有効にする場合は、各リストの同期を再設定する必要があります。",
-        "synclist_undo": "完了マークを解除",
-        "synclist_undo_note": "リストを転送するときに、時計上のリスト項目の完了マークを解除しますか？"
+        "synclist_disable": "すべてのリストの自動同期設定を無効にしますか？<br /><br />この設定を後で再度有効にする場合は、各リストの同期を再設定する必要があります。"
     },
     "page_settings_trash": {
         "page_title": "ゴミ箱",

@@ -12,5 +12,6 @@
     <div [innerHTML]="'comp_watchlogs.text' | translate : { name: Params.device.Name }"></div>
 </div>
 <div class="buttons">
+    <ion-button (click)="openApp()">{{ "comp_watchlogs.openApp" | translate }}</ion-button>
     <ion-button (click)="proceedWithoutLogs()">{{ "comp_watchlogs.withoutlogs" | translate }}</ion-button>
 </div>

@@ -163,8 +163,9 @@
     },
     "comp_watchlogs": {
         "title": "Transferir logs",
-        "text": "Los registros están siendo transmitidos desde el dispositivo<br /><br /><strong>{{name}}</strong><br /><br />Esto puede tardar unos segundos.",
+        "text": "Para transferir los logs de tu reloj, primero debes iniciar la aplicación en tu reloj<br /><br /><strong>{{name}}</strong><br /><br /> Si la app está ejecutándose, los logs se transferirán automáticamente. Sin embargo, esto puede tardar unos segundos.",
         "withoutlogs": "Continuar sin logs",
+        "openApp": "Abrir la aplicación",
         "logs_received_confirm": "Los registros han sido recibidos.<br /><br />¿Deseas verlos ahora?"
     },
     "page_lists": {
@@ -309,9 +310,7 @@
         "synclist_warning": "<strong>Aviso:</strong> Ten en cuenta que el espacio de almacenamiento de la aplicación en el reloj es limitado. No sincronices demasiadas listas al mismo tiempo.",
         "synclist_note": "Sincronizar una lista con el reloj inmediatamente cuando se realicen cambios.",
         "synclist_disable_title": "¿Deshabilitar sincronización?",
-        "synclist_disable": "¿Quieres desactivar la configuración de sincronización automática para todas las listas?<br /><br />Si vuelves a activar esta configuración más tarde, tendrás que configurar la sincronización para cada lista nuevamente.",
-        "synclist_done": "Deshacer Marca de Hecho",
-        "synclist_done_note": "¿Debería deshacerse la marca de hecho de los elementos de la lista en el reloj cuando se transfiere una lista?"
+        "synclist_disable": "¿Quieres desactivar la configuración de sincronización automática para todas las listas?<br /><br />Si vuelves a activar esta configuración más tarde, tendrás que configurar la sincronización para cada lista nuevamente."
     },
     "page_settings_trash": {
         "page_title": "Papelera",
