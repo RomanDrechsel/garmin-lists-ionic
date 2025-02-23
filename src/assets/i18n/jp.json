@@ -53,7 +53,7 @@
         "privacy": "プライバシー",
         "appinfos": "アプリ情報",
         "empty_trash": "ゴミ箱を空にする",
-        "openapp_btn": "アプリを開く"
+        "openapp": "アプリを開く"
     },
     "service-lists": {
         "store_list_error": "リストを保存できませんでした！",
