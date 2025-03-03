@@ -159,10 +159,10 @@ export class Listitem {
                 obj = {};
             }
 
-            obj[`item${this._order}_uuid`] = this._uuid;
-            obj[`item${this._order}_item`] = this._item;
+            obj[`it${this._order}_uuid`] = this._uuid;
+            obj[`it${this._order}_i`] = this._item;
             if (this._note) {
-                obj[`item${this._order}_note`] = this._note;
+                obj[`item${this._order}_n`] = this._note;
             }
         }
         return obj;

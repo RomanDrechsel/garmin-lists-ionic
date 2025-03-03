@@ -256,9 +256,9 @@ export class List {
     public toDeviceObject(): any {
         const ret: { [key: string]: any } = {};
         ret["uuid"] = this._uuid;
-        ret["name"] = this._name;
-        ret["date"] = this._updated;
-        ret["order"] = this._order;
+        ret["t"] = this._name;
+        ret["d"] = this._updated;
+        ret["o"] = this._order;
 
         if (this._items) {
             let order = 0;
@@ -269,14 +269,14 @@ export class List {
         }
 
         if (this._reset && this._reset.active) {
-            ret["reset_active"] = this._reset.active;
-            ret["reset_interval"] = this._reset.interval?.charAt(0) ?? undefined;
-            ret["reset_hour"] = this._reset.hour;
-            ret["reset_minute"] = this._reset.minute;
+            ret["r_a"] = this._reset.active;
+            ret["r_i"] = this._reset.interval?.charAt(0) ?? undefined;
+            ret["r_h"] = this._reset.hour;
+            ret["r_m"] = this._reset.minute;
             if (this._reset.interval == "weekly") {
-                ret["reset_weekday"] = this._reset.weekday;
+                ret["r_w"] = this._reset.weekday;
             } else if (this._reset.interval == "monthly") {
-                ret["reset_day"] = this._reset.day;
+                ret["r_d"] = this._reset.day;
             }
         }
 
