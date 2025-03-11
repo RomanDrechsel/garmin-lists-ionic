@@ -14,6 +14,8 @@ export class List {
     private _sync: boolean = false;
     private _dirty: boolean = false;
 
+    private static readonly ListRevision = 1;
+
     public constructor(obj: ListModel, itemcount?: number) {
         this._uuid = obj.uuid;
         this._name = obj.name;
@@ -259,6 +261,7 @@ export class List {
         ret["t"] = this._name;
         ret["d"] = this._updated;
         ret["o"] = this._order;
+        ret["rev"] = List.CurrentRevision;
 
         if (this._items) {
             let order = 0;
