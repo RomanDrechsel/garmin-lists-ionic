@@ -261,7 +261,7 @@ export class List {
         ret["t"] = this._name;
         ret["d"] = this._updated;
         ret["o"] = this._order;
-        ret["rev"] = List.CurrentRevision;
+        ret["rev"] = List.ListRevision;
 
         if (this._items) {
             let order = 0;
