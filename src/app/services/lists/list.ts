@@ -14,6 +14,8 @@ export class List {
     private _sync: boolean = false;
     private _dirty: boolean = false;
 
+    private static readonly ListRevision = 1;
+
     public constructor(obj: ListModel, itemcount?: number) {
         this._uuid = obj.uuid;
         this._name = obj.name;
@@ -253,30 +255,24 @@ export class List {
      * create an object to send to a device
      * @returns device object representation
      */
-    public toDeviceObject(): any {
-        const ret: { [key: string]: any } = {};
-        ret["uuid"] = this._uuid;
-        ret["name"] = this._name;
-        ret["date"] = this._updated;
-        ret["order"] = this._order;
+    public toDeviceObject(): string[] {
+        const ret: string[] = ["uuid=" + this._uuid, "t=" + this._name, "d=" + this._updated, "o=" + this._order, "rev=" + List.ListRevision];
 
         if (this._items) {
-            let order = 0;
             for (let i = 0; i < this._items.length; i++) {
-                this._items[i].Order = order++;
-                this._items[i].toDeviceObject(ret);
+                const item = this._items[i].toDeviceObject();
+                if (item) {
+                    ret.push(...item);
+                }
             }
         }
 
         if (this._reset && this._reset.active) {
-            ret["reset_active"] = this._reset.active;
-            ret["reset_interval"] = this._reset.interval?.charAt(0) ?? undefined;
-            ret["reset_hour"] = this._reset.hour;
-            ret["reset_minute"] = this._reset.minute;
+            ret.push(...["r_a=" + this._reset.active, "r_i=" + (this._reset.interval?.charAt(0) ?? undefined), "r_h=" + this._reset.hour, "r_m=" + this._reset.minute]);
             if (this._reset.interval == "weekly") {
-                ret["reset_weekday"] = this._reset.weekday;
+                ret.push("r_w=" + this._reset.weekday);
             } else if (this._reset.interval == "monthly") {
-                ret["reset_day"] = this._reset.day;
+                ret.push("r_d=" + this._reset.day);
             }
         }
 

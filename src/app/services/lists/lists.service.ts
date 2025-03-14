@@ -700,15 +700,14 @@ export class ListsService {
         const device = await this.ConnectIQ.GetDefaultDevice({ only_ready: true, select_device_if_undefined: !only_if_definitive_device });
         if (device) {
             if (list.isPeek) {
-                const fulllist = await this.GetList(list.Uuid);
-                list.copyDetails(fulllist);
+                list.copyDetails(await this.GetList(list.Uuid));
             }
             var payload = list.toDeviceObject();
             if (!payload) {
                 Logger.Error(`Could not sync new list to watch, list serialization failed`);
                 return;
             }
-            payload["sync"] = true;
+            payload = ["issync", ...payload];
 
             if (await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload })) {
                 Logger.Debug(`Sync list ${list.toLog()} to watch ${device.toLog()}`);

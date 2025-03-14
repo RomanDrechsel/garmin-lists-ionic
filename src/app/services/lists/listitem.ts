@@ -151,21 +151,18 @@ export class Listitem {
 
     /**
      * create an object to send to a device
+     * @param arr array to append to, or undefined to create a new array
      * @returns device object representation
      */
-    public toDeviceObject(obj?: { [key: string]: any }): { [key: string]: any } | undefined {
+    public toDeviceObject(): string[] | undefined {
         if (!this.Hidden) {
-            if (!obj) {
-                obj = {};
-            }
-
-            obj[`item${this._order}_uuid`] = this._uuid;
-            obj[`item${this._order}_item`] = this._item;
+            const ret: string[] = [`it${this._order}_uuid=${this._uuid}`, `it${this._order}_i=${this._item}`];
             if (this._note) {
-                obj[`item${this._order}_note`] = this._note;
+                ret.push(`it${this._order}_n=${this._note}`);
             }
+            return ret;
         }
-        return obj;
+        return undefined;
     }
 
     /**
