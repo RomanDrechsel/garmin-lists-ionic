@@ -9,6 +9,4 @@ TEST: if disable list sync in settings, ask if all syncs of all lists should be 
 TEST: uuids as number
 TEST: add new listitem line on listitem page
 TEST: Logs can't be send in background
-WIP: Create send-to-device Array<String> at typescript, not java
-TODO: List-Sync: is-Sync Payload must be before list data
 TODO: better hint on transmission settings page, for battery consumption and data usage

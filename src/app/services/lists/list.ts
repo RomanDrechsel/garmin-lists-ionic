@@ -259,15 +259,16 @@ export class List {
         const ret: string[] = ["uuid=" + this._uuid, "t=" + this._name, "d=" + this._updated, "o=" + this._order, "rev=" + List.ListRevision];
 
         if (this._items) {
-            let order = 0;
             for (let i = 0; i < this._items.length; i++) {
-                this._items[i].Order = order++;
-                this._items[i].toDeviceObject(ret);
+                const item = this._items[i].toDeviceObject();
+                if (item) {
+                    ret.push(...item);
+                }
             }
         }
 
         if (this._reset && this._reset.active) {
-            ret.concat(["r_a=" + this._reset.active, "r_i=" + (this._reset.interval?.charAt(0) ?? undefined), "r_h=" + this._reset.hour, "r_m=" + this._reset.minute]);
+            ret.push(...["r_a=" + this._reset.active, "r_i=" + (this._reset.interval?.charAt(0) ?? undefined), "r_h=" + this._reset.hour, "r_m=" + this._reset.minute]);
             if (this._reset.interval == "weekly") {
                 ret.push("r_w=" + this._reset.weekday);
             } else if (this._reset.interval == "monthly") {

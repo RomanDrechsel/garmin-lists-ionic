@@ -3,6 +3,8 @@ package de.romandrechsel.lists.utils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -26,27 +28,11 @@ public class DeviceUtils
         ArrayList<String> ret = new ArrayList<>();
         boolean error_occured = false;
 
-        if (obj.getClass().isPrimitive())
+        if (obj instanceof JsonArray)
         {
-            ret.add(obj.toString());
-        }
-        else if (obj instanceof String)
-        {
-            ret.add((String) obj);
-        }
-        else if (obj instanceof ArrayList)
-        {
-            for (Object val : (ArrayList<Object>) obj)
+            for (JsonElement ele : ((JsonArray) obj).asList())
             {
-                try
-                {
-                    ret.add(DeviceUtils.MakeString(val));
-                }
-                catch (DeviceMessageSerializeException ex)
-                {
-                    error_occured = true;
-                    Logger.Error(TAG, ex.getMessage());
-                }
+                ret.add(ele.getAsString());
             }
         }
         else if (obj instanceof JsonObject json)
@@ -72,6 +58,29 @@ public class DeviceUtils
         else if (obj instanceof JsonPrimitive prim)
         {
             ret.add(prim.getAsString());
+        }
+        else if (obj.getClass().isPrimitive())
+        {
+            ret.add(obj.toString());
+        }
+        else if (obj instanceof String)
+        {
+            ret.add((String) obj);
+        }
+        else if (obj instanceof ArrayList)
+        {
+            for (Object val : (ArrayList<Object>) obj)
+            {
+                try
+                {
+                    ret.add(DeviceUtils.MakeString(val));
+                }
+                catch (DeviceMessageSerializeException ex)
+                {
+                    error_occured = true;
+                    Logger.Error(TAG, ex.getMessage());
+                }
+            }
         }
 
         if (error_occured)
