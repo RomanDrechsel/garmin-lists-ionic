@@ -5,13 +5,13 @@ import { Injectable } from "@angular/core";
 })
 export class ConfigService {
     /**
-     * e-mail adress for app related stuff
+     * e-mail address for app related stuff
      */
     public readonly EMailAddress = "lists-app@roman-drechsel.de";
     /**
      * build version of the garmin app
      */
-    public readonly GarminAppVersion = 16;
+    public readonly GarminAppVersion = 17;
 
     /**
      * app-id for the Garmin ConnectIQ store
