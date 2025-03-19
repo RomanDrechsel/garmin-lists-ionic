@@ -175,20 +175,27 @@ export class ConnectIQService {
 
     /**
      * Returns the most probable device, or let the user select one, if the device is uncertain
+     * @param args btn_text: label of the select-button of the select device page, if no device is found
+     *             only_ready: only return a device, if his state is "Ready"
+     *             select_device_if_undefined: select a device, if the default device is undefined or not Ready
      * @returns device object
      */
-    public async GetDefaultDevice(args?: { btn_text?: string }): Promise<ConnectIQDevice | undefined> {
+    public async GetDefaultDevice(args?: { only_ready?: boolean; select_device_if_undefined?: boolean; btn_text?: string }): Promise<ConnectIQDevice | undefined> {
         if (this._alwaysTransmitToDevice && Capacitor.isNativePlatform()) {
-            return this._alwaysTransmitToDevice;
-        } else {
-            const online = this._devices.filter(d => d.State == "Ready");
-            if (online.length == 1) {
-                return online[0];
-            } else {
-                return new Promise<ConnectIQDevice | undefined>(resolve => {
-                    SelectGarminDevice({ router: this.Router, callback: async (device?: ConnectIQDevice) => resolve(device), submitRoute: undefined, buttonText: args?.btn_text });
-                });
+            if (this._alwaysTransmitToDevice.State == "Ready" || !args?.only_ready) {
+                return this._alwaysTransmitToDevice;
             }
+        }
+
+        const online = this._devices.filter(d => d.State == "Ready");
+        if (online.length == 1) {
+            return online[0];
+        } else if (args?.select_device_if_undefined !== false) {
+            return new Promise<ConnectIQDevice | undefined>(resolve => {
+                SelectGarminDevice({ router: this.Router, callback: async (device?: ConnectIQDevice) => resolve(device), submitRoute: undefined, buttonText: args?.btn_text });
+            });
+        } else {
+            return undefined;
         }
     }
 
@@ -264,6 +271,20 @@ export class ConnectIQService {
         }
     }
 
+    public async SendToDeviceTransaction(obj: { device?: ConnectIQDevice | number; messageType: ConnectIQMessageType; data?: any; timeout?: number }): Promise<ConnectIQDeviceMessage | undefined> {
+        return await new Promise<ConnectIQDeviceMessage | undefined>(async resolve => {
+            this.SendToDevice({
+                device: obj.device,
+                messageType: obj.messageType,
+                data: obj.data,
+                timeout: obj.timeout,
+                response_callback: async resp => {
+                    resolve(resp);
+                },
+            });
+        });
+    }
+
     public CancelRequest(tid: number) {
         Array.from(this._watchListeners.entries()).forEach(([key, value]) => {
             if (value.length > 0) {
@@ -296,24 +317,23 @@ export class ConnectIQService {
 
         if (listener instanceof TimeoutListener && !this._pendingListenersTimeoutCheck) {
             this._pendingListenersTimeoutCheck = interval(1000).subscribe(async () => {
-                let found_timeout_listeners = false;
-                Array.from(this._watchListeners.entries()).forEach(([key, value]) => {
-                    if (value.length > 0) {
-                        if (value[0] instanceof TimeoutListener) {
-                            value = value.filter(l => l instanceof TimeoutListener && !l.IsTimedOut());
-                            if (value.length > 0) {
-                                found_timeout_listeners = true;
-                                this._watchListeners.set(key, value);
-                            } else {
-                                this._watchListeners.delete(key);
+                let timeout_listeners = false;
+                const listeners = Array.from(this._watchListeners.entries());
+                for (let i = 0; i < listeners.length; i++) {
+                    const [key, value] = listeners[i];
+                    for (let j = 0; j < value.length; j++) {
+                        const l = value[j];
+                        if (l instanceof TimeoutListener) {
+                            if (l.IsTimedOut()) {
+                                await l.TimedOut();
                             }
+                        } else {
+                            timeout_listeners = true;
                         }
-                    } else {
-                        this._watchListeners.delete(key);
                     }
-                });
+                }
 
-                if (this._pendingListenersTimeoutCheck && !found_timeout_listeners) {
+                if (this._pendingListenersTimeoutCheck && !timeout_listeners) {
                     this._pendingListenersTimeoutCheck.unsubscribe();
                     this._pendingListenersTimeoutCheck = undefined;
                 }

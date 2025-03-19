@@ -1,20 +1,28 @@
 export namespace HelperUtils {
     /**
-     * Create a unique alphanumeric string
-     * @param length length of the string
-     * @returns unique string
+     * Create a random uuid as number
+     * @param max maximum of the uuid, undefined will set the maximum to
+     * @returns random number
      */
-    export const createUUID = (length: number = 20): string => {
-        const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        const randomBytes = new Uint8Array(length);
-        crypto.getRandomValues(randomBytes);
-
-        let result = '';
-        for (let i = 0; i < length; i++) {
-            const randomIndex = randomBytes[i] % charset.length;
-            result += charset.charAt(randomIndex);
+    export const RandomNumber = (max?: number): number => {
+        if (!max || max <= 0 || max > Number.MAX_SAFE_INTEGER || !Number.isInteger(max)) {
+            max = Number.MAX_SAFE_INTEGER;
         }
+
+        const bitLength = Math.ceil(Math.log2(max));
+        const byteLength = Math.ceil(bitLength / 8);
+        const bytes = new Uint8Array(byteLength);
+
+        let result;
+        do {
+            crypto.getRandomValues(bytes);
+            result = bytesToInteger(bytes) & ((1 << bitLength) - 1);
+        } while (result >= max);
 
         return result;
     };
+
+    function bytesToInteger(bytes: Uint8Array): number {
+        return bytes.reduce((acc, byte, i) => acc + (byte << (8 * (bytes.length - i - 1))), 0);
+    }
 }

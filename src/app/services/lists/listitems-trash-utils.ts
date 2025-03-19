@@ -7,8 +7,8 @@ export namespace ListitemTrashUtils {
      * @param item item to delete
      * @returns was the item found and deleted?
      */
-    export function RemoveItem(trash: ListitemTrashModel, item: string | ListitemModel): ListitemTrashModel {
-        if (typeof item !== "string") {
+    export function RemoveItem(trash: ListitemTrashModel, item: string | number | ListitemModel): ListitemTrashModel {
+        if (typeof item !== "string" && typeof item !== "number") {
             item = item.uuid;
         }
         for (let i = 0; i < trash.items.length; i++) {
@@ -77,6 +77,6 @@ export namespace ListitemTrashUtils {
 }
 
 export declare type ListitemTrashModel = {
-    uuid: string;
+    uuid: string | number;
     items: ListitemModel[];
 };

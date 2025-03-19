@@ -5,7 +5,7 @@ import { BehaviorSubject, Subscription, interval } from "rxjs";
 import { HelperUtils } from "../../classes/utils/helper-utils";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { ListEditor } from "../../components/list-editor/list-editor.component";
-import { ListItemEditor } from "../../components/list-item-editor/list-item-editor.component";
+import { ListItemEditor, ListItemEditorMultiple } from "../../components/list-item-editor/list-item-editor.component";
 import { AppService } from "../app/app.service";
 import { ConnectIQDevice } from "../connectiq/connect-iq-device";
 import { ConnectIQMessageType } from "../connectiq/connect-iq-message-type";
@@ -40,10 +40,11 @@ export class ListsService {
     private readonly ConnectIQ = inject(ConnectIQService);
 
     private _keepInTrashStock: KeepInTrash.Enum = KeepInTrash.Default;
+    private _syncLists: boolean = false;
     private _removeOldTrashEntriesTimer?: Subscription;
 
     public readonly Lists: WritableSignal<List[] | undefined> = signal(undefined);
-    private readonly _listIndex: Map<string, List> = new Map();
+    private readonly _listIndex: Map<string | number, List> = new Map();
 
     private onTrashItemsDatasetChangedSubject = new BehaviorSubject<ListitemTrashModel | undefined>(undefined);
     public onTrashItemsDatasetChanged$ = this.onTrashItemsDatasetChangedSubject.asObservable();
@@ -62,9 +63,12 @@ export class ListsService {
 
     public async Initialize() {
         this.KeepInTrashStock = await this.Preferences.Get<number>(EPrefProperty.TrashKeepinStock, this._keepInTrashStock);
+        this._syncLists = await this.Preferences.Get<boolean>(EPrefProperty.SyncListOnDevice, false);
         this.Preferences.onPrefChanged$.subscribe(arg => {
             if (arg.prop == EPrefProperty.TrashKeepinStock) {
                 this.KeepInTrashStock = arg.value;
+            } else if (arg.prop == EPrefProperty.SyncListOnDevice) {
+                this._syncLists = arg.value;
             }
         });
         const count = (await this.GetLists(true)).length;
@@ -125,7 +129,7 @@ export class ListsService {
      * @param uuid unique id of the list
      * @returns List object
      */
-    public async GetList(uuid: string): Promise<List | undefined> {
+    public async GetList(uuid: string | number): Promise<List | undefined> {
         if (!this._listIndex.has(uuid) || this._listIndex.get(uuid)!.isPeek) {
             AppService.AppToolbar?.ToggleProgressbar(true);
             const list = await this.ListsProvider.GetList(uuid);
@@ -154,15 +158,12 @@ export class ListsService {
      * opens the list editor to create a new list
      */
     public async NewList() {
-        if (AppService.isMobileApp) {
-            await Keyboard.show();
-        }
         const list = await ListEditor(this.ModalCtrl, {});
         if (list) {
             if (await this.StoreList(list)) {
                 Logger.Notice(`Created new list ${list.toLog()}`);
                 this.putListInIndex(list);
-                this.NavController.navigateForward(`/lists/items/${list.Uuid}`);
+                this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { created: true } });
             } else {
                 this.Popups.Toast.Error("service-lists.store_list_error");
             }
@@ -173,17 +174,21 @@ export class ListsService {
      * opens the list editor to edit the list
      * @param list list to be edited
      * @param only_title if true, only the title will be edited
+     * @returns true if the list was edited and stored, false is storage failed. undefined if no changes were made
      */
-    public async EditList(list: List) {
+    public async EditList(list: List): Promise<boolean | undefined> {
         const ret = await ListEditor(this.ModalCtrl, { list: list });
         if (ret) {
-            if (await this.StoreList(list)) {
+            const store = await this.StoreList(list);
+            if (store === true) {
                 Logger.Notice(`Edited list ${list.toLog()}`);
                 this.putListInIndex(list);
-            } else {
+            } else if (store === false) {
                 this.Popups.Toast.Error("service-lists.store_list_error");
             }
+            return store;
         }
+        return undefined;
     }
 
     /**
@@ -240,18 +245,42 @@ export class ListsService {
         if (AppService.isMobileApp) {
             Keyboard.show();
         }
-        const item = await ListItemEditor(this.ModalCtrl, { list: list });
-        if (item) {
-            list.AddItem(item);
-            if (await this.StoreList(list, undefined, undefined, false)) {
-                Logger.Debug(`Created new listitem ${item.toLog()}`);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return undefined;
+        let added: boolean | undefined = undefined;
+        await ListItemEditorMultiple(this.ModalCtrl, {
+            list: list,
+            onAddItem: async (list: List, item: Listitem, add_more: boolean) => {
+                if (item) {
+                    list.AddItem(item);
+                }
+                if (added !== false) {
+                    added = await this.StoreList(list, false, true, false);
+                    if (add_more) {
+                        if (added) {
+                            this.Popups.Toast.Success("service-lists.add_moreitems_success", undefined, true);
+                        } else {
+                            this.Popups.Toast.Error("service-lists.add_moreitems_error", undefined, true);
+                        }
+                    }
+                }
+            },
+        });
+        return added;
+    }
+
+    /**
+     * adds an already created item to a list
+     * @param list list, the item sould be part of
+     * @param item listitem to be added
+     * @returns item-adding successful?
+     */
+    public async AddNewListitem(list: List, args: { item: string; note?: string; hidden?: boolean; locked?: boolean }): Promise<boolean | undefined> {
+        if (!list || !args) {
+            return false;
         }
+
+        const item = await this.createNewListitemObj(list, args);
+        list.AddItem(item);
+        return await this.StoreList(list, false, true, false);
     }
 
     /**
@@ -464,19 +493,19 @@ export class ListsService {
      * creates a unique identifier for a list or listitem
      * @returns unique id
      */
-    public async createUuid(list?: List): Promise<string> {
-        let uuid = HelperUtils.createUUID(20);
+    public async createUuid(list?: List): Promise<number> {
+        let uuid = HelperUtils.RandomNumber();
         if (list) {
             //create an uuid for a listitem
             const trash = await this.TrashItemsProvider.GetListitemsTrash(list.Uuid);
             while (list.Items.some(i => i.Uuid === uuid) || trash?.items.some(i => i.uuid === uuid)) {
-                uuid = HelperUtils.createUUID(20);
+                uuid = HelperUtils.RandomNumber();
             }
         } else {
             //create an uuid for a list
-            let uuid = HelperUtils.createUUID(20);
+            let uuid = HelperUtils.RandomNumber();
             while ((await this.ListsProvider.Exists(uuid)) || (await this.TrashProvider.Exists(uuid))) {
-                uuid = HelperUtils.createUUID(20);
+                uuid = HelperUtils.RandomNumber();
             }
         }
         return uuid;
@@ -486,9 +515,9 @@ export class ListsService {
      * stores a list in backend up there are any changes
      * @param list list to be stored
      * @param force store the list, even if there are no changes
-     * @returns storage successful
+     * @returns storage successful, undefined if no storage was needed
      */
-    public async StoreList(list: List, force: boolean = false, fire_event: boolean = true, progressbar: boolean = true): Promise<boolean> {
+    public async StoreList(list: List, force: boolean = false, fire_event: boolean = true, progressbar: boolean = true): Promise<boolean | undefined> {
         if (progressbar) {
             AppService.AppToolbar?.ToggleProgressbar(true);
         }
@@ -500,7 +529,11 @@ export class ListsService {
             if (store === true && fire_event) {
                 this.onListChangedSubject.next(list);
             }
-            return true;
+            if (store !== undefined) {
+                //only sync, if the list was dirty
+                this.syncListToWatch(list);
+            }
+            return store;
         } else {
             return false;
         }
@@ -511,8 +544,8 @@ export class ListsService {
      * @param list list to transfer (or the uuid)
      * @param device device to be transfered, if null the default device is used
      */
-    public async TransferList(list?: List | string, device?: ConnectIQDevice | number): Promise<boolean> {
-        if (typeof list === "string") {
+    public async TransferList(list?: List | string | number, device?: ConnectIQDevice | number): Promise<boolean> {
+        if (typeof list === "string" || typeof list === "number") {
             list = await this.GetList(list);
         }
         if (!list) {
@@ -533,13 +566,15 @@ export class ListsService {
             if (!confirm || (await this.Popups.Alert.YesNo({ message: locale["service-lists.transmit_confirm"], button_yes: locale["yes"], button_no: locale["no"] }))) {
                 const toast = await this.Popups.Toast.Notice("service-lists.transmit_process", Toast.DURATION_INFINITE);
                 AppService.AppToolbar?.ToggleProgressbar(true);
-                const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: list.toDeviceObject() });
+
+                const payload = list.toDeviceObject();
+                const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload });
                 toast.dismiss();
                 AppService.AppToolbar?.ToggleProgressbar(false);
                 if (resp !== false) {
                     Logger.Debug(`Transfered list ${list.toLog()} to device ${device.toLog()}`);
                     this.Popups.Toast.Success("service-lists.transmit_success");
-                    if (await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, true)) {
+                    if (await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, false)) {
                         this.ConnectIQ.openApp(device);
                     }
                     return true;
@@ -627,6 +662,64 @@ export class ListsService {
     }
 
     /**
+     * remove automatic synchronization from all lists
+     */
+    public async PurgeAllSyncs(): Promise<void> {
+        const lists = await this.GetLists(true);
+        for (let i = 0; i < lists.length; i++) {
+            lists[i].Sync = false;
+            await this.StoreList(lists[i], false, true, false);
+        }
+        Logger.Debug(`Removed automatic synchronization of all lists`);
+    }
+
+    /**
+     * sync a list to the watch
+     * @param obj config for list sync
+     */
+    public async SyncList(obj: { list: List | string | number; only_if_definitive_device?: boolean; force_if_sync_is_disabled?: boolean }): Promise<void> {
+        const list_to_sync = obj.list instanceof List ? obj.list : await this.GetList(obj.list);
+        if (!list_to_sync) {
+            Logger.Error(`Could not sync list ${obj.list} to watch, does not exist`);
+            return;
+        }
+        return this.syncListToWatch(list_to_sync, obj.only_if_definitive_device, obj.force_if_sync_is_disabled);
+    }
+
+    /**
+     * sync changes to a list to the watch
+     * @param list List to be synced
+     * @param only_if_definitive_device only sync list, if the device is unambiguous
+     * @param force_in_sync_is_disabled force sync even if list-sync is disabled
+     */
+    private async syncListToWatch(list: List, only_if_definitive_device: boolean = false, force_in_sync_is_disabled: boolean = false): Promise<void> {
+        if ((!this._syncLists || !list.Sync) && !force_in_sync_is_disabled) {
+            return;
+        }
+
+        const device = await this.ConnectIQ.GetDefaultDevice({ only_ready: true, select_device_if_undefined: !only_if_definitive_device });
+        if (device) {
+            if (list.isPeek) {
+                list.copyDetails(await this.GetList(list.Uuid));
+            }
+            var payload = list.toDeviceObject();
+            if (!payload) {
+                Logger.Error(`Could not sync new list to watch, list serialization failed`);
+                return;
+            }
+            payload = ["issync", ...payload];
+
+            if (await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload })) {
+                Logger.Debug(`Sync list ${list.toLog()} to watch ${device.toLog()}`);
+            } else {
+                Logger.Error(`Failed to sync list ${list.toLog()} to watch ${device.toLog()}`);
+            }
+        } else {
+            Logger.Notice(`Could not sync list to watch, no default device`);
+        }
+    }
+
+    /**
      * publish changes in a list with the signal
      * @param list list to be changed
      */
@@ -688,7 +781,7 @@ export class ListsService {
      * @param uuid unique identifier of the list to be removed
      * @returns was the removal successful
      */
-    private async removeList(uuid: string, delete_on_watch: boolean = false): Promise<boolean> {
+    private async removeList(uuid: string | number, delete_on_watch: boolean = false): Promise<boolean> {
         if (this._listIndex.has(uuid)) {
             AppService.AppToolbar?.ToggleProgressbar(true);
             const list = await this.ListsProvider.GetList(uuid);
@@ -763,7 +856,7 @@ export class ListsService {
         AppService.AppToolbar?.ToggleProgressbar(true);
         if (!(await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) || (await this.TrashItemsProvider.StoreListitem(list.Uuid, item))) {
             list.RemoveItem(item);
-            return await this.StoreList(list);
+            return (await this.StoreList(list)) !== false;
         } else {
             AppService.AppToolbar?.ToggleProgressbar(true);
             return false;
@@ -812,7 +905,7 @@ export class ListsService {
      * @param list list to restore
      * @returns was the restore successful
      */
-    private async restoreListFromTrash(uuid: string): Promise<boolean> {
+    private async restoreListFromTrash(uuid: string | number): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
         //Read list from trash backend
         const list = await this.TrashProvider.GetList(uuid);
@@ -827,9 +920,9 @@ export class ListsService {
                     Logger.Error(`Restored list ${list.toLog()} from trash, but could not erase it from trash`);
                 }
                 this.Popups.Toast.Success("service-lists.restore_success");
-
                 this.putListInIndex(list);
                 AppService.AppToolbar?.ToggleProgressbar(false);
+                this.syncListToWatch(list);
                 return true;
             }
         }
@@ -857,6 +950,7 @@ export class ListsService {
                 await this.TrashItemsProvider.EraseListitem(trash, item);
                 Logger.Debug(`Restored listitem ${ListitemTrashUtils.toLog(item)} from trash of list ${ListitemTrashUtils.toLog(trash)}`);
                 AppService.AppToolbar?.ToggleProgressbar(false);
+                this.syncListToWatch(list);
                 return true;
             }
         }
@@ -869,7 +963,7 @@ export class ListsService {
      * erases a list from trash
      * @param uuid unique identifier of the list
      */
-    private async eraseListFromTrash(uuid: string): Promise<boolean> {
+    private async eraseListFromTrash(uuid: string | number): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
         const ret = (await this.TrashProvider.EraseLists(uuid)) > 0;
         AppService.AppToolbar?.ToggleProgressbar(false);
@@ -896,5 +990,6 @@ export class ListsService {
             this.Lists.set(lists);
         }
         return lists;
+        1;
     }
 }

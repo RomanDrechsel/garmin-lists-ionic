@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
             close = await item.onClick();
         }
         if (close) {
-            this.MainMenu?.close();
+            await this.MainMenu?.close();
         }
     }
 
@@ -102,6 +102,12 @@ export class AppComponent implements OnInit {
         menu = menu.filter(m => m.Hidden !== true);
         this.appPages = menu;
         this.cdr.detectChanges();
+    }
+
+    public async CloseMenu(): Promise<void> {
+        if (this.MainMenu) {
+            await this.MainMenu.close();
+        }
     }
 
     private async tapBackToExit() {

@@ -1,26 +1,30 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, inject } from "@angular/core";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonInput, IonItem, IonList, IonNote, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
+import { PluginListenerHandle } from "@capacitor/core";
+import { Keyboard } from "@capacitor/keyboard";
+import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { List, ListReset } from "../../services/lists/list";
 import { ListsService } from "../../services/lists/lists.service";
 import { LocalizationService } from "../../services/localization/localization.service";
 import { PopupsService } from "../../services/popups/popups.service";
 import { SelectTimeInterval } from "../select-interval/select-interval.component";
+import { AdmobService } from "./../../services/adverticing/admob.service";
 
 @Component({
     selector: "app-list-edit",
-    imports: [IonText, IonNote, IonList, IonAccordion, IonCheckbox, IonAccordionGroup, IonIcon, IonTitle, IonItem, IonInput, IonButton, IonButtons, IonToolbar, IonHeader, IonSelect, IonSelectOption, CommonModule, TranslateModule, ReactiveFormsModule, FormsModule],
+    imports: [IonText, IonList, IonAccordion, IonCheckbox, IonAccordionGroup, IonLabel, IonIcon, IonTitle, IonItem, IonInput, IonButton, IonButtons, IonToolbar, IonHeader, IonSelect, IonSelectOption, CommonModule, TranslateModule, ReactiveFormsModule, FormsModule],
     templateUrl: "./list-editor.component.html",
     styleUrl: "./list-editor.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListEditorComponent {
-    @ViewChild("listname", { read: IonInput }) private listname!: IonInput;
-    @ViewChild("resetAccordion", { read: IonAccordionGroup }) private resetAccordion!: IonAccordionGroup;
-    @ViewChild("reset", { read: IonCheckbox }) private reset!: IonCheckbox;
-    @ViewChild("resetinterval", { read: IonSelect }) private resetinterval!: IonSelect;
+    @ViewChild("listname", { read: IonInput }) private listname?: IonInput;
+    @ViewChild("resetAccordion", { read: IonAccordionGroup }) private resetAccordion?: IonAccordionGroup;
+    @ViewChild("reset", { read: IonCheckbox }) private reset?: IonCheckbox;
+    @ViewChild("resetinterval", { read: IonSelect }) private resetinterval?: IonSelect;
+    @ViewChild("sync", { read: IonCheckbox }) private sync?: IonCheckbox;
     public Params?: EditorParams;
 
     private readonly modalCtrl = inject(ModalController);
@@ -28,17 +32,27 @@ export class ListEditorComponent {
     private readonly Locale = inject(LocalizationService);
     private readonly Popups = inject(PopupsService);
     private readonly cdr = inject(ChangeDetectorRef);
-
-    private formBuilder = inject(FormBuilder);
+    private readonly FormBuilder = inject(FormBuilder);
+    private readonly Admob = inject(AdmobService);
 
     private _listReset?: ListReset = undefined;
+    private _listSync?: boolean;
+    private _keyboardUpListerner?: PluginListenerHandle;
+    private _keyboardDownListener?: PluginListenerHandle;
 
     public Form: FormGroup;
 
     constructor() {
-        this.Form = this.formBuilder.group({
+        this.Form = this.FormBuilder.group({
             listname: ["", [Validators.required]],
         });
+    }
+
+    public set ResetActive(active: boolean) {
+        if (this._listReset) {
+            this._listReset.active = active;
+            this.cdr.detectChanges();
+        }
     }
 
     public get ResetActive(): boolean {
@@ -47,6 +61,18 @@ export class ListEditorComponent {
 
     public get ResetInteval(): "daily" | "weekly" | "monthly" {
         return this._listReset?.interval ?? "weekly";
+    }
+
+    public set SyncActive(active: boolean) {
+        this._listSync = active;
+        if (this.sync) {
+            this.sync.checked = active;
+            this.cdr.detectChanges();
+        }
+    }
+
+    public get SyncActive(): boolean {
+        return this._listSync ?? false;
     }
 
     public get ResetString(): string {
@@ -135,14 +161,24 @@ export class ListEditorComponent {
             this._listReset = { interval: "weekly", active: false, hour: 0, minute: 0, day: 1, weekday: this.Locale.CurrentLanguage.firstDayOfWeek };
         }
         this.Form.get("listname")?.setValue(this.Params?.list?.Name);
-        this.reset.checked = this._listReset.active;
-        this.toggleReset(undefined);
+        this.ResetActive = this._listReset.active;
+        this.SyncActive = this.Params?.list?.Sync ?? false;
     }
 
-    public ionViewDidEnter() {
+    public async ionViewDidEnter() {
+        this._keyboardUpListerner = await Keyboard.addListener("keyboardWillShow", info => this.Admob.OnKeyboardShow(info));
+        this._keyboardDownListener = await Keyboard.addListener("keyboardWillHide", () => this.Admob.OnKeyboardHide());
         if (!this.Params?.list) {
-            this.listname.setFocus();
+            this.listname?.setFocus();
+            await Keyboard.show();
         }
+    }
+
+    public ionViewWillLeave() {
+        this._keyboardUpListerner?.remove();
+        this._keyboardUpListerner = undefined;
+        this._keyboardDownListener?.remove();
+        this._keyboardDownListener = undefined;
     }
 
     public async onSubmit() {
@@ -159,6 +195,7 @@ export class ListEditorComponent {
             list = await this.ListsService.createNewListObj({ name: listname });
         }
         list.Reset = this._listReset;
+        list.Sync = this._listSync ?? false;
         return this.modalCtrl.dismiss(list, "confirm");
     }
 
@@ -186,6 +223,19 @@ export class ListEditorComponent {
         event?.stopImmediatePropagation();
         await this.Popups.Alert.Info({
             message: "comp-listeditor.reset_info",
+            translate: true,
+        });
+    }
+
+    public toggleSync(event: any) {
+        this._listSync = event?.detail.checked ?? false;
+        event?.stopImmediatePropagation();
+    }
+
+    public async syncInfo(event: any) {
+        event?.stopImmediatePropagation();
+        await this.Popups.Alert.Info({
+            message: "comp-listeditor.sync_info",
             translate: true,
         });
     }

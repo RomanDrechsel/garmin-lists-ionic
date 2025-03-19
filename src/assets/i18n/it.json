@@ -89,7 +89,9 @@
         "transmit_process": "La lista viene trasferita...",
         "transmit_success": "La lista è stata trasferita con successo.",
         "transmit_error": "La lista non può essere trasferita!",
-        "transmit_send_btn": "Invia al dispositivo"
+        "transmit_send_btn": "Invia al dispositivo",
+        "add_moreitems_success": "Elemento aggiunto.",
+        "add_moreitems_error": "Impossibile aggiungere l'elemento!"
     },
     "service-connectiq": {
         "watch_outdated": "Sembra che tu stia utilizzando una versione obsoleta dell'app Liste sul tuo dispositivo <strong>{{device}}</strong>.<br /><br />Per favore, aggiorna l'app sul tuo orologio per poter utilizzare tutte le funzioni.",
@@ -104,13 +106,17 @@
         "title_new": "Crea una nuova lista",
         "title_edit": "Modifica la lista",
         "listname": "Nome",
+        "settings": "Impostazioni",
         "reset": "Reimposta automaticamente la lista",
-        "reset_note": "Imposta tutti i punti della lista sull'orologio su \"non completato\" in un determinato intervallo di tempo.",
         "reset_info": "Sull'orologio, tutti i punti di questa lista verranno impostati su \"non completato\" in un determinato intervallo di tempo.<br /><br />Questo è adatto, ad esempio, per compiti ricorrenti come le faccende domestiche o altre attività regolari.",
         "reset_interval": "Intervallo",
         "reset_daily": "Giornaliero",
         "reset_weekly": "Settimanale",
-        "reset_monthly": "Mensile"
+        "reset_monthly": "Mensile",
+        "sync": "Sincronizza elenco con l'orologio",
+        "sync_info": "Quando apporti modifiche all'elenco, ad esempio aggiungendo o eliminando elementi, queste modifiche verranno trasferite automaticamente al tuo orologio in background.<br /><br />Si prega di notare che lo spazio di memoria dell'app sull'orologio è limitato e che la sincronizzazione può consumare più rapidamente la carica della batteria dell'orologio.<br />Non sincronizzare troppi elenchi contemporaneamente.",
+        "sync_settings": "Per attivare la sincronizzazione automatica, devi attivare l'opzione corrispondente nelle impostazioni.<br />Vuoi andare alle impostazioni?",
+        "delete": "Cancellare la lista"
     },
     "comp-select-interval": {
         "last": "ultimo",
@@ -118,14 +124,16 @@
         "oclock": "ora"
     },
     "comp-listitemeditor": {
-        "title_new": "Aggiungi un punto alla lista",
-        "title_edit": "Modifica il punto della lista",
+        "title_new": "Aggiungere un elemento alla lista",
+        "title_edit": "Modificare un elemento dell'elenco",
         "itemname": "Nome",
         "itemnote": "Nota",
         "hidden": "Nascosto",
         "hidden_info": "I punti della lista nascosti non vengono trasferiti al tuo orologio, ma rimangono sul telefono.<br /><br />Questo è utile se desideri temporaneamente nascondere alcuni punti senza eliminarli. Possono essere riutilizzati in seguito.",
         "locked": "Bloccato",
-        "locked_info": "I punti della lista bloccati non vengono eliminati quando la lista viene svuotata.<br /><br />Questo semplifica l'ordine nella lista se desideri ripetere regolarmente alcuni punti."
+        "locked_info": "I punti della lista bloccati non vengono eliminati quando la lista viene svuotata.<br /><br />Questo semplifica l'ordine nella lista se desideri ripetere regolarmente alcuni punti.",
+        "delete": "Eliminare l'elemento",
+        "add_more": "Aggiungere un altro elemento"
     },
     "comp_sharelog": {
         "title": "Salva il log",
@@ -175,7 +183,8 @@
         "lock": "Blocca",
         "unlock": "Sblocca",
         "nolist": "Qualcosa è andato storto :(<br /><br />La lista non può essere visualizzata.",
-        "add_new_hint": "Aggiungi un nuovo elemento alla lista."
+        "add_new_hint": "Aggiungi un nuovo elemento alla lista.",
+        "quickadd": "Creare un nuovo elemento..."
     },
     "page_trash": {
         "page_title": "Cestino",
@@ -270,10 +279,15 @@
     },
     "page_lists_transmission": {
         "page_title": "Trasmissione all'orologio",
-        "openontransmit": "Avvia app durante il trasferimento",
+        "openontransmit": "Avviare l'applicazione durante il trasferimento manuale",
         "openontransmit_note": "Chiedi al tuo orologio se vuoi avviare l'app quando trasferisci una lista.",
         "deletelist": "Cancella automaticamente le liste dall'orologio",
-        "deletelist_note": "Quando cancelli una lista sul tuo smartphone, cancella anche la lista sull'orologio."
+        "deletelist_note": "Quando cancelli una lista sul tuo smartphone, cancella anche la lista sull'orologio.",
+        "synclist": "Sincronizza automaticamente le liste",
+        "synclist_warning": "<strong>Attenzione:</strong> Tenere presente che lo spazio di memoria dell'app sull'orologio è limitato. Non è consigliabile sincronizzare troppi elenchi contemporaneamente!",
+        "synclist_note": "Sincronizza immediatamente una lista con l'orologio quando vengono apportate modifiche.",
+        "synclist_disable_title": "Disabilitare la sincronizzazione?",
+        "synclist_disable": "Vuoi disattivare le impostazioni di sincronizzazione automatica per tutte le liste?<br /><br />Se riattivi questa impostazione in seguito, dovrai riconfigurare la sincronizzazione per ogni lista."
     },
     "page_settings_trash": {
         "page_title": "Cestino",

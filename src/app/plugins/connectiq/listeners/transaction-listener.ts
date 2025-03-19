@@ -28,6 +28,13 @@ export class TransactionListener extends TimeoutListener<DeviceMessageEventArgs>
         return TransactionListener.Event;
     }
 
+    public override async TimedOut(): Promise<void> {
+        if (this._callback) {
+            this._callback(undefined);
+        }
+        super.TimedOut();
+    }
+
     protected async Callback(obj: DeviceMessageEventArgs): Promise<void> {
         const message = new ConnectIQDeviceMessage(obj, this._service);
         if (message.Device.equals(this._device) && message.Message?.tid) {

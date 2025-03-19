@@ -94,6 +94,7 @@ export class TrashListsPage extends PageBase {
     }
 
     public async emptyTrash(): Promise<boolean> {
+        this.appComponent.CloseMenu();
         return (await this.ListsService.WipeTrash()) !== false;
     }
 

@@ -22,6 +22,8 @@ export enum EPrefProperty {
     "TrashKeepinStock" = "LISTS_TrashKeepInStock",
     "OpenAppOnTransmit" = "LISTS_OpenAppOnTransmit",
     "DeleteListOnDevice" = "LISTS_DeleteListOnDevice",
+    "SyncListOnDevice" = "LISTS_SyncListOnDevice",
+    "AddMoreItemsDialog" = "LISTS_AddMoreItemsDialog",
     "DebugSimulator" = "LISTS_DebugSimulator",
     "DebugApp" = "LISTS_DebugApp",
     "OpenedList" = "LISTS_OpenedList",

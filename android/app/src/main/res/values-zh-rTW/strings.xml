@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">清單</string>
-    <string name="app_name_debug">清單 Debug</string>
-    <string name="title_activity_main">清單</string>
+    <string name="app_name">列表</string>
+    <string name="app_name_debug">列表 Debug</string>
+    <string name="title_activity_main">列表</string>
 </resources>

@@ -2,7 +2,7 @@ import { Logger } from "../logging/logger";
 import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
-    private _uuid: string;
+    private _uuid: string | number;
     private _name: string;
     private _created: number;
     private _updated: number;
@@ -11,7 +11,10 @@ export class List {
     private _itemsCount?: number;
     private _items?: Listitem[];
     private _deleted?: number;
+    private _sync: boolean = false;
     private _dirty: boolean = false;
+
+    private static readonly ListRevision = 1;
 
     public constructor(obj: ListModel, itemcount?: number) {
         this._uuid = obj.uuid;
@@ -33,11 +36,16 @@ export class List {
         this._itemsCount = this._items?.length ?? itemcount;
         this._reset = obj.reset;
         this._deleted = obj.deleted;
+        this._sync = obj.sync ?? false;
         this._dirty = true;
     }
 
-    /** get unique list id */
-    public get Uuid(): string {
+    /**
+     * get unique list id
+     * in newer versions, the uuid is a number
+     * in older versions it was a string
+     */
+    public get Uuid(): string | number {
         return this._uuid;
     }
 
@@ -139,6 +147,19 @@ export class List {
         return this._reset;
     }
 
+    /** set, if the list should be automatiacally synced to watch */
+    public set Sync(sync: boolean) {
+        if (this._sync != sync) {
+            this._sync = sync;
+            this._dirty = true;
+        }
+    }
+
+    /** should the list be synced automatically to watch */
+    public get Sync(): boolean {
+        return this._sync;
+    }
+
     /** are only peek information loaded */
     public get isPeek(): boolean {
         return this._items == undefined;
@@ -234,31 +255,24 @@ export class List {
      * create an object to send to a device
      * @returns device object representation
      */
-    public toDeviceObject(): any {
-        const ret: { [key: string]: any } = {};
-        ret["uuid"] = this._uuid;
-        ret["name"] = this._name;
-        ret["date"] = this._updated;
-        ret["order"] = this._order;
+    public toDeviceObject(): string[] {
+        const ret: string[] = ["uuid=" + this._uuid, "t=" + this._name, "d=" + this._updated, "o=" + this._order, "rev=" + List.ListRevision];
 
         if (this._items) {
-            let order = 0;
-
             for (let i = 0; i < this._items.length; i++) {
-                this._items[i].Order = order++;
-                this._items[i].toDeviceObject(ret);
+                const item = this._items[i].toDeviceObject();
+                if (item) {
+                    ret.push(...item);
+                }
             }
         }
 
         if (this._reset && this._reset.active) {
-            ret["reset_active"] = this._reset.active;
-            ret["reset_interval"] = this._reset.interval?.charAt(0) ?? undefined;
-            ret["reset_hour"] = this._reset.hour;
-            ret["reset_minute"] = this._reset.minute;
+            ret.push(...["r_a=" + this._reset.active, "r_i=" + (this._reset.interval?.charAt(0) ?? undefined), "r_h=" + this._reset.hour, "r_m=" + this._reset.minute]);
             if (this._reset.interval == "weekly") {
-                ret["reset_weekday"] = this._reset.weekday;
+                ret.push("r_w=" + this._reset.weekday);
             } else if (this._reset.interval == "monthly") {
-                ret["reset_day"] = this._reset.day;
+                ret.push("r_d=" + this._reset.day);
             }
         }
 
@@ -283,6 +297,7 @@ export class List {
                 deleted: this._deleted ?? undefined,
                 order: this._order,
                 reset: this._reset,
+                sync: this._sync,
             };
 
             if (this._items && this._items.length > 0) {
@@ -358,6 +373,7 @@ export class List {
                 deleted: obj.deleted,
                 items: obj.items,
                 reset: obj.reset,
+                sync: obj.sync,
             },
             itemscount,
         );
@@ -368,13 +384,14 @@ export class List {
 }
 
 export declare type ListModel = {
-    uuid: string;
+    uuid: string | number;
     name: string;
     created: number;
     order: number;
     updated?: number;
     deleted?: number;
     reset?: ListReset;
+    sync?: boolean;
     items?: ListitemModel[];
 };
 

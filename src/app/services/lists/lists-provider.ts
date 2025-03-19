@@ -28,8 +28,8 @@ export class ListsProvider {
      * @param uuid unique id of the list
      * @returns List object, if it was found, otherwise undefined
      */
-    public async GetList(uuid: string): Promise<List | undefined> {
-        const model = await this.Backend.GetList(uuid, this.StoragePath);
+    public async GetList(uuid: string | number): Promise<List | undefined> {
+        const model = await this.Backend.GetList(`${uuid}`, this.StoragePath);
         if (model) {
             return List.fromBackend(model, false);
         }
@@ -40,7 +40,7 @@ export class ListsProvider {
      * stores a list in backend if there are any changes
      * @param list list to be stored
      * @param force store the list, even if there are no changes
-     * @returns storage successful
+     * @returns storage successful, undefined if no store was needed
      */
     public async StoreList(list: List, force: boolean = false): Promise<boolean | undefined> {
         if (list.isPeek) {
@@ -61,7 +61,7 @@ export class ListsProvider {
      * @returns was the removal successful
      */
     public async RemoveList(list: List): Promise<boolean> {
-        return (await this.Backend.RemoveLists(list.Uuid, this.StoragePath)) > 0;
+        return (await this.Backend.RemoveLists(`${list.Uuid}`, this.StoragePath)) > 0;
     }
 
     /**
@@ -69,7 +69,7 @@ export class ListsProvider {
      * @param uuid Uuid to check
      * @returns does a list with this Uuid exist
      */
-    public async Exists(uuid: string): Promise<boolean> {
+    public async Exists(uuid: string | number): Promise<boolean> {
         return this.Backend.ListExists(uuid, this.StoragePath);
     }
 

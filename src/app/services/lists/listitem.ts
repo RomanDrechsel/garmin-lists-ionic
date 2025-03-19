@@ -1,7 +1,7 @@
 import { Logger } from "../logging/logger";
 
 export class Listitem {
-    private _uuid: string;
+    private _uuid: number | string;
     private _order: number;
     private _created: number;
     private _updated: number;
@@ -26,7 +26,7 @@ export class Listitem {
     }
 
     /** get unique id in backend */
-    public get Uuid(): string {
+    public get Uuid(): string | number {
         return this._uuid;
     }
 
@@ -151,20 +151,18 @@ export class Listitem {
 
     /**
      * create an object to send to a device
+     * @param arr array to append to, or undefined to create a new array
      * @returns device object representation
      */
-    public toDeviceObject(obj?: { [key: string]: any }): { [key: string]: any } | undefined {
+    public toDeviceObject(): string[] | undefined {
         if (!this.Hidden) {
-            if (!obj) {
-                obj = {};
-            }
-
-            obj[`item${this._order}_item`] = this._item;
+            const ret: string[] = [`it${this._order}_uuid=${this._uuid}`, `it${this._order}_i=${this._item}`];
             if (this._note) {
-                obj[`item${this._order}_note`] = this._note;
+                ret.push(`it${this._order}_n=${this._note}`);
             }
+            return ret;
         }
-        return obj;
+        return undefined;
     }
 
     /**
@@ -211,7 +209,7 @@ export class Listitem {
         if (!other) {
             return false;
         }
-        return other.Uuid == this.Uuid;
+        return other.Uuid === this.Uuid;
     }
 
     /**
@@ -247,7 +245,7 @@ export class Listitem {
 }
 
 export declare type ListitemModel = {
-    uuid: string;
+    uuid: number | string;
     item: string;
     note?: string;
     order: number;

@@ -48,11 +48,13 @@ export class TrashProvider extends ListsProvider {
      * @param uuids list or array of lists to be removed
      * @returns how many lists where deleted?
      */
-    public async EraseLists(uuids: string | string[], erase_itemtrash: boolean = true): Promise<number> {
+    public async EraseLists(uuids: string | string[] | number | number[], erase_itemtrash: boolean = true): Promise<number> {
         if (!Array.isArray(uuids)) {
-            uuids = [uuids];
+            uuids = [`${uuids}`];
         }
-        const del = await this.Backend.RemoveLists(uuids, this.StoragePath);
+        uuids = uuids.map(uuid => (uuid = `${uuid}`));
+
+        const del = await this.Backend.RemoveLists(`${uuids}`, this.StoragePath);
         if (erase_itemtrash) {
             await this.ListitemsTrash.EraseLists(uuids);
         }
@@ -67,7 +69,7 @@ export class TrashProvider extends ListsProvider {
     public async WipeTrash(): Promise<number> {
         const lists = await this.Backend.GetLists(this.StoragePath);
         await this.Backend.WipeAll(this.StoragePath);
-        await this.ListitemsTrash.EraseLists(lists.map(l => l.uuid));
+        await this.ListitemsTrash.EraseLists(lists.map(l => `${l.uuid}`));
         this._datasetChangedSubject.next(await this.GetLists(true));
         return lists.length;
     }
@@ -89,7 +91,7 @@ export class TrashProvider extends ListsProvider {
                     }
                     return b.deleted - a.deleted;
                 });
-                const uuids = alllists.splice(maxcount).map(l => l.uuid);
+                const uuids = alllists.splice(maxcount).map(l => `${l.uuid}`);
                 const del = await this.Backend.RemoveLists(uuids, this.StoragePath);
                 await this.ListitemsTrash.EraseLists(uuids);
                 if (del == uuids.length) {

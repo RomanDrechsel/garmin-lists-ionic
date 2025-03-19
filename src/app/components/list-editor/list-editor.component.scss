@@ -1,6 +1,6 @@
 :host {
     display: block;
-    max-height: 80%;
+    max-height: 90%;
 
     ion-header {
         ion-toolbar {
@@ -10,34 +10,66 @@
         }
     }
 
-    ion-accordion-group {
-        ion-accordion {
-            ion-item {
-                --background-hover: #ffffff;
-                --padding-start: 6px;
+    ion-item {
+        --background-hover: #ffffff;
+        --padding-start: 2px;
+        --inner-padding-end: 0;
+
+        ion-checkbox {
+            &::part(label) {
+                margin-inline-start: 24px !important;
+                margin-top: 4px;
+                align-self: start;
             }
 
-            ion-list {
-                margin-inline: 34px auto;
+            &::part(container) {
+                top: 4px;
+            }
+        }
 
-                ion-item {
-                    --background-hover: #ffffff;
-                    --background: var(--ion-background-color);
+        ion-icon {
+            &.info-icon {
+                margin-top: -0.4em;
+                padding-block-start: 0;
+                padding-inline-end: 6px;
+            }
+        }
+    }
 
-                    ::part(label) {
-                        margin-inline-start: 0;
+    ion-accordion-group {
+        ion-accordion {
+            &.list-settings {
+                ion-item[slot="header"] {
+                    --ion-color-base: var(--color-popup-background) !important;
+                    --ion-color-base-rgb: var(--color-popup-background-rgb) !important;
+                    --ion-color-shade: var(--color-popup-background) !important;
+                    --ion-color-tint: var(--color-popup-background) !important;
+                    padding-inline-end: 4px;
+                }
 
-                        ion-note {
-                            white-space: wrap !important;
+                ion-list {
+                    margin-inline: 24px auto;
+
+                    ion-item {
+                        --background-hover: #ffffff;
+                        --background: var(--ion-background-color);
+                        --padding-start: 0;
+
+                        ::part(label) {
+                            margin-inline-start: 0;
+
+                            ion-note {
+                                white-space: wrap !important;
+                            }
                         }
-                    }
 
-                    &.select-resetdate {
-                        cursor: pointer;
-                    }
+                        &.select-resetdate {
+                            cursor: pointer;
+                        }
 
-                    ion-select {
-                        width: 100%;
+                        ion-select {
+                            width: 100%;
+                        }
                     }
                 }
             }

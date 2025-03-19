@@ -91,7 +91,9 @@
         "transmit_process": "La liste est en cours de transfert...",
         "transmit_success": "La liste a été transférée avec succès.",
         "transmit_error": "La liste n'a pas pu être transférée !",
-        "transmit_send_btn": "Envoyer à l'appareil"
+        "transmit_send_btn": "Envoyer à l'appareil",
+        "add_moreitems_success": "Élément ajouté.",
+        "add_moreitems_error": "Impossible d'ajouter l'élément !"
     },
     "service-connectiq": {
         "watch_outdated": "Il semble que vous utilisiez une ancienne version de l'application Liste sur votre appareil <strong>{{device}}</strong>.<br /><br />Veuillez mettre à jour l'application sur votre montre pour profiter de toutes les fonctionnalités.",
@@ -106,13 +108,17 @@
         "title_new": "Créer une nouvelle liste",
         "title_edit": "Modifier la liste",
         "listname": "Nom",
+        "settings": "Paramètres",
         "reset": "Réinitialisation automatique de la liste",
-        "reset_note": "Réinitialise tous les éléments de la liste sur la montre à un intervalle défini.",
         "reset_info": "Sur votre montre, tous les éléments de cette liste seront réinitialisés à \"non terminé\" à un intervalle défini.<br /><br />Cela est utile pour les tâches récurrentes comme le ménage ou d'autres activités régulières.",
         "reset_interval": "Intervalle",
         "reset_daily": "Quotidiennement",
         "reset_weekly": "Hebdomadairement",
-        "reset_monthly": "Mensuellement"
+        "reset_monthly": "Mensuellement",
+        "sync": "Synchroniser la liste avec la montre",
+        "sync_info": "Lorsque vous modifiez la liste, par exemple en ajoutant ou en supprimant des éléments, ces changements seront automatiquement transférés en arrière-plan sur votre montre.<br /><br />N'oublie pas que l'espace de stockage de l'application sur ta montre est limité et que la synchronisation risque d'épuiser plus rapidement la batterie de la montre.<br />Ne synchronise pas trop de listes en même temps.",
+        "sync_settings": "Pour activer la synchronisation automatique, vous devez activer l'option correspondante dans les paramètres.<br />Voulez-vous aller dans les paramètres?",
+        "delete": "Supprimer la liste"
     },
     "comp-select-interval": {
         "last": "dernier",
@@ -127,7 +133,9 @@
         "hidden": "Caché",
         "hidden_info": "Les éléments de liste cachés ne sont pas transférés sur votre montre mais restent sur le smartphone.<br /><br />Cela est utile si vous ne souhaitez temporairement pas afficher certains éléments, tout en les conservant pour une utilisation ultérieure.",
         "locked": "Verrouillé",
-        "locked_info": "Les éléments de liste verrouillés ne sont pas supprimés lorsque la liste est vidée.<br /><br />Cela simplifie le nettoyage de la liste si vous souhaitez répéter régulièrement certains éléments."
+        "locked_info": "Les éléments de liste verrouillés ne sont pas supprimés lorsque la liste est vidée.<br /><br />Cela simplifie le nettoyage de la liste si vous souhaitez répéter régulièrement certains éléments.",
+        "delete": "Supprimer l'élément",
+        "add_more": "Ajouter un autre élément"
     },
     "comp_sharelog": {
         "title": "Sauvegarder le journal",
@@ -177,7 +185,8 @@
         "lock": "Verrouiller",
         "unlock": "Déverrouiller",
         "nolist": "Quelque chose s'est mal passé :(<br /><br />La liste ne peut pas être affichée.",
-        "add_new_hint": "Créer un nouvel élément dans la liste."
+        "add_new_hint": "Créer un nouvel élément dans la liste.",
+        "quickadd": "Créer un nouvel élément..."
     },
     "page_trash": {
         "page_title": "Corbeille",
@@ -292,10 +301,15 @@
     },
     "page_lists_transmission": {
         "page_title": "Transmission à la montre",
-        "openontransmit": "Démarrer l'application lors de la transmission",
+        "openontransmit": "Lancer l'application lors du transfert manuel",
         "openontransmit_note": "Demander à votre montre si elle doit démarrer l'application lors de la transmission d'une liste.",
         "deletelist": "Supprimer automatiquement les listes de la montre",
-        "deletelist_note": "Lors de la suppression d'une liste sur le smartphone, la supprimer également de la montre."
+        "deletelist_note": "Lors de la suppression d'une liste sur le smartphone, la supprimer également de la montre.",
+        "synclist": "Synchroniser les listes automatiquement",
+        "synclist_warning": "<strong>Attention:</strong> N'oublie pas que l'espace de stockage de l'application sur la montre est limité. Tu ne devrais pas synchroniser trop de listes en même temps!",
+        "synclist_note": "Synchroniser immédiatement une liste avec la montre lorsqu'elle est modifiée.",
+        "synclist_disable_title": "Désactiver la synchronisation?",
+        "synclist_disable": "Voulez-vous désactiver les paramètres de synchronisation automatique pour toutes les listes ?<br /><br />Si vous réactivez ce paramètre plus tard, vous devrez reconfigurer la synchronisation pour chaque liste."
     },
     "page_settings_trash": {
         "page_title": "Corbeille",
