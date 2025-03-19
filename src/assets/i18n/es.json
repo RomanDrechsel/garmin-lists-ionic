@@ -55,7 +55,6 @@
         "empty_trash": "Vaciar Papelera",
         "openapp": "Abrir app"
     },
-
     "service-lists": {
         "store_list_error": "¡No se pudo guardar la lista!",
         "store_listitem_error": "¡No se pudo guardar el elemento de la lista!",
@@ -307,7 +306,7 @@
         "deletelist": "Eliminar lista del reloj",
         "deletelist_note": "Elimine la lista del smartphone al mismo tiempo que la elimina del reloj.",
         "synclist": "Sincronizar listas automáticamente",
-        "synclist_warning": "<strong>Aviso:</strong> Ten en cuenta que el espacio de almacenamiento de la aplicación en el reloj es limitado. No sincronices demasiadas listas al mismo tiempo.",
+        "synclist_warning": "<strong>Atención:</strong> Ten en cuenta que el espacio de almacenamiento de la aplicación en el reloj es limitado. ¡No deberías sincronizar demasiadas listas al mismo tiempo!<br />Además, también puede afectar negativamente la duración de la batería del reloj.",
         "synclist_note": "Sincronizar una lista con el reloj inmediatamente cuando se realicen cambios.",
         "synclist_disable_title": "¿Deshabilitar sincronización?",
         "synclist_disable": "¿Quieres desactivar la configuración de sincronización automática para todas las listas?<br /><br />Si vuelves a activar esta configuración más tarde, tendrás que configurar la sincronización para cada lista nuevamente."

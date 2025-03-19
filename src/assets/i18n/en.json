@@ -306,8 +306,8 @@
         "deletelist": "Automatically delete lists on the watch",
         "deletelist_note": "When deleting a list on your smartphone, also delete the list on your watch.",
         "synclist": "Automatically sync lists with the watch",
-        "synclist_note": "Immediately sync changes to a list with the watch.",
-        "synclist_warning": "<strong>Warning:</strong> Bear in mind that the app's storage on the watch is limited. You should not synchronize too many lists at the same time!",
+        "synclist_note": "When making changes to a list, sync it with the watch immediately.",
+        "synclist_warning": "<strong>Attention:</strong> Keep in mind that the app's storage space on the watch is limited. You shouldn't sync too many lists at the same time!<br />Additionally, it may also have a negative impact on the watch's battery life.",
         "synclist_disable_title": "Disable automatic synchronization?",
         "synclist_disable": "Do you want to disable the automatic synchronization for all lists?<br /><br />If you enable this setting again later, you will need to reconfigure the synchronization for each list again."
     },

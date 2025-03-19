@@ -95,7 +95,6 @@
         "add_moreitems_success": "项目已添加。",
         "add_moreitems_error": "无法添加项目！"
     },
-
     "service-connectiq": {
         "watch_outdated": "您的设备<strong>{{device}}</strong>上似乎使用的是旧版本的列表应用。<br /><br />请更新手表上的应用，以便使用所有功能。",
         "watch_outdated_button": "前往Connect IQ商店",
@@ -307,7 +306,7 @@
         "deletelist": "自动从手表删除列表",
         "deletelist_note": "在手机上删除列表时也从手表删除。",
         "synclist": "リストを自動同期",
-        "synclist_warning": "<strong>警告：</strong> 请注意，手表上的应用程序存储空间有限。不应同时同步过多的列表！",
+        "synclist_warning": "<strong>注意：</strong> 请注意，手表上应用的存储空间有限。你不应该同时同步太多列表！<br />此外，这可能会对手表的电池寿命产生负面影响。",
         "synclist_note": "リストを変更するとすぐに時計と同期します。",
         "synclist_disable_title": "取消同步？",
         "synclist_disable": "是否要禁用所有列表的自动同步设置？<br /><br />如果稍后重新启用此设置，则需要为每个列表重新配置同步。"
