@@ -1,0 +1,51 @@
+:host {
+    ion-content.page {
+        --background: var(--ion-color-primary-tint);
+        --padding-top: 5%;
+        --padding-bottom: 5%;
+        --padding-start: 5%;
+        --padding-end: 5%;
+
+        .container {
+            background: var(--ion-background-color);
+            width: 100%;
+            height: 100%;
+            border-radius: 5vw;
+            padding: 5vw 5vw 0 5vw;
+            box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.15);
+
+            ion-tab {
+                ion-content {
+                    --padding-top: 3vh;
+                    --padding-bottom: 3vh;
+
+                    ion-img {
+                        &.app-logo {
+                            width: 60%;
+                            margin: 5vh auto;
+                        }
+
+                        &.garmin-icon {
+                            width: 30%;
+                            margin: 1vh auto;
+                        }
+                    }
+
+                    .text {
+                        font-size: 1.2em;
+                        text-align: center;
+
+                        &.welcome {
+                            font-size: 1.5em;
+                            font-weight: bold;
+                        }
+
+                        &.garmin2 {
+                            font-size: 1.1em;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

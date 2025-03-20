@@ -9,5 +9,6 @@ TEST: if disable list sync in settings, ask if all syncs of all lists should be 
 TEST: uuids as number
 TEST: add new listitem line on listitem page
 TEST: Logs can't be send in background
-TODO: use app without connect iq
+WIP: use app without connect iq
+TODO: translate page_lists_transmission.garminconnectiq page_lists_transmission.garminconnectiq_note / page_firsttart.*
 TODO: note function

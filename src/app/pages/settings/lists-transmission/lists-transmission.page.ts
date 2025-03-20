@@ -21,6 +21,7 @@ export class ListsTransmissionPage extends PageBase {
     private _openAppOnTransfer: boolean = false;
     private _deleteListOnDevice: boolean = false;
     private _syncListOnDevice: boolean = false;
+    private _garminConnectIQ: boolean = true;
 
     private _listToSync: List | string | null = null;
 
@@ -54,10 +55,25 @@ export class ListsTransmissionPage extends PageBase {
         }
     }
 
+    public get SupportGarminConnectIQ(): boolean {
+        return this._garminConnectIQ;
+    }
+
+    public set SupportGarminConnectIQ(v: boolean) {
+        this._garminConnectIQ = v;
+        this.Preferences.Set(EPrefProperty.GarminConnectIQ, v);
+        if (v && !this.ConnectIQ.Initialized) {
+            this.ConnectIQ.Initialize();
+        } else if (!v && this.ConnectIQ.Initialized) {
+            this.ConnectIQ.Finalize();
+        }
+    }
+
     public override async ionViewWillEnter() {
         this._openAppOnTransfer = await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, false);
         this._deleteListOnDevice = await this.Preferences.Get<boolean>(EPrefProperty.DeleteListOnDevice, false);
         this._syncListOnDevice = await this.Preferences.Get<boolean>(EPrefProperty.SyncListOnDevice, false);
+        this._garminConnectIQ = await this.Preferences.Get<boolean>(EPrefProperty.GarminConnectIQ, true);
 
         this._listToSync = this.Route.snapshot.queryParamMap.get("syncList");
 
@@ -78,6 +94,10 @@ export class ListsTransmissionPage extends PageBase {
         if (checked && this._listToSync) {
             await this.ListsService.SyncList({ list: this._listToSync, only_if_definitive_device: true, force_if_sync_is_disabled: true });
         }
+    }
+
+    public onSupportGarminConnectIQChanged(checked: boolean) {
+        this.SupportGarminConnectIQ = checked;
     }
 
     private async confirmRemoveSync() {

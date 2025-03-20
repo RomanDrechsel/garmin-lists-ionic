@@ -1,4 +1,5 @@
 import { Routes } from "@angular/router";
+import { FirstStartGuard } from "./services/app/first-start.guard";
 
 export const routes: Routes = [
     {
@@ -9,6 +10,7 @@ export const routes: Routes = [
     {
         path: "lists",
         loadComponent: () => import("./pages/lists/lists/lists.page").then(m => m.ListsPage),
+        canActivate: [FirstStartGuard],
     },
     {
         path: "lists/items/:uuid",
@@ -65,5 +67,9 @@ export const routes: Routes = [
     {
         path: "privacy-policy/policy",
         loadComponent: () => import("./pages/privacy-policy/policy/policy.page").then(m => m.PolicyPage),
+    },
+    {
+        path: "first-start",
+        loadComponent: () => import("./pages/first-start/first-start.page").then(m => m.FirstStartPage),
     },
 ];

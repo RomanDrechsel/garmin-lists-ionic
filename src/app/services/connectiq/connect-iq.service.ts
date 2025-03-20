@@ -49,6 +49,8 @@ export class ConnectIQService {
 
     private _onlineDevices: number = 0;
 
+    private _initialized: boolean = false;
+
     private readonly Preferences = inject(PreferencesService);
     private readonly Config = inject(ConfigService);
     private readonly Router = inject(Router);
@@ -69,11 +71,15 @@ export class ConnectIQService {
         return this._onlineDevices;
     }
 
+    public get Initialized(): boolean {
+        return this._initialized;
+    }
+
     /**
      * initialize service
      * @param obj use debug devices or live devices, and use garmin simulator or live phone
      */
-    public async Initialize(obj: { simulator?: boolean; debug_app?: boolean }) {
+    public async Initialize(obj?: { simulator?: boolean; debug_app?: boolean }) {
         Logger.Debug(`Start initializing ConnectIQ service...`);
         const all_listeners = Array.from(this._watchListeners.values());
         for (let i = 0; i < all_listeners.length; i++) {
@@ -90,7 +96,7 @@ export class ConnectIQService {
             this.addListener(new DeviceErrorReportListener(this, this.NavController, this.Popup));
             this.addListener(new DeviceLogsListener(this, this.NavController, this.Popup));
             this._devices = [];
-            const init = await ConnectIQ.Initialize({ simulator: obj.simulator ?? this.useGarminSimulator, debug_app: obj.debug_app ?? this.useGarminDebugApp });
+            const init = await ConnectIQ.Initialize({ simulator: obj?.simulator ?? this.useGarminSimulator, debug_app: obj?.debug_app ?? this.useGarminDebugApp });
             if (init.success === true) {
                 this.useGarminDebugApp = init.debug_app ?? false;
                 this.useGarminSimulator = init.simulator ?? false;
@@ -105,6 +111,29 @@ export class ConnectIQService {
         } else {
             Logger.Important(`Not on a native device, skipping initialization of ConnectIQ service`);
         }
+
+        this._initialized = true;
+    }
+
+    public async Finalize() {
+        Logger.Important(`Shutting down ConnectIQ service...`);
+
+        const all_listeners = Array.from(this._watchListeners.values());
+        for (let i = 0; i < all_listeners.length; i++) {
+            for (let j = 0; j < all_listeners[i].length; j++) {
+                await all_listeners[i][j].clearListener();
+            }
+        }
+        this._watchListeners.clear();
+        this._onlineDevices = 0;
+        this._devices = [];
+
+        if (this._initialized) {
+            //TODO: send to garmin plugin
+            await ConnectIQ.removeAllListeners();
+        }
+
+        this._initialized = false;
     }
 
     /**
