@@ -170,8 +170,14 @@
     "page_firsttart": {
         "page_title": "Willkommen bei Listen",
         "welcome": "Willkommen bei Listen",
-        "garmin1": "Möchtest du die Unterstützung für Garmin ConnectIQ aktivieren?",
-        "garmin2": "Damit ist es dir möglich, deine Listen mit deiner Garmin-Uhr zu synchronisieren.<br />Dafür benötigst du die <strong>Garmin Connect IQ</strong> App auf deinem Smartphone und die App <strong>Listen</strong> auf deiner Uhr."
+        "garmin1": "Unterstützung für Garmin ConnectIQ",
+        "garmin2": "Damit ist es dir möglich, deine Listen mit deiner Garmin-Uhr zu synchronisieren.<br />Dafür benötigst du die <strong>Garmin Connect IQ</strong> App auf deinem Smartphone und die App <strong>Listen</strong> auf deiner Uhr.",
+        "garmin_btn": "Zur Garmin App",
+        "finish1": "Vielen Dank dass du meine App benutzt.",
+        "finish2": "Falls du an meinen anderen Projekten interessiert bist, kannst du auf",
+        "finish3": "weitere Informationen zu mir finden.",
+        "finish4": "Viel Spass mit meiner App!",
+        "finish_btn": "Weiter zur App"
     },
     "page_lists": {
         "page_title": "Meine Listen",

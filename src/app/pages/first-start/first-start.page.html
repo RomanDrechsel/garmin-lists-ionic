@@ -1,5 +1,3 @@
-<app-main-toolbar menu="false">{{'page_firsttart.page_title'|translate}}</app-main-toolbar>
-
 <ion-content class="page">
     <div class="container">
         <ion-content>
@@ -10,15 +8,43 @@
 
                         <ion-img src="/assets/img/applogo.png" class="app-logo"></ion-img>
 
-                        <div class="text garmin1" [innerHTML]="'page_firsttart.garmin1'|translate"></div>
-                        <ion-img src="/assets/img/garmin-connect-iq.svg" alt="Garmin Connect IQ" class="garmin-icon"></ion-img>
-                        <div class="text garmin2" [innerHTML]="'page_firsttart.garmin2'|translate"></div>
+                        <ion-toggle checked="true" labelPlacement="start" (ionChange)="onGarminChange($event.target.checked)">
+                            <ion-text class="text garmin1" [innerHTML]="'page_firsttart.garmin1'|translate"></ion-text>
+                        </ion-toggle>
+
+                        <div class="text garmin2">
+                            <ion-img src="/assets/img/garmin-connect-iq.svg" alt="Garmin Connect IQ" class="garmin-icon"></ion-img>
+                            <span [innerHTML]="'page_firsttart.garmin2'|translate"></span>
+                        </div>
+
+                        <div class="button">
+                            <ion-button (click)="openApp()">
+                                <ion-icon slot="end" src="/assets/icons/menu/openapp.svg"></ion-icon>
+                                {{'page_firsttart.garmin_btn'|translate}}
+                            </ion-button>
+                        </div>
+                    </ion-content>
+                </ion-tab>
+                <ion-tab tab="finish">
+                    <ion-content>
+                        <div class="text finish1" [innerHTML]="'page_firsttart.finish1'|translate"></div>
+                        <div class="text" [innerHTML]="'page_firsttart.finish2'|translate"></div>
+                        <div class="text link" [innerHTML]="HomepageLink" (click)="openHomepage()"></div>
+                        <div class="text" [innerHTML]="'page_firsttart.finish3'|translate"></div>
+                        <div class="text" [innerHTML]="'page_firsttart.finish4'|translate"></div>
+
+                        <div class="button">
+                            <ion-button (click)="Finish()">{{'page_firsttart.finish_btn'|translate}}</ion-button>
+                        </div>
                     </ion-content>
                 </ion-tab>
 
                 <ion-tab-bar slot="bottom">
                     <ion-tab-button tab="garmin">
                         <ion-icon src="/assets/icons/menu/devices.svg"></ion-icon>
+                    </ion-tab-button>
+                    <ion-tab-button tab="finish">
+                        <ion-icon src="/assets/icons/finish.svg"></ion-icon>
                     </ion-tab-button>
                 </ion-tab-bar>
             </ion-tabs>

@@ -21,18 +21,32 @@
 
                     ion-img {
                         &.app-logo {
-                            width: 60%;
+                            width: 50%;
                             margin: 5vh auto;
                         }
 
                         &.garmin-icon {
                             width: 30%;
-                            margin: 1vh auto;
+                            margin: 0 0 5vw 5vw;
+                            float: right;
+                        }
+                    }
+
+                    ion-toggle {
+                        margin-bottom: 5vh;
+                        margin-right: 10vw;
+                    }
+
+                    .button {
+                        text-align: center;
+
+                        ion-button {
+                            margin-top: 5vh;
                         }
                     }
 
                     .text {
-                        font-size: 1.2em;
+                        font-size: 1.1em;
                         text-align: center;
 
                         &.welcome {
@@ -40,8 +54,25 @@
                             font-weight: bold;
                         }
 
+                        &.garmin1 {
+                            font-weight: bold;
+                        }
+
                         &.garmin2 {
-                            font-size: 1.1em;
+                            text-align: start;
+                            font-size: 1em;
+                        }
+
+                        &.finish1 {
+                            margin-bottom: 10vh;
+                            font-size: 1.3em;
+                            font-weight: bold;
+                        }
+
+                        &.link {
+                            margin-block: 7vh;
+                            font-weight: bold;
+                            font-size: 1.3em;
                         }
                     }
                 }

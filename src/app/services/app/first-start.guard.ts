@@ -21,6 +21,7 @@ export class FirstStartGuard implements CanActivate {
         }
         if (this._firststart) {
             this._router.navigateByUrl("/first-start");
+            this._firststart = false;
             return false;
         } else {
             return true;

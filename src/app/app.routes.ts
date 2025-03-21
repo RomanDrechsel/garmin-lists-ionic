@@ -4,7 +4,7 @@ import { FirstStartGuard } from "./services/app/first-start.guard";
 export const routes: Routes = [
     {
         path: "",
-        redirectTo: "lists",
+        redirectTo: "/lists",
         pathMatch: "full",
     },
     {
