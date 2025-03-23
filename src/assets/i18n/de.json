@@ -11,6 +11,7 @@
     "change": "Ändern",
     "select": "Auswählen",
     "share": "Teilen",
+    "next": "Weiter",
     "date": {
         "date_add": " Uhr",
         "today": "Heute",
@@ -168,11 +169,14 @@
         "logs_received_confirm": "Die Logs wurden empfangen.<br /><br />Möchtest du sie jetzt anzeigen?"
     },
     "page_firsttart": {
-        "page_title": "Willkommen bei Listen",
         "welcome": "Willkommen bei Listen",
+        "language1": "Bitte wähle die gewünschte Sprache für die App:",
+        "language2": "Die Sprache kannst du später auch noch ändern.",
         "garmin1": "Unterstützung für Garmin ConnectIQ",
         "garmin2": "Damit ist es dir möglich, deine Listen mit deiner Garmin-Uhr zu synchronisieren.<br />Dafür benötigst du die <strong>Garmin Connect IQ</strong> App auf deinem Smartphone und die App <strong>Listen</strong> auf deiner Uhr.",
-        "garmin_btn": "Zur Garmin App",
+        "garmin_btn": "Listen App",
+        "garmin-hint1": "Manchmal kann es vorkommen, dass du keine Listen auf deine Uhr übertragen kannst, obwohl deine Uhr richtig erkannt wurde.<br /><br />Um dieses Problem zu beheben, reicht es meist, das Smartphone bzw. die Uhr neu starten.",
+        "garmin-hint2": "Leider habe ich auf die Funktionsweise der Garmin Connect App, die als Brücke zur Komunikation mit deiner Uhr fungiert, keinen Einfluss.",
         "finish1": "Vielen Dank dass du meine App benutzt.",
         "finish2": "Falls du an meinen anderen Projekten interessiert bist, kannst du auf",
         "finish3": "weitere Informationen zu mir finden.",

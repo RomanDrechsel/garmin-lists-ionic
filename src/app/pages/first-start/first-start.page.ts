@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Browser } from "@capacitor/browser";
-import { IonButton, IonContent, IonIcon, IonImg, IonTab, IonTabBar, IonTabButton, IonTabs, IonText, IonToggle } from "@ionic/angular/standalone";
+import { IonButton, IonContent, IonIcon, IonImg, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonText, IonToggle } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { EPrefProperty } from "../../services/storage/preferences.service";
 import { PageBase } from "../page-base";
@@ -13,19 +13,39 @@ import { PageBase } from "../page-base";
     styleUrls: ["./first-start.page.scss"],
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonButton, IonText, IonToggle, IonTab, IonImg, IonContent, IonTabs, IonTabBar, IonTabButton, IonIcon, CommonModule, FormsModule, TranslateModule],
+    imports: [IonSegmentButton, IonSegment, IonSegmentContent, IonSegmentView, IonButton, IonText, IonToggle, IonImg, IonContent, IonIcon, CommonModule, FormsModule, TranslateModule],
 })
 export class FirstStartPage extends PageBase {
+    @ViewChild("segment", { static: false, read: IonSegment }) segment?: IonSegment;
+
+    private _garminActive: boolean = true;
+
     public get HomepageLink(): string {
         return this.Config.Homepage;
+    }
+
+    public get GarminActive(): boolean {
+        return this._garminActive;
     }
 
     public override async ionViewDidEnter(): Promise<void> {
         await super.ionViewDidEnter();
         await this.Preferences.Set(EPrefProperty.GarminConnectIQ, true);
+        if (this.segment) {
+            this.segment.value = "language";
+        }
+    }
+
+    public async segmentChange(segment: any): Promise<void> {
+        if (segment == "garmin-hint") {
+            if (this._garminActive && !this.ConnectIQ.Initialized) {
+                await this.ConnectIQ.Initialize();
+            }
+        }
     }
 
     public async onGarminChange(check: boolean) {
+        this._garminActive = check;
         await this.Preferences.Set(EPrefProperty.GarminConnectIQ, check);
         if (check) {
             await this.ConnectIQ.Initialize();
@@ -34,8 +54,22 @@ export class FirstStartPage extends PageBase {
         }
     }
 
+    public async nextLanguage() {
+        this.gotoSegment("garmin");
+    }
+
+    public async nextGarmin() {
+        const nextSegment = this.GarminActive ? "garmin-hint" : "finish";
+        this.gotoSegment(nextSegment);
+    }
+
+    public async nextGarminHint() {
+        this.gotoSegment("finish");
+    }
+
     public async Finish() {
-        this.NavController.navigateForward("");
+        await this.Preferences.Set(EPrefProperty.FirstStart, false);
+        this.NavController.navigateRoot("", { animated: true, replaceUrl: true });
     }
 
     public async openApp() {
@@ -44,5 +78,13 @@ export class FirstStartPage extends PageBase {
 
     public async openHomepage() {
         await Browser.open({ url: `https://${this.Config.Homepage}` });
+    }
+
+    private async gotoSegment(segment: string) {
+        if (this.segment) {
+            this.segment.value = segment;
+            this.segmentChange(segment);
+            this.cdr.detectChanges();
+        }
     }
 }

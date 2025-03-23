@@ -10,5 +10,5 @@ TEST: uuids as number
 TEST: add new listitem line on listitem page
 TEST: Logs can't be send in background
 WIP: use app without connect iq
-TODO: translate page_lists_transmission.garminconnectiq page_lists_transmission.garminconnectiq_note / page_firsttart.*
+TODO: translate page_lists_transmission.garminconnectiq page_lists_transmission.garminconnectiq_note / page_firsttart.* / next
 TODO: note function

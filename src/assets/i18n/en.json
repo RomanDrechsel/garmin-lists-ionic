@@ -11,6 +11,7 @@
     "change": "Change",
     "select": "Select",
     "share": "Share",
+    "next": "Next",
     "date": {
         "date_add": "",
         "today": "Today",
@@ -167,6 +168,19 @@
         "openApp": "Open app",
         "logs_received_confirm": "The logs have been received.<br /><br />Would you like to see them now?"
     },
+    "page_firsttart": {
+        "welcome": "Welcome to Lists",
+        "garmin1": "Support for Garmin ConnectIQ",
+        "garmin2": "This allows you to sync your lists with your Garmin watch.<br />You need the <strong>Garmin Connect IQ</strong> app on your smartphone and the <strong>Lists</strong> app on your watch.",
+        "garmin_btn": "Lists App",
+        "garmin-hint1": "Sometimes, you may not be able to transfer lists to your watch, even if your watch is recognized correctly.<br /><br />In most cases, simply restarting your smartphone or watch will fix this issue.",
+        "garmin-hint2": "Unfortunately, I have no control over how the Garmin Connect app works, as it acts as a bridge for communication with your watch.",
+        "finish1": "Thank you for using my app.",
+        "finish2": "If you're interested in my other projects, you can find more information on",
+        "finish3": "about me.",
+        "finish4": "Have fun with my app!",
+        "finish_btn": "Continue to the app"
+    },
     "page_lists": {
         "page_title": "My lists",
         "empty": "Empty",
@@ -309,7 +323,9 @@
         "synclist_note": "When making changes to a list, sync it with the watch immediately.",
         "synclist_warning": "<strong>Attention:</strong> Keep in mind that the app's storage space on the watch is limited. You shouldn't sync too many lists at the same time!<br />Additionally, it may also have a negative impact on the watch's battery life.",
         "synclist_disable_title": "Disable automatic synchronization?",
-        "synclist_disable": "Do you want to disable the automatic synchronization for all lists?<br /><br />If you enable this setting again later, you will need to reconfigure the synchronization for each list again."
+        "synclist_disable": "Do you want to disable the automatic synchronization for all lists?<br /><br />If you enable this setting again later, you will need to reconfigure the synchronization for each list again.",
+        "garminconnectiq": "Garmin Connect IQ support",
+        "garminconnectiq_note": "Deactivate this setting if you do not own a Garmin watch or do not want to use the transfer functions.<br />If this setting is activated, the Garmin ConnectIQ app is required on your smartphone."
     },
     "page_settings_trash": {
         "page_title": "Trash",

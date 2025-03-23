@@ -80,19 +80,13 @@ export class AppService {
             }
         })();
 
-        const first_start = await this.Preferences.Get<boolean>(EPrefProperty.FirstStart, true);
-        if (first_start) {
-            
-            window.setTimeout(async () => {
-                await this.Preferences.Set(EPrefProperty.FirstStart, false);
-            }, 5000);
-        }
-
         //no await ...
         (async () => {
-            const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, true) : false;
-            const garmin_debugapp = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugApp, false) : false;
-            await this.ConnectIQ.Initialize({ simulator: garmin_simulator, debug_app: garmin_debugapp });
+            if ((await this.Preferences.Get(EPrefProperty.FirstStart, true)) == false && (await this.Preferences.Get<boolean>(EPrefProperty.GarminConnectIQ, true))) {
+                const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, true) : false;
+                const garmin_debugapp = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugApp, false) : false;
+                await this.ConnectIQ.Initialize({ simulator: garmin_simulator, debug_app: garmin_debugapp });
+            }
         })();
 
         //no await...
