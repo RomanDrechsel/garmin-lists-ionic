@@ -11,6 +11,7 @@
     "change": "Cambiar",
     "select": "Seleccionar",
     "share": "Compartir",
+    "next": "Siguiente",
     "date": {
         "date_add": "",
         "today": "Hoy",
@@ -167,6 +168,21 @@
         "openApp": "Abrir la aplicación",
         "logs_received_confirm": "Los registros han sido recibidos.<br /><br />¿Deseas verlos ahora?"
     },
+    "page_firststart": {
+        "welcome": "Bienvenido a Listas",
+        "language1": "Por favor, selecciona tu idioma preferido:",
+        "language2": "Puedes cambiar el idioma más tarde si es necesario.",
+        "garmin1": "Compatibilidad con Garmin ConnectIQ",
+        "garmin2": "Esto te permite sincronizar tus listas con tu reloj Garmin.<br />Necesitas la aplicación <strong>Garmin Connect IQ</strong> en tu smartphone y la aplicación <strong>Listas</strong> en tu reloj.",
+        "garmin_btn": "Aplicación Listas",
+        "garmin-hint1": "A veces, es posible que no puedas transferir listas a tu reloj, incluso si es reconocido correctamente.<br /><br />En la mayoría de los casos, reiniciar tu smartphone o reloj resolverá el problema.",
+        "garmin-hint2": "Desafortunadamente, no tengo control sobre cómo funciona la aplicación Garmin Connect, ya que actúa como un puente para la comunicación con tu reloj.",
+        "finish1": "Gracias por usar mi aplicación.",
+        "finish2": "Si estás interesado en mis otros proyectos, puedes encontrar más información en",
+        "finish3": "sobre mí.",
+        "finish4": "¡Disfruta usando mi aplicación!",
+        "finish_btn": "Continuar a la aplicación"
+    },
     "page_lists": {
         "page_title": "Mis listas",
         "empty": "Vaciar",
@@ -309,7 +325,9 @@
         "synclist_warning": "<strong>Atención:</strong> Ten en cuenta que el espacio de almacenamiento de la aplicación en el reloj es limitado. ¡No deberías sincronizar demasiadas listas al mismo tiempo!<br />Además, también puede afectar negativamente la duración de la batería del reloj.",
         "synclist_note": "Sincronizar una lista con el reloj inmediatamente cuando se realicen cambios.",
         "synclist_disable_title": "¿Deshabilitar sincronización?",
-        "synclist_disable": "¿Quieres desactivar la configuración de sincronización automática para todas las listas?<br /><br />Si vuelves a activar esta configuración más tarde, tendrás que configurar la sincronización para cada lista nuevamente."
+        "synclist_disable": "¿Quieres desactivar la configuración de sincronización automática para todas las listas?<br /><br />Si vuelves a activar esta configuración más tarde, tendrás que configurar la sincronización para cada lista nuevamente.",
+        "garminconnectiq": "Compatibilidad con Garmin Connect IQ",
+        "garminconnectiq_note": "Desactiva este ajuste si no tienes un reloj Garmin o no quieres utilizar las funciones de transferencia.<br />Si este ajuste está activado, se requiere la aplicación Garmin ConnectIQ en tu smartphone."
     },
     "page_settings_trash": {
         "page_title": "Papelera",

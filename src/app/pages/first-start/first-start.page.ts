@@ -2,7 +2,8 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Browser } from "@capacitor/browser";
-import { IonButton, IonContent, IonIcon, IonImg, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonText, IonToggle } from "@ionic/angular/standalone";
+import { IonButton, IonContent, IonIcon, IonImg, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonSelect, IonSelectOption, IonText, IonToggle } from "@ionic/angular/standalone";
+import { SelectCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { EPrefProperty } from "../../services/storage/preferences.service";
 import { PageBase } from "../page-base";
@@ -13,10 +14,11 @@ import { PageBase } from "../page-base";
     styleUrls: ["./first-start.page.scss"],
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonSegmentButton, IonSegment, IonSegmentContent, IonSegmentView, IonButton, IonText, IonToggle, IonImg, IonContent, IonIcon, CommonModule, FormsModule, TranslateModule],
+    imports: [IonSegmentButton, IonSegment, IonSegmentContent, IonSegmentView, IonButton, IonText, IonToggle, IonImg, IonContent, IonIcon, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule],
 })
 export class FirstStartPage extends PageBase {
     @ViewChild("segment", { static: false, read: IonSegment }) segment?: IonSegment;
+    @ViewChild("selLanguage", { static: false, read: IonSelect }) selLanguage?: IonSelect;
 
     private _garminActive: boolean = true;
 
@@ -34,6 +36,14 @@ export class FirstStartPage extends PageBase {
         if (this.segment) {
             this.segment.value = "language";
         }
+    }
+
+    public async changeLanguage() {
+        this.selLanguage?.open();
+    }
+
+    public onChangeLanguage(event: SelectCustomEvent) {
+        this.Locale.ChangeLanguage(event.detail.value);
     }
 
     public async segmentChange(segment: any): Promise<void> {
@@ -69,7 +79,7 @@ export class FirstStartPage extends PageBase {
 
     public async Finish() {
         await this.Preferences.Set(EPrefProperty.FirstStart, false);
-        this.NavController.navigateRoot("", { animated: true, replaceUrl: true });
+        this.NavController.navigateRoot("/lists", { animated: true, replaceUrl: true });
     }
 
     public async openApp() {

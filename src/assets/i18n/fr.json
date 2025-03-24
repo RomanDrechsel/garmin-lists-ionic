@@ -11,6 +11,7 @@
     "change": "Modifier",
     "select": "Sélectionner",
     "share": "Partager",
+    "next": "Suivant",
     "date": {
         "date_add": "h",
         "today": "Aujourd'hui",
@@ -167,6 +168,21 @@
         "openApp": "Ouvrir l'application",
         "logs_received_confirm": "Les journaux ont été reçus.<br /><br />Voulez-vous les afficher maintenant ?"
     },
+    "page_firststart": {
+        "welcome": "Bienvenue sur Listes",
+        "language1": "Veuillez sélectionner votre langue préférée :",
+        "language2": "Vous pouvez changer la langue plus tard si nécessaire.",
+        "garmin1": "Prise en charge de Garmin ConnectIQ",
+        "garmin2": "Cela vous permet de synchroniser vos listes avec votre montre Garmin.<br />Vous avez besoin de l'application <strong>Garmin Connect IQ</strong> sur votre smartphone et de l'application <strong>Listes</strong> sur votre montre.",
+        "garmin_btn": "Application Listes",
+        "garmin-hint1": "Parfois, il se peut que vous ne puissiez pas transférer de listes sur votre montre, même si elle est correctement reconnue.<br /><br />Dans la plupart des cas, redémarrer votre smartphone ou votre montre résoudra le problème.",
+        "garmin-hint2": "Malheureusement, je n'ai aucun contrôle sur le fonctionnement de l'application Garmin Connect, qui sert de passerelle pour la communication avec votre montre.",
+        "finish1": "Merci d'utiliser mon application.",
+        "finish2": "Si vous êtes intéressé par mes autres projets, vous pouvez trouver plus d'informations sur",
+        "finish3": "à propos de moi.",
+        "finish4": "Profitez bien de mon application !",
+        "finish_btn": "Continuer vers l'application"
+    },
     "page_lists": {
         "page_title": "Mes listes",
         "empty": "Vider",
@@ -309,7 +325,9 @@
         "synclist_warning": "<strong>Attention:</strong> N'oubliez pas que l'espace de stockage de l'application sur la montre est limité. Vous ne devriez pas synchroniser trop de listes en même temps !<br />De plus, cela peut également avoir un impact négatif sur l'autonomie de la batterie de la montre.",
         "synclist_note": "Synchroniser immédiatement une liste avec la montre lorsqu'elle est modifiée.",
         "synclist_disable_title": "Désactiver la synchronisation?",
-        "synclist_disable": "Voulez-vous désactiver les paramètres de synchronisation automatique pour toutes les listes ?<br /><br />Si vous réactivez ce paramètre plus tard, vous devrez reconfigurer la synchronisation pour chaque liste."
+        "synclist_disable": "Voulez-vous désactiver les paramètres de synchronisation automatique pour toutes les listes ?<br /><br />Si vous réactivez ce paramètre plus tard, vous devrez reconfigurer la synchronisation pour chaque liste.",
+        "garminconnectiq": "Support de Garmin Connect IQ",
+        "garminconnectiq_note": "Désactive ce paramètre si tu ne possèdes pas de montre Garmin ou si tu ne souhaites pas utiliser les fonctions de transfert.<br />Lorsque ce paramètre est activé, l'application Garmin ConnectIQ est nécessaire sur ton smartphone."
     },
     "page_settings_trash": {
         "page_title": "Corbeille",

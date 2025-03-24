@@ -11,6 +11,7 @@
     "change": "Modifica",
     "select": "Seleziona",
     "share": "Condividi",
+    "next": "Prossimo",
     "date": {
         "date_add": "",
         "today": "Oggi",
@@ -165,6 +166,21 @@
         "openApp": "Aprire l'applicazione",
         "logs_received_confirm": "I registri sono stati ricevuti.<br /><br />Vuoi visualizzarli ora?"
     },
+    "page_firststart": {
+        "welcome": "Benvenuto su Liste",
+        "language1": "Seleziona la tua lingua preferita:",
+        "language2": "Puoi cambiare la lingua in seguito, se necessario.",
+        "garmin1": "Supporto per Garmin ConnectIQ",
+        "garmin2": "Questo ti permette di sincronizzare le tue liste con il tuo orologio Garmin.<br />Hai bisogno dell'app <strong>Garmin Connect IQ</strong> sul tuo smartphone e dell'app <strong>Liste</strong> sul tuo orologio.",
+        "garmin_btn": "App Liste",
+        "garmin-hint1": "A volte potresti non riuscire a trasferire le liste sul tuo orologio, anche se è stato riconosciuto correttamente.<br /><br />Nella maggior parte dei casi, riavviare lo smartphone o l'orologio risolverà il problema.",
+        "garmin-hint2": "Purtroppo, non ho alcun controllo sul funzionamento dell'app Garmin Connect, che funge da ponte per la comunicazione con il tuo orologio.",
+        "finish1": "Grazie per aver utilizzato la mia app.",
+        "finish2": "Se sei interessato ai miei altri progetti, puoi trovare maggiori informazioni su",
+        "finish3": "di me.",
+        "finish4": "Buon divertimento con la mia app!",
+        "finish_btn": "Continua all'app"
+    },
     "page_lists": {
         "page_title": "Le mie liste",
         "empty": "Svuota",
@@ -287,7 +303,9 @@
         "synclist_warning": "<strong>Attenzione:</strong> Tieni presente che lo spazio di archiviazione dell'app sull'orologio è limitato. Non dovresti sincronizzare troppe liste contemporaneamente!<br />Inoltre, potrebbe influire negativamente sulla durata della batteria dell'orologio.",
         "synclist_note": "Sincronizza immediatamente una lista con l'orologio quando vengono apportate modifiche.",
         "synclist_disable_title": "Disabilitare la sincronizzazione?",
-        "synclist_disable": "Vuoi disattivare le impostazioni di sincronizzazione automatica per tutte le liste?<br /><br />Se riattivi questa impostazione in seguito, dovrai riconfigurare la sincronizzazione per ogni lista."
+        "synclist_disable": "Vuoi disattivare le impostazioni di sincronizzazione automatica per tutte le liste?<br /><br />Se riattivi questa impostazione in seguito, dovrai riconfigurare la sincronizzazione per ogni lista.",
+        "garminconnectiq": "Supporto Garmin Connect IQ",
+        "garminconnectiq_note": "Disattivare questa impostazione se non si possiede un orologio Garmin o se non si desidera utilizzare le funzioni di trasferimento.<br />Se questa impostazione è attivata, è necessario disporre dell'app Garmin ConnectIQ sullo smartphone."
     },
     "page_settings_trash": {
         "page_title": "Cestino",
