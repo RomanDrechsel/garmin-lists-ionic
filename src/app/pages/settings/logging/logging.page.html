@@ -34,7 +34,7 @@
             <ion-button (click)="onBtnDeleteLogs()" slot="end" size="default" fill="outline" [disabled]="Logfiles == 0">{{'page_settings_logs.deleteall'|translate}}</ion-button>
         </ion-item>
 
-        <ion-item [button]="true" routerDirection="forward" [routerLink]="['/settings/watch-logs']" lines="full">
+        <ion-item [button]="true" routerDirection="forward" [routerLink]="['/settings/watch-logs']" lines="full" *ngIf="ConnectIQ.Initialized">
             <ion-label>
                 <div>{{'page_settings_logs.show_watch'|translate}}</div>
                 <ion-note>{{'page_settings_logs.show_watch_note'|translate}}</ion-note>

@@ -8,6 +8,7 @@ import { FileUtils } from "../../classes/utils/file-utils";
 import { ShareUtil } from "../../classes/utils/share-utils";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { ConfigService } from "../../services/config/config.service";
+import { ConnectIQService } from "../../services/connectiq/connect-iq.service";
 import { LocalizationService } from "../../services/localization/localization.service";
 import { Logger } from "../../services/logging/logger";
 import { WatchLoggingService } from "../../services/logging/watch-logging.service";
@@ -37,9 +38,14 @@ export class StoreLogComponent {
     private readonly AppService = inject(AppService);
     private readonly WatchLogs = inject(WatchLoggingService);
     private readonly Config = inject(ConfigService);
+    private readonly ConnectIQService = inject(ConnectIQService);
 
     public get IsWebApp(): boolean {
         return AppService.isWebApp;
+    }
+
+    public get ConnectIQ(): ConnectIQService {
+        return this.ConnectIQService;
     }
 
     public cancel() {

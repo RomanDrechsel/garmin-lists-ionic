@@ -60,7 +60,7 @@ export class FirstStartPage extends PageBase {
         if (check) {
             await this.ConnectIQ.Initialize();
         } else {
-            await this.ConnectIQ.Finalize();
+            await this.ConnectIQ.Shutdown();
         }
     }
 

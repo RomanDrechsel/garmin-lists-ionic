@@ -36,6 +36,7 @@ export class ListItemsPage extends PageBase {
     private _disableClick = false;
     private _preferencesSubscription?: Subscription;
     private _listSubscription?: Subscription;
+    private _connectIqSubscription?: Subscription;
     private _useTrash = true;
     private _scrollPosition: "top" | "bottom" | number = "top";
     private _listTitle?: string = undefined;
@@ -115,6 +116,10 @@ export class ListItemsPage extends PageBase {
                 this._listInitialized = true;
                 this.reload();
             }
+        });
+
+        this._connectIqSubscription = this.ConnectIQ.onInitialized$.subscribe(async () => {
+            this.appComponent.setAppPages(this.ModifyMainMenu());
         });
 
         if (this.List && this.List.Sync && this._informedSyncForNewlist != this.List.Uuid && (await this.Preferences.Get(EPrefProperty.SyncListOnDevice, false)) == false) {
@@ -232,24 +237,28 @@ export class ListItemsPage extends PageBase {
     }
 
     public override ModifyMainMenu(): MenuItem[] {
+        const menu = [];
         if (this.List) {
-            return [
-                MenuitemFactory(EMenuItemType.ListsTrash, { hidden: true }),
-                MenuitemFactory(EMenuItemType.Devices, {
-                    title_id: "page_listitems.menu_devices",
-                    onClick: async () => {
-                        this.ListsService.TransferList(this.List!.Uuid);
-                        return true;
-                    },
-                }),
+            menu.push(MenuitemFactory(EMenuItemType.ListsTrash, { hidden: true }));
+            if (this.ConnectIQ.Initialized) {
+                menu.push(
+                    MenuitemFactory(EMenuItemType.Devices, {
+                        title_id: "page_listitems.menu_devices",
+                        onClick: async () => {
+                            this.ListsService.TransferList(this.List!.Uuid);
+                            return true;
+                        },
+                    }),
+                );
+            }
+            menu.push(
                 MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: `${this.List.Uuid}`, disabled: !this._useTrash }),
                 MenuitemFactory(EMenuItemType.EditList, { onClick: () => this.EditList() }),
                 MenuitemFactory(EMenuItemType.EmptyList, { onClick: () => this.EmptyList(), disabled: this.List.Items.length <= 0 }),
                 MenuitemFactory(EMenuItemType.DeleteList, { onClick: () => this.DeleteList() }),
-            ];
-        } else {
-            return [];
+            );
         }
+        return menu;
     }
 
     public onScroll(event: IonContentCustomEvent<ScrollDetail>) {

@@ -231,4 +231,8 @@ export declare type AppMetaInfo = {
         Environment: "Production" | "Development";
         Release: boolean;
     };
+    ConnectIQ?: {
+        Initialized: boolean;
+        Devices: number;
+    };
 };

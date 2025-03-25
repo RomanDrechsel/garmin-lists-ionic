@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { CanActivate, Router } from "@angular/router";
-import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
+import { EPrefProperty, PreferencesService } from "../../services/storage/preferences.service";
 
 @Injectable({
     providedIn: "root",
@@ -9,7 +9,7 @@ export class FirstStartGuard implements CanActivate {
     private readonly _router = inject(Router);
     private readonly Preferences = inject(PreferencesService);
 
-    private _firststart?: boolean = true;
+    private _firststart?: boolean = undefined;
 
     public async canActivate(): Promise<boolean> {
         if (this._firststart === undefined) {

@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
-import { FirstStartGuard } from "./services/app/first-start.guard";
+import { FirstStartGuard } from "./pages/first-start/first-start.guard";
+import { ConnectIQGuard } from "./services/connectiq/connect-iq-guard";
 
 export const routes: Routes = [
     {
@@ -27,6 +28,7 @@ export const routes: Routes = [
     {
         path: "devices",
         loadComponent: () => import("./pages/devices/devices.page").then(m => m.DevicesPage),
+        canActivate: [ConnectIQGuard],
     },
     {
         path: "settings",
@@ -51,6 +53,7 @@ export const routes: Routes = [
     {
         path: "settings/watch-logs",
         loadComponent: () => import("./pages/settings/show-watch-logs/show-watch-logs.page").then(m => m.ShowWatchLogsPage),
+        canActivate: [ConnectIQGuard],
     },
     {
         path: "settings/lists-transmission",

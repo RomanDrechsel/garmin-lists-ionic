@@ -62,10 +62,10 @@ export class ListsTransmissionPage extends PageBase {
     public set SupportGarminConnectIQ(v: boolean) {
         this._garminConnectIQ = v;
         this.Preferences.Set(EPrefProperty.GarminConnectIQ, v);
-        if (v && !this.ConnectIQ.Initialized) {
+        if (v) {
             this.ConnectIQ.Initialize();
-        } else if (!v && this.ConnectIQ.Initialized) {
-            this.ConnectIQ.Finalize();
+        } else {
+            this.ConnectIQ.Shutdown();
         }
     }
 

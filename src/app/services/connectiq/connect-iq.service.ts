@@ -42,7 +42,7 @@ export class ConnectIQService {
     public useGarminSimulator = false;
     public useGarminDebugApp = false;
 
-    private onInitializedSubject = new BehaviorSubject<void>(undefined);
+    private onInitializedSubject = new BehaviorSubject<boolean | undefined>(undefined);
     public onInitialized$ = this.onInitializedSubject.asObservable();
     private onDeviceChangedSubject = new BehaviorSubject<ConnectIQDevice | undefined>(undefined);
     public onDeviceChanged$ = this.onDeviceChangedSubject.asObservable();
@@ -106,34 +106,38 @@ export class ConnectIQService {
                 } else {
                     this._alwaysTransmitToDevice = undefined;
                 }
-                this.onInitializedSubject.next();
+                this.onInitializedSubject.next(true);
             }
         } else {
             Logger.Important(`Not on a native device, skipping initialization of ConnectIQ service`);
         }
 
+        Logger.Debug(`ConnectIQ service initialized successfully`);
         this._initialized = true;
     }
 
-    public async Finalize() {
+    public async Shutdown() {
         Logger.Important(`Shutting down ConnectIQ service...`);
 
-        const all_listeners = Array.from(this._watchListeners.values());
-        for (let i = 0; i < all_listeners.length; i++) {
-            for (let j = 0; j < all_listeners[i].length; j++) {
-                await all_listeners[i][j].clearListener();
-            }
-        }
         this._watchListeners.clear();
         this._onlineDevices = 0;
         this._devices = [];
 
         if (this._initialized) {
-            //TODO: send to garmin plugin
-            await ConnectIQ.removeAllListeners();
+            if (Capacitor.isNativePlatform()) {
+                await ConnectIQ.Shutdown();
+                const all_listeners = Array.from(this._watchListeners.values());
+                for (let i = 0; i < all_listeners.length; i++) {
+                    for (let j = 0; j < all_listeners[i].length; j++) {
+                        await all_listeners[i][j].clearListener();
+                    }
+                }
+                await ConnectIQ.removeAllListeners();
+            }
         }
 
         this._initialized = false;
+        this.onInitializedSubject.next(false);
     }
 
     /**

@@ -92,16 +92,19 @@ export class AppComponent implements OnInit {
     }
 
     public setAppPages(menu: MenuItem[] = []) {
-        let required = MenuitemFactoryList([EMenuItemType.Lists, EMenuItemType.Devices]);
-        required.push(
-            MenuitemFactory(EMenuItemType.OpenApp, {
-                disabled: this.ConnectIQ.OnlineDevices == 0,
-                onClick: () => {
-                    this.MainMenu?.close();
-                    return this.ConnectIQ.openApp(undefined, true);
-                },
-            }),
-        );
+        let required = MenuitemFactoryList([EMenuItemType.Lists]);
+        if (this.ConnectIQ.Initialized) {
+            required.push(
+                MenuitemFactory(EMenuItemType.Devices),
+                MenuitemFactory(EMenuItemType.OpenApp, {
+                    disabled: this.ConnectIQ.OnlineDevices == 0,
+                    onClick: () => {
+                        this.MainMenu?.close();
+                        return this.ConnectIQ.openApp(undefined, true);
+                    },
+                }),
+            );
+        }
         required.push(MenuitemFactory(EMenuItemType.ListsTrash, { disabled: !this._useTrash }));
         for (let i = required.length - 1; i >= 0; i--) {
             if (!menu?.find(m => m.Id == required[i].Id)) {

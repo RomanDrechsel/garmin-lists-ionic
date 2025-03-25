@@ -58,8 +58,14 @@ export class DevicesPage extends PageBase {
 
     public override async ionViewDidEnter() {
         super.ionViewDidEnter();
-        this.initListener = this.ConnectIQ.onInitialized$.subscribe(async () => {
-            await this.loadDevices();
+        this.initListener = this.ConnectIQ.onInitialized$.subscribe(async (initialized?: boolean) => {
+            if (initialized) {
+                await this.loadDevices();
+            } else {
+                this.Devices = [];
+                this.SelectedDevice = undefined;
+                this.selectDevice();
+            }
         });
 
         this.stateListener = this.ConnectIQ.onDeviceChanged$.subscribe(device => {

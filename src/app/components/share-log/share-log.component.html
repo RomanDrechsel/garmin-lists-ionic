@@ -53,7 +53,7 @@
                 </ion-list>
             </ion-accordion>
         </ion-accordion-group>
-        <ion-item lines="none" class="attach-watchlog">
+        <ion-item lines="none" class="attach-watchlog" *ngIf="ConnectIQ.Initialized">
             <ion-checkbox [checked]="Params.watch_logs_included === true" [disabled]="Params.watch_logs_included === true" #attachWatchLogs>
                 {{ "comp_sharelog.watch" | translate }}
             </ion-checkbox>
