@@ -11,6 +11,7 @@
     "change": "更改",
     "select": "选择",
     "share": "分享",
+    "next": "下一步",
     "date": {
         "date_add": "",
         "today": "今天",
@@ -167,6 +168,21 @@
         "openApp": "打开应用程序",
         "logs_received_confirm": "日志已收到。<br /><br />您想现在查看吗？"
     },
+    "page_firststart": {
+        "welcome": "欢迎使用列表",
+        "language1": "请选择您偏好的语言：",
+        "language2": "您可以稍后更改语言。",
+        "garmin1": "支持 Garmin ConnectIQ",
+        "garmin2": "这让您可以将列表与您的 Garmin 手表同步。<br />您需要在智能手机上安装 <strong>Garmin Connect IQ</strong> 应用程序，并在手表上安装 <strong>列表</strong> 应用程序。",
+        "garmin_btn": "列表应用程序",
+        "garmin-hint1": "有时，即使您的手表已正确识别，您仍可能无法传输列表。<br /><br />在大多数情况下，重新启动您的智能手机或手表即可解决问题。",
+        "garmin-hint2": "很遗憾，我无法影响 Garmin Connect 应用程序的运作，该应用程序作为与您的手表通信的桥梁。",
+        "finish1": "感谢您使用我的应用程序。",
+        "finish2": "如果您对我的其他项目感兴趣，可以在此找到更多信息：",
+        "finish3": "关于我。",
+        "finish4": "祝您使用愉快！",
+        "finish_btn": "继续使用应用程序"
+    },
     "page_lists": {
         "page_title": "我的列表",
         "empty": "清空",
@@ -309,7 +325,9 @@
         "synclist_warning": "<strong>注意：</strong> 请注意，手表上应用的存储空间有限。你不应该同时同步太多列表！<br />此外，这可能会对手表的电池寿命产生负面影响。",
         "synclist_note": "リストを変更するとすぐに時計と同期します。",
         "synclist_disable_title": "取消同步？",
-        "synclist_disable": "是否要禁用所有列表的自动同步设置？<br /><br />如果稍后重新启用此设置，则需要为每个列表重新配置同步。"
+        "synclist_disable": "是否要禁用所有列表的自动同步设置？<br /><br />如果稍后重新启用此设置，则需要为每个列表重新配置同步。",
+        "garminconnectiq": "Garmin 连接 IQ 支持",
+        "garminconnectiq_note": "如果您没有 Garmin 手表或不想使用传输函数, 则取消此设置 。 <br/>如果启用此设置, 您的智能手机需要 Garmin ConnectIQ 应用程序。"
     },
     "page_settings_trash": {
         "page_title": "回收站",
