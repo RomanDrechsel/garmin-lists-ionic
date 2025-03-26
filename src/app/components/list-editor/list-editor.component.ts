@@ -5,6 +5,7 @@ import { PluginListenerHandle } from "@capacitor/core";
 import { Keyboard } from "@capacitor/keyboard";
 import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
+import { ConnectIQService } from "../../services/connectiq/connect-iq.service";
 import { List, ListReset } from "../../services/lists/list";
 import { ListsService } from "../../services/lists/lists.service";
 import { LocalizationService } from "../../services/localization/localization.service";
@@ -34,6 +35,7 @@ export class ListEditorComponent {
     private readonly cdr = inject(ChangeDetectorRef);
     private readonly FormBuilder = inject(FormBuilder);
     private readonly Admob = inject(AdmobService);
+    private readonly ConnectIQ = inject(ConnectIQService);
 
     private _listReset?: ListReset = undefined;
     private _listSync?: boolean;
@@ -46,6 +48,10 @@ export class ListEditorComponent {
         this.Form = this.FormBuilder.group({
             listname: ["", [Validators.required]],
         });
+    }
+
+    public get ConnectIQInitialized(): boolean {
+        return this.ConnectIQ.Initialized;
     }
 
     public set ResetActive(active: boolean) {

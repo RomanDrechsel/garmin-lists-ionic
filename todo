@@ -9,4 +9,6 @@ TEST: if disable list sync in settings, ask if all syncs of all lists should be 
 TEST: uuids as number
 TEST: add new listitem line on listitem page
 TEST: Logs can't be send in background
-TODO: better hint on transmission settings page, for battery consumption and data usage
+WIP: use app without connect iq
+TODO: Translate comp-sharelog.meta_garmin / comp-sharelog.meta_garmin_note
+TODO: note function

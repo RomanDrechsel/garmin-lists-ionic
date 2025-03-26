@@ -6,6 +6,7 @@ import { TransmitDataEventArgs } from "./event-args/transmit-data-event-args";
 
 export interface IConnectIQ extends Plugin {
     Initialize(opts: { simulator: boolean; debug_app: boolean }): Promise<InitializeEventArgs>;
+    Shutdown(): Promise<void>;
 
     GetDevices(opts: { force_reload: boolean }): Promise<DevicesEventArgs>;
 

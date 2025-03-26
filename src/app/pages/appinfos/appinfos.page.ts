@@ -29,10 +29,13 @@ export class AppinfosPage extends PageBase {
     public DatabaseSizeTrash: string = "-";
     public MemoryUsage: string = "-";
     public LogsSize: string = "-";
-    public WebsiteLink = "roman-drechsel.de";
 
     private GarminLogger = inject(WatchLoggingService);
     private timerSubscription?: Subscription;
+
+    public get Homepage(): string {
+        return this.Config.Homepage;
+    }
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
@@ -63,7 +66,7 @@ export class AppinfosPage extends PageBase {
     }
 
     public async mywebsite() {
-        await Browser.open({ url: `https://${this.WebsiteLink}` });
+        await Browser.open({ url: `https://${this.Config.Homepage}` });
     }
 
     public async writeReviewIQ() {

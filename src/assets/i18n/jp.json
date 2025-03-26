@@ -11,6 +11,7 @@
     "change": "変更",
     "select": "選択",
     "share": "共有",
+    "next": "次へ",
     "date": {
         "date_add": "",
         "today": "今日",
@@ -137,7 +138,7 @@
         "delete": "リスト項目を削除する",
         "add_more": "別のリスト要素を追加する"
     },
-    "comp_sharelog": {
+    "comp-sharelog": {
         "title": "ログを保存",
         "text": "ログを<br /><strong>{{filename}}</strong><br />としてどう保存しますか？",
         "text_web": "ログ <strong>{{filename}}</strong> はあなたのPCに保存されます。",
@@ -157,15 +158,32 @@
         "meta_settings_note": "ログ設定、言語など",
         "meta_storage": "ストレージ情報",
         "meta_storage_note": "デバイス上のリストやログの数・サイズ",
+        "meta_garmin": "時計の情報",
+        "meta_garmin_note": "時計の名前、ユニーク識別子、現在の状態",
         "watch": "ウォッチのログを添付",
         "error_report_confirm": "バグレポートは受け取りました。<br /><br />バグレポートとして転送しますか？"
     },
-    "comp_watchlogs": {
+    "comp-watchlogs": {
         "title": "ログを転送",
         "text": "ウォッチからログを転送するには、まずウォッチでアプリ<br /><br /><strong>{{name}}</strong><br /><br />を起動する必要があります。アプリが起動すると、ログが自動的に転送されます。ただし、これには数秒かかる場合がある。",
         "withoutlogs": "ログなしで続行",
         "openApp": "アプリを開く",
         "logs_received_confirm": "ログが届きました。<br /><br />今すぐご覧になりますか？"
+    },
+    "page_firststart": {
+        "welcome": "「列表」へようこそ",
+        "language1": "アプリの言語を選択してください:",
+        "language2": "言語は後で変更することもできます。",
+        "garmin1": "Garmin ConnectIQ 対応",
+        "garmin2": "これにより、リストを Garmin ウォッチと同期できます。<br />スマートフォンに <strong>Garmin Connect IQ</strong> アプリを、ウォッチに <strong>リスト</strong> アプリをインストールする必要があります。",
+        "garmin_btn": "リスト アプリ",
+        "garmin-hint1": "時々、ウォッチが正しく認識されているにもかかわらず、リストを転送できないことがあります。<br /><br />ほとんどの場合、スマートフォンまたはウォッチを再起動すると問題が解決します。",
+        "garmin-hint2": "残念ながら、Garmin Connect アプリの動作には影響を与えられません。このアプリはウォッチとの通信のための橋渡し役をしています。",
+        "finish1": "アプリをご利用いただきありがとうございます。",
+        "finish2": "他のプロジェクトに興味がある場合は、以下で詳細をご覧いただけます。",
+        "finish3": "私について。",
+        "finish4": "アプリをお楽しみください！",
+        "finish_btn": "アプリへ進む"
     },
     "page_lists": {
         "page_title": "マイリスト",
@@ -306,10 +324,12 @@
         "deletelist": "ウォッチからリストを自動削除",
         "deletelist_note": "スマートフォンでリストを削除するときに、ウォッチ上のリストも削除します。",
         "synclist": "リストを自動的に同期する",
-        "synclist_warning": "<strong>警告:</strong> ウォッチ上のアプリのストレージ容量には限りがあります。同時に多くのリストを同期しないようにしてください！",
+        "synclist_warning": "<strong>注意:</strong> アプリのストレージ容量は時計上で限られています。一度に多くのリストを同期しないようにしてください！<br />さらに、時計のバッテリー寿命にも悪影響を与える可能性があります。",
         "synclist_note": "リストに変更があった場合、すぐに時計と同期する。",
         "synclist_disable_title": "同期を無効にしますか？",
-        "synclist_disable": "すべてのリストの自動同期設定を無効にしますか？<br /><br />この設定を後で再度有効にする場合は、各リストの同期を再設定する必要があります。"
+        "synclist_disable": "すべてのリストの自動同期設定を無効にしますか？<br /><br />この設定を後で再度有効にする場合は、各リストの同期を再設定する必要があります。",
+        "garminconnectiq": "ガーミンコネクトIQに対応",
+        "garminconnectiq_note": "ガーミンウォッチをお持ちでない場合や転送機能を使用したくない場合は、この設定を解除してください。<br />この設定を有効にすると、スマートフォンのGarmin ConnectIQアプリが必要になります。"
     },
     "page_settings_trash": {
         "page_title": "ゴミ箱",
