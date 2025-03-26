@@ -3,7 +3,7 @@
 <ion-content>
     <ion-list>
         <!-- transmit list-->
-        <ion-item lines="full">
+        <ion-item lines="full" *ngIf="ConnectIQInitialized">
             <ion-toggle label-placement="start" [checked]="TransmitList" (ionChange)="onTransmitListChanged($event.target.checked)">
                 <div class="text" [innerHTML]="'page_settings_confirm.transmit_list'|translate"></div>
                 <ion-note [innerHTML]="'page_settings_confirm.transmit_list_note'|translate"></ion-note>

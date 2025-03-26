@@ -138,7 +138,7 @@
         "delete": "Supprimer l'élément",
         "add_more": "Ajouter un autre élément"
     },
-    "comp_sharelog": {
+    "comp-sharelog": {
         "title": "Sauvegarder le journal",
         "text": "Comment voulez-vous sauvegarder le journal<br /><strong>{{filename}}</strong> ?",
         "text_web": "Le journal <strong>{{filename}}</strong> sera sauvegardé sur votre ordinateur.",
@@ -157,11 +157,13 @@
         "meta_settings": "Paramètres de l'application",
         "meta_settings_note": "Paramètres de log, langue, etc.",
         "meta_storage": "Infos de stockage",
-        "meta_storage_note": "Nombre/taille des listes et journaux sur l'appareil",
+        "meta_storage_note": "Nom de la montre, identifiant unique, état actuel",
+        "meta_garmin": "Informations sur la montre",
+        "meta_garmin_note": "Watch name, unique identifier, current status",
         "watch": "Joindre les journaux de la montre",
         "error_report_confirm": "Le rapport d'erreur a été reçu.<br /><br />Voulez-vous me le transmettre comme rapport d'erreur ?"
     },
-    "comp_watchlogs": {
+    "comp-watchlogs": {
         "title": "Transférer les journaux",
         "text": "Pour transférer les journaux de votre montre, vous devez d'abord lancer l'application sur votre montre<br /><br /><strong>{{name}}</strong>.<br /><br />Les journaux devraient se transférer automatiquement une fois l'application lancée. Cela peut toutefois prendre quelques secondes.",
         "withoutlogs": "Continuer sans journaux",

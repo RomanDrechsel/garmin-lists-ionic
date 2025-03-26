@@ -34,7 +34,7 @@ export class DeviceLogsListener extends ConnectIQListener<DeviceMessageEventArgs
             logreport.push("===========", "");
             Logger.Important(logreport.join("\n"));
 
-            if (await this._popup.Alert.YesNo({ message: "comp_watchlogs.logs_received_confirm", translate: true })) {
+            if (await this._popup.Alert.YesNo({ message: "comp-watchlogs.logs_received_confirm", translate: true })) {
                 await this._navController.navigateForward("settings/watch-logs", {
                     queryParams: {
                         watchLogs: logs,

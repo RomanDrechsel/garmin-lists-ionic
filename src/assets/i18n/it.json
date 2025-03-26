@@ -136,7 +136,7 @@
         "delete": "Eliminare l'elemento",
         "add_more": "Aggiungere un altro elemento"
     },
-    "comp_sharelog": {
+    "comp-sharelog": {
         "title": "Salva il log",
         "text": "Come desideri salvare il log <br /><strong>{{filename}}</strong>?",
         "text_web": "Il log <strong>{{filename}}</strong> verrà salvato sul tuo computer.",
@@ -156,10 +156,12 @@
         "meta_settings_note": "Impostazioni del log, lingua, ecc.",
         "meta_storage": "Informazioni di archiviazione",
         "meta_storage_note": "Numero/dimensione delle liste e dei log sul dispositivo",
+        "meta_garmin": "Informazioni sull'orologio",
+        "meta_garmin_note": "Nome dell'orologio, identificatore univoco, stato attuale",
         "watch": "Aggiungi i log dell'orologio",
         "error_report_confirm": "La segnalazione è stata ricevuta.<br /><br />Vuoi inoltrarla a me come segnalazione di bug?"
     },
-    "comp_watchlogs": {
+    "comp-watchlogs": {
         "title": "Trasferisci i log",
         "text": "Per trasferire i log dal tuo orologio, devi prima avviare l'app sul tuo orologio<br /><br /><strong>{{name}}</strong><br /><br />Se l'app è in esecuzione, i log verranno trasferiti automaticamente. Tuttavia, questa operazione potrebbe richiedere alcuni secondi.",
         "withoutlogs": "Procedi senza log",

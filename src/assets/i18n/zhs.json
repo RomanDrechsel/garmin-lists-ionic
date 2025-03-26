@@ -138,7 +138,7 @@
         "delete": "删除列表项",
         "add_more": "添加另一个列表项目"
     },
-    "comp_sharelog": {
+    "comp-sharelog": {
         "title": "保存日志",
         "text": "你想如何保存日志<br /><strong>{{filename}}</strong><br />？",
         "text_web": "日志<strong>{{filename}}</strong>将保存在你的计算机上。",
@@ -158,10 +158,12 @@
         "meta_settings_note": "日志设置，语言等。",
         "meta_storage": "存储信息",
         "meta_storage_note": "设备上列表和日志的数量/大小",
+        "meta_garmin": "手表信息",
+        "meta_garmin_note": "手表名称、唯一识别码、当前状态",
         "watch": "附加手表日志",
         "error_report_confirm": "已收到错误报告。<br /><br />您愿意将其作为错误报告转发给我吗？"
     },
-    "comp_watchlogs": {
+    "comp-watchlogs": {
         "title": "传输日志",
         "text": "要传输手表的日志，请首先在手表上启动应用<br /><br /><strong>{{name}}</strong><br /><br />。当应用运行时，日志将会自动传输。不过，这可能需要几秒钟。",
         "withoutlogs": "继续而不包含日志",

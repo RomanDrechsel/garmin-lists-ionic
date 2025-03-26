@@ -138,7 +138,7 @@
         "delete": "リスト項目を削除する",
         "add_more": "別のリスト要素を追加する"
     },
-    "comp_sharelog": {
+    "comp-sharelog": {
         "title": "ログを保存",
         "text": "ログを<br /><strong>{{filename}}</strong><br />としてどう保存しますか？",
         "text_web": "ログ <strong>{{filename}}</strong> はあなたのPCに保存されます。",
@@ -158,10 +158,12 @@
         "meta_settings_note": "ログ設定、言語など",
         "meta_storage": "ストレージ情報",
         "meta_storage_note": "デバイス上のリストやログの数・サイズ",
+        "meta_garmin": "時計の情報",
+        "meta_garmin_note": "時計の名前、ユニーク識別子、現在の状態",
         "watch": "ウォッチのログを添付",
         "error_report_confirm": "バグレポートは受け取りました。<br /><br />バグレポートとして転送しますか？"
     },
-    "comp_watchlogs": {
+    "comp-watchlogs": {
         "title": "ログを転送",
         "text": "ウォッチからログを転送するには、まずウォッチでアプリ<br /><br /><strong>{{name}}</strong><br /><br />を起動する必要があります。アプリが起動すると、ログが自動的に転送されます。ただし、これには数秒かかる場合がある。",
         "withoutlogs": "ログなしで続行",

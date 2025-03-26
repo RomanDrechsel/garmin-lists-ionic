@@ -57,6 +57,11 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
 
     public void Initialize(Activity activity, @Nullable Boolean simulator, @Nullable Boolean debug_app, @Nullable IInitializeListener listener)
     {
+        if (this.connectIQ != null)
+        {
+            this.Shutdown(activity);
+        }
+
         this._initListener = listener;
         this.DisconnectAllDevices();
 
@@ -112,6 +117,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         catch (InvalidStateException ignore)
         {
         }
+        this.connectIQ = null;
         this._initListener = null;
     }
 

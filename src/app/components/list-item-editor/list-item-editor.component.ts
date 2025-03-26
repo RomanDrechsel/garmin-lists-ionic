@@ -6,6 +6,7 @@ import { Keyboard } from "@capacitor/keyboard";
 import { IonButton, IonButtons, IonCheckbox, IonHeader, IonIcon, IonItem, IonLabel, IonTextarea, IonTitle, IonToggle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { AdmobService } from "../../services/adverticing/admob.service";
+import { ConnectIQService } from "../../services/connectiq/connect-iq.service";
 import { List } from "../../services/lists/list";
 import { Listitem } from "../../services/lists/listitem";
 import { ListsService } from "../../services/lists/lists.service";
@@ -31,10 +32,15 @@ export class ListItemEditorComponent implements OnInit {
     private readonly ListsService = inject(ListsService);
     private readonly Preferences = inject(PreferencesService);
     private readonly Admob = inject(AdmobService);
+    private readonly ConnectIQ = inject(ConnectIQService);
 
     private _listAdded = false;
     private _keyboardUpListerner?: PluginListenerHandle;
     private _keyboardDownListener?: PluginListenerHandle;
+
+    public get ConnectIQInitialized(): boolean {
+        return this.ConnectIQ.Initialized;
+    }
 
     public get Title(): string {
         if (this.Params?.item) {

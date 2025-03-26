@@ -138,7 +138,7 @@
         "delete": "Listenpunkt löschen",
         "add_more": "einen weiteren Punkt hinzufügen"
     },
-    "comp_sharelog": {
+    "comp-sharelog": {
         "title": "Log Speichern",
         "text": "Wie möchtest du das Log <br /><strong>{{filename}}</strong><br /> speichern?",
         "text_web": "Das Log <strong>{{filename}}</strong> wird auf Deinem Rechner gespeichert.",
@@ -158,10 +158,12 @@
         "meta_settings_note": "Log-Einstellungen, Sprache, etc.",
         "meta_storage": "Speicher Informationen",
         "meta_storage_note": "Anzahl/Größe der Listen und Logs auf dem Gerät",
+        "meta_garmin": "Uhr Informationen",
+        "meta_garmin_note": "Name der Uhr, eindeutige Identifier, aktueller Status",
         "watch": "Logs der Uhr anhängen",
         "error_report_confirm": "Der Fehlerbericht wurde empfangen.<br /><br />Möchtest du ihn als Fehlerbericht an mich weiterleiten?"
     },
-    "comp_watchlogs": {
+    "comp-watchlogs": {
         "title": "Logs übertragen",
         "text": "Um die Logs von Deiner Uhr zu übertragen, musst du zuerst die App auf deiner Uhr<br /><br /><strong>{{name}}</strong><br /><br />starten. Wenn du App läuft, sollten die Logs automatisch übertragen werden. Dies kann aber ein paar Sekunden dauern.",
         "withoutlogs": "Ohne Logs fortfahren",

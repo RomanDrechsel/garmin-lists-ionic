@@ -30,6 +30,7 @@ export class StoreLogComponent {
     @ViewChild("attachMetaDevice", { read: IonCheckbox }) attachMetaDevice?: IonCheckbox;
     @ViewChild("attachMetaSettings", { read: IonCheckbox }) attachMetaSettings?: IonCheckbox;
     @ViewChild("attachMetaStorage", { read: IonCheckbox }) attachMetaStorage?: IonCheckbox;
+    @ViewChild("attachMetaGarmin", { read: IonCheckbox }) attachMetaGarmin?: IonCheckbox;
     @ViewChild("attachWatchLogs", { read: IonCheckbox }) attachWatchLogs?: IonCheckbox;
 
     private readonly Locale = inject(LocalizationService);
@@ -38,14 +39,14 @@ export class StoreLogComponent {
     private readonly AppService = inject(AppService);
     private readonly WatchLogs = inject(WatchLoggingService);
     private readonly Config = inject(ConfigService);
-    private readonly ConnectIQService = inject(ConnectIQService);
+    private readonly ConnectIQ = inject(ConnectIQService);
 
     public get IsWebApp(): boolean {
         return AppService.isWebApp;
     }
 
-    public get ConnectIQ(): ConnectIQService {
-        return this.ConnectIQService;
+    public get ConnectIQInitialized(): boolean {
+        return this.ConnectIQ.Initialized;
     }
 
     public cancel() {
@@ -62,7 +63,8 @@ export class StoreLogComponent {
                 const meta_device = this.attachMetaDevice?.checked ?? false;
                 const meta_settings = this.attachMetaSettings?.checked ?? false;
                 const meta_storage = this.attachMetaStorage?.checked ?? false;
-                const meta = await this.AppService.AppMetaInfo({ device: meta_device, settings: meta_settings, storage: meta_storage });
+                const meta_garmin = this.attachMetaGarmin?.checked ?? false;
+                const meta = await this.AppService.AppMetaInfo({ device: meta_device, settings: meta_settings, storage: meta_storage, garmin: meta_garmin });
 
                 if (this.attachMeta?.checked === true) {
                     await this.addToLog(StringUtils.toString(meta));
@@ -76,12 +78,12 @@ export class StoreLogComponent {
                         Logger.Debug(`Stored log ${this.Params.file.Filename} in DOCUMENTS`);
 
                         await FileOpener.open({ filePath: result.uri, contentType: "text/plain" });
-                        this.Popups.Toast.Success("comp_sharelog.store_success");
+                        this.Popups.Toast.Success("comp-sharelog.store_success");
                         this.modalCtrl.dismiss(null, "confirm");
                     } catch (error) {
                         Logger.Error(`Could not store log ${this.Params.file.Filename} in DOCUMENTS: `, error);
                         this.modalCtrl.dismiss(null, "cancel");
-                        this.Popups.Toast.Error("comp_sharelog.store_error");
+                        this.Popups.Toast.Error("comp-sharelog.store_error");
                     }
                 } else if (this.do.value == "share") {
                     try {
@@ -97,8 +99,8 @@ export class StoreLogComponent {
                         this.modalCtrl.dismiss(null, "cancel");
                     }
                 } else if (this.do.value == "email") {
-                    const email_title = this.Locale.getText("comp_sharelog.share_email.title", { package: meta.Package?.Name, platform: meta.Device?.Platform, file: this.Params.file.Filename, size: FileUtils.File.FormatSize(this.Params.file.Size) });
-                    if (await ShareUtil.SendMail({ sendto: this.Config.EMailAddress, files: this.Params.file.Path, title: email_title, text: this.Locale.getText("comp_sharelog.share_email.text") })) {
+                    const email_title = this.Locale.getText("comp-sharelog.share_email.title", { package: meta.Package?.Name, platform: meta.Device?.Platform, file: this.Params.file.Filename, size: FileUtils.File.FormatSize(this.Params.file.Size) });
+                    if (await ShareUtil.SendMail({ sendto: this.Config.EMailAddress, files: this.Params.file.Path, title: email_title, text: this.Locale.getText("comp-sharelog.share_email.text") })) {
                         Logger.Debug(`Shared log ${this.Params.file.Filename} via e-mail`);
                         this.modalCtrl.dismiss(null, "confirm");
                     } else {

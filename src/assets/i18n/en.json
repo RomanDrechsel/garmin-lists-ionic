@@ -138,7 +138,7 @@
         "delete": "Delete item",
         "add_more": "Add another item"
     },
-    "comp_sharelog": {
+    "comp-sharelog": {
         "title": "Store log",
         "text": "How do you want to store the logfile <br /><strong>{{filename}}</strong>?",
         "text_web": "The logfile <strong>{{filename}}</strong> will be stored on your disk.",
@@ -158,10 +158,12 @@
         "meta_settings_note": "Log settings, language, etc.",
         "meta_storage": "Storage information",
         "meta_storage_note": "Number and size of lists and logs on the device",
+        "meta_garmin": "Watch information",
+        "meta_garmin_note": "Watch name, unique identifier, current status",
         "watch": "Attach logs of the watch",
         "error_report_confirm": "The error report has been received.<br /><br />Would you like to forward it to me as a bug report??"
     },
-    "comp_watchlogs": {
+    "comp-watchlogs": {
         "title": "Transmit logs",
         "text": "To transfer the logs from your watch, you must first start the app on your watch<br /><br /><strong>{{name}}</strong><br /><br />If the app is running, the logs should be transferred automatically. This may take a few seconds.",
         "withoutlogs": "Continue without logs",
