@@ -9,6 +9,7 @@ import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
+import { CreateListitemAnimation } from "../../../animations/create-listitem.animation";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { PageAddNewComponent } from "../../../components/page-add-new/page-add-new.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
@@ -32,11 +33,16 @@ export class ListItemsPage extends PageBase {
     @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
     @ViewChild("quickAdd") private quickAdd?: IonTextarea;
 
-    public List?: List | null = undefined;
+    private _list?: List = undefined;
+    private readonly animateItemsTimeout = 20;
+
+    private _showQuickAddbar = true;
+
     private _disableClick = false;
     private _preferencesSubscription?: Subscription;
     private _listSubscription?: Subscription;
-    private _connectIqSubscription?: Subscription;
+    private _connectIQSubscription?: Subscription;
+
     private _useTrash = true;
     private _scrollPosition: "top" | "bottom" | number = "top";
     private _listTitle?: string = undefined;
@@ -47,6 +53,14 @@ export class ListItemsPage extends PageBase {
     private _keyboardHideListener?: PluginListenerHandle;
 
     private readonly Route = inject(ActivatedRoute);
+
+    public get List(): List | undefined {
+        return this._list;
+    }
+
+    public get ShowQuickAddBar(): boolean {
+        return this._showQuickAddbar;
+    }
 
     public get ScrollPosition(): "top" | "bottom" | number {
         return this._scrollPosition;
@@ -94,14 +108,18 @@ export class ListItemsPage extends PageBase {
         if (listtitle) {
             this._listTitle = listtitle;
         }
-        const listid = this.Route.snapshot.paramMap.get("uuid");
-        if (listid) {
-            const uuid = Number(listid);
-            this.List = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
-            this._listInitialized = true;
-            this.reload();
-            this.appComponent.setAppPages(this.ModifyMainMenu());
-        }
+        (async () => {
+            // no wait
+            const listid = this.Route.snapshot.paramMap.get("uuid");
+            if (listid) {
+                const uuid = Number(listid);
+                this._list = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
+                this._listInitialized = true;
+                this.reload();
+                this.animateNewItems();
+                this.appComponent.setAppPages(this.ModifyMainMenu());
+            }
+        })();
         this._useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true);
         this._preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
             if (prop.prop == EPrefProperty.TrashListitems) {
@@ -110,15 +128,17 @@ export class ListItemsPage extends PageBase {
         });
 
         this._listSubscription = this.ListsService.onListChanged$.subscribe(async list => {
-            if (list && list.equals(this.List) && list.isPeek == false) {
-                this.List = list;
+            if (list && list.equals(this._list) && list.isPeek == false) {
+                this._list = list;
+                this.animateNewItems();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
                 this._listInitialized = true;
                 this.reload();
+                console.log("Items: ", this._list?.Items?.length);
             }
         });
 
-        this._connectIqSubscription = this.ConnectIQ.onInitialized$.subscribe(async () => {
+        this._connectIQSubscription = this.ConnectIQ.onInitialized$.subscribe(async () => {
             this.appComponent.setAppPages(this.ModifyMainMenu());
         });
 
@@ -145,6 +165,7 @@ export class ListItemsPage extends PageBase {
         await this.Preferences.Remove(EPrefProperty.OpenedList);
         this._preferencesSubscription?.unsubscribe();
         this._listSubscription?.unsubscribe();
+        this._connectIQSubscription?.unsubscribe();
         this._keyboardShowListener?.remove();
         this._keyboardShowListener = undefined;
         this._keyboardHideListener?.remove();
@@ -302,6 +323,28 @@ export class ListItemsPage extends PageBase {
             })
         ) {
             this.NavController.navigateForward("/settings/lists-transmission", { queryParams: { syncList: this.List } });
+        }
+    }
+
+    private animateNewItems() {
+        const unanimated = document.querySelectorAll("#list-item-content .list-item:not(.animation-started):not(.animation-done)");
+        if (unanimated.length > 0) {
+            this._showQuickAddbar = false;
+            const animation = CreateListitemAnimation(unanimated[0] as HTMLElement);
+            if (unanimated.length == 1) {
+                animation.afterAddRead(() => {
+                    const unanimated = document.querySelector("#list-item-content .list-item:not(.animation-started):not(.animation-done)");
+                    if (!unanimated) {
+                        this._showQuickAddbar = true;
+                        this.reload();
+                    }
+                });
+            }
+            animation.play();
+        }
+
+        if (unanimated.length != 1) {
+            window.setTimeout(() => this.animateNewItems(), this.animateItemsTimeout);
         }
     }
 }

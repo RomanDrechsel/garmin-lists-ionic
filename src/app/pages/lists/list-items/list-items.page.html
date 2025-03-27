@@ -1,10 +1,10 @@
 <app-main-toolbar back="/lists">{{PageTitle}}</app-main-toolbar>
 
 <ion-content fixed-slot-placement="before" scrollEvents="true" scrollX="false" (ionScroll)="onScroll($event)" *ngIf="List !== undefined && ListInitialized; else error" #mainContent>
-    <div *ngIf="List && List.Items.length > 0; else noItems" class="list-content" #listContent>
+    <div class="content" *ngIf="List && List.Items.length > 0; else noItems" #listContent>
         <ion-list #itemsContainer>
-            <ion-reorder-group [disabled]="List.Items.length <= 1" (ionItemReorder)="HandleReorder($any($event))">
-                <ion-item-sliding *ngFor="let item of List.Items">
+            <ion-reorder-group [disabled]="List.Items.length <= 1" (ionItemReorder)="HandleReorder($any($event))" id="list-item-content">
+                <ion-item-sliding *ngFor="let item of List.Items" class="list-item">
                     <ion-item-options side="start" (ionSwipe)="onSwipeRight(item)">
                         <ion-item-option color="danger" expandable="true" (click)="deleteItem(item)">
                             <ion-icon slot="start" src="./assets/icons/trash_solid.svg"></ion-icon>
@@ -39,9 +39,9 @@
                 </ion-item-sliding>
             </ion-reorder-group>
         </ion-list>
-        <ion-item lines="none" class="quick-add">
+        <ion-item lines="none" class="quick-add" *ngIf="ShowQuickAddBar">
             <ion-textarea placeholder="{{'page_listitems.quickadd'|translate}}" autoGrow="true" inputmode="text" spellcheck="true" maxlength="250" autocapitalize="sentence" rows="2" #quickAdd>
-                <ion-button fill="outline" color="medium" [ariaLabel]="'add'|translate" size="small" [disabled]="!quickAdd.value?.length" slot="end" (click)="QuickAddItem($event)">
+                <ion-button fill="outline" color="medium" [ariaLabel]="'add'|translate" size="small" [disabled]="ShowQuickAddBar && !quickAdd?.value?.length" slot="end" (click)="QuickAddItem($event)">
                     <ion-icon slot="start" src="./assets/icons/add.svg"></ion-icon>
                     {{'add'|translate}}
                 </ion-button>
