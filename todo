@@ -11,6 +11,6 @@ TEST: add new listitem line on listitem page
 TEST: Logs can't be send in background
 TEST: use app without connect iq
 TEST: animations
-TODO: Translate page_settings.animations / page_settings.animations_note
+WIP: Translate page_settings.animations / page_settings.animations_note
 TODO: reorder only if pressed for a second
 TODO: note function
