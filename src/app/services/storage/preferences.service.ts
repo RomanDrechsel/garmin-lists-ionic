@@ -8,6 +8,7 @@ export enum EPrefProperty {
     "AppLanguage" = "LISTS_AppLanguage",
     "LogMode" = "LISTS_LogMode",
     "LogsAutoDelete" = "LISTS_LogsAutoDelete",
+    "Animations" = "LISTS_Animations",
     "AlwaysTransmitTo" = "LISTS_AlwaysTransmitTo",
     "ConfirmDeleteList" = "LISTS_ConfirmDeleteList",
     "ConfirmDeleteListitem" = "LISTS_ConfirmDeleteListitem",

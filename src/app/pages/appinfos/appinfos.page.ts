@@ -89,10 +89,4 @@ export class AppinfosPage extends PageBase {
         }
         this.cdr.detectChanges();
     }
-
-    public async test() {
-        if (this.ConnectIQ.AlwaysTransmitToDevice) {
-            console.log(await this.GarminLogger.RequestGarminWatchLogs(this.ConnectIQ.AlwaysTransmitToDevice?.Identifier));
-        }
-    }
 }

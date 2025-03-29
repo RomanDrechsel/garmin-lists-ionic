@@ -478,7 +478,6 @@ export class ConnectIQService {
         });
 
         this._onlineDevices = count;
-        console.log(`Found ${count} online device(s)`);
         return count;
     }
 }
