@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectorRef, Component, OnInit, ViewChild, inject, isDevMode } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, isDevMode, OnInit, ViewChild } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { App } from "@capacitor/app";
 import { StatusBar } from "@capacitor/status-bar";
@@ -64,6 +64,10 @@ export class AppComponent implements OnInit {
                 this.cdr.detectChanges();
             }
         });
+        this.ConnectIQ.onInitialized$.subscribe(() => {
+            this.setAppPages();
+        });
+
         this._useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true);
         this._firstStart = await this.Preferences.Get<boolean>(EPrefProperty.FirstStart, true);
         this.setAppPages();

@@ -243,6 +243,8 @@
         "language_hint": "English is not my native language. If you find any translation errors, please report them to <span class=\"no-wrap\">{{email}}</span>",
         "translation_error_confirm": "Would you like to report a translation error to me?",
         "translation_error_title": "Mistake in the english translation",
+        "animations": "Animations",
+        "animations_note": "Should some visual effects be animated?",
         "logging": "Log settings",
         "logging_note": "Settings and management of log files",
         "confirm": "Confirmation settings",

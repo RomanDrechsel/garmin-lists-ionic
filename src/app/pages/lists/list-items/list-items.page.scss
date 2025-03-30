@@ -32,25 +32,35 @@
     }
 }
 
-.quick-add {
-    --inner-padding-end: 4px;
+.content {
+    padding-block-end: 5em;
 
-    ion-textarea {
-        --placeholder-color: var(--ion-color-medium);
-        --placeholder-font-style: italic;
-        --placeholder-opacity: 0.8;
-        --padding-top: 0.7em;
-        --padding-bottom: 0.7em;
-        --padding-end: 0;
-        --padding-start: 4px;
-        --min-height: 1.5em;
-        --highlight-color-focused: var(--ion-color-primary);
-        --highlight-height: 5px;
-        font-size: 1.1em;
-        min-height: 1.5em;
+    .quick-add {
+        --inner-padding-end: 4px;
+        opacity: 0;
+        transition: opacity 0.5s ease-out;
 
-        ion-button[slot="end"] {
-            margin-top: -0.4em;
+        &.visible {
+            opacity: 1;
+        }
+
+        ion-textarea {
+            --placeholder-color: var(--ion-color-medium);
+            --placeholder-font-style: italic;
+            --placeholder-opacity: 0.8;
+            --padding-top: 0.7em;
+            --padding-bottom: 0.7em;
+            --padding-end: 0;
+            --padding-start: 4px;
+            --min-height: 1.5em;
+            --highlight-color-focused: var(--ion-color-primary);
+            --highlight-height: 5px;
+            font-size: 1.1em;
+            min-height: 1.5em;
+
+            ion-button[slot="end"] {
+                margin-top: -0.4em;
+            }
         }
     }
 }

@@ -4,11 +4,10 @@ https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
 ADB
 https://wiki.ubuntuusers.de/adb/
 
-TEST: Sync lists with watch
-TEST: if disable list sync in settings, ask if all syncs of all lists should be disabled
-TEST: uuids as number
-TEST: add new listitem line on listitem page
-TEST: Logs can't be send in background
-WIP: use app without connect iq
-TODO: Translate comp-sharelog.meta_garmin / comp-sharelog.meta_garmin_note
+TEST: use app without connect iq
+TEST: animations
+BUG: Lists Trash not animated?!
+BUG: deleted list don't show number of items in trash
+TODO: reorder only if pressed for a second
+TODO: use SQLite as backend
 TODO: note function

@@ -243,6 +243,8 @@
         "language_hint": "La aplicación se ha traducido utilizando inteligencia artificial. Si se han producido errores, notifíquelos a <span class=\"no-wrap\">{{email}}</span>",
         "translation_error_confirm": "¿Quiere informarme de un error de traducción?",
         "translation_error_title": "Errores en la traducción al español",
+        "animations": "Animaciones",
+        "animations_note": "¿Se deben representar visualmente varios procesos de forma animada?",
         "logging": "Configuración de registro",
         "logging_note": "Configuración y gestión de registros",
         "confirm": "Configuración de confirmación",

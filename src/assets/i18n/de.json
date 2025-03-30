@@ -243,6 +243,8 @@
         "language_hint": "Deutsch ist meine Muttersprache. Solltest du trotzdem Rechschreibfehler finden, melde sie bitte an <span class=\"no-wrap\">{{email}}</span>",
         "translation_error_confirm": "Möchtest du mir einen Rechtschreibfehler melden?",
         "translation_error_title": "Fehler in der deutschen Übersetzung",
+        "animations": "Animationen",
+        "animations_note": "Sollen verschiedene Vorgänge animiert dargestellt werden?",
         "logging": "Logging Einstellungen",
         "logging_note": "Einstellungen und Verwalung von Log-Einträgen",
         "confirm": "Bestätigungs-Einstellungen",

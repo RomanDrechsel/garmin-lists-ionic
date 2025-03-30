@@ -6,10 +6,19 @@ import com.getcapacitor.BridgeActivity;
 
 import de.romandrechsel.lists.garmin.ConnectIQPlugin;
 
-public class MainActivity extends BridgeActivity {
+public class MainActivity extends BridgeActivity
+{
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         registerPlugin(ConnectIQPlugin.class);
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        bridge.getWebView().setVerticalScrollBarEnabled(true);
     }
 }

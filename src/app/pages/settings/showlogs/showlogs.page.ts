@@ -9,7 +9,7 @@ import { TranslateModule } from "@ngx-translate/core";
 import { interval, Subscription } from "rxjs";
 import { FileUtils } from "src/app/classes/utils/file-utils";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
-import { InteractionAnimation } from "../../../animations/interaction-animation";
+import { InteractionAnimation } from "../../../animations/interaction.animation";
 import { SelectDatetime } from "../../../components/datetime/datetime.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { ShareLogfile } from "../../../components/share-log/share-log.component";

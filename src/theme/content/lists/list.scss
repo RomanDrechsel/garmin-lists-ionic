@@ -3,6 +3,8 @@
 }
 
 ion-list {
+    contain: none;
+
     ion-item {
         --padding-top: 6px;
         --padding-bottom: 6px;
@@ -19,6 +21,16 @@ ion-list {
 
         .details {
             width: 100%;
+        }
+    }
+}
+
+#animated-list {
+    .animated-item {
+        opacity: 0;
+
+        &.visible {
+            opacity: 1;
         }
     }
 }

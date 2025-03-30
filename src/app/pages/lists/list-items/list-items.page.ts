@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { PluginListenerHandle } from "@capacitor/core";
@@ -16,7 +16,7 @@ import { List } from "../../../services/lists/list";
 import { Listitem } from "../../../services/lists/listitem";
 import { Locale } from "../../../services/localization/locale";
 import { EPrefProperty } from "../../../services/storage/preferences.service";
-import { PageBase } from "../../page-base";
+import { AnimatedListPageBase } from "../animated-list-page-base";
 
 @Component({
     selector: "app-list-items",
@@ -25,42 +25,48 @@ import { PageBase } from "../../page-base";
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [IonImg, IonText, IonButton, IonTextarea, IonFabButton, IonFab, IonReorder, IonNote, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent],
 })
-export class ListItemsPage extends PageBase {
+export class ListItemsPage extends AnimatedListPageBase {
     @ViewChild("itemsContainer") private itemsContainer?: IonList;
     @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
     @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
     @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
-    @ViewChild("quickAdd") private quickAdd?: IonTextarea;
+    @ViewChild("quickAdd", { read: IonTextarea, static: false }) private quickAdd?: IonTextarea;
+    private _list?: List = undefined;
 
-    public List?: List | null = undefined;
     private _disableClick = false;
-    private _preferencesSubscription?: Subscription;
     private _listSubscription?: Subscription;
-    private _connectIqSubscription?: Subscription;
+    private _connectIQSubscription?: Subscription;
+
     private _useTrash = true;
     private _scrollPosition: "top" | "bottom" | number = "top";
     private _listTitle?: string = undefined;
     private _listInitialized = false;
     private _informedSyncForNewlist: string | number | undefined = undefined;
     private _keyboardShow = false;
+    private _forceHideButtons = false;
     private _keyboardShowListener?: PluginListenerHandle;
     private _keyboardHideListener?: PluginListenerHandle;
+    private _preferencesSubscription?: Subscription;
 
     private readonly Route = inject(ActivatedRoute);
+
+    public get List(): List | undefined {
+        return this._list;
+    }
 
     public get ScrollPosition(): "top" | "bottom" | number {
         return this._scrollPosition;
     }
 
     public get ShowScrollButtons(): boolean {
-        if (!this._listInitialized || this._keyboardShow) {
+        if (!this._listInitialized || this._keyboardShow || this._forceHideButtons) {
             return false;
         }
         return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
     }
 
     public get ShowAddButton(): boolean {
-        return this._listInitialized && !this._keyboardShow;
+        return this._listInitialized && !this._keyboardShow && !this._forceHideButtons;
     }
 
     public get DisableScrollToTop(): boolean {
@@ -76,32 +82,37 @@ export class ListItemsPage extends PageBase {
     }
 
     public get PageTitle(): string {
-        if (this.List === undefined) {
-            if (this._listTitle && this._listTitle.length > 0) {
+        if (!this._list) {
+            if (this._listTitle?.length) {
                 return this._listTitle;
             } else {
                 return Locale.getText("page_listitems.loading");
             }
         } else {
-            return this.List?.Name ?? Locale.getText("page_listitems.page_title");
+            return this._list.Name;
         }
     }
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
+
         this._listInitialized = false;
         const listtitle = this.Route.snapshot.queryParamMap.get("title");
         if (listtitle) {
             this._listTitle = listtitle;
         }
-        const listid = this.Route.snapshot.paramMap.get("uuid");
-        if (listid) {
-            const uuid = Number(listid);
-            this.List = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
-            this._listInitialized = true;
-            this.reload();
-            this.appComponent.setAppPages(this.ModifyMainMenu());
-        }
+
+        (async () => {
+            // no wait
+            const listid = this.Route.snapshot.paramMap.get("uuid");
+            if (listid) {
+                const uuid = Number(listid);
+                this._list = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
+                this._listInitialized = true;
+                this.animateNewItems();
+                this.appComponent.setAppPages(this.ModifyMainMenu());
+            }
+        })();
         this._useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true);
         this._preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
             if (prop.prop == EPrefProperty.TrashListitems) {
@@ -110,15 +121,15 @@ export class ListItemsPage extends PageBase {
         });
 
         this._listSubscription = this.ListsService.onListChanged$.subscribe(async list => {
-            if (list && list.equals(this.List) && list.isPeek == false) {
-                this.List = list;
+            if (list && list.equals(this._list) && list.isPeek == false) {
+                this._list = list;
                 this.appComponent.setAppPages(this.ModifyMainMenu());
                 this._listInitialized = true;
-                this.reload();
+                this.animateNewItems();
             }
         });
 
-        this._connectIqSubscription = this.ConnectIQ.onInitialized$.subscribe(async () => {
+        this._connectIQSubscription = this.ConnectIQ.onInitialized$.subscribe(async () => {
             this.appComponent.setAppPages(this.ModifyMainMenu());
         });
 
@@ -136,8 +147,13 @@ export class ListItemsPage extends PageBase {
         if (this.List) {
             await this.Preferences.Set(EPrefProperty.OpenedList, this.List.Uuid);
         }
-        this._keyboardHideListener = await Keyboard.addListener("keyboardWillShow", () => (this._keyboardShow = true));
-        this._keyboardHideListener = await Keyboard.addListener("keyboardWillHide", () => (this._keyboardShow = false));
+        this._keyboardHideListener = await Keyboard.addListener("keyboardWillShow", () => {
+            this._keyboardShow = true;
+            this.reload();
+        });
+        this._keyboardHideListener = await Keyboard.addListener("keyboardWillHide", () => {
+            this._keyboardShow = false;
+        });
     }
 
     public override async ionViewWillLeave() {
@@ -145,6 +161,7 @@ export class ListItemsPage extends PageBase {
         await this.Preferences.Remove(EPrefProperty.OpenedList);
         this._preferencesSubscription?.unsubscribe();
         this._listSubscription?.unsubscribe();
+        this._connectIQSubscription?.unsubscribe();
         this._keyboardShowListener?.remove();
         this._keyboardShowListener = undefined;
         this._keyboardHideListener?.remove();
@@ -160,7 +177,7 @@ export class ListItemsPage extends PageBase {
     }
 
     public editItem(item: Listitem) {
-        if (this.List && !this._disableClick) {
+        if (this.List && !this._disableClick && this._initAnimationDone) {
             this.ListsService.EditListitem(this.List, item);
         }
     }
@@ -273,11 +290,12 @@ export class ListItemsPage extends PageBase {
 
     public async QuickAddItem(event: MouseEvent) {
         if (this.List && this.quickAdd?.value && this.quickAdd.value.trim().length > 0) {
+            this._forceHideButtons = true;
             event.stopImmediatePropagation();
             await this.ListsService.AddNewListitem(this.List, { item: this.quickAdd.value.trim() });
             await this.ScrollToBottom(true);
             this.cdr.detectChanges();
-            this.quickAdd.value = undefined;
+            this.quickAdd.value = "";
             this.quickAdd.setFocus();
             return false;
         }
@@ -295,13 +313,12 @@ export class ListItemsPage extends PageBase {
     }
 
     private async informSyncSettings(): Promise<void> {
-        if (
-            await this.Popups.Alert.YesNo({
-                message: "comp-listeditor.sync_settings",
-                translate: true,
-            })
-        ) {
+        if (await this.Popups.Alert.YesNo({ message: "comp-listeditor.sync_settings", translate: true })) {
             this.NavController.navigateForward("/settings/lists-transmission", { queryParams: { syncList: this.List } });
         }
+    }
+
+    protected getItemCount(): number {
+        return this._list?.Items.length ?? 0;
     }
 }

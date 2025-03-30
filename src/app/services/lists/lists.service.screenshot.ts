@@ -58,8 +58,6 @@ export class ListsService {
             this._listIndex.set(l.Uuid, l);
         });
 
-        console.log(lists);
-
         this.Lists.set(lists);
         return lists;
     }

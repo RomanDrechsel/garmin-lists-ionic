@@ -9,7 +9,7 @@ import { DateUtils } from "../../../classes/utils/date-utils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { List } from "../../../services/lists/list";
-import { PageBase } from "../../page-base";
+import { AnimatedListPageBase } from "../animated-list-page-base";
 
 @Component({
     selector: "app-trash-lists",
@@ -17,7 +17,7 @@ import { PageBase } from "../../page-base";
     styleUrls: ["./trash-lists.page.scss"],
     imports: [IonContent, IonText, IonNote, IonItem, IonImg, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
-export class TrashListsPage extends PageBase {
+export class TrashListsPage extends AnimatedListPageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;
     @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
     @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
@@ -51,6 +51,11 @@ export class TrashListsPage extends PageBase {
         return this._trashInitialized;
     }
 
+    constructor() {
+        super();
+        this._animationDirection = "right";
+    }
+
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
         this._trashInitialized = false;
@@ -58,17 +63,19 @@ export class TrashListsPage extends PageBase {
             this.Lists = lists ?? [];
             if (lists) {
                 this._trashInitialized = true;
+                this.animateNewItems();
+                this.appComponent.setAppPages(this.ModifyMainMenu());
             }
-            this.reload();
-            this.appComponent.setAppPages(this.ModifyMainMenu());
         });
+
         this.Lists = await this.ListsService.GetTrash();
-        this._trashInitialized = true;
+        this.animateNewItems();
     }
 
     public override async ionViewDidLeave() {
         super.ionViewDidLeave();
         this._trashChangedSubscription?.unsubscribe();
+        this._trashChangedSubscription = undefined;
     }
 
     public override ModifyMainMenu(): MenuItem[] {
@@ -124,5 +131,9 @@ export class TrashListsPage extends PageBase {
     public async ScrollToBottom(instant: boolean = true) {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
+    }
+
+    protected getItemCount(): number {
+        return this.Lists?.length ?? 0;
     }
 }
