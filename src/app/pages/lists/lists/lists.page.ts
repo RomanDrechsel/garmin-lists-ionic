@@ -71,6 +71,7 @@ export class ListsPage extends AnimatedListPageBase {
                 this.animateNewItems();
             }
         });
+        this.animateNewItems();
     }
 
     public override async ionViewWillLeave(): Promise<void> {
@@ -165,5 +166,9 @@ export class ListsPage extends AnimatedListPageBase {
     public async ScrollToBottom(instant: boolean = true) {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
+    }
+
+    protected getItemCount(): number {
+        return this.Lists()?.length ?? 0;
     }
 }

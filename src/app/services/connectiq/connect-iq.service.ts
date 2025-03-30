@@ -106,14 +106,15 @@ export class ConnectIQService {
                 } else {
                     this._alwaysTransmitToDevice = undefined;
                 }
-                this.onInitializedSubject.next(true);
+            } else {
+                Logger.Error(`Could not initialize ConnectIQ service`, init);
             }
+
+            this._initialized = init.success;
+            this.onInitializedSubject.next(init.success);
         } else {
             Logger.Important(`Not on a native device, skipping initialization of ConnectIQ service`);
         }
-
-        Logger.Debug(`ConnectIQ service initialized successfully`);
-        this._initialized = true;
     }
 
     public async Shutdown() {

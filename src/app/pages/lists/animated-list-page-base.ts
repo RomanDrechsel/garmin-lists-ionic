@@ -41,6 +41,12 @@ export abstract class AnimatedListPageBase extends PageBase {
 
     protected animateNewItems() {
         this.reload();
+
+        if (this.getItemCount() <= 0) {
+            this._initAnimationDone = true;
+            return;
+        }
+
         if (this._animateItems) {
             const querySelector = "#animated-list .animated-item:not(.animation-running):not(.visible)";
             const unanimated = document.querySelectorAll(querySelector);
@@ -75,4 +81,6 @@ export abstract class AnimatedListPageBase extends PageBase {
     private animateElement(el: HTMLElement): boolean {
         return el.offsetTop < window.scrollY + window.innerHeight;
     }
+
+    protected abstract getItemCount(): number;
 }

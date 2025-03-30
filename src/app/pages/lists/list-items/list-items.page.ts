@@ -82,14 +82,14 @@ export class ListItemsPage extends AnimatedListPageBase {
     }
 
     public get PageTitle(): string {
-        if (this.List === undefined) {
-            if (this._listTitle && this._listTitle.length > 0) {
+        if (!this._list) {
+            if (this._listTitle?.length) {
                 return this._listTitle;
             } else {
                 return Locale.getText("page_listitems.loading");
             }
         } else {
-            return this.List?.Name ?? Locale.getText("page_listitems.page_title");
+            return this._list.Name;
         }
     }
 
@@ -125,7 +125,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                 this._list = list;
                 this.appComponent.setAppPages(this.ModifyMainMenu());
                 this._listInitialized = true;
-                this.reload();
+                this.animateNewItems();
             }
         });
 
@@ -316,5 +316,9 @@ export class ListItemsPage extends AnimatedListPageBase {
         if (await this.Popups.Alert.YesNo({ message: "comp-listeditor.sync_settings", translate: true })) {
             this.NavController.navigateForward("/settings/lists-transmission", { queryParams: { syncList: this.List } });
         }
+    }
+
+    protected getItemCount(): number {
+        return this._list?.Items.length ?? 0;
     }
 }

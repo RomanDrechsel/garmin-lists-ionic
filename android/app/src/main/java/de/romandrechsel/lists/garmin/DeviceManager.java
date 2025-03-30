@@ -119,6 +119,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         }
         this.connectIQ = null;
         this._initListener = null;
+        Logger.Notice(TAG, "ConnectIQ shutdown successful");
     }
 
     @Override
@@ -150,8 +151,11 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
     public void onSdkShutDown()
     {
         this.sdkReady = false;
-        Logger.Debug(TAG, "ConnectIQ sdk shut down");
-        this.DisconnectAllDevices();
+        if (this.connectIQ != null)
+        {
+            Logger.Debug(TAG, "ConnectIQ sdk shut down");
+            this.DisconnectAllDevices();
+        }
     }
 
     /**

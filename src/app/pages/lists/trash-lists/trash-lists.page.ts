@@ -132,4 +132,8 @@ export class TrashListsPage extends AnimatedListPageBase {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
     }
+
+    protected getItemCount(): number {
+        return this.Lists?.length ?? 0;
+    }
 }
