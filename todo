@@ -6,6 +6,8 @@ https://wiki.ubuntuusers.de/adb/
 
 TEST: use app without connect iq
 TEST: animations
+BUG: Lists Trash not animated?!
+BUG: deleted list don't show number of items in trash
 TODO: reorder only if pressed for a second
 TODO: use SQLite as backend
 TODO: note function

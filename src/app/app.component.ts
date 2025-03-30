@@ -65,7 +65,6 @@ export class AppComponent implements OnInit {
             }
         });
         this.ConnectIQ.onInitialized$.subscribe(() => {
-            console.log("INIT CHECK");
             this.setAppPages();
         });
 
@@ -98,9 +97,7 @@ export class AppComponent implements OnInit {
 
     public setAppPages(menu: MenuItem[] = []) {
         let required = MenuitemFactoryList([EMenuItemType.Lists]);
-        console.log("CHECK START");
         if (this.ConnectIQ.Initialized) {
-            console.log("CHECK");
             required.push(
                 MenuitemFactory(EMenuItemType.Devices),
                 MenuitemFactory(EMenuItemType.OpenApp, {

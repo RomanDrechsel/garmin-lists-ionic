@@ -63,12 +63,12 @@ export class TrashListsPage extends AnimatedListPageBase {
             this.Lists = lists ?? [];
             if (lists) {
                 this._trashInitialized = true;
+                this.animateNewItems();
+                this.appComponent.setAppPages(this.ModifyMainMenu());
             }
-            this.animateNewItems();
-            this.appComponent.setAppPages(this.ModifyMainMenu());
         });
+
         this.Lists = await this.ListsService.GetTrash();
-        this._trashInitialized = true;
         this.animateNewItems();
     }
 

@@ -42,6 +42,10 @@ export abstract class AnimatedListPageBase extends PageBase {
     protected animateNewItems() {
         this.reload();
 
+        if (this._initAnimationDone) {
+            return;
+        }
+
         if (this.getItemCount() <= 0) {
             this._initAnimationDone = true;
             return;

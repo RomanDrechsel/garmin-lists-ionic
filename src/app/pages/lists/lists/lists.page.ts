@@ -71,7 +71,6 @@ export class ListsPage extends AnimatedListPageBase {
                 this.animateNewItems();
             }
         });
-        this.animateNewItems();
     }
 
     public override async ionViewWillLeave(): Promise<void> {

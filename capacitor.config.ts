@@ -5,6 +5,8 @@ const config: CapacitorConfig = {
     appId: "de.romandrechsel.lists.dev",
     appName: "Lists",
     webDir: "www/browser",
+    loggingBehavior: "debug",
+    zoomEnabled: false,
     plugins: {
         SplashScreen: {
             launchShowDuration: 500,
