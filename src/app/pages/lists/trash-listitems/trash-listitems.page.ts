@@ -80,6 +80,9 @@ export class TrashListitemsPage extends AnimatedListPageBase {
         if (listid) {
             this._listUuid = listid;
             this.Trash = await this.ListsService.GetListitemTrash(listid);
+            if (this.Trash) {
+                this.Trash.items = this.Trash.items.sort((a, b) => (b.deleted ?? 0) - (a.deleted ?? 0));
+            }
             this._trashInitialized = true;
             this.animateNewItems();
         }
@@ -87,6 +90,9 @@ export class TrashListitemsPage extends AnimatedListPageBase {
         this._trashChangedSubscription = this.ListsService.onTrashItemsDatasetChanged$.subscribe(trash => {
             if (trash) {
                 this.Trash = trash;
+                if (this.Trash) {
+                    this.Trash.items = this.Trash.items.sort((a, b) => (b.deleted ?? 0) - (a.deleted ?? 0));
+                }
                 this._trashInitialized = true;
                 this.animateNewItems();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
@@ -136,9 +142,10 @@ export class TrashListitemsPage extends AnimatedListPageBase {
     }
 
     public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
+        console.log(Math.ceil(event.detail.scrollTop), (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight);
         if (event.detail.scrollTop == 0) {
             this._scrollPosition = "top";
-        } else if (event.detail.scrollTop >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
             this._scrollPosition = "bottom";
         } else {
             this._scrollPosition = event.detail.scrollTop;

@@ -62,13 +62,15 @@ export class TrashListsPage extends AnimatedListPageBase {
         this._trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => {
             this.Lists = lists ?? [];
             if (lists) {
+                this.Lists = this.Lists.sort((a, b) => b.Deleted - a.Deleted);
                 this._trashInitialized = true;
                 this.animateNewItems();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
 
-        this.Lists = await this.ListsService.GetTrash();
+        this.Lists = (await this.ListsService.GetTrash()).sort((a: List, b: List) => b.Deleted - a.Deleted);
+        this._trashInitialized = true;
         this.animateNewItems();
     }
 
@@ -116,7 +118,7 @@ export class TrashListsPage extends AnimatedListPageBase {
     public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
         if (event.detail.scrollTop == 0) {
             this._scrollPosition = "top";
-        } else if (event.detail.scrollTop >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
             this._scrollPosition = "bottom";
         } else {
             this._scrollPosition = event.detail.scrollTop;
