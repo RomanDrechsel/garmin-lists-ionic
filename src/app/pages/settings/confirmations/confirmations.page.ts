@@ -25,16 +25,8 @@ export class ConfirmationsPage extends PageBase {
     private _restoreList: boolean = true;
     private _restoreListitem: boolean = true;
 
-    public override async ionViewWillEnter() {
-        await super.ionViewWillEnter();
-        this._deleteList = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmDeleteList, true);
-        this._deleteListitem = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmDeleteListitem, true);
-        this._transmitList = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmTransmitList, true);
-        this._emptyList = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmEmptyList, true);
-        this._eraseList = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmEraseList, true);
-        this._restoreList = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmRestoreList, true);
-        this._restoreListitem = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmRestoreListitem, true);
-        this.cdr.detectChanges();
+    public get ConnectIQInitialized(): boolean {
+        return this.ConnectIQ.Initialized;
     }
 
     public get DeleteList(): boolean {
@@ -116,6 +108,18 @@ export class ConfirmationsPage extends PageBase {
     public set RestoreListitem(v: boolean) {
         this._restoreListitem = v;
         this.Preferences.Set(EPrefProperty.ConfirmRestoreListitem, v);
+    }
+
+    public override async ionViewWillEnter() {
+        await super.ionViewWillEnter();
+        this._deleteList = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmDeleteList, true);
+        this._deleteListitem = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmDeleteListitem, true);
+        this._transmitList = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmTransmitList, true);
+        this._emptyList = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmEmptyList, true);
+        this._eraseList = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmEraseList, true);
+        this._restoreList = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmRestoreList, true);
+        this._restoreListitem = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmRestoreListitem, true);
+        this.cdr.detectChanges();
     }
 
     public onDeleteListChanged(checked: boolean) {

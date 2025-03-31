@@ -16,6 +16,14 @@
             <ion-icon src="/assets/icons/info.svg" slot="end" class="info-icon"></ion-icon>
         </ion-item>
 
+        <!-- animations -->
+        <ion-item lines="full">
+            <ion-toggle label-placement="start" [checked]="UseAnimations" (ionChange)="onAnimationsChanged($event.target.checked)">
+                <div class="text" [innerHTML]="'page_settings.animations'|translate"></div>
+                <ion-note [innerHTML]="'page_settings.animations_note'|translate"></ion-note>
+            </ion-toggle>
+        </ion-item>
+
         <!-- transmission settings -->
         <ion-item [button]="true" routerDirection="forward" [routerLink]="['/settings/lists-transmission']" lines="full">
             <ion-label>

@@ -28,7 +28,7 @@ export class DeviceErrorReportListener extends ConnectIQListener<DeviceMessageEv
             logreport.push(...this.processMessage(data.Message));
             Logger.Error(logreport.join("\n"));
 
-            if (await this._popup.Alert.YesNo({ message: "comp_sharelog.error_report_confirm", translate: true })) {
+            if (await this._popup.Alert.YesNo({ message: "comp-sharelog.error_report_confirm", translate: true })) {
                 await this._navController.navigateForward("settings/logs", {
                     queryParams: {
                         errorReport: true,

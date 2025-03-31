@@ -1,14 +1,17 @@
 import { Routes } from "@angular/router";
+import { FirstStartGuard } from "./pages/first-start/first-start.guard";
+import { ConnectIQGuard } from "./services/connectiq/connect-iq-guard";
 
 export const routes: Routes = [
     {
         path: "",
-        redirectTo: "lists",
+        redirectTo: "/lists",
         pathMatch: "full",
     },
     {
         path: "lists",
         loadComponent: () => import("./pages/lists/lists/lists.page").then(m => m.ListsPage),
+        canActivate: [FirstStartGuard],
     },
     {
         path: "lists/items/:uuid",
@@ -25,6 +28,7 @@ export const routes: Routes = [
     {
         path: "devices",
         loadComponent: () => import("./pages/devices/devices.page").then(m => m.DevicesPage),
+        canActivate: [ConnectIQGuard],
     },
     {
         path: "settings",
@@ -49,6 +53,7 @@ export const routes: Routes = [
     {
         path: "settings/watch-logs",
         loadComponent: () => import("./pages/settings/show-watch-logs/show-watch-logs.page").then(m => m.ShowWatchLogsPage),
+        canActivate: [ConnectIQGuard],
     },
     {
         path: "settings/lists-transmission",
@@ -65,5 +70,9 @@ export const routes: Routes = [
     {
         path: "privacy-policy/policy",
         loadComponent: () => import("./pages/privacy-policy/policy/policy.page").then(m => m.PolicyPage),
+    },
+    {
+        path: "first-start",
+        loadComponent: () => import("./pages/first-start/first-start.page").then(m => m.FirstStartPage),
     },
 ];

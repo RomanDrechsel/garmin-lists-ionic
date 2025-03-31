@@ -5,22 +5,22 @@ import { FormsModule } from "@angular/forms";
 import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
 import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
-import { Observable } from "rxjs";
+import { Observable, type Subscription } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { List } from "src/app/services/lists/list";
 import { DateUtils } from "../../../classes/utils/date-utils";
 import { PageAddNewComponent } from "../../../components/page-add-new/page-add-new.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { EPrefProperty } from "../../../services/storage/preferences.service";
-import { PageBase } from "../../page-base";
+import { AnimatedListPageBase } from "../animated-list-page-base";
 
 @Component({
     selector: "app-lists",
     templateUrl: "./lists.page.html",
     styleUrls: ["./lists.page.scss"],
-    imports: [IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonReorderGroup, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent],
+    imports: [IonReorderGroup, IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent],
 })
-export class ListsPage extends PageBase {
+export class ListsPage extends AnimatedListPageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;
     @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
     @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
@@ -28,6 +28,7 @@ export class ListsPage extends PageBase {
 
     public Lists: WritableSignal<List[] | undefined> = this.ListsService.Lists;
     private _listObserver?: Observable<List[] | undefined> = toObservable(this.ListsService.Lists);
+    private _listsSubscription?: Subscription;
     private _disableClick = false;
     private _scrollPosition: "top" | "bottom" | number = "top";
 
@@ -56,18 +57,28 @@ export class ListsPage extends PageBase {
         return this._listsInitialized;
     }
 
-    public override async ionViewWillEnter() {
+    constructor() {
+        super();
+        this._animationDirection = "left";
+    }
+
+    public override async ionViewWillEnter(): Promise<void> {
         super.ionViewWillEnter();
         this.ListsService.PurgeListDetails();
-        const sub = this._listObserver?.subscribe(lists => {
+        this._listsSubscription = this._listObserver?.subscribe(lists => {
             if (lists) {
                 this._listsInitialized = true;
-                setTimeout(() => {
-                    sub?.unsubscribe();
-                }, 1);
-                this._listObserver = undefined;
+                this.animateNewItems();
             }
         });
+    }
+
+    public override async ionViewWillLeave(): Promise<void> {
+        await super.ionViewWillLeave();
+        if (this._listsSubscription) {
+            this._listsSubscription.unsubscribe();
+            this._listsSubscription = undefined;
+        }
     }
 
     public onSwipeRight(list: List) {
@@ -154,5 +165,9 @@ export class ListsPage extends PageBase {
     public async ScrollToBottom(instant: boolean = true) {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
+    }
+
+    protected getItemCount(): number {
+        return this.Lists()?.length ?? 0;
     }
 }

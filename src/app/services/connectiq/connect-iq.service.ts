@@ -42,12 +42,14 @@ export class ConnectIQService {
     public useGarminSimulator = false;
     public useGarminDebugApp = false;
 
-    private onInitializedSubject = new BehaviorSubject<void>(undefined);
+    private onInitializedSubject = new BehaviorSubject<boolean | undefined>(undefined);
     public onInitialized$ = this.onInitializedSubject.asObservable();
     private onDeviceChangedSubject = new BehaviorSubject<ConnectIQDevice | undefined>(undefined);
     public onDeviceChanged$ = this.onDeviceChangedSubject.asObservable();
 
     private _onlineDevices: number = 0;
+
+    private _initialized: boolean = false;
 
     private readonly Preferences = inject(PreferencesService);
     private readonly Config = inject(ConfigService);
@@ -69,11 +71,15 @@ export class ConnectIQService {
         return this._onlineDevices;
     }
 
+    public get Initialized(): boolean {
+        return this._initialized;
+    }
+
     /**
      * initialize service
      * @param obj use debug devices or live devices, and use garmin simulator or live phone
      */
-    public async Initialize(obj: { simulator?: boolean; debug_app?: boolean }) {
+    public async Initialize(obj?: { simulator?: boolean; debug_app?: boolean }) {
         Logger.Debug(`Start initializing ConnectIQ service...`);
         const all_listeners = Array.from(this._watchListeners.values());
         for (let i = 0; i < all_listeners.length; i++) {
@@ -90,7 +96,7 @@ export class ConnectIQService {
             this.addListener(new DeviceErrorReportListener(this, this.NavController, this.Popup));
             this.addListener(new DeviceLogsListener(this, this.NavController, this.Popup));
             this._devices = [];
-            const init = await ConnectIQ.Initialize({ simulator: obj.simulator ?? this.useGarminSimulator, debug_app: obj.debug_app ?? this.useGarminDebugApp });
+            const init = await ConnectIQ.Initialize({ simulator: obj?.simulator ?? this.useGarminSimulator, debug_app: obj?.debug_app ?? this.useGarminDebugApp });
             if (init.success === true) {
                 this.useGarminDebugApp = init.debug_app ?? false;
                 this.useGarminSimulator = init.simulator ?? false;
@@ -100,11 +106,39 @@ export class ConnectIQService {
                 } else {
                     this._alwaysTransmitToDevice = undefined;
                 }
-                this.onInitializedSubject.next();
+            } else {
+                Logger.Error(`Could not initialize ConnectIQ service`, init);
             }
+
+            this._initialized = init.success;
+            this.onInitializedSubject.next(init.success);
         } else {
             Logger.Important(`Not on a native device, skipping initialization of ConnectIQ service`);
         }
+    }
+
+    public async Shutdown() {
+        Logger.Important(`Shutting down ConnectIQ service...`);
+
+        this._watchListeners.clear();
+        this._onlineDevices = 0;
+        this._devices = [];
+
+        if (this._initialized) {
+            if (Capacitor.isNativePlatform()) {
+                await ConnectIQ.Shutdown();
+                const all_listeners = Array.from(this._watchListeners.values());
+                for (let i = 0; i < all_listeners.length; i++) {
+                    for (let j = 0; j < all_listeners[i].length; j++) {
+                        await all_listeners[i][j].clearListener();
+                    }
+                }
+                await ConnectIQ.removeAllListeners();
+            }
+        }
+
+        this._initialized = false;
+        this.onInitializedSubject.next(false);
     }
 
     /**
@@ -445,7 +479,6 @@ export class ConnectIQService {
         });
 
         this._onlineDevices = count;
-        console.log(`Found ${count} online device(s)`);
         return count;
     }
 }

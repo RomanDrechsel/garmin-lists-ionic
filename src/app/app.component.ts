@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectorRef, Component, OnInit, ViewChild, inject, isDevMode } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, isDevMode, OnInit, ViewChild } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { App } from "@capacitor/app";
 import { StatusBar } from "@capacitor/status-bar";
@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
     public appPages: MenuItem[] = [];
     public systemPages: MenuItem[] = MenuitemFactoryList([EMenuItemType.Settings, EMenuItemType.AppInfo, EMenuItemType.Privacy]);
     private _useTrash: boolean = true;
+    private _firstStart: boolean = true;
 
     public readonly ConnectIQ = inject(ConnectIQService);
     private readonly Platform = inject(Platform);
@@ -36,8 +37,12 @@ export class AppComponent implements OnInit {
         return isDevMode();
     }
 
-    public get menuSide() {
+    public get menuSide(): string {
         return this.App.DeviceWidth < 1024 ? "end" : "start";
+    }
+
+    public get FirstStart(): boolean {
+        return this._firstStart;
     }
 
     public async ngOnInit() {
@@ -54,9 +59,17 @@ export class AppComponent implements OnInit {
             if (prop.prop == EPrefProperty.TrashLists) {
                 this._useTrash = prop.value as boolean;
                 this.setAppPages();
+            } else if (prop.prop == EPrefProperty.FirstStart) {
+                this._firstStart = prop.value as boolean;
+                this.cdr.detectChanges();
             }
         });
+        this.ConnectIQ.onInitialized$.subscribe(() => {
+            this.setAppPages();
+        });
+
         this._useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true);
+        this._firstStart = await this.Preferences.Get<boolean>(EPrefProperty.FirstStart, true);
         this.setAppPages();
     }
 
@@ -83,16 +96,19 @@ export class AppComponent implements OnInit {
     }
 
     public setAppPages(menu: MenuItem[] = []) {
-        let required = MenuitemFactoryList([EMenuItemType.Lists, EMenuItemType.Devices]);
-        required.push(
-            MenuitemFactory(EMenuItemType.OpenApp, {
-                disabled: this.ConnectIQ.OnlineDevices == 0,
-                onClick: () => {
-                    this.MainMenu?.close();
-                    return this.ConnectIQ.openApp(undefined, true);
-                },
-            }),
-        );
+        let required = MenuitemFactoryList([EMenuItemType.Lists]);
+        if (this.ConnectIQ.Initialized) {
+            required.push(
+                MenuitemFactory(EMenuItemType.Devices),
+                MenuitemFactory(EMenuItemType.OpenApp, {
+                    disabled: this.ConnectIQ.OnlineDevices == 0,
+                    onClick: () => {
+                        this.MainMenu?.close();
+                        return this.ConnectIQ.openApp(undefined, true);
+                    },
+                }),
+            );
+        }
         required.push(MenuitemFactory(EMenuItemType.ListsTrash, { disabled: !this._useTrash }));
         for (let i = required.length - 1; i >= 0; i--) {
             if (!menu?.find(m => m.Id == required[i].Id)) {

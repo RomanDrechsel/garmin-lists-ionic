@@ -26,14 +26,15 @@ export class AdmobService {
     public async Initialize() {
         this._isInitialized = false;
 
+        this._bannerHeight = await this.Preferences.Get(EPrefProperty.AdmobBannerHeight, this._bannerHeight);
+        this.resizeContainer(this._bannerHeight);
+
         await AdMob.initialize({
             initializeForTesting: environment.publicRelease !== true,
             testingDevices: ["83906043-1167-4ca6-8f7c-10ca1ad1abe1"],
         });
 
         await this.RequestConsent(false);
-        this._bannerHeight = await this.Preferences.Get(EPrefProperty.AdmobBannerHeight, this._bannerHeight);
-        this.resizeContainer(this._bannerHeight);
 
         AdMob.addListener(BannerAdPluginEvents.Loaded, () => {
             Logger.Debug(`Admob banner loaded`);

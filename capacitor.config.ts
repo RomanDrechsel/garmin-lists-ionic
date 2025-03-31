@@ -5,10 +5,8 @@ const config: CapacitorConfig = {
     appId: "de.romandrechsel.lists.dev",
     appName: "Lists",
     webDir: "www/browser",
-    server: {
-        androidScheme: "https",
-        cleartext: true,
-    },
+    loggingBehavior: "debug",
+    zoomEnabled: false,
     plugins: {
         SplashScreen: {
             launchShowDuration: 500,
@@ -31,9 +29,6 @@ const config: CapacitorConfig = {
             style: KeyboardStyle.Default,
             resizeOnFullScreen: true,
         },
-    },
-    android: {
-        useLegacyBridge: true,
     },
 };
 

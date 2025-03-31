@@ -28,7 +28,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
 {
     public interface IInitializeListener
     {
-        void Success(Boolean simulator, Boolean debug_app);
+        void Success();
 
         void Failed(String message);
     }
@@ -57,6 +57,11 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
 
     public void Initialize(Activity activity, @Nullable Boolean simulator, @Nullable Boolean debug_app, @Nullable IInitializeListener listener)
     {
+        if (this.connectIQ != null)
+        {
+            this.Shutdown(activity);
+        }
+
         this._initListener = listener;
         this.DisconnectAllDevices();
 
@@ -95,6 +100,28 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         }
     }
 
+    public void Shutdown(Activity activity)
+    {
+        this.DisconnectAllDevices();
+        try
+        {
+            this.connectIQ.shutdown(activity);
+        }
+        catch (InvalidStateException ignore)
+        {
+        }
+        try
+        {
+            this.connectIQ.unregisterAllForEvents();
+        }
+        catch (InvalidStateException ignore)
+        {
+        }
+        this.connectIQ = null;
+        this._initListener = null;
+        Logger.Notice(TAG, "ConnectIQ shutdown successful");
+    }
+
     @Override
     public void onSdkReady()
     {
@@ -102,7 +129,7 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
         Logger.Debug(TAG, "ConnectIQ initialization successful");
         if (this._initListener != null)
         {
-            this._initListener.Success(this._useGarminSimulator, AppId.equals(AppIdDebug));
+            this._initListener.Success();
             this._initListener = null;
         }
     }
@@ -124,8 +151,11 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
     public void onSdkShutDown()
     {
         this.sdkReady = false;
-        Logger.Debug(TAG, "ConnectIQ shut down");
-        this.DisconnectAllDevices();
+        if (this.connectIQ != null)
+        {
+            Logger.Debug(TAG, "ConnectIQ sdk shut down");
+            this.DisconnectAllDevices();
+        }
     }
 
     /**
@@ -232,6 +262,16 @@ public class DeviceManager implements ConnectIQ.ConnectIQListener
             }
         }
         return null;
+    }
+
+    public boolean UsingSimulator()
+    {
+        return this._useGarminSimulator;
+    }
+
+    public boolean UsingDebugApp()
+    {
+        return DeviceManager.AppId.equals(DeviceManager.AppIdDebug);
     }
 
     /**

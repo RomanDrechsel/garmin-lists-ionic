@@ -4,7 +4,7 @@
     <div class="flex">
         <div class="list">
             <ion-list>
-                <ion-item class="ion-align-items-start" lines="full" (click)="test()">
+                <ion-item class="ion-align-items-start" lines="full">
                     <div>
                         <ion-text>{{'page_appinfos.package'|translate}}</ion-text>
                         <ion-note class="ion-text-end">{{BundleId}}</ion-note>
@@ -59,7 +59,7 @@
             <div [innerHTML]="'page_appinfos.thanks'|translate" class="ion-text-center"></div>
             <div class="my-website" (click)="mywebsite()">
                 <div [innerHTML]="'page_appinfos.website'|translate" class="ion-text-center"></div>
-                <div class="link">{{WebsiteLink}}</div>
+                <div class="link">{{Homepage}}</div>
             </div>
         </div>
     </div>

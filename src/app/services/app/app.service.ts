@@ -76,20 +76,20 @@ export class AppService {
             await this.ListsService.Initialize();
             const loadList = await this.Preferences.Get<string>(EPrefProperty.OpenedList, "");
             if (loadList.length > 0) {
-                this.NavController.navigateForward(`/lists/items/${loadList}`);
+                this.NavController.navigateForward(`/lists/items/${loadList}`, { animated: false });
             }
         })();
 
         //no await ...
         (async () => {
-            const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, true) : false;
-            const garmin_debugapp = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugApp, false) : false;
-            await this.ConnectIQ.Initialize({ simulator: garmin_simulator, debug_app: garmin_debugapp });
+            if ((await this.Preferences.Get(EPrefProperty.FirstStart, true)) == false && (await this.Preferences.Get<boolean>(EPrefProperty.GarminConnectIQ, true))) {
+                const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, true) : false;
+                const garmin_debugapp = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugApp, false) : false;
+                await this.ConnectIQ.Initialize({ simulator: garmin_simulator, debug_app: garmin_debugapp });
+            } else {
+                this.Logger.Notice(`Starting without ConnectIQ support`);
+            }
         })();
-
-        window.setTimeout(async () => {
-            await this.Preferences.Set(EPrefProperty.FirstStart, false);
-        }, 5000);
 
         //no await...
         this.Admob.Initialize();
@@ -120,7 +120,7 @@ export class AppService {
      * get info about the app instance and the device
      * @returns app meta information
      */
-    public async AppMetaInfo(query?: { device?: boolean; settings?: boolean; storage?: boolean }): Promise<AppMetaInfo> {
+    public async AppMetaInfo(query?: { device?: boolean; settings?: boolean; storage?: boolean; garmin?: boolean }): Promise<AppMetaInfo> {
         const meta: AppMetaInfo = {};
         if (!query || query.device !== false) {
             const deviceinfo = await Device.getInfo();
@@ -183,6 +183,27 @@ export class AppService {
             };
         }
 
+        if (this.ConnectIQ.Initialized) {
+            const devices = query?.garmin
+                ? (await this.ConnectIQ.getDevices()).map(device => {
+                      return {
+                          Identifier: device.Identifier,
+                          Name: device.Name,
+                          State: device.State,
+                      };
+                  })
+                : undefined;
+
+            meta.ConnectIQ = {
+                Initialized: true,
+                Devices: devices,
+            };
+        } else {
+            meta.ConnectIQ = {
+                Initialized: false,
+            };
+        }
+
         return meta;
     }
 }
@@ -232,5 +253,9 @@ export declare type AppMetaInfo = {
         Build: number;
         Environment: "Production" | "Development";
         Release: boolean;
+    };
+    ConnectIQ?: {
+        Initialized: boolean;
+        Devices?: any;
     };
 };

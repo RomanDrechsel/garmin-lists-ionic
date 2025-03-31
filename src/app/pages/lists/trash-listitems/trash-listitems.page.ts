@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
 import { IonContentCustomEvent } from "@ionic/core";
@@ -10,7 +10,7 @@ import { MainToolbarComponent } from "../../../components/main-toolbar/main-tool
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
 import { ListitemModel } from "../../../services/lists/listitem";
 import { ListitemTrashModel } from "../../../services/lists/listitems-trash-utils";
-import { PageBase } from "../../page-base";
+import { AnimatedListPageBase } from "../animated-list-page-base";
 
 @Component({
     selector: "app-trash-listitems",
@@ -19,7 +19,7 @@ import { PageBase } from "../../page-base";
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, IonImg, CommonModule, IonFab, IonFabButton, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
-export class TrashListitemsPage extends PageBase {
+export class TrashListitemsPage extends AnimatedListPageBase {
     @ViewChild("itemsContainer") private itemsContainer?: IonList;
     public Trash?: ListitemTrashModel;
 
@@ -68,6 +68,11 @@ export class TrashListitemsPage extends PageBase {
         }
     }
 
+    constructor() {
+        super();
+        this._animationDirection = "right";
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
         this._trashInitialized = false;
@@ -75,15 +80,21 @@ export class TrashListitemsPage extends PageBase {
         if (listid) {
             this._listUuid = listid;
             this.Trash = await this.ListsService.GetListitemTrash(listid);
+            if (this.Trash) {
+                this.Trash.items = this.Trash.items.sort((a, b) => (b.deleted ?? 0) - (a.deleted ?? 0));
+            }
             this._trashInitialized = true;
-            this.reload();
+            this.animateNewItems();
         }
 
         this._trashChangedSubscription = this.ListsService.onTrashItemsDatasetChanged$.subscribe(trash => {
             if (trash) {
                 this.Trash = trash;
+                if (this.Trash) {
+                    this.Trash.items = this.Trash.items.sort((a, b) => (b.deleted ?? 0) - (a.deleted ?? 0));
+                }
                 this._trashInitialized = true;
-                this.reload();
+                this.animateNewItems();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
@@ -131,9 +142,10 @@ export class TrashListitemsPage extends PageBase {
     }
 
     public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
+        console.log(Math.ceil(event.detail.scrollTop), (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight);
         if (event.detail.scrollTop == 0) {
             this._scrollPosition = "top";
-        } else if (event.detail.scrollTop >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
             this._scrollPosition = "bottom";
         } else {
             this._scrollPosition = event.detail.scrollTop;
@@ -148,5 +160,9 @@ export class TrashListitemsPage extends PageBase {
     public async ScrollToBottom(instant: boolean = true) {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
+    }
+
+    protected getItemCount(): number {
+        return this.Trash?.items?.length ?? 0;
     }
 }

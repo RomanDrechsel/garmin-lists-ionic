@@ -11,6 +11,7 @@
     "change": "Ändern",
     "select": "Auswählen",
     "share": "Teilen",
+    "next": "Weiter",
     "date": {
         "date_add": " Uhr",
         "today": "Heute",
@@ -137,7 +138,7 @@
         "delete": "Listenpunkt löschen",
         "add_more": "einen weiteren Punkt hinzufügen"
     },
-    "comp_sharelog": {
+    "comp-sharelog": {
         "title": "Log Speichern",
         "text": "Wie möchtest du das Log <br /><strong>{{filename}}</strong><br /> speichern?",
         "text_web": "Das Log <strong>{{filename}}</strong> wird auf Deinem Rechner gespeichert.",
@@ -157,15 +158,32 @@
         "meta_settings_note": "Log-Einstellungen, Sprache, etc.",
         "meta_storage": "Speicher Informationen",
         "meta_storage_note": "Anzahl/Größe der Listen und Logs auf dem Gerät",
+        "meta_garmin": "Uhr Informationen",
+        "meta_garmin_note": "Name der Uhr, eindeutige Identifier, aktueller Status",
         "watch": "Logs der Uhr anhängen",
         "error_report_confirm": "Der Fehlerbericht wurde empfangen.<br /><br />Möchtest du ihn als Fehlerbericht an mich weiterleiten?"
     },
-    "comp_watchlogs": {
+    "comp-watchlogs": {
         "title": "Logs übertragen",
         "text": "Um die Logs von Deiner Uhr zu übertragen, musst du zuerst die App auf deiner Uhr<br /><br /><strong>{{name}}</strong><br /><br />starten. Wenn du App läuft, sollten die Logs automatisch übertragen werden. Dies kann aber ein paar Sekunden dauern.",
         "withoutlogs": "Ohne Logs fortfahren",
         "openApp": "App öffnen",
         "logs_received_confirm": "Die Logs wurden empfangen.<br /><br />Möchtest du sie jetzt anzeigen?"
+    },
+    "page_firststart": {
+        "welcome": "Willkommen bei Listen",
+        "language1": "Bitte wähle die gewünschte Sprache für die App:",
+        "language2": "Die Sprache kannst du später auch noch ändern.",
+        "garmin1": "Unterstützung für Garmin ConnectIQ",
+        "garmin2": "Damit ist es dir möglich, deine Listen mit deiner Garmin-Uhr zu synchronisieren.<br />Dafür benötigst du die <strong>Garmin Connect IQ</strong> App auf deinem Smartphone und die App <strong>Listen</strong> auf deiner Uhr.",
+        "garmin_btn": "Listen App",
+        "garmin-hint1": "Manchmal kann es vorkommen, dass du keine Listen auf deine Uhr übertragen kannst, obwohl deine Uhr richtig erkannt wurde.<br /><br />Um dieses Problem zu beheben, reicht es meist, das Smartphone bzw. die Uhr neu starten.",
+        "garmin-hint2": "Leider habe ich auf die Funktionsweise der Garmin Connect App, die als Brücke zur Komunikation mit deiner Uhr fungiert, keinen Einfluss.",
+        "finish1": "Vielen Dank dass du meine App benutzt.",
+        "finish2": "Falls du an meinen anderen Projekten interessiert bist, kannst du auf",
+        "finish3": "weitere Informationen zu mir finden.",
+        "finish4": "Viel Spass mit meiner App!",
+        "finish_btn": "Weiter zur App"
     },
     "page_lists": {
         "page_title": "Meine Listen",
@@ -225,6 +243,8 @@
         "language_hint": "Deutsch ist meine Muttersprache. Solltest du trotzdem Rechschreibfehler finden, melde sie bitte an <span class=\"no-wrap\">{{email}}</span>",
         "translation_error_confirm": "Möchtest du mir einen Rechtschreibfehler melden?",
         "translation_error_title": "Fehler in der deutschen Übersetzung",
+        "animations": "Animationen",
+        "animations_note": "Sollen verschiedene Vorgänge animiert dargestellt werden?",
         "logging": "Logging Einstellungen",
         "logging_note": "Einstellungen und Verwalung von Log-Einträgen",
         "confirm": "Bestätigungs-Einstellungen",
@@ -307,9 +327,11 @@
         "deletelist_note": "Beim Löschen einer Liste auf dem Smartphone die Liste auch auf deiner Uhr löschen.",
         "synclist": "Listen automatisch synchronisieren",
         "synclist_note": "Bei Änderungen an einer Liste diese sofort mit der Uhr synchronisieren.",
-        "synclist_warning": "<strong>Achtung:</strong> Bedenke, dass der Speicherplatz der App auf der Uhr begrenzt ist. Du solltest nicht zu viele Listen gleichzeitig synchronisieren!",
+        "synclist_warning": "<strong>Achtung:</strong> Bedenke, dass der Speicherplatz der App auf der Uhr begrenzt ist. Du solltest nicht zu viele Listen gleichzeitig synchronisieren!<br />Außerdem kann es sich negativ auf die Akku-Laufzeit der Uhr auswirken.",
         "synclist_disable_title": "Synchronisierung aufheben?",
-        "synclist_disable": "Sollen die Einstellungen für die automatische Synchronisierung für alle Listen aufgehoben werden?<br /><br />Falls Du diese Einstellung später wieder aktivierst, musst du die Synchronisierung für jede Liste neu einstellen."
+        "synclist_disable": "Sollen die Einstellungen für die automatische Synchronisierung für alle Listen aufgehoben werden?<br /><br />Falls Du diese Einstellung später wieder aktivierst, musst du die Synchronisierung für jede Liste neu einstellen.",
+        "garminconnectiq": "Garmin Connect IQ Unterstützung",
+        "garminconnectiq_note": "Deaktiviere diese Einstellung, wenn du keine Garmin Uhr besitzt, oder die Übertragungsfunktionen nicht nutzen möchtest. <br />Wenn diese Einstellung aktiviert ist, wird die Garmin ConnectIQ App auf deinem Smartphone benötigt."
     },
     "page_settings_trash": {
         "page_title": "Papierkorb",
