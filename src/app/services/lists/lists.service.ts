@@ -1,7 +1,7 @@
-import { Injectable, WritableSignal, inject, signal } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Keyboard } from "@capacitor/keyboard";
 import { AlertInput, ModalController, NavController } from "@ionic/angular/standalone";
-import { BehaviorSubject, Subscription, interval } from "rxjs";
+import { BehaviorSubject, interval, Subscription } from "rxjs";
 import { HelperUtils } from "../../classes/utils/helper-utils";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { ListEditor } from "../../components/list-editor/list-editor.component";
@@ -43,7 +43,7 @@ export class ListsService {
     private _syncLists: boolean = false;
     private _removeOldTrashEntriesTimer?: Subscription;
 
-    public readonly Lists: WritableSignal<List[] | undefined> = signal(undefined);
+    private _lists: List[] = [];
     private readonly _listIndex: Map<string | number, List> = new Map();
 
     private onTrashItemsDatasetChangedSubject = new BehaviorSubject<ListitemTrashModel | undefined>(undefined);
@@ -54,6 +54,9 @@ export class ListsService {
 
     private onListChangedSubject = new BehaviorSubject<List | undefined>(undefined);
     public onListChanged$ = this.onListChangedSubject.asObservable();
+
+    private onListsChangedSubject = new BehaviorSubject<List[] | undefined>(undefined);
+    public onListsChanged$ = this.onListsChangedSubject.asObservable();
 
     public constructor() {
         this.ListsProvider = new ListsProvider(this.Backend);
@@ -100,17 +103,17 @@ export class ListsService {
      * @returns array of all lists
      */
     public async GetLists(reload: boolean = false): Promise<List[]> {
-        if (reload || this.Lists()?.length == 0) {
+        if (reload || this._lists.length == 0) {
             AppService.AppToolbar?.ToggleProgressbar(true);
-            const lists = await this.ListsProvider.GetLists(true);
+            this._lists = await this.ListsProvider.GetLists(true);
             this._listIndex.clear();
-            lists.forEach(l => {
+            this._lists.forEach(l => {
                 this._listIndex.set(l.Uuid, l);
             });
-            this.orderLists(lists);
+            this._lists = this.orderLists(this._lists);
             AppService.AppToolbar?.ToggleProgressbar(false);
         }
-        return this.Lists()!;
+        return this._lists;
     }
 
     /**
@@ -607,7 +610,7 @@ export class ListsService {
      * purges all details of lists in memory
      */
     public PurgeListDetails() {
-        this.Lists()?.forEach(l => {
+        this._lists.forEach(l => {
             l.PurgeDetails();
         });
     }
@@ -726,7 +729,7 @@ export class ListsService {
     private putListInIndex(list: List) {
         this._listIndex.set(list.Uuid, list);
         let lists = Array.from(this._listIndex.values());
-        this.orderLists(lists);
+        this._lists = this.orderLists(lists);
     }
 
     /**
@@ -748,9 +751,8 @@ export class ListsService {
      * orders the lists by 'Order' property and publish the list with the signal
      * @param lists lists array to be ordered and set in Lists-signal
      */
-    private orderLists(lists: List[]) {
-        lists = lists.sort((a: List, b: List) => (a.Order > b.Order ? 1 : -1));
-        this.Lists.set(lists);
+    private orderLists(lists: List[]): List[] {
+        return lists.sort((a: List, b: List) => (a.Order > b.Order ? 1 : -1));
     }
 
     /**
@@ -770,9 +772,10 @@ export class ListsService {
                 await this.StoreList(list, undefined, undefined, false);
             }
         }
+        this._lists = lists;
 
         if (force_event || changed) {
-            this.Lists.set(lists);
+            this.onListsChangedSubject.next(this._lists);
         }
     }
 
@@ -911,7 +914,7 @@ export class ListsService {
         const list = await this.TrashProvider.GetList(uuid);
         if (list) {
             //move it to the end...
-            list.Order = this.Lists()?.length ?? 0;
+            list.Order = this._lists.length;
 
             if (await this.ListsProvider.StoreList(list, true)) {
                 if (await this.TrashProvider.EraseLists(list.Uuid, false)) {
@@ -987,7 +990,8 @@ export class ListsService {
             }
         }
         if (update) {
-            this.Lists.set(lists);
+            this._lists = lists;
+            this.onListsChangedSubject.next(this._lists);
         }
         return lists;
         1;

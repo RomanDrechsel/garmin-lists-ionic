@@ -5,32 +5,80 @@
 ion-list {
     contain: none;
 
-    ion-item {
-        --padding-top: 6px;
-        --padding-bottom: 6px;
-        --padding-start: 6px;
-        --ripple-color: var(--ion-color-primary);
-        --min-height: 30px;
-        cursor: pointer;
+    ion-item-sliding {
+        ion-item {
+            --padding-top: 6px;
+            --padding-bottom: 6px;
+            --padding-start: 6px;
+            --ripple-color: var(--ion-color-primary);
+            --min-height: 30px;
+            cursor: pointer;
 
-        ion-reorder {
-            margin-inline-end: 0;
-            margin-inline-start: 0;
-            padding-inline-start: 0.3em;
-        }
+            ion-reorder {
+                margin-inline-end: 0;
+                margin-inline-start: 16px;
+                padding-inline-start: 0.3em;
+                //width: 4.5em;
+            }
+            ion-label {
+                display: flex;
+                flex-direction: row;
+                gap: 0.5em;
 
-        .details {
-            width: 100%;
+                .details {
+                    width: 100%;
+                }
+
+                .icons {
+                    //width: 4.5em;
+                    height: 100%;
+                    display: flex;
+                    justify-content: end;
+                    align-items: start;
+                    flex-wrap: nowrap;
+                    flex-direction: row;
+                    gap: 0.5em;
+                    padding-block: 0.3em;
+
+                    ion-icon {
+                        width: 1.5em;
+                        min-width: 1.5em;
+                        height: 1.5em;
+                    }
+                }
+            }
         }
     }
-}
 
-#animated-list {
-    .animated-item {
-        opacity: 0;
-
-        &.visible {
+    &#animated-list {
+        .animated-item {
             opacity: 1;
+
+            &.animated {
+                opacity: 0;
+                transition: transform 600ms ease-out, opacity 600ms ease-out;
+            }
+
+            &.animation-left {
+                transform: translateX(-100vw);
+            }
+
+            &.animation-right {
+                transform: translateX(100vw);
+            }
+
+            &.animation-top {
+                transform: translateY(-100vh);
+            }
+
+            &.animate-bottom {
+                transform: translateY(100vh);
+            }
+
+            &.animation-running {
+                opacity: 1;
+                transform: translate(0);
+            }
         }
     }
 }
@@ -51,6 +99,20 @@ ion-fab {
             &.to-bottom {
                 rotate: 180deg;
             }
+        }
+    }
+}
+
+::ng-deep {
+    ion-modal.edit-menu-modal {
+        align-items: flex-start;
+        top: 56px;
+        backdrop-filter: none;
+
+        &::part(content) {
+            height: auto;
+            -webkit-box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.5);
+            box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.5);
         }
     }
 }

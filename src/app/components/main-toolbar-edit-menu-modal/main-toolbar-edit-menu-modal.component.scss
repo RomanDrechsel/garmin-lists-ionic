@@ -1,0 +1,16 @@
+:host {
+    display: block;
+
+    ion-item {
+        --min-height: 56px;
+        ion-icon {
+            height: 1.2em;
+            width: 1.2em;
+        }
+
+        ion-label {
+            margin-inline-start: 0.5em;
+            font-size: 1.1em;
+        }
+    }
+}

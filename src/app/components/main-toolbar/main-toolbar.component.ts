@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild, inject } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, ViewChild } from "@angular/core";
 import { IonBackButton, IonButtons, IonHeader, IonMenuButton, IonProgressBar, IonTitle, IonToolbar } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 
@@ -13,7 +13,9 @@ import { TranslateModule } from "@ngx-translate/core";
 export class MainToolbarComponent {
     @Input("title") pageTitle: string = "";
     @Input("back") backButton?: string = undefined;
-    @Input("menu") menuButton: "true" | "false" = "true";
+    @Input("displayMenu") displayMenu: boolean = true;
+    @Input("displayCustomMenu") displayCustomMenu: boolean = false;
+
     @ViewChild("backbutton", { read: IonBackButton }) private backBtn?: IonBackButton;
 
     private readonly cdr = inject(ChangeDetectorRef);

@@ -109,7 +109,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                 const uuid = Number(listid);
                 this._list = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
                 this._listInitialized = true;
-                this.animateNewItems();
+                this.onItemsChanged();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         })();
@@ -125,7 +125,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                 this._list = list;
                 this.appComponent.setAppPages(this.ModifyMainMenu());
                 this._listInitialized = true;
-                this.animateNewItems();
+                this.onItemsChanged();
             }
         });
 

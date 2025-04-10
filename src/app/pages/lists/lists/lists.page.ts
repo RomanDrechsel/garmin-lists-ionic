@@ -1,11 +1,12 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, ViewChild, WritableSignal } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
+import { Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
+import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonMenuButton, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail, ModalController, ScrollDetail } from "@ionic/angular/standalone";
 import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
-import { Observable, type Subscription } from "rxjs";
+import { type Subscription } from "rxjs";
+import { CreateEditMenuModalAnimation } from "src/app/animations/edit-menu-modal.animation";
+import { MainToolbarEditMenuModalComponent } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { List } from "src/app/services/lists/list";
 import { DateUtils } from "../../../classes/utils/date-utils";
@@ -18,7 +19,7 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     selector: "app-lists",
     templateUrl: "./lists.page.html",
     styleUrls: ["./lists.page.scss"],
-    imports: [IonReorderGroup, IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent],
+    imports: [IonLabel, IonButtons, IonButton, IonReorderGroup, IonNote, IonItemOption, IonMenuButton, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent],
 })
 export class ListsPage extends AnimatedListPageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;
@@ -26,13 +27,33 @@ export class ListsPage extends AnimatedListPageBase {
     @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
     @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
 
-    public Lists: WritableSignal<List[] | undefined> = this.ListsService.Lists;
-    private _listObserver?: Observable<List[] | undefined> = toObservable(this.ListsService.Lists);
+    private readonly _modalCtrl = inject(ModalController);
+    private _editMenuModal?: HTMLIonModalElement;
+
+    private _lists: List[] | undefined;
     private _listsSubscription?: Subscription;
     private _disableClick = false;
     private _scrollPosition: "top" | "bottom" | number = "top";
 
     private _listsInitialized = false;
+
+    private _editMode = false;
+
+    public get Lists(): List[] {
+        return this._lists ?? [];
+    }
+
+    public get EditMode(): boolean {
+        return this._editMode;
+    }
+
+    public set EditMode(value: boolean) {
+        this._editMode = value;
+        if (!value && this._editMenuModal) {
+            this._editMenuModal.dismiss();
+            this._editMenuModal = undefined;
+        }
+    }
 
     public get ScrollPosition(): "top" | "bottom" | number {
         return this._scrollPosition;
@@ -59,16 +80,19 @@ export class ListsPage extends AnimatedListPageBase {
 
     constructor() {
         super();
-        this._animationDirection = "left";
+        this._animationDirection = "top";
     }
 
     public override async ionViewWillEnter(): Promise<void> {
-        super.ionViewWillEnter();
+        await super.ionViewWillEnter();
         this.ListsService.PurgeListDetails();
-        this._listsSubscription = this._listObserver?.subscribe(lists => {
+        this._lists = await this.ListsService.GetLists(true);
+        this.onItemsChanged();
+        this._listsSubscription = this.ListsService.onListsChanged$.subscribe(lists => {
             if (lists) {
+                this._lists = lists;
                 this._listsInitialized = true;
-                this.animateNewItems();
+                this.onItemsChanged();
             }
         });
     }
@@ -84,6 +108,11 @@ export class ListsPage extends AnimatedListPageBase {
     public onSwipeRight(list: List) {
         this.listsContainer.closeSlidingItems();
         this.deleteList(list);
+    }
+
+    public onItemLongPress(event: Event) {
+        this.EditMode = true;
+        this.reload();
     }
 
     public async addList() {
@@ -137,14 +166,66 @@ export class ListsPage extends AnimatedListPageBase {
         }
     }
 
+    public enterEditMode() {
+        this.EditMode = true;
+    }
+
+    public leaveEditMode() {
+        this.EditMode = false;
+    }
+
     public async handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
-        const lists = event.detail.complete(this.Lists());
+        const lists = event.detail.complete(this._lists);
         await this.ListsService.ReorderLists(lists);
         event.stopImmediatePropagation();
     }
 
     public UpdatedString(list: List): string {
         return this.Locale.getText("page_lists.updated", { date: DateUtils.formatDate(list.Updated ?? list.Created) });
+    }
+
+    public async toggleEditMenu() {
+        if (this._editMenuModal) {
+            await this._editMenuModal.dismiss();
+        } else {
+            this._editMenuModal = await this._modalCtrl.create({
+                component: MainToolbarEditMenuModalComponent,
+                cssClass: "edit-menu-modal",
+                backdropDismiss: true,
+                animated: true,
+                showBackdrop: false,
+                componentProps: {
+                    Methods: [
+                        {
+                            text: this.Locale.getText("page_lists.upload"),
+                            icon: "/assets/icons/menu/devices.svg",
+                            click: () => {
+                                console.log("Transmit");
+                            },
+                        },
+                        {
+                            text: this.Locale.getText("page_lists.empty"),
+                            icon: "/assets/icons/menu/empty.svg",
+                            click: () => {
+                                console.log("Empty");
+                            },
+                        },
+                        {
+                            text: this.Locale.getText("delete"),
+                            icon: "/assets/icons/trash.svg",
+                            click: () => {
+                                console.log("Delete");
+                            },
+                        },
+                    ],
+                },
+                enterAnimation: (baseEl: HTMLElement) => CreateEditMenuModalAnimation(baseEl, "enter"),
+                leaveAnimation: (baseEl: HTMLElement) => CreateEditMenuModalAnimation(baseEl, "leave"),
+            });
+            this._editMenuModal.present();
+            await this._editMenuModal.onWillDismiss();
+            this._editMenuModal = undefined;
+        }
     }
 
     public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
@@ -168,6 +249,6 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     protected getItemCount(): number {
-        return this.Lists()?.length ?? 0;
+        return this._lists?.length ?? 0;
     }
 }

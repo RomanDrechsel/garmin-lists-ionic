@@ -4,7 +4,7 @@
     <div class="content" *ngIf="List && List.Items.length > 0; else noItems" #listContent>
         <ion-list id="animated-list" #itemsContainer>
             <ion-reorder-group [disabled]="List.Items.length <= 1" (ionItemReorder)="HandleReorder($any($event))">
-                <ion-item-sliding *ngFor="let item of List.Items" [ngClass]="{'animated-item': true, 'visible': InitialAnimationDone }">
+                <ion-item-sliding *ngFor="let item of List.Items" [ngClass]="['animated-item', !InitialAnimationDone ? ItemAnimationClass: '', !InitialAnimationDone ? 'animated': '']">
                     <ion-item-options side="start" (ionSwipe)="onSwipeRight(item)">
                         <ion-item-option color="danger" expandable="true" (click)="deleteItem(item)">
                             <ion-icon slot="start" src="./assets/icons/trash_solid.svg"></ion-icon>
