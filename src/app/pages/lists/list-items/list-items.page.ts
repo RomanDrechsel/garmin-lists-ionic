@@ -93,6 +93,11 @@ export class ListItemsPage extends AnimatedListPageBase {
         }
     }
 
+    constructor() {
+        super();
+        this._animationDirection = "top";
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
 
@@ -109,7 +114,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                 const uuid = Number(listid);
                 this._list = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
                 this._listInitialized = true;
-                this.animateNewItems();
+                this.onItemsChanged();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         })();
@@ -125,7 +130,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                 this._list = list;
                 this.appComponent.setAppPages(this.ModifyMainMenu());
                 this._listInitialized = true;
-                this.animateNewItems();
+                this.onItemsChanged();
             }
         });
 
@@ -316,9 +321,5 @@ export class ListItemsPage extends AnimatedListPageBase {
         if (await this.Popups.Alert.YesNo({ message: "comp-listeditor.sync_settings", translate: true })) {
             this.NavController.navigateForward("/settings/lists-transmission", { queryParams: { syncList: this.List } });
         }
-    }
-
-    protected getItemCount(): number {
-        return this._list?.Items.length ?? 0;
     }
 }

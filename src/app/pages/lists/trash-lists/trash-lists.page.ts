@@ -64,14 +64,14 @@ export class TrashListsPage extends AnimatedListPageBase {
             if (lists) {
                 this.Lists = this.Lists.sort((a, b) => b.Deleted - a.Deleted);
                 this._trashInitialized = true;
-                this.animateNewItems();
+                this.onItemsChanged();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
 
         this.Lists = (await this.ListsService.GetTrash()).sort((a: List, b: List) => b.Deleted - a.Deleted);
         this._trashInitialized = true;
-        this.animateNewItems();
+        this.onItemsChanged();
     }
 
     public override async ionViewDidLeave() {
@@ -133,9 +133,5 @@ export class TrashListsPage extends AnimatedListPageBase {
     public async ScrollToBottom(instant: boolean = true) {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
-    }
-
-    protected getItemCount(): number {
-        return this.Lists?.length ?? 0;
     }
 }

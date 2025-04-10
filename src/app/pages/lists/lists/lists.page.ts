@@ -68,7 +68,7 @@ export class ListsPage extends AnimatedListPageBase {
         this._listsSubscription = this._listObserver?.subscribe(lists => {
             if (lists) {
                 this._listsInitialized = true;
-                this.animateNewItems();
+                this.onItemsChanged();
             }
         });
     }
@@ -165,9 +165,5 @@ export class ListsPage extends AnimatedListPageBase {
     public async ScrollToBottom(instant: boolean = true) {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
-    }
-
-    protected getItemCount(): number {
-        return this.Lists()?.length ?? 0;
     }
 }

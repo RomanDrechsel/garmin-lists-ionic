@@ -23,14 +23,36 @@ ion-list {
             width: 100%;
         }
     }
-}
 
-#animated-list {
-    .animated-item {
-        opacity: 0;
-
-        &.visible {
+    &#animated-list {
+        .animated-item {
             opacity: 1;
+
+            &.animated {
+                opacity: 0;
+                transition: transform 400ms ease-out, opacity 400ms ease-out;
+            }
+
+            &.animation-left {
+                transform: translateX(-100vw);
+            }
+
+            &.animation-right {
+                transform: translateX(100vw);
+            }
+
+            &.animation-top {
+                transform: translateY(-100vh);
+            }
+
+            &.animate-bottom {
+                transform: translateY(100vh);
+            }
+
+            &.animation-running {
+                opacity: 1;
+                transform: translate(0);
+            }
         }
     }
 }
