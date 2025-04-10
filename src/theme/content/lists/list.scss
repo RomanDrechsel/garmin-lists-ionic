@@ -14,12 +14,6 @@ ion-list {
             --min-height: 30px;
             cursor: pointer;
 
-            ion-reorder {
-                margin-inline-end: 0;
-                margin-inline-start: 16px;
-                padding-inline-start: 0.3em;
-                //width: 4.5em;
-            }
             ion-label {
                 display: flex;
                 flex-direction: row;
@@ -30,7 +24,7 @@ ion-list {
                 }
 
                 .icons {
-                    //width: 4.5em;
+                    width: 4.5em;
                     height: 100%;
                     display: flex;
                     justify-content: end;
@@ -44,6 +38,32 @@ ion-list {
                         width: 1.5em;
                         min-width: 1.5em;
                         height: 1.5em;
+                    }
+                }
+            }
+
+            .select {
+                width: 1.5em;
+                height: 100%;
+                position: absolute;
+                top: 16px;
+            }
+
+            .reorder {
+                width: 4.5em;
+                height: 100%;
+                justify-content: flex-end;
+                align-items: flex-start;
+                display: flex;
+
+                ion-reorder {
+                    margin-inline-end: 0;
+                    margin-inline-start: 0;
+                    padding-inline-start: 0.3em;
+
+                    ion-icon {
+                        width: 2em;
+                        height: 2em;
                     }
                 }
             }

@@ -45,9 +45,8 @@ export abstract class AnimatedListPageBase extends PageBase {
     protected async onItemsChanged() {
         this.reload();
 
-        await new Promise<void>(resolve => setTimeout(() => resolve(), 10));
-
         if (!this._initAnimationDone && this._animateItems) {
+            await new Promise<void>(resolve => setTimeout(() => resolve(), 10));
             const querySelector = "#animated-list .animated-item.animated:not(.animation-running)";
             const toanimated = Array.from(document.querySelectorAll(querySelector)).filter((el: Element) => this.animateElement(el as HTMLElement));
 
@@ -92,6 +91,4 @@ export abstract class AnimatedListPageBase extends PageBase {
         }
         return el.offsetTop < window.scrollY + window.innerHeight;
     }
-
-    protected abstract getItemCount(): number;
 }

@@ -93,6 +93,11 @@ export class ListItemsPage extends AnimatedListPageBase {
         }
     }
 
+    constructor() {
+        super();
+        this._animationDirection = "top";
+    }
+
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
 
@@ -316,9 +321,5 @@ export class ListItemsPage extends AnimatedListPageBase {
         if (await this.Popups.Alert.YesNo({ message: "comp-listeditor.sync_settings", translate: true })) {
             this.NavController.navigateForward("/settings/lists-transmission", { queryParams: { syncList: this.List } });
         }
-    }
-
-    protected getItemCount(): number {
-        return this._list?.Items.length ?? 0;
     }
 }

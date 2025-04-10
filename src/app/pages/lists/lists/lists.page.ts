@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonMenuButton, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail, ModalController, ScrollDetail } from "@ionic/angular/standalone";
+import { IonButton, IonButtons, IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonMenuButton, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail, ModalController, ScrollDetail } from "@ionic/angular/standalone";
 import { IonContentCustomEvent } from "@ionic/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { type Subscription } from "rxjs";
@@ -19,7 +19,7 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     selector: "app-lists",
     templateUrl: "./lists.page.html",
     styleUrls: ["./lists.page.scss"],
-    imports: [IonLabel, IonButtons, IonButton, IonReorderGroup, IonNote, IonItemOption, IonMenuButton, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent],
+    imports: [IonCheckbox, IonLabel, IonButtons, IonButton, IonReorderGroup, IonNote, IonItemOption, IonMenuButton, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent],
 })
 export class ListsPage extends AnimatedListPageBase {
     @ViewChild("listsContainer") private listsContainer!: IonList;
@@ -246,9 +246,5 @@ export class ListsPage extends AnimatedListPageBase {
     public async ScrollToBottom(instant: boolean = true) {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
-    }
-
-    protected getItemCount(): number {
-        return this._lists?.length ?? 0;
     }
 }
