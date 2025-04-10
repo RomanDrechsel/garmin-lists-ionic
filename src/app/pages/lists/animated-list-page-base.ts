@@ -1,13 +1,12 @@
 import { Subscription } from "rxjs";
-import { CreateListitemAnimation, ListitemAnimationDirection } from "../../animations/create-listitem.animation";
 import { EPrefProperty } from "../../services/storage/preferences.service";
 import { PageBase } from "../page-base";
 
 export abstract class AnimatedListPageBase extends PageBase {
-    private readonly animateItemsTimeout = 20;
+    private readonly _animationDelay = 30;
 
     protected _initAnimationDone = false;
-    protected _animationDirection: ListitemAnimationDirection = "top";
+    protected _animationDirection: "left" | "right" | "top" | "bottom" = "left";
 
     private _animateItems = true;
 
@@ -15,6 +14,10 @@ export abstract class AnimatedListPageBase extends PageBase {
 
     public get InitialAnimationDone(): boolean {
         return this._initAnimationDone;
+    }
+
+    public get ItemAnimationClass(): string {
+        return `animation-${this._animationDirection}`;
     }
 
     public override async ionViewWillEnter() {
@@ -39,52 +42,54 @@ export abstract class AnimatedListPageBase extends PageBase {
         }
     }
 
-    protected animateNewItems() {
+    protected async onItemsChanged() {
         this.reload();
 
-        if (this._initAnimationDone) {
-            return;
-        }
+        await new Promise<void>(resolve => setTimeout(() => resolve(), 10));
 
-        if (this.getItemCount() <= 0) {
-            this._initAnimationDone = true;
-            return;
-        }
+        if (!this._initAnimationDone && this._animateItems) {
+            const querySelector = "#animated-list .animated-item.animated:not(.animation-running)";
+            const toanimated = Array.from(document.querySelectorAll(querySelector)).filter((el: Element) => this.animateElement(el as HTMLElement));
 
-        if (this._animateItems) {
-            const querySelector = "#animated-list .animated-item:not(.animation-running):not(.visible)";
-            const unanimated = document.querySelectorAll(querySelector);
-            if (unanimated.length > 0) {
-                if (this.animateElement(unanimated[0] as HTMLElement)) {
-                    const animation = CreateListitemAnimation(unanimated[0] as HTMLElement, this._animationDirection);
-                    if (unanimated.length == 1) {
-                        animation.afterAddRead(() => {
-                            const unanimated = document.querySelector(querySelector);
-                            if (!unanimated) {
+            console.log(`found ${toanimated.length} items to animate`);
+
+            toanimated.forEach((el: Element, index: number) => {
+                const html_el = el as HTMLElement;
+                if (html_el) {
+                    html_el.style.transitionDelay = `${index * this._animationDelay}ms`;
+                    if (index == toanimated.length - 1) {
+                        html_el.addEventListener(
+                            "transitionend",
+                            (ev: TransitionEvent) => {
                                 this._initAnimationDone = true;
-                                this.reload();
-                            }
-                        });
+                                Array.from(document.querySelectorAll("#animated-list .animated-item")).forEach(el => {
+                                    if (el instanceof HTMLElement) {
+                                        //el.classList.remove("animated", "animation-running", this.ItemAnimationClass);
+                                        el.style.transitionDelay = "";
+                                    }
+                                });
+                            },
+                            { once: true },
+                        );
                     }
-                    animation.play();
-
-                    if (unanimated.length != 1) {
-                        window.setTimeout(() => this.animateNewItems(), this.animateItemsTimeout);
-                    }
-                    return;
+                    html_el.classList.add("animation-running");
                 } else {
-                    unanimated.forEach(el => {
-                        el.classList.add("visible");
-                    });
-                    this._initAnimationDone = true;
+                    console.log("no html element", el);
                 }
+            });
+            if (toanimated.length == 0) {
+                console.log("no items to animate");
+                this._initAnimationDone = true;
             }
+        } else {
+            this._initAnimationDone = true;
         }
     }
 
-    private animateElement(el: HTMLElement): boolean {
+    private animateElement(el?: HTMLElement): boolean {
+        if (!el) {
+            return false;
+        }
         return el.offsetTop < window.scrollY + window.innerHeight;
     }
-
-    protected abstract getItemCount(): number;
 }

@@ -84,7 +84,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
                 this.Trash.items = this.Trash.items.sort((a, b) => (b.deleted ?? 0) - (a.deleted ?? 0));
             }
             this._trashInitialized = true;
-            this.animateNewItems();
+            this.onItemsChanged();
         }
 
         this._trashChangedSubscription = this.ListsService.onTrashItemsDatasetChanged$.subscribe(trash => {
@@ -94,7 +94,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
                     this.Trash.items = this.Trash.items.sort((a, b) => (b.deleted ?? 0) - (a.deleted ?? 0));
                 }
                 this._trashInitialized = true;
-                this.animateNewItems();
+                this.onItemsChanged();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
@@ -160,9 +160,5 @@ export class TrashListitemsPage extends AnimatedListPageBase {
     public async ScrollToBottom(instant: boolean = true) {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
-    }
-
-    protected getItemCount(): number {
-        return this.Trash?.items?.length ?? 0;
     }
 }
