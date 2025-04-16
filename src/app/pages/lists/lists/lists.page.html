@@ -23,23 +23,21 @@
         <ion-list id="animated-list" #listsContainer>
             <ion-reorder-group (ionItemReorder)="handleReorder($any($event))" [disabled]="!EditMode">
                 <ion-item-sliding *ngFor="let list of Lists" [disabled]="EditMode" [ngClass]="['animated-item', !InitialAnimationDone ? ItemAnimationClass: '', !InitialAnimationDone ? 'animated': '']">
-                    <ion-item lines="full" [button]="true" (click)="gotoList($event, list)">
-                        <div class="select" slot="start">
-                            <ion-checkbox></ion-checkbox>
-                        </div>
+                    <ion-item lines="full" [button]="true" (click)="clickOnItem($event, list)">
                         <ion-label>
                             <div class="details">
                                 <div class="listname">{{list.Name}}</div>
                                 <ion-note color="medium" class="date">{{UpdatedString(list)}}</ion-note>
                             </div>
-                            <div class="icons" *ngIf="!EditMode" (click)="editList($event, list)">
-                                <div class="itemcount">
-                                    <div class="count">{{list.ItemsCount}}</div>
-                                </div>
-                                <ion-icon src="./assets/icons/edit.svg"></ion-icon>
-                            </div>
                         </ion-label>
-                        <div slot="end" class="reorder" *ngIf="EditMode">
+                        <div slot="end" class="icons" *ngIf="!EditMode" (click)="editList($event, list)">
+                            <div class="itemcount">
+                                <div class="count">{{list.ItemsCount}}</div>
+                            </div>
+                            <ion-icon src="./assets/icons/edit.svg"></ion-icon>
+                        </div>
+                        <div slot="end" class="editmode" *ngIf="EditMode">
+                            <ion-checkbox checked="true" [checked]="isListSelected(list)"></ion-checkbox>
                             <ion-reorder>
                                 <ion-icon src="/assets/icons/reorder.svg"></ion-icon>
                             </ion-reorder>

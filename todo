@@ -6,6 +6,6 @@ https://wiki.ubuntuusers.de/adb/
 
 TEST: use app without connect iq
 TEST: animations
-TODO: reorder only if pressed for a second
+WIP: editmode
 TODO: use SQLite as backend
 TODO: note function

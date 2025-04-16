@@ -38,6 +38,7 @@ export class ListsPage extends AnimatedListPageBase {
     private _listsInitialized = false;
 
     private _editMode = false;
+    private _selectedLists: List[] = [];
 
     public get Lists(): List[] {
         return this._lists ?? [];
@@ -49,9 +50,12 @@ export class ListsPage extends AnimatedListPageBase {
 
     public set EditMode(value: boolean) {
         this._editMode = value;
-        if (!value && this._editMenuModal) {
-            this._editMenuModal.dismiss();
-            this._editMenuModal = undefined;
+        if (!value) {
+            if (this._editMenuModal) {
+                this._editMenuModal.dismiss();
+                this._editMenuModal = undefined;
+            }
+            this._selectedLists = [];
         }
     }
 
@@ -103,16 +107,12 @@ export class ListsPage extends AnimatedListPageBase {
             this._listsSubscription.unsubscribe();
             this._listsSubscription = undefined;
         }
+        this._editMode = false;
     }
 
     public onSwipeRight(list: List) {
         this.listsContainer.closeSlidingItems();
         this.deleteList(list);
-    }
-
-    public onItemLongPress(event: Event) {
-        this.EditMode = true;
-        this.reload();
     }
 
     public async addList() {
@@ -159,10 +159,20 @@ export class ListsPage extends AnimatedListPageBase {
         }
     }
 
-    public gotoList(event: MouseEvent, list: List) {
+    public clickOnItem(event: MouseEvent, list: List) {
         if (!this._disableClick) {
-            this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { title: list.Name } });
-            event.stopImmediatePropagation();
+            if (this._editMode) {
+                if (this.isListSelected(list)) {
+                    this._selectedLists = this._selectedLists.filter(l => l != list);
+                } else {
+                    this._selectedLists.push(list);
+                }
+                this.reload();
+                console.log(this._selectedLists.length);
+            } else {
+                this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { title: list.Name } });
+                event.stopImmediatePropagation();
+            }
         }
     }
 
@@ -182,6 +192,10 @@ export class ListsPage extends AnimatedListPageBase {
 
     public UpdatedString(list: List): string {
         return this.Locale.getText("page_lists.updated", { date: DateUtils.formatDate(list.Updated ?? list.Created) });
+    }
+
+    public isListSelected(list: List): boolean {
+        return this._selectedLists.indexOf(list) >= 0;
     }
 
     public async toggleEditMenu() {
