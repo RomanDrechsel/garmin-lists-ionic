@@ -87,7 +87,7 @@
         "empty_trash_listitems_confirm": "リストのゴミ箱を空にして {{count}} 件の項目を削除しますか？",
         "empty_trash_listitems_confirm_single": "リストのゴミ箱を空にして項目を削除しますか？",
         "empty_trash_success": "ゴミ箱が空になりました。",
-        "empry_trash_error": "ゴミ箱を空にできませんでした！",
+        "empty_trash_error": "ゴミ箱を空にできませんでした！",
         "transmit_confirm": "リストをデバイス <strong>{{device}}</strong> に送信しますか？",
         "transmit_process": "リストを送信中...",
         "transmit_success": "リストが正常に送信されました",

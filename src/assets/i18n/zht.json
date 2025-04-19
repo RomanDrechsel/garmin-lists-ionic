@@ -87,7 +87,7 @@
         "empty_trash_listitems_confirm": "確定要清空清單的垃圾桶並刪除 {{count}} 個項目嗎？",
         "empty_trash_listitems_confirm_single": "確定要清空清單的垃圾桶並刪除項目嗎？",
         "empty_trash_success": "垃圾桶已清空。",
-        "empry_trash_error": "無法清空垃圾桶！",
+        "empty_trash_error": "無法清空垃圾桶！",
         "transmit_confirm": "確定要將清單傳送到您的裝置 <strong>{{device}}</strong> 嗎？",
         "transmit_process": "清單正在傳送中...",
         "transmit_success": "清單已成功傳送。",

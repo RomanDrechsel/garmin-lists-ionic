@@ -50,8 +50,6 @@ export abstract class AnimatedListPageBase extends PageBase {
             const querySelector = "#animated-list .animated-item.animated:not(.animation-running)";
             const toanimated = Array.from(document.querySelectorAll(querySelector)).filter((el: Element) => this.animateElement(el as HTMLElement));
 
-            console.log(`found ${toanimated.length} items to animate`);
-
             toanimated.forEach((el: Element, index: number) => {
                 const html_el = el as HTMLElement;
                 if (html_el) {
@@ -63,7 +61,6 @@ export abstract class AnimatedListPageBase extends PageBase {
                                 this._initAnimationDone = true;
                                 Array.from(document.querySelectorAll("#animated-list .animated-item")).forEach(el => {
                                     if (el instanceof HTMLElement) {
-                                        //el.classList.remove("animated", "animation-running", this.ItemAnimationClass);
                                         el.style.transitionDelay = "";
                                     }
                                 });
@@ -72,12 +69,9 @@ export abstract class AnimatedListPageBase extends PageBase {
                         );
                     }
                     html_el.classList.add("animation-running");
-                } else {
-                    console.log("no html element", el);
                 }
             });
             if (toanimated.length == 0) {
-                console.log("no items to animate");
                 this._initAnimationDone = true;
             }
         } else {

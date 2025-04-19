@@ -87,7 +87,7 @@
         "empty_trash_listitems_confirm": "¿Quieres vaciar la papelera de la lista y eliminar los {{count}} elementos?",
         "empty_trash_listitems_confirm_single": "¿Quieres vaciar la papelera de la lista y eliminar el elemento?",
         "empty_trash_success": "La papelera fue vaciada.",
-        "empry_trash_error": "¡No se pudo vaciar la papelera!",
+        "empty_trash_error": "¡No se pudo vaciar la papelera!",
         "transmit_confirm": "¿Quieres transmitir la lista a tu dispositivo <strong>{{device}}</strong>?",
         "transmit_process": "La lista está siendo transmitida...",
         "transmit_success": "La lista fue transmitida correctamente.",

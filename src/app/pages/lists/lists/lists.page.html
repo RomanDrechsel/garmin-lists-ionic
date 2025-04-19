@@ -2,7 +2,7 @@
     {{'page_lists.page_title'|translate}}
     <ng-content slot="customMenu">
         <ion-buttons *ngIf="EditMode">
-            <ion-button shape="round" (click)="toggleEditMenu()">
+            <ion-button shape="round" (click)="toggleEditMenu()" [disabled]="disableEditMenu()">
                 <ion-icon src="/assets/icons/list_menu.svg" slot="icon-only"></ion-icon>
             </ion-button>
             <ion-button shape="round" (click)="leaveEditMode()">
@@ -23,7 +23,7 @@
         <ion-list id="animated-list" #listsContainer>
             <ion-reorder-group (ionItemReorder)="handleReorder($any($event))" [disabled]="!EditMode">
                 <ion-item-sliding *ngFor="let list of Lists" [disabled]="EditMode" [ngClass]="['animated-item', !InitialAnimationDone ? ItemAnimationClass: '', !InitialAnimationDone ? 'animated': '']">
-                    <ion-item lines="full" [button]="true" (click)="clickOnItem($event, list)">
+                    <ion-item lines="full" [button]="true" (click)="clickOnItem($event, list)" [ngClass]="{'selected-list': EditMode && isListSelected(list)}">
                         <ion-label>
                             <div class="details">
                                 <div class="listname">{{list.Name}}</div>
@@ -44,17 +44,17 @@
                         </div>
                     </ion-item>
                     <ion-item-options side="start" (ionSwipe)="onSwipeRight(list)">
-                        <ion-item-option color="danger" (click)="emptyList(list)" *ngIf="list.ItemsCount > 0">
+                        <ion-item-option color="danger" (click)="emptyLists(list)" *ngIf="list.ItemsCount > 0">
                             <ion-icon slot="start" src="./assets/icons/trash_bin_solid.svg"></ion-icon>
                             {{'page_lists.empty'|translate}}
                         </ion-item-option>
-                        <ion-item-option color="danger" expandable="true" (click)="deleteList(list)">
+                        <ion-item-option color="danger" expandable="true" (click)="deleteLists(list)">
                             <ion-icon slot="start" src="./assets/icons/trash_solid.svg"></ion-icon>
                             {{'delete'|translate}}
                         </ion-item-option>
                     </ion-item-options>
                     <ion-item-options side="end" (ionSwipe)="onSwipeLeft(list)">
-                        <ion-item-option color="secondary" expandable="true" (click)="transmitList(list)">
+                        <ion-item-option color="secondary" expandable="true" (click)="transmitLists(list)">
                             <ion-icon slot="end" src="assets/icons/menu/devices.svg"></ion-icon>
                             {{'page_lists.upload'|translate}}
                         </ion-item-option>

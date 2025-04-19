@@ -7,5 +7,8 @@ https://wiki.ubuntuusers.de/adb/
 TEST: use app without connect iq
 TEST: animations
 WIP: editmode
+TODO: translate comp-toolbar-edit-menu.* / service-lists.transmit_confirm_plural / service-lists.transmit_progrss_plural / service-lists.transmit_success_plural / service-lists.transmit_error_partial
+TODO: translate service_lists.empty_error_partial / service-lists.empty_confirm_plural / service-lists.delete_confirm_plural / service-lists.delete_error_plural / service-lists.delete_error_partial
+BUG: service-lists.empty_trash_error wird nicht verwendet?!
 TODO: use SQLite as backend
 TODO: note function

@@ -87,7 +87,7 @@
         "empty_trash_listitems_confirm": "Do you really want to empty the trash for the list and delete all {{count}} items?",
         "empty_trash_listitems_confirm_single": "Do you really want to empty the trash for the list and delete the item?",
         "empty_trash_success": "The trash is now empty.",
-        "empry_trash_error": "The trash could not be emptied!",
+        "empty_trash_error": "The trash could not be emptied!",
         "transmit_confirm": "Do you want transmit the list to the device <strong>{{device}}</strong>?",
         "transmit_process": "The list is being transmitted...",
         "transmit_success": "The list has been transmitted successfully",

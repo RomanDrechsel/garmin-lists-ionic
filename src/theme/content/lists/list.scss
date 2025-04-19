@@ -14,8 +14,8 @@ ion-list {
             --min-height: 30px;
             cursor: pointer;
 
-            ion-ripple-effect {
-                color: var(--ion-color-primary);
+            &.selected-list {
+                --background: rgba(var(--ion-color-primary-rgb), 0.07);
             }
 
             ion-label {
@@ -59,9 +59,9 @@ ion-list {
                     --size: 1.5em;
                     --checkbox-background-checked: var(--ion-card-background);
                     --border-color-checked: var(--border-color);
-                    --checkmark-color: var(--color-medium);
-                    --checkmark-width: 2px;
-                    --border-radius: 50%;
+                    --checkmark-color: var(--ion-color-medium);
+                    --checkmark-width: 3px;
+                    --border-radius: 20%;
 
                     &::part(container) {
                         top: 0.2em;
@@ -135,7 +135,7 @@ ion-fab {
     ion-modal.edit-menu-modal {
         align-items: flex-start;
         top: 56px;
-        backdrop-filter: none;
+        backdrop-filter: blur(2px);
 
         &::part(content) {
             height: auto;

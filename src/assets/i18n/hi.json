@@ -87,7 +87,7 @@
         "empty_trash_listitems_confirm": "क्या आप सूची का कचरा खाली करना चाहते हैं और {{count}} पॉइंट्स हटाना चाहते हैं?",
         "empty_trash_listitems_confirm_single": "क्या आप सूची का कचरा खाली करना चाहते हैं और पॉइंट हटाना चाहते हैं?",
         "empty_trash_success": "कचरा खाली कर दिया गया है।",
-        "empry_trash_error": "कचरा खाली नहीं किया जा सका!",
+        "empty_trash_error": "कचरा खाली नहीं किया जा सका!",
         "transmit_confirm": "क्या आप सूची को अपने डिवाइस <strong>{{device}}</strong> पर भेजना चाहते हैं?",
         "transmit_process": "सूची भेजी जा रही है...",
         "transmit_success": "सूची सफलतापूर्वक भेज दी गई है।",

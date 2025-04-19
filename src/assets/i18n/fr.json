@@ -87,7 +87,7 @@
         "empty_trash_listitems_confirm": "Voulez-vous vider la corbeille de la liste et supprimer les {{count}} éléments ?",
         "empty_trash_listitems_confirm_single": "Voulez-vous vider la corbeille de la liste et supprimer l'élément ?",
         "empty_trash_success": "La corbeille a été vidée.",
-        "empry_trash_error": "La corbeille n'a pas pu être vidée !",
+        "empty_trash_error": "La corbeille n'a pas pu être vidée !",
         "transmit_confirm": "Voulez-vous transférer la liste sur votre appareil <strong>{{device}}</strong> ?",
         "transmit_process": "La liste est en cours de transfert...",
         "transmit_success": "La liste a été transférée avec succès.",

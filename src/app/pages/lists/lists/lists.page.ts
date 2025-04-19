@@ -37,8 +37,8 @@ export class ListsPage extends AnimatedListPageBase {
 
     private _listsInitialized = false;
 
-    private _editMode = false;
-    private _selectedLists: List[] = [];
+    private _editMode = true;
+    private _selectedLists: (Number | String)[] = [];
 
     public get Lists(): List[] {
         return this._lists ?? [];
@@ -55,7 +55,6 @@ export class ListsPage extends AnimatedListPageBase {
                 this._editMenuModal.dismiss();
                 this._editMenuModal = undefined;
             }
-            this._selectedLists = [];
         }
     }
 
@@ -91,6 +90,7 @@ export class ListsPage extends AnimatedListPageBase {
         await super.ionViewWillEnter();
         this.ListsService.PurgeListDetails();
         this._lists = await this.ListsService.GetLists(true);
+        this._listsInitialized = true;
         this.onItemsChanged();
         this._listsSubscription = this.ListsService.onListsChanged$.subscribe(lists => {
             if (lists) {
@@ -107,12 +107,12 @@ export class ListsPage extends AnimatedListPageBase {
             this._listsSubscription.unsubscribe();
             this._listsSubscription = undefined;
         }
-        this._editMode = false;
+        this.EditMode = false;
     }
 
     public onSwipeRight(list: List) {
         this.listsContainer.closeSlidingItems();
-        this.deleteList(list);
+        this.deleteLists(list);
     }
 
     public async addList() {
@@ -121,27 +121,30 @@ export class ListsPage extends AnimatedListPageBase {
 
     public onSwipeLeft(list: List) {
         this.listsContainer.closeSlidingItems();
-        this.transmitList(list);
+        this.transmitLists(list);
     }
 
-    public async deleteList(list: List) {
-        const res = await this.ListsService.DeleteList(list);
-        if (res !== undefined) {
-            this.listsContainer.closeSlidingItems();
-            this.reload();
-        }
-    }
-
-    public async emptyList(list: List) {
-        if ((await this.ListsService.EmptyList(list)) === true) {
-            this.listsContainer.closeSlidingItems();
-            this.reload();
-        }
-    }
-
-    public async transmitList(list: List) {
-        await this.ListsService.TransferList(list.Uuid);
+    public async deleteLists(lists: List | List[]): Promise<boolean | undefined> {
         this.listsContainer.closeSlidingItems();
+        const success = await this.ListsService.DeleteList(lists);
+        if (success === true) {
+            this.reload();
+        }
+        return success;
+    }
+
+    public async emptyLists(lists: List | List[]): Promise<boolean | undefined> {
+        this.listsContainer.closeSlidingItems();
+        const success = await this.ListsService.EmptyList(lists);
+        if (success === true) {
+            this.reload();
+        }
+        return success;
+    }
+
+    public async transmitLists(lists: List | List[]): Promise<boolean | undefined> {
+        this.listsContainer.closeSlidingItems();
+        return await this.ListsService.TransferList(lists);
     }
 
     public async editList(event: MouseEvent, list: List) {
@@ -163,16 +166,14 @@ export class ListsPage extends AnimatedListPageBase {
         if (!this._disableClick) {
             if (this._editMode) {
                 if (this.isListSelected(list)) {
-                    this._selectedLists = this._selectedLists.filter(l => l != list);
+                    this._selectedLists = this._selectedLists.filter(l => l != list.Uuid);
                 } else {
-                    this._selectedLists.push(list);
+                    this._selectedLists.push(list.Uuid);
                 }
-                this.reload();
-                console.log(this._selectedLists.length);
             } else {
                 this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { title: list.Name } });
-                event.stopImmediatePropagation();
             }
+            event.stopImmediatePropagation();
         }
     }
 
@@ -180,8 +181,14 @@ export class ListsPage extends AnimatedListPageBase {
         this.EditMode = true;
     }
 
-    public leaveEditMode() {
-        this.EditMode = false;
+    public leaveEditMode(force: boolean = false) {
+        if (force || !this._editMenuModal) {
+            this.EditMode = false;
+        }
+
+        if (this._editMenuModal) {
+            this.toggleEditMenu();
+        }
     }
 
     public async handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
@@ -195,40 +202,75 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public isListSelected(list: List): boolean {
-        return this._selectedLists.indexOf(list) >= 0;
+        return this._selectedLists.indexOf(list.Uuid) >= 0;
+    }
+
+    public disableEditMenu(): boolean {
+        return !this._editMode || this._selectedLists.length == 0;
     }
 
     public async toggleEditMenu() {
         if (this._editMenuModal) {
             await this._editMenuModal.dismiss();
         } else {
+            let texts = [];
+            if (this._selectedLists.length == 1) {
+                texts = this.Locale.getText(["comp-toolbar-edit-menu.list-transmit", "comp-toolbar-edit-menu.list-empty", "comp-toolbar-edit-menu.list-delete"]);
+                texts["transmit"] = texts["comp-toolbar-edit-menu.list-transmit"];
+                texts["delete"] = texts["comp-toolbar-edit-menu.list-delete"];
+                texts["empty"] = texts["comp-toolbar-edit-menu.list-empty"];
+            } else {
+                texts = this.Locale.getText(["comp-toolbar-edit-menu.lists-transmit", "comp-toolbar-edit-menu.lists-empty", "comp-toolbar-edit-menu.lists-delete"], { num: this._selectedLists.length });
+                texts["transmit"] = texts["comp-toolbar-edit-menu.lists-transmit"];
+                texts["delete"] = texts["comp-toolbar-edit-menu.lists-delete"];
+                texts["empty"] = texts["comp-toolbar-edit-menu.lists-empty"];
+            }
+
             this._editMenuModal = await this._modalCtrl.create({
                 component: MainToolbarEditMenuModalComponent,
                 cssClass: "edit-menu-modal",
                 backdropDismiss: true,
                 animated: true,
-                showBackdrop: false,
+                showBackdrop: true,
                 componentProps: {
                     Methods: [
                         {
-                            text: this.Locale.getText("page_lists.upload"),
+                            text: texts["transmit"],
                             icon: "/assets/icons/menu/devices.svg",
-                            click: () => {
-                                console.log("Transmit");
+                            click: async () => {
+                                this.leaveEditMode(true);
+                                const transmit = await this.transmitLists(this.Lists.filter(l => this._selectedLists.indexOf(l.Uuid) >= 0));
+                                if (transmit === true) {
+                                    this._selectedLists = [];
+                                } else if (transmit === undefined) {
+                                    this.enterEditMode();
+                                }
                             },
                         },
                         {
-                            text: this.Locale.getText("page_lists.empty"),
+                            text: texts["empty"],
                             icon: "/assets/icons/menu/empty.svg",
-                            click: () => {
-                                console.log("Empty");
+                            click: async () => {
+                                this.leaveEditMode(true);
+                                const empty = await this.emptyLists(this.Lists.filter(l => this._selectedLists.indexOf(l.Uuid) >= 0));
+                                if (empty === true) {
+                                    this._selectedLists = [];
+                                } else if (empty === undefined) {
+                                    this.enterEditMode();
+                                }
                             },
                         },
                         {
-                            text: this.Locale.getText("delete"),
+                            text: texts["delete"],
                             icon: "/assets/icons/trash.svg",
-                            click: () => {
-                                console.log("Delete");
+                            click: async () => {
+                                this.leaveEditMode(true);
+                                const del = await this.deleteLists(this.Lists.filter(l => this._selectedLists.indexOf(l.Uuid) >= 0));
+                                if (del === true) {
+                                    this._selectedLists = [];
+                                } else if (del === undefined) {
+                                    this.enterEditMode();
+                                }
                             },
                         },
                     ],
