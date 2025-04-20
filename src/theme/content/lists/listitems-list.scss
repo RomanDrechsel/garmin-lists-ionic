@@ -2,10 +2,6 @@
 
 ion-list {
     ion-item {
-        ion-reorder {
-            margin-inline-start: 10px;
-        }
-
         .listpoint-indicator-wrapper {
             width: 12px;
             margin-inline-end: 4px;
@@ -18,7 +14,7 @@ ion-list {
                 position: absolute;
                 inset-inline-start: 10px;
                 margin-inline-end: 4px;
-                top: 20px;
+                top: 1.6em;
             }
 
             ion-icon {
@@ -29,7 +25,8 @@ ion-list {
         }
 
         .details {
-            margin-block: 6px;
+            margin-block: 0.3em;
+            --min-height: 1.5em;
 
             .item {
                 font-size: 1.3em;

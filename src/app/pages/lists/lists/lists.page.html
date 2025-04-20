@@ -8,24 +8,26 @@
         <ion-list id="animated-list" #listsContainer>
             <ion-reorder-group (ionItemReorder)="handleReorder($any($event))" [disabled]="!EditMode">
                 <ion-item-sliding *ngFor="let list of Lists" [disabled]="EditMode" [ngClass]="['animated-item', !InitialAnimationDone ? ItemAnimationClass: '', !InitialAnimationDone ? 'animated': '']">
-                    <ion-item lines="full" [button]="true" (click)="clickOnItem($event, list)" [ngClass]="{'selected-list': EditMode && isListSelected(list)}">
+                    <ion-item lines="full" [button]="true" (click)="clickOnItem($event, list)" [ngClass]="{'selected-item': EditMode && isListSelected(list)}">
                         <ion-label>
                             <div class="details">
                                 <div class="listname">{{list.Name}}</div>
                                 <ion-note color="medium" class="date">{{UpdatedString(list)}}</ion-note>
                             </div>
                         </ion-label>
-                        <div slot="end" class="icons" *ngIf="!EditMode" (click)="editList($event, list)">
+                        <div slot="end" class="icons" [ngClass]="{'hide': EditMode}" (click)="editList($event, list)">
                             <div class="itemcount">
                                 <div class="count">{{list.ItemsCount}}</div>
                             </div>
                             <ion-icon src="./assets/icons/edit.svg"></ion-icon>
                         </div>
-                        <div slot="end" class="editmode" *ngIf="EditMode">
-                            <ion-checkbox checked="true" [checked]="isListSelected(list)"></ion-checkbox>
-                            <ion-reorder>
-                                <ion-icon src="/assets/icons/reorder.svg"></ion-icon>
-                            </ion-reorder>
+                        <div class="editmode" [ngClass]="{'show': EditMode}">
+                            <div class="editmode-wrapper">
+                                <ion-checkbox checked="true" [checked]="isListSelected(list)"></ion-checkbox>
+                                <ion-reorder>
+                                    <ion-icon src="/assets/icons/reorder.svg"></ion-icon>
+                                </ion-reorder>
+                            </div>
                         </div>
                     </ion-item>
                     <ion-item-options side="start" (ionSwipe)="onSwipeRight(list)">

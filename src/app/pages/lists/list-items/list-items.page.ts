@@ -2,12 +2,11 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { PluginListenerHandle } from "@capacitor/core";
-import { Keyboard } from "@capacitor/keyboard";
-import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTextarea, ItemReorderEventDetail } from "@ionic/angular/standalone";
+import { IonButton, IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTextarea, ItemReorderEventDetail } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import type { EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
+import { MainToolbarListsCustomMenuComponent } from "src/app/components/main-toolbar-lists-custom-menu/main-toolbar-lists-custom-menu.component";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { PageAddNewComponent } from "../../../components/page-add-new/page-add-new.component";
@@ -23,7 +22,33 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     templateUrl: "./list-items.page.html",
     styleUrls: ["./list-items.page.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonImg, IonText, IonButton, IonTextarea, IonFabButton, IonFab, IonReorder, IonNote, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent],
+    imports: [
+        IonLabel,
+        IonCheckbox,
+        IonImg,
+        IonText,
+        IonButton,
+        IonTextarea,
+        IonFabButton,
+        IonFab,
+        IonReorder,
+        IonNote,
+        IonItem,
+        IonItemOptions,
+        IonItemSliding,
+        IonIcon,
+        IonItemOption,
+        IonReorderGroup,
+        IonList,
+        IonContent,
+        CommonModule,
+        FormsModule,
+        TranslateModule,
+        MainToolbarComponent,
+        PageAddNewComponent,
+        PageEmptyComponent,
+        MainToolbarListsCustomMenuComponent,
+    ],
 })
 export class ListItemsPage extends AnimatedListPageBase {
     @ViewChild("quickAdd", { read: IonTextarea, static: false }) private quickAdd?: IonTextarea;
@@ -35,20 +60,12 @@ export class ListItemsPage extends AnimatedListPageBase {
     private _useTrash = true;
     private _listTitle?: string = undefined;
     private _informedSyncForNewlist: string | number | undefined = undefined;
-    private _keyboardShow = false;
-    private _forceHideButtons = false;
-    private _keyboardShowListener?: PluginListenerHandle;
-    private _keyboardHideListener?: PluginListenerHandle;
     private _preferencesSubscription?: Subscription;
 
     private readonly Route = inject(ActivatedRoute);
 
     public get List(): List | undefined {
         return this._list;
-    }
-
-    public get ShowAddButton(): boolean {
-        return this._itemsInitialized && !this._keyboardShow && !this._forceHideButtons;
     }
 
     public get PageTitle(): string {
@@ -70,7 +87,6 @@ export class ListItemsPage extends AnimatedListPageBase {
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
-
         this._itemsInitialized = false;
         const listtitle = this.Route.snapshot.queryParamMap.get("title");
         if (listtitle) {
@@ -122,12 +138,6 @@ export class ListItemsPage extends AnimatedListPageBase {
         if (this.List) {
             await this.Preferences.Set(EPrefProperty.OpenedList, this.List.Uuid);
         }
-        this._keyboardShowListener = await Keyboard.addListener("keyboardWillShow", () => {
-            this._keyboardShow = true;
-        });
-        this._keyboardHideListener = await Keyboard.addListener("keyboardWillHide", () => {
-            this._keyboardShow = false;
-        });
     }
 
     public override async ionViewWillLeave() {
@@ -136,10 +146,6 @@ export class ListItemsPage extends AnimatedListPageBase {
         this._preferencesSubscription?.unsubscribe();
         this._listSubscription?.unsubscribe();
         this._connectIQSubscription?.unsubscribe();
-        this._keyboardShowListener?.remove();
-        this._keyboardShowListener = undefined;
-        this._keyboardHideListener?.remove();
-        this._keyboardHideListener = undefined;
     }
 
     public onSwipeRight(item: Listitem) {
@@ -252,6 +258,19 @@ export class ListItemsPage extends AnimatedListPageBase {
         return menu;
     }
 
+    public clickOnItem(event: MouseEvent, item: Listitem) {
+        if (this._editMode) {
+            if (this.isItemSelected(item)) {
+                this._selectedItems = this._selectedItems.filter(l => l != item.Uuid);
+            } else {
+                this._selectedItems.push(item.Uuid);
+            }
+        } else {
+            this.editItem(item);
+        }
+        event.stopImmediatePropagation();
+    }
+
     public async QuickAddItem(event: MouseEvent) {
         if (this.List && this.quickAdd?.value && this.quickAdd.value.trim().length > 0) {
             this._forceHideButtons = true;
@@ -264,6 +283,10 @@ export class ListItemsPage extends AnimatedListPageBase {
             return false;
         }
         return true;
+    }
+
+    public isItemSelected(item: Listitem): boolean {
+        return this._selectedItems.indexOf(item.Uuid) >= 0;
     }
 
     private async informSyncSettings(): Promise<void> {

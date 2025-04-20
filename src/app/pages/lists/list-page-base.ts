@@ -1,4 +1,6 @@
 import { Component, ElementRef, inject, ViewChild } from "@angular/core";
+import type { PluginListenerHandle } from "@capacitor/core";
+import { Keyboard } from "@capacitor/keyboard";
 import { IonContent, IonList, ModalController } from "@ionic/angular/standalone";
 import { IonContentCustomEvent, type ScrollDetail } from "@ionic/core";
 import { type EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
@@ -23,6 +25,11 @@ export abstract class ListPageBase extends PageBase {
 
     protected _editMode = true;
     protected _selectedItems: (Number | String)[] = [];
+
+    protected _keyboardShow = false;
+    protected _forceHideButtons = false;
+    private _keyboardShowListener?: PluginListenerHandle;
+    private _keyboardHideListener?: PluginListenerHandle;
 
     public get EditMode(): boolean {
         return this._editMode;
@@ -55,16 +62,34 @@ export abstract class ListPageBase extends PageBase {
         return this._itemsInitialized;
     }
 
+    public get ShowAddButton(): boolean {
+        return this._itemsInitialized && !this._keyboardShow && !this._forceHideButtons;
+    }
+
     public override async ionViewWillEnter(): Promise<void> {
         await super.ionViewWillEnter();
         this._editMode = false;
         this._selectedItems = [];
     }
 
+    public override async ionViewDidEnter(): Promise<void> {
+        await super.ionViewDidEnter();
+        this._keyboardShowListener = await Keyboard.addListener("keyboardWillShow", () => {
+            this._keyboardShow = true;
+        });
+        this._keyboardHideListener = await Keyboard.addListener("keyboardWillHide", () => {
+            this._keyboardShow = false;
+        });
+    }
+
     public override async ionViewWillLeave(): Promise<void> {
         await super.ionViewWillLeave();
         this._editMode = false;
         this._selectedItems = [];
+        this._keyboardShowListener?.remove();
+        this._keyboardShowListener = undefined;
+        this._keyboardHideListener?.remove();
+        this._keyboardHideListener = undefined;
     }
 
     public EditMenuDisabled(): boolean {
