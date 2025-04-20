@@ -1,6 +1,6 @@
 <app-main-toolbar back="/lists">{{PageTitle}}</app-main-toolbar>
 
-<ion-content fixed-slot-placement="before" scrollEvents="true" scrollX="false" overflow-scroll="false" (ionScroll)="onScroll($event)" *ngIf="List !== undefined && ListInitialized; else error" #mainContent>
+<ion-content fixed-slot-placement="before" scrollEvents="true" scrollX="false" overflow-scroll="false" (ionScroll)="onScroll($event)" *ngIf="List !== undefined && ItemsInitialized; else error" #mainContent>
     <div class="content" *ngIf="List && List.Items.length > 0; else noItems" #listContent>
         <ion-list id="animated-list" #itemsContainer>
             <ion-reorder-group [disabled]="List.Items.length <= 1" (ionItemReorder)="HandleReorder($any($event))">
@@ -70,7 +70,7 @@
 </ion-content>
 
 <ng-template #error>
-    <div class="nolist" *ngIf="ListInitialized; else notInit">
+    <div class="nolist" *ngIf="ItemsInitialized; else notInit">
         <app-page-empty>
             <div slot="image">
                 <ion-img src="./assets/icons/nolist.svg"></ion-img>

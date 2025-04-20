@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, ViewChild } from "@angular/core";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
-import { IonContentCustomEvent } from "@ionic/core";
+import { Component } from "@angular/core";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
+import type { EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { DateUtils } from "../../../classes/utils/date-utils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
@@ -18,39 +18,9 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     imports: [IonContent, IonText, IonNote, IonItem, IonImg, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListsPage extends AnimatedListPageBase {
-    @ViewChild("listsContainer") private listsContainer!: IonList;
-    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
-    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
-    @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
-
     public Lists: List[] = [];
     private _trashChangedSubscription?: Subscription;
-    private _scrollPosition: "top" | "bottom" | number = "top";
     private _trashInitialized = false;
-
-    public get ScrollPosition(): "top" | "bottom" | number {
-        return this._scrollPosition;
-    }
-
-    public get ShowScrollButtons(): boolean {
-        if (!this._trashInitialized) {
-            return false;
-        }
-        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
-    }
-
-    public get DisableScrollToTop(): boolean {
-        return this._scrollPosition == "top";
-    }
-
-    public get DisableScrollToBottom(): boolean {
-        return this._scrollPosition == "bottom";
-    }
-
-    public get TrashInitialized(): boolean {
-        return this._trashInitialized;
-    }
-
     constructor() {
         super();
         this._animationDirection = "right";
@@ -58,7 +28,6 @@ export class TrashListsPage extends AnimatedListPageBase {
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
-        this._trashInitialized = false;
         this._trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => {
             this.Lists = lists ?? [];
             if (lists) {
@@ -94,12 +63,12 @@ export class TrashListsPage extends AnimatedListPageBase {
 
     public async deleteList(list: List) {
         await this.ListsService.EraseListFromTrash(list);
-        this.listsContainer.closeSlidingItems();
+        this.itemsContainer.closeSlidingItems();
     }
 
     public async restoreList(list: List) {
         await this.ListsService.RestoreListFromTrash(list);
-        this.listsContainer.closeSlidingItems();
+        this.itemsContainer.closeSlidingItems();
     }
 
     public async emptyTrash(): Promise<boolean> {
@@ -115,23 +84,7 @@ export class TrashListsPage extends AnimatedListPageBase {
         }
     }
 
-    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
-        if (event.detail.scrollTop == 0) {
-            this._scrollPosition = "top";
-        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
-            this._scrollPosition = "bottom";
-        } else {
-            this._scrollPosition = event.detail.scrollTop;
-        }
-    }
-
-    public async ScrollToTop() {
-        await this.mainContent?.scrollToTop(300);
-        this.cdr.detectChanges();
-    }
-
-    public async ScrollToBottom(instant: boolean = true) {
-        await this.mainContent?.scrollToBottom(instant ? 0 : 300);
-        this.cdr.detectChanges();
+    protected override getEditMenuActions(): EditMenuAction[] {
+        return [];
     }
 }

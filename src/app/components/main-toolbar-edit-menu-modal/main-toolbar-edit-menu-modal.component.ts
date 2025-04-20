@@ -9,7 +9,7 @@ import { IonIcon, IonItem, IonLabel, IonList, ModalController } from "@ionic/ang
     styleUrl: "./main-toolbar-edit-menu-modal.component.scss",
 })
 export class MainToolbarEditMenuModalComponent {
-    public Methods?: EditMenuMethod[];
+    public Methods?: EditMenuAction[];
 
     private readonly modalCtrl = inject(ModalController);
 
@@ -21,7 +21,7 @@ export class MainToolbarEditMenuModalComponent {
     }
 }
 
-export type EditMenuMethod = {
+export type EditMenuAction = {
     text: string;
     icon: string;
     click: () => Promise<void>;

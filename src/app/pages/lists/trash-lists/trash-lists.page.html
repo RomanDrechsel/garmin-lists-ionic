@@ -38,7 +38,7 @@
     </ion-fab>
 </ion-content>
 <ng-template #empty>
-    <app-page-empty *ngIf="TrashInitialized; else notInit">
+    <app-page-empty *ngIf="ItemsInitialized; else notInit">
         <div slot="image">
             <ion-icon src="./assets/icons/menu/trash.svg"></ion-icon>
         </div>

@@ -1,12 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, inject, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonButton, IonButtons, IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonMenuButton, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail, ModalController, ScrollDetail } from "@ionic/angular/standalone";
-import { IonContentCustomEvent } from "@ionic/core";
+import { IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { type Subscription } from "rxjs";
-import { CreateEditMenuModalAnimation } from "src/app/animations/edit-menu-modal.animation";
-import { MainToolbarEditMenuModalComponent } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
+import { type EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
+import { MainToolbarListsCustomMenuComponent } from "src/app/components/main-toolbar-lists-custom-menu/main-toolbar-lists-custom-menu.component";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { List } from "src/app/services/lists/list";
 import { DateUtils } from "../../../classes/utils/date-utils";
@@ -19,66 +18,15 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     selector: "app-lists",
     templateUrl: "./lists.page.html",
     styleUrls: ["./lists.page.scss"],
-    imports: [IonCheckbox, IonLabel, IonButtons, IonButton, IonReorderGroup, IonNote, IonItemOption, IonMenuButton, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [IonCheckbox, IonLabel, IonReorderGroup, IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent, MainToolbarListsCustomMenuComponent],
 })
 export class ListsPage extends AnimatedListPageBase {
-    @ViewChild("listsContainer") private listsContainer!: IonList;
-    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
-    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
-    @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
-
-    private readonly _modalCtrl = inject(ModalController);
-    private _editMenuModal?: HTMLIonModalElement;
-
     private _lists: List[] | undefined;
     private _listsSubscription?: Subscription;
-    private _disableClick = false;
-    private _scrollPosition: "top" | "bottom" | number = "top";
-
-    private _listsInitialized = false;
-
-    private _editMode = true;
-    private _selectedLists: (Number | String)[] = [];
 
     public get Lists(): List[] {
         return this._lists ?? [];
-    }
-
-    public get EditMode(): boolean {
-        return this._editMode;
-    }
-
-    public set EditMode(value: boolean) {
-        this._editMode = value;
-        if (!value) {
-            if (this._editMenuModal) {
-                this._editMenuModal.dismiss();
-                this._editMenuModal = undefined;
-            }
-        }
-    }
-
-    public get ScrollPosition(): "top" | "bottom" | number {
-        return this._scrollPosition;
-    }
-
-    public get ShowScrollButtons(): boolean {
-        if (!this._listsInitialized) {
-            return false;
-        }
-        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
-    }
-
-    public get DisableScrollToTop(): boolean {
-        return this._scrollPosition == "top";
-    }
-
-    public get DisableScrollToBottom(): boolean {
-        return this._scrollPosition == "bottom";
-    }
-
-    public get ListsInitialized(): boolean {
-        return this._listsInitialized;
     }
 
     constructor() {
@@ -90,12 +38,12 @@ export class ListsPage extends AnimatedListPageBase {
         await super.ionViewWillEnter();
         this.ListsService.PurgeListDetails();
         this._lists = await this.ListsService.GetLists(true);
-        this._listsInitialized = true;
+        this._itemsInitialized = true;
         this.onItemsChanged();
         this._listsSubscription = this.ListsService.onListsChanged$.subscribe(lists => {
             if (lists) {
                 this._lists = lists;
-                this._listsInitialized = true;
+                this._itemsInitialized = true;
                 this.onItemsChanged();
             }
         });
@@ -107,11 +55,10 @@ export class ListsPage extends AnimatedListPageBase {
             this._listsSubscription.unsubscribe();
             this._listsSubscription = undefined;
         }
-        this.EditMode = false;
     }
 
     public onSwipeRight(list: List) {
-        this.listsContainer.closeSlidingItems();
+        this.itemsContainer.closeSlidingItems();
         this.deleteLists(list);
     }
 
@@ -120,12 +67,12 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public onSwipeLeft(list: List) {
-        this.listsContainer.closeSlidingItems();
+        this.itemsContainer.closeSlidingItems();
         this.transmitLists(list);
     }
 
     public async deleteLists(lists: List | List[]): Promise<boolean | undefined> {
-        this.listsContainer.closeSlidingItems();
+        this.itemsContainer.closeSlidingItems();
         const success = await this.ListsService.DeleteList(lists);
         if (success === true) {
             this.reload();
@@ -134,7 +81,7 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public async emptyLists(lists: List | List[]): Promise<boolean | undefined> {
-        this.listsContainer.closeSlidingItems();
+        this.itemsContainer.closeSlidingItems();
         const success = await this.ListsService.EmptyList(lists);
         if (success === true) {
             this.reload();
@@ -143,7 +90,7 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public async transmitLists(lists: List | List[]): Promise<boolean | undefined> {
-        this.listsContainer.closeSlidingItems();
+        this.itemsContainer.closeSlidingItems();
         return await this.ListsService.TransferList(lists);
     }
 
@@ -166,28 +113,14 @@ export class ListsPage extends AnimatedListPageBase {
         if (!this._disableClick) {
             if (this._editMode) {
                 if (this.isListSelected(list)) {
-                    this._selectedLists = this._selectedLists.filter(l => l != list.Uuid);
+                    this._selectedItems = this._selectedItems.filter(l => l != list.Uuid);
                 } else {
-                    this._selectedLists.push(list.Uuid);
+                    this._selectedItems.push(list.Uuid);
                 }
             } else {
                 this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { title: list.Name } });
             }
             event.stopImmediatePropagation();
-        }
-    }
-
-    public enterEditMode() {
-        this.EditMode = true;
-    }
-
-    public leaveEditMode(force: boolean = false) {
-        if (force || !this._editMenuModal) {
-            this.EditMode = false;
-        }
-
-        if (this._editMenuModal) {
-            this.toggleEditMenu();
         }
     }
 
@@ -202,105 +135,63 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public isListSelected(list: List): boolean {
-        return this._selectedLists.indexOf(list.Uuid) >= 0;
+        return this._selectedItems.indexOf(list.Uuid) >= 0;
     }
 
-    public disableEditMenu(): boolean {
-        return !this._editMode || this._selectedLists.length == 0;
-    }
-
-    public async toggleEditMenu() {
-        if (this._editMenuModal) {
-            await this._editMenuModal.dismiss();
+    public getEditMenuActions(): EditMenuAction[] {
+        let texts = [];
+        if (this._selectedItems.length == 1) {
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.list-transmit", "comp-toolbar-edit-menu.list-empty", "comp-toolbar-edit-menu.list-delete"]);
+            texts["transmit"] = texts["comp-toolbar-edit-menu.list-transmit"];
+            texts["delete"] = texts["comp-toolbar-edit-menu.list-delete"];
+            texts["empty"] = texts["comp-toolbar-edit-menu.list-empty"];
         } else {
-            let texts = [];
-            if (this._selectedLists.length == 1) {
-                texts = this.Locale.getText(["comp-toolbar-edit-menu.list-transmit", "comp-toolbar-edit-menu.list-empty", "comp-toolbar-edit-menu.list-delete"]);
-                texts["transmit"] = texts["comp-toolbar-edit-menu.list-transmit"];
-                texts["delete"] = texts["comp-toolbar-edit-menu.list-delete"];
-                texts["empty"] = texts["comp-toolbar-edit-menu.list-empty"];
-            } else {
-                texts = this.Locale.getText(["comp-toolbar-edit-menu.lists-transmit", "comp-toolbar-edit-menu.lists-empty", "comp-toolbar-edit-menu.lists-delete"], { num: this._selectedLists.length });
-                texts["transmit"] = texts["comp-toolbar-edit-menu.lists-transmit"];
-                texts["delete"] = texts["comp-toolbar-edit-menu.lists-delete"];
-                texts["empty"] = texts["comp-toolbar-edit-menu.lists-empty"];
-            }
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.lists-transmit", "comp-toolbar-edit-menu.lists-empty", "comp-toolbar-edit-menu.lists-delete"], { num: this._selectedItems.length });
+            texts["transmit"] = texts["comp-toolbar-edit-menu.lists-transmit"];
+            texts["delete"] = texts["comp-toolbar-edit-menu.lists-delete"];
+            texts["empty"] = texts["comp-toolbar-edit-menu.lists-empty"];
+        }
 
-            this._editMenuModal = await this._modalCtrl.create({
-                component: MainToolbarEditMenuModalComponent,
-                cssClass: "edit-menu-modal",
-                backdropDismiss: true,
-                animated: true,
-                showBackdrop: true,
-                componentProps: {
-                    Methods: [
-                        {
-                            text: texts["transmit"],
-                            icon: "/assets/icons/menu/devices.svg",
-                            click: async () => {
-                                this.leaveEditMode(true);
-                                const transmit = await this.transmitLists(this.Lists.filter(l => this._selectedLists.indexOf(l.Uuid) >= 0));
-                                if (transmit === true) {
-                                    this._selectedLists = [];
-                                } else if (transmit === undefined) {
-                                    this.enterEditMode();
-                                }
-                            },
-                        },
-                        {
-                            text: texts["empty"],
-                            icon: "/assets/icons/menu/empty.svg",
-                            click: async () => {
-                                this.leaveEditMode(true);
-                                const empty = await this.emptyLists(this.Lists.filter(l => this._selectedLists.indexOf(l.Uuid) >= 0));
-                                if (empty === true) {
-                                    this._selectedLists = [];
-                                } else if (empty === undefined) {
-                                    this.enterEditMode();
-                                }
-                            },
-                        },
-                        {
-                            text: texts["delete"],
-                            icon: "/assets/icons/trash.svg",
-                            click: async () => {
-                                this.leaveEditMode(true);
-                                const del = await this.deleteLists(this.Lists.filter(l => this._selectedLists.indexOf(l.Uuid) >= 0));
-                                if (del === true) {
-                                    this._selectedLists = [];
-                                } else if (del === undefined) {
-                                    this.enterEditMode();
-                                }
-                            },
-                        },
-                    ],
+        return [
+            {
+                text: texts["transmit"],
+                icon: "/assets/icons/menu/devices.svg",
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    const transmit = await this.transmitLists(this.Lists.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                    if (transmit === true) {
+                        this._selectedItems = [];
+                    } else if (transmit === undefined) {
+                        this.editMenu?.enterEditMode();
+                    }
                 },
-                enterAnimation: (baseEl: HTMLElement) => CreateEditMenuModalAnimation(baseEl, "enter"),
-                leaveAnimation: (baseEl: HTMLElement) => CreateEditMenuModalAnimation(baseEl, "leave"),
-            });
-            this._editMenuModal.present();
-            await this._editMenuModal.onWillDismiss();
-            this._editMenuModal = undefined;
-        }
-    }
-
-    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
-        if (event.detail.scrollTop == 0) {
-            this._scrollPosition = "top";
-        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
-            this._scrollPosition = "bottom";
-        } else {
-            this._scrollPosition = event.detail.scrollTop;
-        }
-    }
-
-    public async ScrollToTop() {
-        await this.mainContent?.scrollToTop(300);
-        this.cdr.detectChanges();
-    }
-
-    public async ScrollToBottom(instant: boolean = true) {
-        await this.mainContent?.scrollToBottom(instant ? 0 : 300);
-        this.cdr.detectChanges();
+            },
+            {
+                text: texts["empty"],
+                icon: "/assets/icons/menu/empty.svg",
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    const empty = await this.emptyLists(this.Lists.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                    if (empty === true) {
+                        this._selectedItems = [];
+                    } else if (empty === undefined) {
+                        this.editMenu?.enterEditMode();
+                    }
+                },
+            },
+            {
+                text: texts["delete"],
+                icon: "/assets/icons/trash.svg",
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    const del = await this.deleteLists(this.Lists.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                    if (del === true) {
+                        this._selectedItems = [];
+                    } else if (del === undefined) {
+                        this.editMenu?.enterEditMode();
+                    }
+                },
+            },
+        ];
     }
 }

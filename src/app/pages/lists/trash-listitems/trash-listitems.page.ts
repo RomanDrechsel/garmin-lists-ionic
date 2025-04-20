@@ -1,10 +1,10 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
-import { IonContentCustomEvent } from "@ionic/core";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
+import type { EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
 import { PageEmptyComponent } from "../../../components/page-empty/page-empty.component";
@@ -20,45 +20,13 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     imports: [IonText, IonItem, IonIcon, IonItemOption, IonItemOptions, IonNote, IonItemSliding, IonList, IonContent, IonImg, CommonModule, IonFab, IonFabButton, TranslateModule, MainToolbarComponent, PageEmptyComponent],
 })
 export class TrashListitemsPage extends AnimatedListPageBase {
-    @ViewChild("itemsContainer") private itemsContainer?: IonList;
     public Trash?: ListitemTrashModel;
 
-    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
-    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
-    @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
-
     private _trashChangedSubscription?: Subscription;
-
-    private _scrollPosition: "top" | "bottom" | number = "top";
-
-    private _trashInitialized = false;
 
     private _listUuid?: string = undefined;
 
     private Route = inject(ActivatedRoute);
-
-    public get ScrollPosition(): "top" | "bottom" | number {
-        return this._scrollPosition;
-    }
-
-    public get ShowScrollButtons(): boolean {
-        if (!this._trashInitialized) {
-            return false;
-        }
-        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
-    }
-
-    public get DisableScrollToTop(): boolean {
-        return this._scrollPosition == "top";
-    }
-
-    public get DisableScrollToBottom(): boolean {
-        return this._scrollPosition == "bottom";
-    }
-
-    public get TrashInitialized(): boolean {
-        return this._trashInitialized;
-    }
 
     public get BackLink(): string {
         if (this._listUuid) {
@@ -75,7 +43,6 @@ export class TrashListitemsPage extends AnimatedListPageBase {
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
-        this._trashInitialized = false;
         const listid = this.Route.snapshot.paramMap.get("uuid");
         if (listid) {
             this._listUuid = listid;
@@ -83,7 +50,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
             if (this.Trash) {
                 this.Trash.items = this.Trash.items.sort((a, b) => (b.deleted ?? 0) - (a.deleted ?? 0));
             }
-            this._trashInitialized = true;
+            this._itemsInitialized = true;
             this.onItemsChanged();
         }
 
@@ -93,7 +60,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
                 if (this.Trash) {
                     this.Trash.items = this.Trash.items.sort((a, b) => (b.deleted ?? 0) - (a.deleted ?? 0));
                 }
-                this._trashInitialized = true;
+                this._itemsInitialized = true;
                 this.onItemsChanged();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
@@ -141,24 +108,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
         return true;
     }
 
-    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
-        console.log(Math.ceil(event.detail.scrollTop), (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight);
-        if (event.detail.scrollTop == 0) {
-            this._scrollPosition = "top";
-        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
-            this._scrollPosition = "bottom";
-        } else {
-            this._scrollPosition = event.detail.scrollTop;
-        }
-    }
-
-    public async ScrollToTop() {
-        await this.mainContent?.scrollToTop(300);
-        this.cdr.detectChanges();
-    }
-
-    public async ScrollToBottom(instant: boolean = true) {
-        await this.mainContent?.scrollToBottom(instant ? 0 : 300);
-        this.cdr.detectChanges();
+    protected override getEditMenuActions(): EditMenuAction[] {
+        return [];
     }
 }

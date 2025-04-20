@@ -1,8 +1,8 @@
 import { Subscription } from "rxjs";
 import { EPrefProperty } from "../../services/storage/preferences.service";
-import { PageBase } from "../page-base";
+import { ListPageBase } from "./list-page-base";
 
-export abstract class AnimatedListPageBase extends PageBase {
+export abstract class AnimatedListPageBase extends ListPageBase {
     private readonly _animationDelay = 30;
 
     protected _initAnimationDone = false;

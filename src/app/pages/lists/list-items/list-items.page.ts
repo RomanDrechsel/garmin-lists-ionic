@@ -1,13 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { PluginListenerHandle } from "@capacitor/core";
 import { Keyboard } from "@capacitor/keyboard";
-import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTextarea, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
-import { IonContentCustomEvent } from "@ionic/core";
+import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTextarea, ItemReorderEventDetail } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
+import type { EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { PageAddNewComponent } from "../../../components/page-add-new/page-add-new.component";
@@ -26,21 +26,14 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     imports: [IonImg, IonText, IonButton, IonTextarea, IonFabButton, IonFab, IonReorder, IonNote, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent],
 })
 export class ListItemsPage extends AnimatedListPageBase {
-    @ViewChild("itemsContainer") private itemsContainer?: IonList;
-    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
-    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
-    @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
     @ViewChild("quickAdd", { read: IonTextarea, static: false }) private quickAdd?: IonTextarea;
     private _list?: List = undefined;
 
-    private _disableClick = false;
     private _listSubscription?: Subscription;
     private _connectIQSubscription?: Subscription;
 
     private _useTrash = true;
-    private _scrollPosition: "top" | "bottom" | number = "top";
     private _listTitle?: string = undefined;
-    private _listInitialized = false;
     private _informedSyncForNewlist: string | number | undefined = undefined;
     private _keyboardShow = false;
     private _forceHideButtons = false;
@@ -54,31 +47,8 @@ export class ListItemsPage extends AnimatedListPageBase {
         return this._list;
     }
 
-    public get ScrollPosition(): "top" | "bottom" | number {
-        return this._scrollPosition;
-    }
-
-    public get ShowScrollButtons(): boolean {
-        if (!this._listInitialized || this._keyboardShow || this._forceHideButtons) {
-            return false;
-        }
-        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
-    }
-
     public get ShowAddButton(): boolean {
-        return this._listInitialized && !this._keyboardShow && !this._forceHideButtons;
-    }
-
-    public get DisableScrollToTop(): boolean {
-        return this._scrollPosition == "top";
-    }
-
-    public get DisableScrollToBottom(): boolean {
-        return this._scrollPosition == "bottom";
-    }
-
-    public get ListInitialized(): boolean {
-        return this._listInitialized;
+        return this._itemsInitialized && !this._keyboardShow && !this._forceHideButtons;
     }
 
     public get PageTitle(): string {
@@ -101,7 +71,7 @@ export class ListItemsPage extends AnimatedListPageBase {
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
 
-        this._listInitialized = false;
+        this._itemsInitialized = false;
         const listtitle = this.Route.snapshot.queryParamMap.get("title");
         if (listtitle) {
             this._listTitle = listtitle;
@@ -113,7 +83,7 @@ export class ListItemsPage extends AnimatedListPageBase {
             if (listid) {
                 const uuid = Number(listid);
                 this._list = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
-                this._listInitialized = true;
+                this._itemsInitialized = true;
                 this.onItemsChanged();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
@@ -129,7 +99,7 @@ export class ListItemsPage extends AnimatedListPageBase {
             if (list && list.equals(this._list) && list.isPeek == false) {
                 this._list = list;
                 this.appComponent.setAppPages(this.ModifyMainMenu());
-                this._listInitialized = true;
+                this._itemsInitialized = true;
                 this.onItemsChanged();
             }
         });
@@ -152,9 +122,8 @@ export class ListItemsPage extends AnimatedListPageBase {
         if (this.List) {
             await this.Preferences.Set(EPrefProperty.OpenedList, this.List.Uuid);
         }
-        this._keyboardHideListener = await Keyboard.addListener("keyboardWillShow", () => {
+        this._keyboardShowListener = await Keyboard.addListener("keyboardWillShow", () => {
             this._keyboardShow = true;
-            this.reload();
         });
         this._keyboardHideListener = await Keyboard.addListener("keyboardWillHide", () => {
             this._keyboardShow = false;
@@ -283,16 +252,6 @@ export class ListItemsPage extends AnimatedListPageBase {
         return menu;
     }
 
-    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
-        if (event.detail.scrollTop == 0) {
-            this._scrollPosition = "top";
-        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
-            this._scrollPosition = "bottom";
-        } else {
-            this._scrollPosition = event.detail.scrollTop;
-        }
-    }
-
     public async QuickAddItem(event: MouseEvent) {
         if (this.List && this.quickAdd?.value && this.quickAdd.value.trim().length > 0) {
             this._forceHideButtons = true;
@@ -307,19 +266,13 @@ export class ListItemsPage extends AnimatedListPageBase {
         return true;
     }
 
-    public async ScrollToTop(): Promise<void> {
-        await this.mainContent?.scrollToTop(300);
-        this.cdr.detectChanges();
-    }
-
-    public async ScrollToBottom(instant: boolean = true): Promise<void> {
-        await this.mainContent?.scrollToBottom(instant ? 0 : 300);
-        this.cdr.detectChanges();
-    }
-
     private async informSyncSettings(): Promise<void> {
         if (await this.Popups.Alert.YesNo({ message: "comp-listeditor.sync_settings", translate: true })) {
             this.NavController.navigateForward("/settings/lists-transmission", { queryParams: { syncList: this.List } });
         }
+    }
+
+    protected override getEditMenuActions(): EditMenuAction[] {
+        return [];
     }
 }
