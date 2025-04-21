@@ -47,10 +47,11 @@ export abstract class PageBase {
 
     public async ionViewDidEnter() {
         this.appComponent.setAppPages(this.ModifyMainMenu());
-        if (this.Toolbar != AppService.AppToolbar) {
-            AppService.AppToolbar?.Copy(this.Toolbar);
-            AppService.AppToolbar = this.Toolbar;
+        if (AppService.AppToolbar && this.Toolbar) {
+            this.Toolbar.Copy(AppService.AppToolbar);
         }
+        AppService.AppToolbar = this.Toolbar;
+        console.log("Progressbar is visible: ", AppService.AppToolbar?.ShowProgressbar);
     }
 
     public async ionViewWillLeave() {
@@ -65,7 +66,6 @@ export abstract class PageBase {
     }
 
     protected async reload() {
-        //this.cdr.detectChanges();
         /* else, scroll buttons won't be shown */
         await new Promise(resolve => setTimeout(resolve, 1));
         this.cdr.detectChanges();

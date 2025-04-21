@@ -110,7 +110,7 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public clickOnItem(event: MouseEvent, list: List) {
-        if (!this._disableClick) {
+        if (!this._disableClick && this._initAnimationDone) {
             if (this._editMode) {
                 if (this.isListSelected(list)) {
                     this._selectedItems = this._selectedItems.filter(l => l != list.Uuid);

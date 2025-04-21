@@ -63,7 +63,7 @@ export abstract class ListPageBase extends PageBase {
     }
 
     public get ShowAddButton(): boolean {
-        return this._itemsInitialized && !this._keyboardShow && !this._forceHideButtons;
+        return this._itemsInitialized && !this._keyboardShow && !this._forceHideButtons && !this.EditMode;
     }
 
     public override async ionViewWillEnter(): Promise<void> {

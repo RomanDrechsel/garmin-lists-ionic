@@ -1,9 +1,10 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText } from "@ionic/angular/standalone";
+import { IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import type { EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
+import { MainToolbarListsCustomMenuComponent } from "src/app/components/main-toolbar-lists-custom-menu/main-toolbar-lists-custom-menu.component";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { DateUtils } from "../../../classes/utils/date-utils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
@@ -15,12 +16,12 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     selector: "app-trash-lists",
     templateUrl: "./trash-lists.page.html",
     styleUrls: ["./trash-lists.page.scss"],
-    imports: [IonContent, IonText, IonNote, IonItem, IonImg, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
+    imports: [IonCheckbox, IonLabel, IonContent, IonText, IonNote, IonItem, IonImg, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent, MainToolbarListsCustomMenuComponent],
 })
 export class TrashListsPage extends AnimatedListPageBase {
     public Lists: List[] = [];
     private _trashChangedSubscription?: Subscription;
-    private _trashInitialized = false;
+
     constructor() {
         super();
         this._animationDirection = "right";
@@ -32,14 +33,14 @@ export class TrashListsPage extends AnimatedListPageBase {
             this.Lists = lists ?? [];
             if (lists) {
                 this.Lists = this.Lists.sort((a, b) => b.Deleted - a.Deleted);
-                this._trashInitialized = true;
+                this._itemsInitialized = true;
                 this.onItemsChanged();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
 
         this.Lists = (await this.ListsService.GetTrash()).sort((a: List, b: List) => b.Deleted - a.Deleted);
-        this._trashInitialized = true;
+        this._itemsInitialized = true;
         this.onItemsChanged();
     }
 
@@ -66,9 +67,12 @@ export class TrashListsPage extends AnimatedListPageBase {
         this.itemsContainer.closeSlidingItems();
     }
 
-    public async restoreList(list: List) {
-        await this.ListsService.RestoreListFromTrash(list);
-        this.itemsContainer.closeSlidingItems();
+    public async restoreList(lists: List | List[]): Promise<boolean | undefined> {
+        const success = await this.ListsService.RestoreListFromTrash(lists);
+        if (success) {
+            this.itemsContainer.closeSlidingItems();
+        }
+        return success;
     }
 
     public async emptyTrash(): Promise<boolean> {
@@ -84,7 +88,44 @@ export class TrashListsPage extends AnimatedListPageBase {
         }
     }
 
+    public isListSelected(list: List): boolean {
+        return this._selectedItems.indexOf(list.Uuid) >= 0;
+    }
+
+    public clickOnItem(event: MouseEvent, list: List) {
+        if (this._editMode) {
+            if (this.isListSelected(list)) {
+                this._selectedItems = this._selectedItems.filter(l => l != list.Uuid);
+            } else {
+                this._selectedItems.push(list.Uuid);
+            }
+        }
+        event.stopImmediatePropagation();
+    }
+
     protected override getEditMenuActions(): EditMenuAction[] {
-        return [];
+        let texts = [];
+        if (this._selectedItems.length == 1) {
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.list-restore", "comp-toolbar-edit-menu.list-empty", "comp-toolbar-edit-menu.list-delete"]);
+            texts["restore"] = texts["comp-toolbar-edit-menu.list-restore"];
+        } else {
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.lists-restore", "comp-toolbar-edit-menu.lists-empty", "comp-toolbar-edit-menu.lists-delete"], { num: this._selectedItems.length });
+            texts["restore"] = texts["comp-toolbar-edit-menu.lists-restore"];
+        }
+        return [
+            {
+                icon: "/assets/icons/undo.svg",
+                text: texts["restore"],
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    const restore = await this.restoreList(this.Lists.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                    if (restore === true) {
+                        this._selectedItems = [];
+                    } else if (restore === undefined) {
+                        this.editMenu?.enterEditMode();
+                    }
+                },
+            },
+        ];
     }
 }

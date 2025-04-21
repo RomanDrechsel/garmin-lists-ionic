@@ -149,7 +149,7 @@ export class ListItemsPage extends AnimatedListPageBase {
     }
 
     public onSwipeRight(item: Listitem) {
-        this.deleteItem(item);
+        this.DeleteItem(item);
     }
 
     public onSwipeLeft(item: Listitem) {
@@ -170,27 +170,34 @@ export class ListItemsPage extends AnimatedListPageBase {
         return false;
     }
 
-    public async deleteItem(item: Listitem) {
+    public async DeleteItem(items: Listitem | Listitem[]) {
+        let success: boolean | undefined = undefined;
         if (this.List) {
-            if (await this.ListsService.DeleteListitem(this.List, item, false)) {
+            success = await this.ListsService.DeleteListitem(this.List, items, false);
+            if (success) {
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         }
         this.itemsContainer?.closeSlidingItems();
+        return success;
     }
 
-    public async HideItem(item: Listitem) {
+    public async HideItem(items: Listitem | Listitem[], hide: boolean | undefined = undefined): Promise<boolean | undefined> {
+        let success: boolean | undefined = undefined;
         if (this.List) {
-            await this.ListsService.ToggleHiddenListitem(this.List, item);
+            success = await this.ListsService.ToggleHiddenListitem(this.List, items, hide);
         }
         this.itemsContainer?.closeSlidingItems();
+        return success;
     }
 
-    public async PinItem(item: Listitem) {
+    public async PinItem(items: Listitem | Listitem[], pin: boolean | undefined = undefined): Promise<boolean | undefined> {
+        let success: boolean | undefined = undefined;
         if (this.List) {
-            await this.ListsService.ToggleLockListitem(this.List, item);
+            success = await this.ListsService.ToggleLockListitem(this.List, items, pin);
         }
         this.itemsContainer?.closeSlidingItems();
+        return success;
     }
 
     public async AddItem() {
@@ -201,8 +208,8 @@ export class ListItemsPage extends AnimatedListPageBase {
     }
 
     public async HandleReorder(event: CustomEvent<ItemReorderEventDetail>) {
-        if (this.List) {
-            await this.ListsService.ReorderListitems(this.List, event.detail.complete(this.List.Items) as Listitem[]);
+        if (!this._disableClick && this._initAnimationDone && this._list) {
+            await this.ListsService.ReorderListitems(this._list, event.detail.complete(this._list.Items) as Listitem[]);
             this._disableClick = true;
             setTimeout(() => {
                 this._disableClick = false;
@@ -296,6 +303,92 @@ export class ListItemsPage extends AnimatedListPageBase {
     }
 
     protected override getEditMenuActions(): EditMenuAction[] {
-        return [];
+        if (!this._list) {
+            return [];
+        }
+        let pin_items = false;
+        let hide_items = false;
+        for (let i = 0; i < this._selectedItems.length; i++) {
+            const item_uuid = this._selectedItems[i];
+            const item = this._list!.Items.find(i => i.Uuid == item_uuid);
+            if (item) {
+                if (!item.Locked) {
+                    pin_items = true;
+                }
+                if (!item.Hidden) {
+                    hide_items = true;
+                }
+                if (pin_items && hide_items) {
+                    break;
+                }
+            }
+        }
+
+        let texts = [];
+        if (this._selectedItems.length == 1) {
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.item-pin", "comp-toolbar-edit-menu.item-unpin", "comp-toolbar-edit-menu.item-hide", "comp-toolbar-edit-menu.item-show", "comp-toolbar-edit-menu.item-delete"]);
+            texts["pin"] = pin_items ? texts["comp-toolbar-edit-menu.item-pin"] : texts["comp-toolbar-edit-menu.item-unpin"];
+            texts["hide"] = hide_items ? texts["comp-toolbar-edit-menu.item-hide"] : texts["comp-toolbar-edit-menu.item-show"];
+            texts["delete"] = texts["comp-toolbar-edit-menu.item-delete"];
+        } else {
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.items-pin", "comp-toolbar-edit-menu.items-unpin", "comp-toolbar-edit-menu.items-hide", "comp-toolbar-edit-menu.items-show", "comp-toolbar-edit-menu.items-delete"], { num: this._selectedItems.length });
+            texts["pin"] = pin_items ? texts["comp-toolbar-edit-menu.items-pin"] : texts["comp-toolbar-edit-menu.items-unpin"];
+            texts["hide"] = hide_items ? texts["comp-toolbar-edit-menu.items-hide"] : texts["comp-toolbar-edit-menu.items-show"];
+            texts["delete"] = texts["comp-toolbar-edit-menu.items-delete"];
+        }
+
+        return [
+            {
+                text: texts["pin"],
+                icon: `/assets/icons/${pin_items ? "pin" : "pin_off"}.svg`,
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    if (this.List) {
+                        const pin = await this.PinItem(
+                            this.List.Items.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0),
+                            pin_items,
+                        );
+                        if (pin === true) {
+                            this._selectedItems = [];
+                        } else if (pin === undefined) {
+                            this.editMenu?.enterEditMode();
+                        }
+                    }
+                },
+            },
+            {
+                text: texts["hide"],
+                icon: `/assets/icons/${hide_items ? "eye_off" : "eye"}.svg`,
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    if (this.List) {
+                        const hide = await this.HideItem(
+                            this.List.Items.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0),
+                            hide_items,
+                        );
+                        if (hide === true) {
+                            this._selectedItems = [];
+                        } else if (hide === undefined) {
+                            this.editMenu?.enterEditMode();
+                        }
+                    }
+                },
+            },
+            {
+                text: texts["delete"],
+                icon: "/assets/icons/menu/trash_items.svg",
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    if (this.List) {
+                        const del = await this.DeleteItem(this.List.Items.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                        if (del === true) {
+                            this._selectedItems = [];
+                        } else if (del === undefined) {
+                            this.editMenu?.enterEditMode();
+                        }
+                    }
+                },
+            },
+        ];
     }
 }

@@ -7,8 +7,8 @@
     <div class="content" *ngIf="List && List.Items.length > 0; else noItems" #listContent>
         <ion-list id="animated-list" #itemsContainer>
             <ion-reorder-group [disabled]="List.Items.length <= 1" (ionItemReorder)="HandleReorder($any($event))" [disabled]="!EditMode">
-                <ion-item-sliding *ngFor="let item of List.Items" [disabled]="EditMode" [ngClass]="['animated-item', !InitialAnimationDone ? ItemAnimationClass: '', !InitialAnimationDone ? 'animated': '']">
-                    <ion-item lines="full" [button]="true" (click)="clickOnItem($event, item)" [ngClass]="{'hidden': item.Hidden}" [ngClass]="{'selected-item': EditMode && isItemSelected(item)}">
+                <ion-item-sliding *ngFor="let item of List.Items" [disabled]="EditMode" [ngClass]="!InitialAnimationDone ? ['animated-item', ItemAnimationClass, 'animated'] : []">
+                    <ion-item lines="full" [button]="true" (click)="clickOnItem($event, item)" [ngClass]="{'hidden': item.Hidden, 'selected-item': EditMode && isItemSelected(item)}">
                         <div class="listpoint-indicator-wrapper" slot="start">
                             <div class="listpoint-indicator" *ngIf="!item.Locked"></div>
                             <ion-icon src="./assets/icons/pin_solid.svg" *ngIf="item.Locked"></ion-icon>
@@ -33,7 +33,7 @@
                         </div>
                     </ion-item>
                     <ion-item-options side="start" (ionSwipe)="onSwipeRight(item)">
-                        <ion-item-option color="danger" expandable="true" (click)="deleteItem(item)">
+                        <ion-item-option color="danger" expandable="true" (click)="DeleteItem(item)">
                             <ion-icon slot="start" src="./assets/icons/trash_solid.svg"></ion-icon>
                             {{'delete'|translate}}
                         </ion-item-option>
@@ -67,11 +67,11 @@
         </ion-fab-button>
     </ion-fab>
 
-    <ion-fab slot="fixed" vertical="bottom" horizontal="start" *ngIf="ShowScrollButtons">
-        <ion-fab-button (click)="ScrollToTop()" [disabled]="!List || DisableScrollToTop">
+    <ion-fab slot="fixed" vertical="bottom" horizontal="start" *ngIf="List && List.Items.length > 0 && ShowScrollButtons">
+        <ion-fab-button (click)="ScrollToTop()" [disabled]="DisableScrollToTop">
             <ion-icon src="./assets/icons/to-top.svg"></ion-icon>
         </ion-fab-button>
-        <ion-fab-button (click)="ScrollToBottom(false)" [disabled]="!List || DisableScrollToBottom">
+        <ion-fab-button (click)="ScrollToBottom(false)" [disabled]="DisableScrollToBottom">
             <ion-icon src="./assets/icons/to-top.svg" class="to-bottom"></ion-icon>
         </ion-fab-button>
     </ion-fab>

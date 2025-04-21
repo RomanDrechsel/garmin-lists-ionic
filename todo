@@ -8,7 +8,12 @@ TEST: use app without connect iq
 TEST: animations
 WIP: editmode
 TODO: translate comp-toolbar-edit-menu.* / service-lists.transmit_confirm_plural / service-lists.transmit_progrss_plural / service-lists.transmit_success_plural / service-lists.transmit_error_partial
-TODO: translate service_lists.empty_error_partial / service-lists.empty_confirm_plural / service-lists.delete_confirm_plural / service-lists.delete_error_plural / service-lists.delete_error_partial
+TODO: translate service-lists.empty_error_partial / service-lists.empty_confirm_plural / service-lists.delete_confirm_plural / service-lists.delete_error_plural / service-lists.delete_error_partial
+TODO: translate service-lists.delete_item_confirm_plural / service-lists.restore_success_plural / service-lists.restore_error_plural / service-lists.restore_error_partial
+TODO: Editmode - Darkmode
 BUG: service-lists.empty_trash_error wird nicht verwendet?!
+BUG: animations doesn't work properly
+BUG: if i delete a sync list, it will be transmitted to device due to StoreList()
+BUG: Progressbar is not shown after page change
 TODO: use SQLite as backend
 TODO: note function

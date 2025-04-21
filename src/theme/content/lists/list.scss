@@ -13,6 +13,8 @@ ion-list {
             --ripple-color: var(--ion-color-primary);
             --min-height: 3.5em;
             cursor: pointer;
+            display: flex;
+            align-items: start;
 
             &.selected-item {
                 --background: rgba(var(--ion-color-primary-rgb), 0.07);
@@ -131,8 +133,6 @@ ion-list {
 
     &#animated-list {
         .animated-item {
-            opacity: 1;
-
             &.animated {
                 opacity: 0;
                 transition: transform 600ms ease-out, opacity 600ms ease-out;

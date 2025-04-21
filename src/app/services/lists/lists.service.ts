@@ -322,20 +322,26 @@ export class ListsService {
 
     /**
      * prompts the user to delete an list item
-     * @param list list, the item is part of
-     * @param item item to be deleted
+     * @param list list, the item(s) are part of
+     * @param items item(s) to be deleted
      * @param force delete the listitem without prompting
      * @returns deletion successful? undefined if user canceled it
      */
-    public async DeleteListitem(list: List, item: Listitem, force: boolean = false): Promise<boolean | undefined> {
+    public async DeleteListitem(list: List, items: Listitem | Listitem[], force: boolean = false): Promise<boolean | undefined> {
         if (!force && (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmDeleteListitem, true))) {
-            if (await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.delete_item_confirm", { name: StringUtils.shorten(item.Item, 40) }) })) {
-                return this.removeListitem(list, item);
+            let text = "";
+            if (Array.isArray(items) && items.length > 1) {
+                text = this.Locale.getText("service-lists.delete_item_confirm_plural");
+            } else {
+                text = this.Locale.getText("service-lists.delete_item_confirm", { name: StringUtils.shorten(Array.isArray(items) ? items[0].Item : items.Item, 40) });
+            }
+            if (await this.Popups.Alert.YesNo({ message: text })) {
+                return this.removeListitem(list, items);
             } else {
                 return undefined;
             }
         } else {
-            return this.removeListitem(list, item);
+            return this.removeListitem(list, items);
         }
     }
 
@@ -435,21 +441,41 @@ export class ListsService {
     /**
      * toggles the hidden state of a listitem
      * @param list list, the item is part of
-     * @param item listitem, hiddenstate should be toggled
+     * @param items listitem, hiddenstate should be toggled
+     * @param hide hide/show the listitem(s), if undefined the state is toggled
      */
-    public async ToggleHiddenListitem(list: List, item: Listitem): Promise<void> {
-        item.Hidden = !item.Hidden;
-        await this.StoreList(list, undefined, undefined, false);
+    public async ToggleHiddenListitem(list: List, items: Listitem | Listitem[], hide: boolean | undefined = undefined): Promise<boolean | undefined> {
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+        items.forEach(item => {
+            if (hide === undefined) {
+                item.Hidden = !item.Hidden;
+            } else {
+                item.Hidden = hide;
+            }
+        });
+        return await this.StoreList(list, undefined, undefined, false);
     }
 
     /**
      * lock the item, so it is not deleted when emptying the list
      * @param list list, the item is part of^
-     * @param item listitem, that should be locked/unlocked
+     * @param items listitem(s), that should be locked/unlocked
+     * @param pin lock/unlock the listitem(s), if undefined, the state is toggled
      */
-    public async ToggleLockListitem(list: List, item: Listitem): Promise<void> {
-        item.Locked = !item.Locked;
-        await this.StoreList(list, undefined, undefined, false);
+    public async ToggleLockListitem(list: List, items: Listitem | Listitem[], pin: boolean | undefined = undefined): Promise<boolean | undefined> {
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+        items.forEach(item => {
+            if (pin === undefined) {
+                item.Locked = !item.Locked;
+            } else {
+                item.Locked = pin;
+            }
+        });
+        return await this.StoreList(list, undefined, undefined, false);
     }
 
     /**
@@ -473,18 +499,24 @@ export class ListsService {
 
     /**
      * prompts the user to restore a list from trash
-     * @param list list to be restored
+     * @param lists list(s) to be restored
      * @returns restore successful? undefined if user canceled it
      */
-    public async RestoreListFromTrash(list: List): Promise<boolean | undefined> {
+    public async RestoreListFromTrash(lists: List | List[]): Promise<boolean | undefined> {
         if (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmRestoreList, true)) {
-            if (await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.restore_confirm", { name: StringUtils.shorten(list.Name, 40) }) })) {
-                return this.restoreListFromTrash(list.Uuid);
+            let text = "";
+            if (!Array.isArray(lists) || lists.length == 1) {
+                text = this.Locale.getText("service-lists.restore_confirm", { name: StringUtils.shorten(Array.isArray(lists) ? lists[0].Name : lists.Name, 40) });
+            } else {
+                text = this.Locale.getText("service-lists.restore_confirm_plural");
+            }
+            if (await this.Popups.Alert.YesNo({ message: text })) {
+                return this.restoreListFromTrash(lists);
             } else {
                 return undefined;
             }
         } else {
-            return this.restoreListFromTrash(list.Uuid);
+            return this.restoreListFromTrash(lists);
         }
     }
 
@@ -972,13 +1004,13 @@ export class ListsService {
     /**
      * removes a listitems from a list
      * @param list list, the item should be removed
-     * @param item listitem to remove
+     * @param items listitem to remove
      * @returns was the list stored successful after removal?
      */
-    private async removeListitem(list: List, item: Listitem): Promise<boolean> {
+    private async removeListitem(list: List, items: Listitem | Listitem[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        if (!(await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) || (await this.TrashItemsProvider.StoreListitem(list.Uuid, item))) {
-            list.RemoveItem(item);
+        if (!(await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) || (await this.TrashItemsProvider.StoreListitem(list.Uuid, items))) {
+            list.RemoveItem(items);
             return (await this.StoreList(list)) !== false;
         } else {
             AppService.AppToolbar?.ToggleProgressbar(true);
@@ -1028,30 +1060,60 @@ export class ListsService {
      * @param list list to restore
      * @returns was the restore successful
      */
-    private async restoreListFromTrash(uuid: string | number): Promise<boolean> {
+    private async restoreListFromTrash(lists: List | List[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        //Read list from trash backend
-        const list = await this.TrashProvider.GetList(uuid);
-        if (list) {
-            //move it to the end...
-            list.Order = this._lists.length;
 
-            if (await this.ListsProvider.StoreList(list, true)) {
-                if (await this.TrashProvider.EraseLists(list.Uuid, false)) {
-                    Logger.Notice(`Restored list ${list.toLog()} from trash`);
+        if (!Array.isArray(lists)) {
+            lists = [lists];
+        }
+
+        let errors = 0;
+        for (let i = 0; i < lists.length; i++) {
+            //read the full list with all items
+            const list = await this.TrashProvider.GetList(lists[i].Uuid);
+            if (list) {
+                //add it at the end
+                list.Order = this._lists.length + i;
+                if (await this.ListsProvider.StoreList(list, true)) {
+                    if (await this.TrashProvider.EraseLists(list.Uuid, false)) {
+                        Logger.Notice(`Restored list ${list.toLog()} from trash`);
+                        this.putListInIndex(list);
+                        this.syncListToWatch(list);
+                    } else {
+                        Logger.Error(`Restored list ${list.toLog()} from trash, but could not erase it from trash`);
+                    }
                 } else {
-                    Logger.Error(`Restored list ${list.toLog()} from trash, but could not erase it from trash`);
+                    Logger.Error(`Could not restore list ${list.toLog()} from trash - could not store as new`);
+                    errors++;
                 }
-                this.Popups.Toast.Success("service-lists.restore_success");
-                this.putListInIndex(list);
-                AppService.AppToolbar?.ToggleProgressbar(false);
-                this.syncListToWatch(list);
-                return true;
+            } else {
+                Logger.Error(`Could not restore list ${lists[i].toLog()} from trash - not found`);
+                errors++;
             }
         }
-        Logger.Error(`Could not restore list ${list?.toLog() ?? "uuid:" + uuid} from trash`);
+
+        if (errors > 0) {
+            if (lists.length == 1) {
+                this.Popups.Toast.Error("service-lists.restore_error");
+            } else if (lists.length == errors) {
+                this.Popups.Toast.Error("service-lists.restore_error_plural");
+            } else {
+                this.Popups.Toast.Error("service-lists.restore_error_partial");
+            }
+        } else {
+            if (lists.length == 1) {
+                this.Popups.Toast.Success("service-lists.restore_success");
+            } else {
+                this.Popups.Toast.Success("service-lists.restore_success_plural");
+            }
+        }
+        this.onListsChangedSubject.next(await this.GetLists(true));
+
+        await new Promise<void>(resolve => setTimeout(resolve, 10000));
+
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return false;
+
+        return errors == 0;
     }
 
     /**

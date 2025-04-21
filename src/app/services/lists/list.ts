@@ -210,8 +210,17 @@ export class List {
      * removes a item from the list
      * @param item item to remove
      */
-    public RemoveItem(item: Listitem) {
-        this._items = this.Items.filter(el => !el.equals(item));
+    public RemoveItem(items: Listitem | Listitem[]) {
+        if (!this._items) {
+            return;
+        }
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+
+        this._items = this._items.filter(el => {
+            return items.find(el2 => el.equals(el2)) == undefined;
+        });
         this._itemsCount = this._items.length;
 
         let order = 0;
