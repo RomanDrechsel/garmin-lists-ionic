@@ -1,30 +1,40 @@
-<app-main-toolbar back="{{BackLink}}">{{'page_trashitem.page_title'|translate}}</app-main-toolbar>
+<app-main-toolbar back="{{BackLink}}" [displayCustomMenu]="true" [displayMenu]="false">
+    {{'page_trashitem.page_title'|translate}}
+    <app-main-toolbar-lists-custom-menu [(EditMode)]="EditMode" [EditMenuDisabled]="EditMenuDisabled()" [EditMenuActions]="getEditMenuActions()" slot="customMenu"></app-main-toolbar-lists-custom-menu>
+</app-main-toolbar>
 
-<ion-content fixed-slot-placement="before" scrollEvents="true" scrollX="false" (ionScroll)="onScroll($event)" #mainContent>
+<ion-content fixed-slot-placement="before" scrollEvents="true" scrollX="false" overflow-scroll="false" (ionScroll)="onScroll($event)" #mainContent>
     <div *ngIf="Trash && Trash.items.length > 0; else empty" class="list-content" #listContent>
         <ion-list id="animated-list" #itemsContainer>
-            <ion-item-sliding *ngFor="let item of Trash.items" [ngClass]="['animated-item', !InitialAnimationDone ? ItemAnimationClass: '', !InitialAnimationDone ? 'animated': '']">
+            <ion-item-sliding *ngFor="let item of Trash.items" [disabled]="EditMode" [ngClass]="!InitialAnimationDone ? ['animated-item', ItemAnimationClass, 'animated'] : []">
+                <ion-item lines="full" [button]="true" (click)="clickOnItem($event, item)" [ngClass]="{'hidden': item.hidden, 'selected-item': EditMode && isItemSelected(item)}">
+                    <div class="listpoint-indicator-wrapper" slot="start">
+                        <div class="listpoint-indicator"></div>
+                    </div>
+                    <ion-label>
+                        <div class="details">
+                            <div>
+                                <ion-text class="item">{{item.item}}</ion-text>
+                            </div>
+                            <div *ngIf="item.note">
+                                <ion-note color="medium" class="note">{{item.note}}</ion-note>
+                            </div>
+                        </div>
+                    </ion-label>
+                    <div class="editmode" [ngClass]="{'show': EditMode}">
+                        <div class="editmode-wrapper">
+                            <ion-checkbox checked="true" [checked]="isItemSelected(item)" (click)="$event.preventDefault()"></ion-checkbox>
+                        </div>
+                    </div>
+                </ion-item>
                 <ion-item-options side="start" (ionSwipe)="onSwipeRight(item)">
-                    <ion-item-option color="danger" expandable="true" (click)="deleteItem(item)">
+                    <ion-item-option color="danger" expandable="true" (click)="deleteItems(item)">
                         <ion-icon slot="start" src="./assets/icons/trash_solid.svg"></ion-icon>
                         {{'delete'|translate}}
                     </ion-item-option>
                 </ion-item-options>
-                <ion-item lines="full" [ngClass]="{'hidden': item.hidden}">
-                    <div class="listpoint-indicator-wrapper" slot="start">
-                        <div class="listpoint-indicator"></div>
-                    </div>
-                    <div class="details">
-                        <div>
-                            <ion-text class="item">{{item.item}}</ion-text>
-                        </div>
-                        <div *ngIf="item.note">
-                            <ion-note color="medium" class="note">{{item.note}}</ion-note>
-                        </div>
-                    </div>
-                </ion-item>
                 <ion-item-options side="end" (ionSwipe)="onSwipeLeft(item)">
-                    <ion-item-option color="secondary" expandable="true" (click)="restoreItem(item)">
+                    <ion-item-option color="secondary" expandable="true" (click)="restoreItems(item)">
                         <ion-icon slot="end" src="./assets/icons/undo.svg"></ion-icon>
                         {{'page_trash.restore'|translate}}
                     </ion-item-option>

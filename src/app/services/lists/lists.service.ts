@@ -484,16 +484,22 @@ export class ListsService {
      * @param force erase the list without user prompt
      * @returns erase successful? undefined if user canceled it
      */
-    public async EraseListFromTrash(list: List, force: boolean = false): Promise<boolean | undefined> {
+    public async EraseListFromTrash(lists: List | List[], force: boolean = false): Promise<boolean | undefined> {
         if (!force && (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmEraseList, true))) {
-            const text = this.Locale.getText("service-lists.erase_confirm", { name: StringUtils.shorten(list.Name, 40) }) + this.Locale.getText("service-lists.undo_warning");
+            let text = this.Locale.getText("service-lists.undo_warning");
+            if (!Array.isArray(lists) || lists.length == 1) {
+                text = this.Locale.getText("service-lists.erase_confirm", { name: StringUtils.shorten(Array.isArray(lists) ? lists[0].Name : lists.Name, 40) }) + text;
+            } else {
+                text = this.Locale.getText("service-lists.erase_confirm_plural") + text;
+            }
+
             if (await this.Popups.Alert.YesNo({ message: text })) {
-                return this.eraseListFromTrash(list.Uuid);
+                return this.eraseListFromTrash(lists);
             } else {
                 return undefined;
             }
         } else {
-            return this.eraseListFromTrash(list.Uuid);
+            return this.eraseListFromTrash(lists);
         }
     }
 
@@ -522,19 +528,26 @@ export class ListsService {
 
     /**
      * prompts the user to restore a list item
-     * @param list list, to which the item should be restored
-     * @param item item in TRASH to be restored
+     * @param trash list, to which the item should be restored
+     * @param items item(s) in trash to be restored
      * @returns restore successful? undefined if user canceled it
      */
-    public async RestoreListitemFromTrash(trash: ListitemTrashModel, item: ListitemModel): Promise<boolean | undefined> {
+    public async RestoreListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean | undefined> {
         if (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmRestoreListitem, true)) {
-            if (await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.restore_item_confirm", { name: StringUtils.shorten(item.item, 40) }) })) {
-                return this.restoreListitemFromTrash(trash, item);
+            let text = "";
+            if (!Array.isArray(items) || items.length == 1) {
+                text = this.Locale.getText("service-lists.restore_item_confirm", { name: StringUtils.shorten(Array.isArray(items) ? items[0].item : items.item, 40) });
+            } else {
+                text = this.Locale.getText("service-lists.restore_item_confirm_plural");
+            }
+
+            if (await this.Popups.Alert.YesNo({ message: text })) {
+                return this.restoreListitemFromTrash(trash, items);
             } else {
                 return undefined;
             }
         } else {
-            return this.restoreListitemFromTrash(trash, item);
+            return this.restoreListitemFromTrash(trash, items);
         }
     }
 
@@ -1119,40 +1132,61 @@ export class ListsService {
     /**
      * restores a listitem from the trash of a list
      * @param trash trash of the list
-     * @param item listitem to restore
+     * @param items listitem(s) to restore
      * @returns was the restore successful
      */
-    private async restoreListitemFromTrash(trash: ListitemTrashModel, item: ListitemModel): Promise<boolean> {
+    private async restoreListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
         const list = await this.GetList(trash.uuid);
+        let success = false;
         if (list) {
-            if (list.Items.some(i => i.Uuid == item.uuid)) {
-                item.uuid = await this.createUuid(list);
+            if (!Array.isArray(items)) {
+                items = [items];
             }
-            list.AddItem(item);
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (list.Items.some(i => i.Uuid == item.uuid)) {
+                    //if there is an item with this uuid, give the restored item a new one
+                    item.uuid = await this.createUuid(list);
+                }
+                list.AddItem(item);
+            }
 
             if (await this.ListsProvider.StoreList(list)) {
-                await this.TrashItemsProvider.EraseListitem(trash, item);
-                Logger.Debug(`Restored listitem ${ListitemTrashUtils.toLog(item)} from trash of list ${ListitemTrashUtils.toLog(trash)}`);
-                AppService.AppToolbar?.ToggleProgressbar(false);
+                await this.TrashItemsProvider.EraseListitem(trash, items); //WIP:
+                Logger.Debug(`Restored ${items.length} listitem(s) from trash of list ${ListitemTrashUtils.toLog(trash)}`);
                 this.syncListToWatch(list);
-                return true;
+                success = true;
+            } else {
+                Logger.Error(`Could not restore ${items.length} listitem(s) from trash of list ${ListitemTrashUtils.toLog(trash)}`);
+                success = false;
             }
         }
-        Logger.Error(`Could not restore listitem ${ListitemTrashUtils.toLog(item)} from trash of list ${ListitemTrashUtils.toLog(trash)}`);
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return false;
+        return success;
     }
 
     /**
      * erases a list from trash
-     * @param uuid unique identifier of the list
+     * @param lists Lists to be erased
      */
-    private async eraseListFromTrash(uuid: string | number): Promise<boolean> {
+    private async eraseListFromTrash(lists: List | List[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        const ret = (await this.TrashProvider.EraseLists(uuid)) > 0;
+        if (!Array.isArray(lists)) {
+            lists = [lists];
+        }
+        const ret = await this.TrashProvider.EraseLists(lists.map(l => l.Uuid));
+
+        if (ret == lists.length) {
+            Logger.Debug(`Erased ${ret} list(s) from trash`);
+        } else {
+            Logger.Error(`Erased ${ret} list(s) from trash, but could not erase ${lists.length - ret} list(s)`);
+        }
+
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return ret;
+
+        return ret == lists.length;
     }
 
     /**

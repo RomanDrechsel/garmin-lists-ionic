@@ -62,9 +62,13 @@ export class TrashListsPage extends AnimatedListPageBase {
         await this.restoreList(list);
     }
 
-    public async deleteList(list: List) {
-        await this.ListsService.EraseListFromTrash(list);
-        this.itemsContainer.closeSlidingItems();
+    public async deleteList(lists: List | List[]): Promise<boolean | undefined> {
+        const success = await this.ListsService.EraseListFromTrash(lists);
+
+        if (success) {
+            this.itemsContainer.closeSlidingItems();
+        }
+        return success;
     }
 
     public async restoreList(lists: List | List[]): Promise<boolean | undefined> {
@@ -93,12 +97,16 @@ export class TrashListsPage extends AnimatedListPageBase {
     }
 
     public clickOnItem(event: MouseEvent, list: List) {
-        if (this._editMode) {
+        if (!this._disableClick && this._editMode) {
+            this._disableClick = true;
             if (this.isListSelected(list)) {
                 this._selectedItems = this._selectedItems.filter(l => l != list.Uuid);
             } else {
                 this._selectedItems.push(list.Uuid);
             }
+            setTimeout(() => {
+                this._disableClick = false;
+            }, 100);
         }
         event.stopImmediatePropagation();
     }
@@ -106,11 +114,13 @@ export class TrashListsPage extends AnimatedListPageBase {
     protected override getEditMenuActions(): EditMenuAction[] {
         let texts = [];
         if (this._selectedItems.length == 1) {
-            texts = this.Locale.getText(["comp-toolbar-edit-menu.list-restore", "comp-toolbar-edit-menu.list-empty", "comp-toolbar-edit-menu.list-delete"]);
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.list-restore", "comp-toolbar-edit-menu.trash-list-delete"]);
             texts["restore"] = texts["comp-toolbar-edit-menu.list-restore"];
+            texts["delete"] = texts["comp-toolbar-edit-menu.trash-list-delete"];
         } else {
-            texts = this.Locale.getText(["comp-toolbar-edit-menu.lists-restore", "comp-toolbar-edit-menu.lists-empty", "comp-toolbar-edit-menu.lists-delete"], { num: this._selectedItems.length });
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.lists-restore", "comp-toolbar-edit-menu.trash-lists-delete"], { num: this._selectedItems.length });
             texts["restore"] = texts["comp-toolbar-edit-menu.lists-restore"];
+            texts["delete"] = texts["comp-toolbar-edit-menu.trash-lists-delete"];
         }
         return [
             {
@@ -122,6 +132,19 @@ export class TrashListsPage extends AnimatedListPageBase {
                     if (restore === true) {
                         this._selectedItems = [];
                     } else if (restore === undefined) {
+                        this.editMenu?.enterEditMode();
+                    }
+                },
+            },
+            {
+                icon: "/assets/icons/trash.svg",
+                text: texts["delete"],
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    const del = await this.deleteList(this.Lists.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                    if (del === true) {
+                        this._selectedItems = [];
+                    } else if (del === undefined) {
                         this.editMenu?.enterEditMode();
                     }
                 },

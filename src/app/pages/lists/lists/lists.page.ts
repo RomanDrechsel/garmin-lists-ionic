@@ -111,6 +111,7 @@ export class ListsPage extends AnimatedListPageBase {
 
     public clickOnItem(event: MouseEvent, list: List) {
         if (!this._disableClick && this._initAnimationDone) {
+            this._disableClick = true;
             if (this._editMode) {
                 if (this.isListSelected(list)) {
                     this._selectedItems = this._selectedItems.filter(l => l != list.Uuid);
@@ -120,8 +121,11 @@ export class ListsPage extends AnimatedListPageBase {
             } else {
                 this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { title: list.Name } });
             }
-            event.stopImmediatePropagation();
+            setTimeout(() => {
+                this._disableClick = false;
+            }, 100);
         }
+        event.stopImmediatePropagation();
     }
 
     public async handleReorder(event: CustomEvent<ItemReorderEventDetail>) {

@@ -25,7 +25,7 @@
                         </ion-label>
                         <div class="editmode" [ngClass]="{'show': EditMode}">
                             <div class="editmode-wrapper">
-                                <ion-checkbox checked="true" [checked]="isItemSelected(item)"></ion-checkbox>
+                                <ion-checkbox checked="true" [checked]="isItemSelected(item)" (click)="$event.preventDefault()"></ion-checkbox>
                                 <ion-reorder>
                                     <ion-icon src="/assets/icons/reorder.svg"></ion-icon>
                                 </ion-reorder>

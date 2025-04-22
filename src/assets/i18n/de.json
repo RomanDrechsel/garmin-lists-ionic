@@ -77,6 +77,7 @@
         "empty_error_partial": "Es konnten nicht alle Listenpunkte gelöscht werden!",
         "undo_warning": "<br /><br /><strong>Achtung:</strong> Dies kann nichtmehr rückgängig gemacht werden!",
         "erase_confirm": "Möchstest du die Liste <strong>{{name}}</strong> endgültig löschen?",
+        "erase_confirm_plural": "Möchtest du die Listen endgültig löschen?",
         "erase_success": "Die Liste wurde endgültig gelöscht.",
         "erase_error": "Die Liste konnte nicht gelöscht werden!",
         "erase_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> endgültig löschem?",
@@ -90,6 +91,7 @@
         "restore_error_plural": "Die Listen konnten nicht wiederhergestellt werden!",
         "restore_error_partial": "Es konnten nicht alle Listen wiederhergestellt werden!",
         "restore_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> wiederherstellen?",
+        "restore_item_confirm_plural": "Möchtest du die Punkte wiederherstellen?",
         "restore_item_success": "Der Punkt wurde wiederhergestellt.",
         "restore_item_error": "Der Punkt konnte nicht wiederhergestellt werden!",
         "empty_trash_confirm": "Möchstest du den Papierkorb leeren und die {{count}} Listen löschen?",
@@ -203,7 +205,13 @@
         "item-delete": "Listenpunkt löschen",
         "items-delete": "{{num}} Listenpunkte löschen",
         "list-restore": "Liste wiederherstellen",
-        "lists-restore": "{{num}} Listen wiederherstellen"
+        "lists-restore": "{{num}} Listen wiederherstellen",
+        "trash-list-delete": "Liste entgültig löschen",
+        "trash-lists-delete": "{{num}} Listen entgültig löschen",
+        "trash-item-restore": "Listenpunkt wiederherstellen",
+        "trash-items-restore": "{{num}} Listenpunkte wiederherstellen",
+        "trash-item-delete": "Listenpunkt entgültig löschen",
+        "trash-items-delete": "{{num}} Listenpunkte endgültig löschen"
     },
     "page_firststart": {
         "welcome": "Willkommen bei Listen",

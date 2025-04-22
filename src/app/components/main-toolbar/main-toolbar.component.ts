@@ -33,14 +33,12 @@ export class MainToolbarComponent {
     public ToggleProgressbar(v: boolean) {
         if (this._showProgressbar != v) {
             this._showProgressbar = v;
-            console.log("Progressbar: ", v);
             this.cdr.detectChanges();
         }
     }
 
     public Copy(toolbar?: MainToolbarComponent) {
         if (toolbar) {
-            console.log("Progressbar copied", toolbar.ShowProgressbar);
             this.ToggleProgressbar(toolbar.ShowProgressbar);
         }
     }

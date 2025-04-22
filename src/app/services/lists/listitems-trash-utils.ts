@@ -4,19 +4,16 @@ export namespace ListitemTrashUtils {
     /**
      * deletes a certain item from the trash
      * @param trash trash of listitems
-     * @param item item to delete
-     * @returns was the item found and deleted?
+     * @param items item(s) to delete
+     * @returns ListitemTrashModal without the listitem(s)
      */
-    export function RemoveItem(trash: ListitemTrashModel, item: string | number | ListitemModel): ListitemTrashModel {
-        if (typeof item !== "string" && typeof item !== "number") {
-            item = item.uuid;
+    export function RemoveItem(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): ListitemTrashModel {
+        if (!Array.isArray(items)) {
+            items = [items];
         }
-        for (let i = 0; i < trash.items.length; i++) {
-            if (trash.items[i].uuid == item) {
-                trash.items.splice(i, 1);
-                break;
-            }
-        }
+
+        const uuids = items.map(i => i.uuid);
+        trash.items = trash.items.filter(i => uuids.indexOf(i.uuid) < 0);
         return trash;
     }
 

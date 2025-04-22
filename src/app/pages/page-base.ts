@@ -51,7 +51,6 @@ export abstract class PageBase {
             this.Toolbar.Copy(AppService.AppToolbar);
         }
         AppService.AppToolbar = this.Toolbar;
-        console.log("Progressbar is visible: ", AppService.AppToolbar?.ShowProgressbar);
     }
 
     public async ionViewWillLeave() {

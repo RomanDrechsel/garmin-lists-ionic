@@ -266,14 +266,20 @@ export class ListItemsPage extends AnimatedListPageBase {
     }
 
     public clickOnItem(event: MouseEvent, item: Listitem) {
-        if (this._editMode) {
-            if (this.isItemSelected(item)) {
-                this._selectedItems = this._selectedItems.filter(l => l != item.Uuid);
+        if (!this._disableClick) {
+            this._disableClick = true;
+            if (this._editMode) {
+                if (this.isItemSelected(item)) {
+                    this._selectedItems = this._selectedItems.filter(l => l != item.Uuid);
+                } else {
+                    this._selectedItems.push(item.Uuid);
+                }
             } else {
-                this._selectedItems.push(item.Uuid);
+                this.editItem(item);
             }
-        } else {
-            this.editItem(item);
+            setTimeout(() => {
+                this._disableClick = false;
+            }, 100);
         }
         event.stopImmediatePropagation();
     }
