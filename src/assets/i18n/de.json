@@ -81,6 +81,7 @@
         "erase_success": "Die Liste wurde endgültig gelöscht.",
         "erase_error": "Die Liste konnte nicht gelöscht werden!",
         "erase_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> endgültig löschem?",
+        "erase_item_confirm_plural": "Möchtest du die Punkte endgültig löschen?",
         "erase_item_success": "Der Punkt wurde endgültig gelöscht.",
         "erase_item_error": "Der Punkt konnte nicht gelöscht werden!",
         "restore_confirm": "Möchtest du die Liste <strong>{{name}}</strong> wiederherstellen?",

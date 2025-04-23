@@ -348,18 +348,26 @@ export class ListsService {
     /**
      * prompts the user to finally erase a listitem from trash
      * @param trash trash of the list
-     * @param item the item in Trash to be erased
+     * @param items the item in Trash to be erased
      * @returns erase successful, undefined if user canceled it
      */
-    public async EraseListitemFromTrash(trash: ListitemTrashModel, item: ListitemModel): Promise<boolean | undefined> {
+    public async EraseListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean | undefined> {
         if (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmEraseListitem, true)) {
-            if (await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.erase_item_confirm", { name: StringUtils.shorten(item.item, 40) }) })) {
-                return this.eraseListitemFromTrash(trash, item);
+            let text = "";
+            if (Array.isArray(items) && items.length > 1) {
+                text = this.Locale.getText("service-lists.erase_item_confirm_plural");
+            } else {
+                text = this.Locale.getText("service-lists.erase_item_confirm", { name: StringUtils.shorten(Array.isArray(items) ? items[0].item : items.item, 40) });
+            }
+            text += this.Locale.getText("service-lists.undo_warning");
+
+            if (await this.Popups.Alert.YesNo({ message: text })) {
+                return this.eraseListitemFromTrash(trash, items);
             } else {
                 return undefined;
             }
         } else {
-            return this.eraseListitemFromTrash(trash, item);
+            return this.eraseListitemFromTrash(trash, items);
         }
     }
 
@@ -1034,11 +1042,11 @@ export class ListsService {
     /**
      * erases a listitem from trash
      * @param trash trash of the list, the item should be erased
-     * @param item listitem to be erased
+     * @param items listitem to be erased
      * @returns was the erase successful
      */
-    private async eraseListitemFromTrash(trash: ListitemTrashModel, item: ListitemModel): Promise<boolean> {
-        return this.TrashItemsProvider.EraseListitem(trash, item);
+    private async eraseListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean> {
+        return this.TrashItemsProvider.EraseListitem(trash, items);
     }
 
     /**

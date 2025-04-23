@@ -78,7 +78,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
     }
 
     public onSwipeRight(item: ListitemModel) {
-        this.deleteItem(item);
+        this.deleteItems(item);
     }
 
     public onSwipeLeft(item: ListitemModel) {
