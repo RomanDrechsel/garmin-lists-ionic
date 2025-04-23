@@ -49,6 +49,14 @@ export class List {
         return this._uuid;
     }
 
+    /**
+     * set the unique list id
+     * @param uuid unique list id
+     */
+    public set Uuid(uuid: string | number) {
+        this._uuid = uuid;
+    }
+
     /** set list title */
     public set Name(name: string) {
         if (this._name != name) {

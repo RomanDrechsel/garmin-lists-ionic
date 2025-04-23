@@ -1124,12 +1124,17 @@ export class ListsService {
         }
 
         let errors = 0;
+        const all_lists = await this.GetLists(true);
         for (let i = 0; i < lists.length; i++) {
             //read the full list with all items
             const list = await this.TrashProvider.GetList(lists[i].Uuid);
             if (list) {
                 //add it at the end
                 list.Order = this._lists.length + i;
+                if (all_lists.some(i => i.Uuid == list.Uuid)) {
+                    //if there is an item with this uuid, give the restored item a new one
+                    list.Uuid = await this.createUuid(list);
+                }
                 if (await this.ListsProvider.StoreList(list, true)) {
                     if (await this.TrashProvider.EraseLists(list.Uuid, false)) {
                         Logger.Notice(`Restored list ${list.toLog()} from trash`);
