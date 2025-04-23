@@ -22,12 +22,10 @@
                             <ion-icon src="./assets/icons/edit.svg"></ion-icon>
                         </div>
                         <div class="editmode" [ngClass]="{'show': EditMode}">
-                            <div class="editmode-wrapper">
-                                <ion-checkbox checked="true" [checked]="isListSelected(list)" (click)="$event.preventDefault()"></ion-checkbox>
-                                <ion-reorder>
-                                    <ion-icon src="/assets/icons/reorder.svg"></ion-icon>
-                                </ion-reorder>
-                            </div>
+                            <ion-checkbox checked="true" [checked]="isListSelected(list)" (click)="$event.preventDefault()"></ion-checkbox>
+                            <ion-reorder>
+                                <ion-icon src="/assets/icons/reorder.svg"></ion-icon>
+                            </ion-reorder>
                         </div>
                     </ion-item>
                     <ion-item-options side="start" (ionSwipe)="onSwipeRight(list)">

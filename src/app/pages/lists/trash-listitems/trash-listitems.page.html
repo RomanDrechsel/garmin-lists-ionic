@@ -21,10 +21,8 @@
                             </div>
                         </div>
                     </ion-label>
-                    <div class="editmode" [ngClass]="{'show': EditMode}">
-                        <div class="editmode-wrapper">
-                            <ion-checkbox checked="true" [checked]="isItemSelected(item)" (click)="$event.preventDefault()"></ion-checkbox>
-                        </div>
+                    <div class="editmode small" [ngClass]="{'show': EditMode}">
+                        <ion-checkbox checked="true" [checked]="isItemSelected(item)" (click)="$event.preventDefault()"></ion-checkbox>
                     </div>
                 </ion-item>
                 <ion-item-options side="start" (ionSwipe)="onSwipeRight(item)">
