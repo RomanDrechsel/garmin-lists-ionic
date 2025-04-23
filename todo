@@ -6,7 +6,6 @@ https://wiki.ubuntuusers.de/adb/
 
 TEST: animations
 WIP: editmode
-TODO: Editmode - Darkmode
 BUG: animations doesn't work properly
 BUG: Progressbar is not shown after page change
 TODO: use SQLite as backend

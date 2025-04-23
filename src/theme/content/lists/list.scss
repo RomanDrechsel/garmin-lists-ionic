@@ -21,7 +21,7 @@ ion-list {
 
                 .editmode {
                     .editmode-wrapper {
-                        background-color: #e9f2fc;
+                        background-color: var(--color-item-selected-shade);
                     }
                 }
             }
