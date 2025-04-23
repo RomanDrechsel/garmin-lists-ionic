@@ -1,12 +1,11 @@
 import { Subscription } from "rxjs";
+import { CreateListitemAnimation, type ListitemAnimationDirection } from "src/app/animations/listitem.animation";
 import { EPrefProperty } from "../../services/storage/preferences.service";
-import { PageBase } from "../page-base";
+import { ListPageBase } from "./list-page-base";
 
-export abstract class AnimatedListPageBase extends PageBase {
-    private readonly _animationDelay = 30;
-
+export abstract class AnimatedListPageBase extends ListPageBase {
     protected _initAnimationDone = false;
-    protected _animationDirection: "left" | "right" | "top" | "bottom" = "left";
+    protected _animationDirection: ListitemAnimationDirection = "left";
 
     private _animateItems = true;
 
@@ -14,10 +13,6 @@ export abstract class AnimatedListPageBase extends PageBase {
 
     public get InitialAnimationDone(): boolean {
         return this._initAnimationDone;
-    }
-
-    public get ItemAnimationClass(): string {
-        return `animation-${this._animationDirection}`;
     }
 
     public override async ionViewWillEnter() {
@@ -44,41 +39,28 @@ export abstract class AnimatedListPageBase extends PageBase {
 
     protected async onItemsChanged() {
         this.reload();
-
-        await new Promise<void>(resolve => setTimeout(() => resolve(), 10));
-
         if (!this._initAnimationDone && this._animateItems) {
-            const querySelector = "#animated-list .animated-item.animated:not(.animation-running)";
-            const toanimated = Array.from(document.querySelectorAll(querySelector)).filter((el: Element) => this.animateElement(el as HTMLElement));
-
-            console.log(`found ${toanimated.length} items to animate`);
+            await new Promise<void>(resolve => setTimeout(() => resolve(), 10));
+            const querySelector = "#animated-list .animated-item:not(.animating)";
+            const toanimated = Array.from(document.querySelectorAll(querySelector));
+            console.log(`Animate ${toanimated.length} items`);
 
             toanimated.forEach((el: Element, index: number) => {
-                const html_el = el as HTMLElement;
-                if (html_el) {
-                    html_el.style.transitionDelay = `${index * this._animationDelay}ms`;
+                if (this.animateElement(el as HTMLElement)) {
+                    const animation = CreateListitemAnimation(el as HTMLElement, this._animationDirection, index);
                     if (index == toanimated.length - 1) {
-                        html_el.addEventListener(
-                            "transitionend",
-                            (ev: TransitionEvent) => {
-                                this._initAnimationDone = true;
-                                Array.from(document.querySelectorAll("#animated-list .animated-item")).forEach(el => {
-                                    if (el instanceof HTMLElement) {
-                                        //el.classList.remove("animated", "animation-running", this.ItemAnimationClass);
-                                        el.style.transitionDelay = "";
-                                    }
-                                });
-                            },
-                            { once: true },
-                        );
+                        animation.afterAddRead(() => {
+                            console.log("Animation done");
+                            this._initAnimationDone = true;
+                        });
                     }
-                    html_el.classList.add("animation-running");
+                    animation.play();
                 } else {
-                    console.log("no html element", el);
+                    el.classList.remove("pre-animation-state");
+                    console.log("Not animating");
                 }
             });
             if (toanimated.length == 0) {
-                console.log("no items to animate");
                 this._initAnimationDone = true;
             }
         } else {

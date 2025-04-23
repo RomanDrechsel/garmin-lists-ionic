@@ -6,9 +6,13 @@ export namespace DateUtils {
      * @param ts UNIX timestamp in seconds of milliseconds
      * @returns formated date as string
      */
-    export const formatDate = (ts: number) => {
+    export const formatDate = (ts: number, separator?: string) => {
         if (ts < 9999999999) {
             ts *= 1000;
+        }
+
+        if (!separator) {
+            separator = " ";
         }
 
         const date = new Date(ts);
@@ -39,29 +43,19 @@ export namespace DateUtils {
         }
 
         if (isToday(date)) {
-            var options: any = {
+            const options: Intl.DateTimeFormatOptions = {
                 hour: "2-digit",
                 minute: "2-digit",
             };
-            return (
-                Locale.getText("date.today") +
-                ", " +
-                date.toLocaleTimeString(Locale.currentLang().locale, options) +
-                Locale.getText("date.date_add")
-            );
+            return Locale.getText("date.today") + ", " + date.toLocaleTimeString(Locale.currentLang().locale, options) + Locale.getText("date.date_add");
         } else if (isYesterday(date)) {
-            var options: any = {
+            const options: Intl.DateTimeFormatOptions = {
                 hour: "2-digit",
                 minute: "2-digit",
             };
-            return (
-                Locale.getText("date.yesterday") +
-                ", " +
-                date.toLocaleTimeString(Locale.currentLang().locale, options) +
-                Locale.getText("date.date_add")
-            );
+            return Locale.getText("date.yesterday") + ", " + date.toLocaleTimeString(Locale.currentLang().locale, options) + Locale.getText("date.date_add");
         } else {
-            var options: any = {
+            const options: Intl.DateTimeFormatOptions = {
                 weekday: "short",
                 day: "2-digit",
                 month: "2-digit",
@@ -69,10 +63,7 @@ export namespace DateUtils {
                 hour: "2-digit",
                 minute: "2-digit",
             };
-            return (
-                date.toLocaleString(Locale.currentLang().locale, options) +
-                Locale.getText("date.date_add")
-            );
+            return date.toLocaleString(Locale.currentLang().locale, options) + Locale.getText("date.date_add");
         }
     };
 
@@ -83,11 +74,7 @@ export namespace DateUtils {
      */
     const isToday = (someDate: Date) => {
         const today = new Date();
-        return (
-            someDate.getDate() == today.getDate() &&
-            someDate.getMonth() == today.getMonth() &&
-            someDate.getFullYear() == today.getFullYear()
-        );
+        return someDate.getDate() == today.getDate() && someDate.getMonth() == today.getMonth() && someDate.getFullYear() == today.getFullYear();
     };
 
     /**
@@ -98,10 +85,6 @@ export namespace DateUtils {
     const isYesterday = (someDate: Date) => {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        return (
-            someDate.getDate() == yesterday.getDate() &&
-            someDate.getMonth() == yesterday.getMonth() &&
-            someDate.getFullYear() == yesterday.getFullYear()
-        );
+        return someDate.getDate() == yesterday.getDate() && someDate.getMonth() == yesterday.getMonth() && someDate.getFullYear() == yesterday.getFullYear();
     };
 }

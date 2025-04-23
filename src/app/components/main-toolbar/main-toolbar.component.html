@@ -3,11 +3,12 @@
         <ion-buttons slot="start" *ngIf="backButton">
             <ion-back-button [defaultHref]="backButton" text="" #backbutton></ion-back-button>
         </ion-buttons>
-        <ion-title [ngClass]="{ back: backButton != '', menu: menuButton == 'true' }">
+        <ion-title [ngClass]="{ back: backButton != '', menu: displayMenu }">
             <ng-content></ng-content>
         </ion-title>
-        <ion-buttons slot="end" *ngIf="menuButton == 'true'">
-            <ion-menu-button></ion-menu-button>
+        <ion-buttons class="menu" slot="end" *ngIf="displayCustomMenu || displayMenu">
+            <ng-content select="[slot='customMenu']" *ngIf="displayCustomMenu"></ng-content>
+            <ion-menu-button *ngIf="displayMenu"></ion-menu-button>
         </ion-buttons>
         <ion-progress-bar type="indeterminate" *ngIf="ShowProgressbar"></ion-progress-bar>
     </ion-toolbar>

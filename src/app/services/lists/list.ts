@@ -49,6 +49,14 @@ export class List {
         return this._uuid;
     }
 
+    /**
+     * set the unique list id
+     * @param uuid unique list id
+     */
+    public set Uuid(uuid: string | number) {
+        this._uuid = uuid;
+    }
+
     /** set list title */
     public set Name(name: string) {
         if (this._name != name) {
@@ -210,8 +218,17 @@ export class List {
      * removes a item from the list
      * @param item item to remove
      */
-    public RemoveItem(item: Listitem) {
-        this._items = this.Items.filter(el => !el.equals(item));
+    public RemoveItem(items: Listitem | Listitem[]) {
+        if (!this._items) {
+            return;
+        }
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+
+        this._items = this._items.filter(el => {
+            return items.find(el2 => el.equals(el2)) == undefined;
+        });
         this._itemsCount = this._items.length;
 
         let order = 0;

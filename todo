@@ -4,8 +4,9 @@ https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
 ADB
 https://wiki.ubuntuusers.de/adb/
 
-TEST: use app without connect iq
-TEST: animations
-TODO: reorder only if pressed for a second
+WIP: animations
+TEST: editmode
+WIP: animations doesn't work properly
+BUG: Progressbar is not shown after page change
 TODO: use SQLite as backend
 TODO: note function
