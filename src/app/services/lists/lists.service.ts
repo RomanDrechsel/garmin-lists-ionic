@@ -297,7 +297,13 @@ export class ListsService {
 
         const item = await this.createNewListitemObj(list, args);
         list.AddItem(item);
-        return await this.StoreList(list, false, true, false);
+        const success = await this.StoreList(list, false, true, false);
+
+        if (success) {
+            this.putListInIndex(list);
+        }
+
+        return success;
     }
 
     /**
@@ -870,7 +876,7 @@ export class ListsService {
             list.Order = order++;
             if (list.Dirty) {
                 changed = true;
-                await this.StoreList(list, undefined, undefined, false);
+                await this.StoreList(list, undefined, false, false);
             }
         }
         this._lists = lists;
@@ -1075,7 +1081,12 @@ export class ListsService {
         const del = await this.TrashProvider.WipeTrash();
         if (del > 0) {
             Logger.Notice(`Erased ${del} list(s) from trash`);
+            this.Popups.Toast.Success("service-lists.empty_trash_success");
+        } else {
+            Logger.Error("Could not wipe lists trash");
+            this.Popups.Toast.Error("service-lists.empty_trash_error");
         }
+
         AppService.AppToolbar?.ToggleProgressbar(false);
 
         return del;
@@ -1089,6 +1100,13 @@ export class ListsService {
     private async emptyListitemTrash(trash: ListitemTrashModel): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
         const ret = await this.TrashItemsProvider.EraseListitemTrash(trash);
+        if (ret) {
+            Logger.Notice(`Erased trash of list ${ListitemTrashUtils.toLog(trash)}`);
+            this.Popups.Toast.Success("service-lists.empty_trash_success");
+        } else {
+            Logger.Error(`Could not erase trash of list ${ListitemTrashUtils.toLog(trash)}`);
+            this.Popups.Toast.Error("service-lists.empty_trash_error");
+        }
         AppService.AppToolbar?.ToggleProgressbar(false);
         return ret;
     }
