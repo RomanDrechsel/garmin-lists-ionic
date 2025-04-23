@@ -13,8 +13,8 @@ import { ConnectIQService } from "../connectiq/connect-iq.service";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { PopupsService } from "../popups/popups.service";
-import { Toast } from "../popups/toast";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
+import { Toast } from "./../popups/toast";
 import { ListsBackendService } from "./../storage/lists/lists-backend.service";
 import { KeepInTrash } from "./keep-in-trash";
 import { List } from "./list";
@@ -947,7 +947,11 @@ export class ListsService {
                 this.Popups.Toast.Error("service-lists.delete_error_partial");
             }
         } else {
-            this.Popups.Toast.Success("service-lists.delete_success");
+            if (lists.length > 1) {
+                this.Popups.Toast.Success("service-lists.delete_success");
+            } else {
+                this.Popups.Toast.Success("service-lists.delete_success_plural");
+            }
         }
 
         return errors == 0;
@@ -1042,11 +1046,24 @@ export class ListsService {
     /**
      * erases a listitem from trash
      * @param trash trash of the list, the item should be erased
-     * @param items listitem to be erased
+     * @param items listitem(s) to be erased
      * @returns was the erase successful
      */
     private async eraseListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean> {
-        return this.TrashItemsProvider.EraseListitem(trash, items);
+        AppService.AppToolbar?.ToggleProgressbar(true);
+        const success = await this.TrashItemsProvider.EraseListitem(trash, items);
+
+        if (success) {
+            const text = !Array.isArray(items) || items.length == 1 ? "service-lists.erase_item_success" : "service-lists.erase_item_success_plural";
+            this.Popups.Toast.Success(text);
+        } else {
+            const text = !Array.isArray(items) || items.length == 1 ? "service-lists.erase_item_error" : "service-lists.erase_item_error_plural";
+            this.Popups.Toast.Error(text);
+        }
+
+        AppService.AppToolbar?.ToggleProgressbar(false);
+
+        return success;
     }
 
     /**
@@ -1162,13 +1179,17 @@ export class ListsService {
             }
 
             if (await this.ListsProvider.StoreList(list)) {
-                await this.TrashItemsProvider.EraseListitem(trash, items); //WIP:
+                await this.TrashItemsProvider.EraseListitem(trash, items);
                 Logger.Debug(`Restored ${items.length} listitem(s) from trash of list ${ListitemTrashUtils.toLog(trash)}`);
                 this.syncListToWatch(list);
                 success = true;
+                const text = !Array.isArray(items) || items.length == 1 ? "service-lists.restore_item_success" : "service-lists.restore_item_success_plural";
+                this.Popups.Toast.Success(text);
             } else {
                 Logger.Error(`Could not restore ${items.length} listitem(s) from trash of list ${ListitemTrashUtils.toLog(trash)}`);
                 success = false;
+                const text = !Array.isArray(items) || items.length == 1 ? "service-lists.restore_item_error" : "service-lists.restore_item_error_plural";
+                this.Popups.Toast.Error(text);
             }
         }
         AppService.AppToolbar?.ToggleProgressbar(false);
