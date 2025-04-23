@@ -6,10 +6,6 @@ https://wiki.ubuntuusers.de/adb/
 
 TEST: animations
 WIP: editmode
-TODO: translate service-lists.transmit_confirm_plural / service-lists.transmit_process_plural / service-lists.transmit_success_plural / service-lists.transmit_error_partial
-TODO: translate service-lists.empty_error_partial / service-lists.empty_confirm_plural / service-lists.delete_confirm_plural / service-lists.delete_error_plural / service-lists.delete_error_partial
-TODO: translate service-lists.delete_item_confirm_plural / service-lists.restore_success_plural / service-lists.restore_error_plural / service-lists.restore_error_partial
-TODO: translate service-lists.erase_confirm_plural / service-lists.restore_item_confirm_plural / service-lists.erase_item_confirm_plural
 TODO: Editmode - Darkmode
 BUG: service-lists.empty_trash_error wird nicht verwendet?!
 BUG: animations doesn't work properly
@@ -17,29 +13,3 @@ BUG: if i delete a sync list, it will be transmitted to device due to StoreList(
 BUG: Progressbar is not shown after page change
 TODO: use SQLite as backend
 TODO: note function
-
-
-all but de, en:
-Todo:
-transmit_confirm_plural
-transmit_process_plural
-transmit_success_plural
-transmit_error_partial
-transmit_error_plural
-empty_error_partial
-empty_confirm_plural
-delete_confirm_plural
-delete_error_plural
-delete_error_partial
-delete_item_confirm_plural
-restore_confirm_plural
-restore_success_plural
-restore_error_plural
-restore_error_partial
-restore_item_confirm_plural
-restore_item_success_plural
-restore_item_error_plural
-erase_confirm_plural
-erase_item_confirm_plural
-erase_item_success_plural
-erase_item_error_plural
