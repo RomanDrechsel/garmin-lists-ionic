@@ -1,9 +1,8 @@
 import { Animation, AnimationController } from "@ionic/angular/standalone";
 
-export const CreateListitemAnimation = (baseEl?: HTMLElement, direction: ListitemAnimationDirection = "top", index: number = 0): Animation => {
+export const CreateListitemAnimation = (baseEl?: HTMLElement, ref?: HTMLElement, direction: ListitemAnimationDirection = "top"): Animation => {
     const animationCtrl = new AnimationController();
-    const duration = 600;
-    const delay = 80;
+    const duration = 4000;
 
     if (!baseEl) {
         return animationCtrl.create();
@@ -13,7 +12,8 @@ export const CreateListitemAnimation = (baseEl?: HTMLElement, direction: Listite
     switch (direction) {
         default:
         case "top":
-            from = "translateY(-100vh)";
+            const top = ref ? `-${ref.offsetHeight + ref.offsetTop}px` : "-100vh";
+            from = `translateY(${top}`;
             to = "translateY(0)";
             break;
         case "bottom":
@@ -30,24 +30,10 @@ export const CreateListitemAnimation = (baseEl?: HTMLElement, direction: Listite
             break;
     }
 
-    const slide = animationCtrl.create().addElement(baseEl).duration(duration).easing("ease-in-out").iterations(1).fromTo("transform", from, to);
-    const fade = animationCtrl
-        .create()
-        .addElement(baseEl)
-        .duration(duration / 2)
-        .delay(duration / 2)
-        .easing("ease-in-out")
-        .iterations(1)
-        .fromTo("opacity", 0, 1);
+    const slide = animationCtrl.create().addElement(baseEl).duration(duration).easing("ease-out").iterations(1).fromTo("transform", from, to);
+    const fade = animationCtrl.create().addElement(baseEl).duration(duration).iterations(1).fromTo("opacity", 0, 1).delay(0);
 
-    return animationCtrl
-        .create()
-        .addAnimation([slide, fade])
-        .beforeAddClass("animating")
-        .afterRemoveClass(["animating", "pre-animation-state"])
-        .afterClearStyles(["transform", "opacity", "z-index"])
-        .beforeStyles({ "z-index": index })
-        .delay(index * delay);
+    return animationCtrl.create().addAnimation([slide, fade]).beforeAddClass("animating").afterRemoveClass(["animating", "pre-animation-state"]).afterClearStyles(["transform", "opacity"]);
 };
 
 export type ListitemAnimationDirection = "top" | "bottom" | "left" | "right";

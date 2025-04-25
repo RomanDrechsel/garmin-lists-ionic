@@ -66,7 +66,7 @@ export class TrashListsPage extends AnimatedListPageBase {
         const success = await this.ListsService.EraseListFromTrash(lists);
 
         if (success) {
-            this.itemsContainer.closeSlidingItems();
+            this._itemsList?.closeSlidingItems();
         }
         return success;
     }
@@ -74,7 +74,7 @@ export class TrashListsPage extends AnimatedListPageBase {
     public async restoreList(lists: List | List[]): Promise<boolean | undefined> {
         const success = await this.ListsService.RestoreListFromTrash(lists);
         if (success) {
-            this.itemsContainer.closeSlidingItems();
+            this._itemsList?.closeSlidingItems();
         }
         return success;
     }

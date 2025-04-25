@@ -1,3 +1,4 @@
+import type { Animation, IonContentCustomEvent, ScrollDetail } from "@ionic/core";
 import { Subscription } from "rxjs";
 import { CreateListitemAnimation, type ListitemAnimationDirection } from "src/app/animations/listitem.animation";
 import { EPrefProperty } from "../../services/storage/preferences.service";
@@ -8,6 +9,8 @@ export abstract class AnimatedListPageBase extends ListPageBase {
     protected _animationDirection: ListitemAnimationDirection = "left";
 
     private _animateItems = true;
+
+    private _itemAnimations: Animation[] | undefined;
 
     private _animationSubscription?: Subscription;
 
@@ -37,41 +40,71 @@ export abstract class AnimatedListPageBase extends ListPageBase {
         }
     }
 
+    public override onScroll(event: IonContentCustomEvent<ScrollDetail>) {
+        super.onScroll(event);
+        if (this._itemAnimations) {
+            this._itemAnimations.forEach(a => a.progressEnd(1, 1));
+            this.finishAnimation();
+        }
+    }
+
     protected async onItemsChanged() {
         this.reload();
         if (!this._initAnimationDone && this._animateItems) {
             await new Promise<void>(resolve => setTimeout(() => resolve(), 10));
+            const content = document.querySelector("#main-content ion-content[role='main']") as HTMLElement;
             const querySelector = "#animated-list .animated-item:not(.animating)";
-            const toanimated = Array.from(document.querySelectorAll(querySelector));
-            console.log(`Animate ${toanimated.length} items`);
+            const all_items = Array.from(content.querySelectorAll(querySelector));
 
-            toanimated.forEach((el: Element, index: number) => {
-                if (this.animateElement(el as HTMLElement)) {
-                    const animation = CreateListitemAnimation(el as HTMLElement, this._animationDirection, index);
-                    if (index == toanimated.length - 1) {
-                        animation.afterAddRead(() => {
-                            console.log("Animation done");
-                            this._initAnimationDone = true;
-                        });
-                    }
-                    animation.play();
+            all_items.forEach((el: Element, index: number) => {
+                const ref = this.refElement(el as HTMLElement);
+                if (this.animateElement(ref, content.offsetHeight)) {
+                    setTimeout(() => {
+                        const animation = CreateListitemAnimation(el as HTMLElement, ref, this._animationDirection);
+                        if (index == all_items.length - 1) {
+                            animation.afterAddWrite(() => {
+                                this.finishAnimation();
+                            });
+                        }
+                        if (this._itemAnimations) {
+                            this._itemAnimations.push(animation);
+                        } else {
+                            this._itemAnimations = [animation];
+                        }
+                        animation.play();
+                    }, index * 70);
                 } else {
                     el.classList.remove("pre-animation-state");
-                    console.log("Not animating");
+                    this.finishAnimation();
                 }
             });
-            if (toanimated.length == 0) {
-                this._initAnimationDone = true;
+            if (all_items.length == 0) {
+                this.finishAnimation();
             }
         } else {
-            this._initAnimationDone = true;
+            this.finishAnimation();
         }
     }
 
-    private animateElement(el?: HTMLElement): boolean {
-        if (!el) {
-            return false;
+    private finishAnimation() {
+        this._itemAnimations = undefined;
+        this._initAnimationDone = true;
+    }
+
+    private refElement(el?: HTMLElement): HTMLElement | undefined {
+        for (let i = 0; i < 5; i++) {
+            if (el && el.tagName.toLowerCase() == "ion-item-sliding") {
+                return el;
+            }
+            el = el?.parentElement as HTMLElement;
         }
-        return el.offsetTop < window.scrollY + window.innerHeight;
+        return undefined;
+    }
+
+    private animateElement(el?: HTMLElement, viewport?: number): boolean {
+        if (el) {
+            return el.offsetTop < window.scrollY + (viewport ? viewport : window.innerHeight);
+        }
+        return false;
     }
 }

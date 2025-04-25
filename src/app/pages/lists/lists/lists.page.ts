@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail } from "@ionic/angular/standalone";
+import { IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonReorder, IonReorderGroup, ItemReorderEventDetail } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { type Subscription } from "rxjs";
 import { type EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
@@ -19,7 +19,7 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     templateUrl: "./lists.page.html",
     styleUrls: ["./lists.page.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [IonCheckbox, IonLabel, IonReorderGroup, IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent, MainToolbarListsCustomMenuComponent],
+    imports: [IonCheckbox, IonLabel, IonReorderGroup, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent, MainToolbarListsCustomMenuComponent],
 })
 export class ListsPage extends AnimatedListPageBase {
     private _lists: List[] | undefined;
@@ -39,7 +39,6 @@ export class ListsPage extends AnimatedListPageBase {
         this.ListsService.PurgeListDetails();
         this._lists = await this.ListsService.GetLists(true);
         this._itemsInitialized = true;
-        this.onItemsChanged();
         this._listsSubscription = this.ListsService.onListsChanged$.subscribe(lists => {
             if (lists) {
                 this._lists = lists;
@@ -47,6 +46,7 @@ export class ListsPage extends AnimatedListPageBase {
                 this.onItemsChanged();
             }
         });
+        this.onItemsChanged();
     }
 
     public override async ionViewWillLeave(): Promise<void> {
@@ -58,7 +58,7 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public onSwipeRight(list: List) {
-        this.itemsContainer.closeSlidingItems();
+        this._itemsList?.closeSlidingItems();
         this.deleteLists(list);
     }
 
@@ -67,12 +67,12 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public onSwipeLeft(list: List) {
-        this.itemsContainer.closeSlidingItems();
+        this._itemsList?.closeSlidingItems();
         this.transmitLists(list);
     }
 
     public async deleteLists(lists: List | List[]): Promise<boolean | undefined> {
-        this.itemsContainer.closeSlidingItems();
+        this._itemsList?.closeSlidingItems();
         const success = await this.ListsService.DeleteList(lists);
         if (success === true) {
             this.reload();
@@ -81,7 +81,7 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public async emptyLists(lists: List | List[]): Promise<boolean | undefined> {
-        this.itemsContainer.closeSlidingItems();
+        this._itemsList?.closeSlidingItems();
         const success = await this.ListsService.EmptyList(lists);
         if (success === true) {
             this.reload();
@@ -90,7 +90,7 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public async transmitLists(lists: List | List[]): Promise<boolean | undefined> {
-        this.itemsContainer.closeSlidingItems();
+        this._itemsList?.closeSlidingItems();
         return await this.ListsService.TransferList(lists);
     }
 

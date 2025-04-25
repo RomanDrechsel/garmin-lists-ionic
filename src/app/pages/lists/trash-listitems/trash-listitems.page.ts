@@ -108,7 +108,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
                 this.reload();
             }
         }
-        this.itemsContainer?.closeSlidingItems();
+        this._itemsList?.closeSlidingItems();
         return success;
     }
 
@@ -120,7 +120,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
                 this.reload();
             }
         }
-        this.itemsContainer?.closeSlidingItems();
+        this._itemsList?.closeSlidingItems();
         return success;
     }
 

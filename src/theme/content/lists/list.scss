@@ -4,17 +4,22 @@
 
 ion-list {
     contain: none;
+    --background: red;
 
     ion-item-sliding {
+        overflow: visible;
+
         ion-item {
-            --padding-top: 6px;
-            --padding-bottom: 6px;
-            --padding-start: 6px;
+            --padding-top: 0;
+            --padding-bottom: 0;
+            --padding-start: 0;
+            --inner-padding-end: 0;
             --ripple-color: var(--ion-color-primary);
             --min-height: 3.5em;
-            cursor: pointer;
+            --background-color: var(--color-item-background);
             display: flex;
             align-items: start;
+            overflow: visible;
 
             &.selected-item {
                 --background: rgba(var(--ion-color-primary-rgb), 0.07);
@@ -25,14 +30,28 @@ ion-list {
             }
 
             ion-label {
-                display: flex;
-                flex-direction: row;
-                gap: 0.5em;
                 margin-top: 0;
                 margin-bottom: 0;
+                flex: 1;
+                width: 100%;
+                max-width: 100%;
+                min-height: 4em;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                background-color: var(--background-color);
+                border-bottom: solid 1px var(--color-control-border);
+                padding: 0.3em 0.5em;
+                word-break: break-word;
 
                 .details {
                     width: 100%;
+
+                    .date {
+                        color: var(--ion-color-medium);
+                        font-size: 0.9em;
+                    }
                 }
             }
 
@@ -50,6 +69,7 @@ ion-list {
             }
 
             .icons {
+                flex: 0;
                 opacity: 1;
                 transition: opacity 400ms ease-in-out;
 
@@ -69,7 +89,7 @@ ion-list {
                 width: 5em;
                 right: -5em;
                 min-height: 3em;
-                top: 0;
+                top: 0.3em;
                 z-index: 10;
                 transition: right 500ms ease-in-out, opacity 500ms ease-in-out, background-color 300ms ease-in-out;
                 padding: 0.5em 0 0.5em 0.5em;

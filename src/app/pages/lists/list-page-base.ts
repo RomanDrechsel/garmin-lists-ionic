@@ -11,10 +11,10 @@ import { PageBase } from "../page-base";
     template: "",
 })
 export abstract class ListPageBase extends PageBase {
-    @ViewChild("listsContainer") protected itemsContainer!: IonList;
     @ViewChild("mainContent", { read: IonContent, static: false }) protected mainContent?: IonContent;
     @ViewChild("mainContent", { read: ElementRef, static: false }) protected mainContentRef?: ElementRef;
-    @ViewChild("listContent", { read: ElementRef, static: false }) protected listContent?: ElementRef;
+    @ViewChild("itemsList") protected _itemsList?: IonList;
+    @ViewChild("itemsList", { read: ElementRef, static: false }) protected _itemsListRef?: ElementRef;
     @ViewChild(MainToolbarListsCustomMenuComponent, { read: MainToolbarListsCustomMenuComponent, static: false }) protected editMenu?: MainToolbarListsCustomMenuComponent;
 
     protected readonly _modalCtrl = inject(ModalController);
@@ -47,7 +47,7 @@ export abstract class ListPageBase extends PageBase {
         if (!this._itemsInitialized) {
             return false;
         }
-        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+        return (this._itemsListRef?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
     }
 
     public get DisableScrollToTop(): boolean {
@@ -99,7 +99,7 @@ export abstract class ListPageBase extends PageBase {
     public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
         if (event.detail.scrollTop == 0) {
             this._scrollPosition = "top";
-        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
+        } else if (Math.ceil(event.detail.scrollTop) >= (this._itemsListRef?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this._itemsListRef?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
             this._scrollPosition = "bottom";
         } else {
             this._scrollPosition = event.detail.scrollTop;
@@ -114,11 +114,6 @@ export abstract class ListPageBase extends PageBase {
     public async ScrollToBottom(instant: boolean = true) {
         await this.mainContent?.scrollToBottom(instant ? 0 : 300);
         this.cdr.detectChanges();
-    }
-
-    onEditModeChanged(val: boolean) {
-        this._editMode = val;
-        console.log("EditMode geändert:", this._editMode);
     }
 
     protected abstract getEditMenuActions(): EditMenuAction[];

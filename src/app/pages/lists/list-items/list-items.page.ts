@@ -178,7 +178,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         }
-        this.itemsContainer?.closeSlidingItems();
+        this._itemsList?.closeSlidingItems();
         return success;
     }
 
@@ -187,7 +187,7 @@ export class ListItemsPage extends AnimatedListPageBase {
         if (this.List) {
             success = await this.ListsService.ToggleHiddenListitem(this.List, items, hide);
         }
-        this.itemsContainer?.closeSlidingItems();
+        this._itemsList?.closeSlidingItems();
         return success;
     }
 
@@ -196,7 +196,7 @@ export class ListItemsPage extends AnimatedListPageBase {
         if (this.List) {
             success = await this.ListsService.ToggleLockListitem(this.List, items, pin);
         }
-        this.itemsContainer?.closeSlidingItems();
+        this._itemsList?.closeSlidingItems();
         return success;
     }
 
