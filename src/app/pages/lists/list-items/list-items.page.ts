@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { IonButton, IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonReorder, IonReorderGroup, IonText, IonTextarea, ItemReorderEventDetail } from "@ionic/angular/standalone";
+import { IonButton, IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonReorder, IonReorderGroup, IonTextarea, ItemReorderEventDetail } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import type { EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
@@ -21,34 +21,8 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     selector: "app-list-items",
     templateUrl: "./list-items.page.html",
     styleUrls: ["./list-items.page.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        IonLabel,
-        IonCheckbox,
-        IonImg,
-        IonText,
-        IonButton,
-        IonTextarea,
-        IonFabButton,
-        IonFab,
-        IonReorder,
-        IonNote,
-        IonItem,
-        IonItemOptions,
-        IonItemSliding,
-        IonIcon,
-        IonItemOption,
-        IonReorderGroup,
-        IonList,
-        IonContent,
-        CommonModule,
-        FormsModule,
-        TranslateModule,
-        MainToolbarComponent,
-        PageAddNewComponent,
-        PageEmptyComponent,
-        MainToolbarListsCustomMenuComponent,
-    ],
+    changeDetection: ChangeDetectionStrategy.Default,
+    imports: [IonLabel, IonCheckbox, IonImg, IonButton, IonTextarea, IonFabButton, IonFab, IonReorder, IonItem, IonItemOptions, IonItemSliding, IonIcon, IonItemOption, IonReorderGroup, IonList, IonContent, CommonModule, FormsModule, TranslateModule, MainToolbarComponent, PageAddNewComponent, PageEmptyComponent, MainToolbarListsCustomMenuComponent],
 })
 export class ListItemsPage extends AnimatedListPageBase {
     @ViewChild("quickAdd", { read: IonTextarea, static: false }) private quickAdd?: IonTextarea;
@@ -286,7 +260,6 @@ export class ListItemsPage extends AnimatedListPageBase {
 
     public async QuickAddItem(event: MouseEvent) {
         if (this.List && this.quickAdd?.value && this.quickAdd.value.trim().length > 0) {
-            this._forceHideButtons = true;
             event.stopImmediatePropagation();
             await this.ListsService.AddNewListitem(this.List, { item: this.quickAdd.value.trim() });
             await this.ScrollToBottom(true);

@@ -301,6 +301,7 @@ export class ListsService {
 
         if (success) {
             this.putListInIndex(list);
+            this.onListsChangedSubject.next(await this.GetLists(true));
         }
 
         return success;

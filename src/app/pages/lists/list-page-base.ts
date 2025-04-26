@@ -13,7 +13,7 @@ import { PageBase } from "../page-base";
 export abstract class ListPageBase extends PageBase {
     @ViewChild("mainContent", { read: IonContent, static: false }) protected mainContent?: IonContent;
     @ViewChild("mainContent", { read: ElementRef, static: false }) protected mainContentRef?: ElementRef;
-    @ViewChild("itemsList") protected _itemsList?: IonList;
+    @ViewChild("itemsList", { read: IonList, static: false }) protected _itemsList?: IonList;
     @ViewChild("itemsList", { read: ElementRef, static: false }) protected _itemsListRef?: ElementRef;
     @ViewChild(MainToolbarListsCustomMenuComponent, { read: MainToolbarListsCustomMenuComponent, static: false }) protected editMenu?: MainToolbarListsCustomMenuComponent;
 
@@ -27,7 +27,6 @@ export abstract class ListPageBase extends PageBase {
     protected _selectedItems: (Number | String)[] = [];
 
     protected _keyboardShow = false;
-    protected _forceHideButtons = false;
     private _keyboardShowListener?: PluginListenerHandle;
     private _keyboardHideListener?: PluginListenerHandle;
 
@@ -44,10 +43,10 @@ export abstract class ListPageBase extends PageBase {
     }
 
     public get ShowScrollButtons(): boolean {
-        if (!this._itemsInitialized) {
+        if (!this._itemsInitialized || this._keyboardShow || !this._itemsListRef || !this.mainContentRef) {
             return false;
         }
-        return (this._itemsListRef?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
+        return (this._itemsListRef.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef.nativeElement as HTMLElement)?.clientHeight;
     }
 
     public get DisableScrollToTop(): boolean {
@@ -63,23 +62,25 @@ export abstract class ListPageBase extends PageBase {
     }
 
     public get ShowAddButton(): boolean {
-        return this._itemsInitialized && !this._keyboardShow && !this._forceHideButtons && !this.EditMode;
+        return this._itemsInitialized && !this._keyboardShow && !this.EditMode;
     }
 
     public override async ionViewWillEnter(): Promise<void> {
         await super.ionViewWillEnter();
         this._editMode = false;
         this._selectedItems = [];
+        this._keyboardShowListener = await Keyboard.addListener("keyboardWillShow", () => {
+            this._keyboardShow = true;
+            this.reload();
+        });
+        this._keyboardHideListener = await Keyboard.addListener("keyboardWillHide", () => {
+            this._keyboardShow = false;
+            this.reload();
+        });
     }
 
     public override async ionViewDidEnter(): Promise<void> {
         await super.ionViewDidEnter();
-        this._keyboardShowListener = await Keyboard.addListener("keyboardWillShow", () => {
-            this._keyboardShow = true;
-        });
-        this._keyboardHideListener = await Keyboard.addListener("keyboardWillHide", () => {
-            this._keyboardShow = false;
-        });
     }
 
     public override async ionViewWillLeave(): Promise<void> {

@@ -8,5 +8,6 @@ WIP: animations
 TEST: editmode
 WIP: animations doesn't work properly
 BUG: Progressbar is not shown after page change
+BUG: List-Editor: checkboxes doesn't match text color
 TODO: use SQLite as backend
 TODO: note function

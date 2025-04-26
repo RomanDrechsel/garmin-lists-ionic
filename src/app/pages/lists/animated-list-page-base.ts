@@ -49,23 +49,32 @@ export abstract class AnimatedListPageBase extends ListPageBase {
     }
 
     protected async onItemsChanged() {
-        this.reload();
-        if (!this._initAnimationDone && this._animateItems) {
-            await new Promise<void>(resolve => setTimeout(() => resolve(), 10));
-            const content = document.querySelector("#main-content ion-content[role='main']") as HTMLElement;
-            const querySelector = "#animated-list .animated-item:not(.animating)";
-            const all_items = Array.from(content.querySelectorAll(querySelector));
+        await new Promise<void>(resolve => setTimeout(() => resolve(), 1));
+        const content = document.querySelector("#main-content") as HTMLElement;
+        const viewport = content?.offsetHeight ?? window.innerHeight;
 
+        const all_items = Array.from((this._itemsListRef?.nativeElement as HTMLElement)?.querySelectorAll(".animated-item") ?? []);
+        if (all_items.length == 0) {
+            this.finishAnimation();
+        }
+
+        if (!this._initAnimationDone && this._animateItems) {
             all_items.forEach((el: Element, index: number) => {
+                if (el.classList.contains("animating")) {
+                    return;
+                }
+
                 const ref = this.refElement(el as HTMLElement);
-                if (this.animateElement(ref, content.offsetHeight)) {
+                if (this.animateElement(ref, viewport)) {
+                    el.classList.add("animating");
                     setTimeout(() => {
                         const animation = CreateListitemAnimation(el as HTMLElement, ref, this._animationDirection);
-                        if (index == all_items.length - 1) {
-                            animation.afterAddWrite(() => {
+                        animation.afterAddWrite(() => {
+                            this._itemAnimations = this._itemAnimations?.filter(a => a != animation);
+                            if (this._itemAnimations?.length == 0) {
                                 this.finishAnimation();
-                            });
-                        }
+                            }
+                        });
                         if (this._itemAnimations) {
                             this._itemAnimations.push(animation);
                         } else {
@@ -74,14 +83,13 @@ export abstract class AnimatedListPageBase extends ListPageBase {
                         animation.play();
                     }, index * 70);
                 } else {
-                    el.classList.remove("pre-animation-state");
-                    this.finishAnimation();
+                    el.classList.remove("pre-animation-state", "animating");
                 }
             });
-            if (all_items.length == 0) {
-                this.finishAnimation();
-            }
         } else {
+            all_items.forEach(el => {
+                el.classList.remove("pre-animation-state", "animating");
+            });
             this.finishAnimation();
         }
     }

@@ -2,7 +2,7 @@ import { Animation, AnimationController } from "@ionic/angular/standalone";
 
 export const CreateListitemAnimation = (baseEl?: HTMLElement, ref?: HTMLElement, direction: ListitemAnimationDirection = "top"): Animation => {
     const animationCtrl = new AnimationController();
-    const duration = 4000;
+    const duration = 400;
 
     if (!baseEl) {
         return animationCtrl.create();

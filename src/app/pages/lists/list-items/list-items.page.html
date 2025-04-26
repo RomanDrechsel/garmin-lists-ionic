@@ -5,21 +5,19 @@
 
 <ion-content fixed-slot-placement="before" scrollEvents="true" scrollX="false" overflow-scroll="false" (ionScroll)="onScroll($event)" *ngIf="List !== undefined && ItemsInitialized; else error" #mainContent>
     <div class="content" *ngIf="List && List.Items.length > 0; else noItems" #listContent>
-        <ion-list id="animated-list" #itemsContainer>
+        <ion-list id="animated-list" #itemsList>
             <ion-reorder-group [disabled]="List.Items.length <= 1" (ionItemReorder)="HandleReorder($any($event))" [disabled]="!EditMode">
-                <ion-item-sliding *ngFor="let item of List.Items" [disabled]="EditMode" class="animated-item">
-                    <ion-item lines="full" [button]="true" (click)="clickOnItem($event, item)" [ngClass]="{'hidden': item.Hidden, 'selected-item': EditMode && isItemSelected(item)}">
-                        <div class="listpoint-indicator-wrapper" slot="start">
-                            <div class="listpoint-indicator" *ngIf="!item.Locked"></div>
-                            <ion-icon src="./assets/icons/pin_solid.svg" *ngIf="item.Locked"></ion-icon>
-                        </div>
-                        <ion-label>
-                            <div class="details">
-                                <div>
-                                    <ion-text class="item">{{item.Item}}</ion-text>
+                <ion-item-sliding *ngFor="let item of List.Items" [disabled]="EditMode || !InitialAnimationDone">
+                    <ion-item lines="none" [button]="true" (click)="clickOnItem($event, item)" [ngClass]="{'selected-item': EditMode && isItemSelected(item)}">
+                        <ion-label class="animated-item" [ngClass]="{'pre-animation-state': !InitialAnimationDone}">
+                            <div class="details" [ngClass]="{'hidden': item.Hidden}">
+                                <div class="listpoint-indicator-wrapper">
+                                    <div class="listpoint-indicator" *ngIf="!item.Locked"></div>
+                                    <ion-icon src="./assets/icons/pin_solid.svg" *ngIf="item.Locked"></ion-icon>
                                 </div>
-                                <div *ngIf="item.Note">
-                                    <ion-note color="medium" class="note">{{item.Note}}</ion-note>
+                                <div class="text">
+                                    <div class="item">{{item.Item}}</div>
+                                    <div color="medium" class="note" *ngIf="item.Note">{{item.Note}}</div>
                                 </div>
                             </div>
                         </ion-label>

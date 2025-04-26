@@ -5,19 +5,17 @@
 
 <ion-content fixed-slot-placement="before" scrollEvents="true" scrollX="false" overflow-scroll="false" (ionScroll)="onScroll($event)" #mainContent>
     <div *ngIf="Trash && Trash.items.length > 0; else empty" class="list-content" #listContent>
-        <ion-list id="animated-list" #itemsContainer>
-            <ion-item-sliding *ngFor="let item of Trash.items" [disabled]="EditMode" class="animated-item">
-                <ion-item lines="full" [button]="true" (click)="clickOnItem($event, item)" [ngClass]="{'hidden': item.hidden, 'selected-item': EditMode && isItemSelected(item)}">
-                    <div class="listpoint-indicator-wrapper" slot="start">
-                        <div class="listpoint-indicator"></div>
-                    </div>
-                    <ion-label>
-                        <div class="details">
-                            <div>
-                                <ion-text class="item">{{item.item}}</ion-text>
+        <ion-list id="animated-list" #itemsList>
+            <ion-item-sliding *ngFor="let item of Trash.items" [disabled]="EditMode || !InitialAnimationDone">
+                <ion-item lines="none" [button]="true" (click)="clickOnItem($event, item)" [ngClass]="{'selected-item': EditMode && isItemSelected(item)}">
+                    <ion-label class="animated-item">
+                        <div class="details" [ngClass]="{'hidden': item.hidden}">
+                            <div class="listpoint-indicator-wrapper" slot="start">
+                                <div class="listpoint-indicator"></div>
                             </div>
-                            <div *ngIf="item.note">
-                                <ion-note color="medium" class="note">{{item.note}}</ion-note>
+                            <div class="text">
+                                <div class="item">{{item.item}}</div>
+                                <div color="medium" class="note" *ngIf="item.note">{{item.note}}</div>
                             </div>
                         </div>
                     </ion-label>

@@ -18,7 +18,7 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     selector: "app-lists",
     templateUrl: "./lists.page.html",
     styleUrls: ["./lists.page.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.Default,
     imports: [IonCheckbox, IonLabel, IonReorderGroup, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent, MainToolbarListsCustomMenuComponent],
 })
 export class ListsPage extends AnimatedListPageBase {
@@ -31,7 +31,7 @@ export class ListsPage extends AnimatedListPageBase {
 
     constructor() {
         super();
-        this._animationDirection = "top";
+        this._animationDirection = "left";
     }
 
     public override async ionViewWillEnter(): Promise<void> {
