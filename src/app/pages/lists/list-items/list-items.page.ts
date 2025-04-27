@@ -76,9 +76,8 @@ export class ListItemsPage extends AnimatedListPageBase {
                 this.appComponent.setAppPages(this.ModifyMainMenu());
                 if (this._list) {
                     this._itemsInitialized = true;
+                    this.Preferences.Set(EPrefProperty.OpenedList, this._list.Uuid);
                     this.onItemsChanged();
-                    this.Logger.Debug(`Autoload list ${this._list.Uuid}`);
-                    await this.Preferences.Set(EPrefProperty.OpenedList, this._list.Uuid);
                 }
             }
         })();
@@ -114,7 +113,6 @@ export class ListItemsPage extends AnimatedListPageBase {
     public override async ionViewWillLeave() {
         await super.ionViewWillLeave();
         await this.Preferences.Remove(EPrefProperty.OpenedList);
-        this.Logger.Debug(`Remove autoload list ${this.List?.Uuid}`);
         this._preferencesSubscription?.unsubscribe();
         this._listSubscription?.unsubscribe();
         this._connectIQSubscription?.unsubscribe();

@@ -1,6 +1,6 @@
 {
     "name": "lists",
-    "version": "2025.04.2701",
+    "version": "2025.04.2703",
     "author": "Roman Drechsel",
     "homepage": "https://roman-drechsel.de",
     "scripts": {
@@ -42,7 +42,6 @@
         "@ngx-translate/core": "16.0.4",
         "@ngx-translate/http-loader": "16.0.1",
         "capacitor-email-composer": "^7.0.0",
-        "npm": "11.3.0",
         "rxjs": "7.8.2",
         "tslib": "2.8.1",
         "zone.js": "0.15.0"

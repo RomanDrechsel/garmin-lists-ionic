@@ -14,7 +14,6 @@ export class OpenListOnStartGuard implements CanActivate {
         if (!OpenListOnStartGuard._check) {
             OpenListOnStartGuard._check = true;
             const openend_list = await this._preferences.Get(EPrefProperty.OpenedList, undefined);
-            console.log("List on Start: ", openend_list);
             if (openend_list) {
                 this._router.navigateByUrl(`/lists/items/${openend_list}`, { replaceUrl: false });
                 return false;
