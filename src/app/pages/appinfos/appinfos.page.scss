@@ -63,14 +63,18 @@ ion-content {
         }
 
         ion-img {
-            margin-top: 10px;
+            margin-block: 1em;
             margin-inline: auto;
             max-width: 265px;
+
+            &.paypal {
+                max-width: 200px;
+            }
         }
 
         .review {
             margin-block: 16px;
-            font-size: 1.2em;
+            font-size: 1em;
 
             > div {
                 margin-bottom: 10px;

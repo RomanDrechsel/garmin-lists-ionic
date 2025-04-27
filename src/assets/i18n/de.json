@@ -412,8 +412,9 @@
         "database_trash": "Papierkorb:",
         "database_logs": "Logs:",
         "memory": "Speicherverbrauch:",
-        "support": "Ich habe die App in meiner Freizeit und ohne finanzielle Hintergedanken entwickelt.<br />Sie ist und bleibt kostenlos und OpenSource.<br /><br />Wenn sie Dir gefällt und du mich unterstützen möchtest,<br />warum kaufst du mir dann nicht einen Kaffee?",
-        "review": "Oder schreibe eine nette Bewertung im <strong>Garmin ConnectIQ Store</strong>",
+        "support": "Ich habe die App in meiner Freizeit und ohne finanzielle Hintergedanken entwickelt.<br />Sie ist und bleibt kostenlos und OpenSource.<br /><br />Wenn sie Dir gefällt und du mich unterstützen möchtest,<br />warum kaufst du mir dann nicht einen Kaffee,",
+        "support2": "unterstützt mich auf Paypal,",
+        "review": "oder schreibst eine nette Bewertung im <strong>Garmin ConnectIQ Store</strong>",
         "review_google": "oder auf <strong>Google Play</strong>",
         "thanks": "Danke!",
         "website": "Für meine anderen Projekte, besuche mich auf meiner Webseite:"

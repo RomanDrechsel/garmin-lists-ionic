@@ -65,6 +65,11 @@ export class AppinfosPage extends PageBase {
         await Browser.open({ url: "https://buymeacoffee.com/romandrechsel" });
     }
 
+    public async paypal() {
+        const url = this.Locale.CurrentLanguage.locale == "de-DE" ? "https://www.paypal.com/donate/?hosted_button_id=T5GWXZJ9PZK4N" : "https://www.paypal.com/donate/?hosted_button_id=6SML79UYCTTL8";
+        await Browser.open({ url: url });
+    }
+
     public async mywebsite() {
         await Browser.open({ url: `https://${this.Config.Homepage}` });
     }
