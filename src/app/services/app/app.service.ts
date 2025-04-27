@@ -1,4 +1,4 @@
-import { Injectable, inject, isDevMode } from "@angular/core";
+import { inject, Injectable, isDevMode } from "@angular/core";
 import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
@@ -70,15 +70,7 @@ export class AppService {
         AppService.Popups = this._popups;
         await Logger.Initialize(this.Logger);
         await Locale.Initialize(this.Locale);
-
-        //no await ...
-        (async () => {
-            await this.ListsService.Initialize();
-            const loadList = await this.Preferences.Get<string>(EPrefProperty.OpenedList, "");
-            if (loadList.length > 0) {
-                this.NavController.navigateForward(`/lists/items/${loadList}`, { animated: false });
-            }
-        })();
+        await this.ListsService.Initialize();
 
         //no await ...
         (async () => {

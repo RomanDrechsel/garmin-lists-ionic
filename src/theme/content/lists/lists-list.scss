@@ -1,46 +1,35 @@
 @use "src/theme/content/lists/list.scss";
 
-ion-content {
-    background: var(--color-lists-background);
-
-    ion-list {
+ion-list {
+    ion-item-sliding {
         ion-item {
             .details {
-                --color: var(--ion-color-tertiary);
-
                 .listname {
                     font-size: 1.4em;
                 }
-
-                ion-note {
-                    --padding-top: 0;
-                }
             }
 
-            .itemcount {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-                margin-inline-start: 0;
-                padding-inline-start: 0.5em;
+            .icons {
+                .itemcount {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-inline-start: 0;
+                    padding-inline-start: 0.5em;
+                    word-break: keep-all;
 
-                .count {
-                    padding: 4px 8px;
-                    font-size: 0.8em;
-                    color: var(--ion-color-primary-contrast);
-                    border-radius: 12px;
-                    background: var(--ion-color-primary);
+                    .count {
+                        padding: 4px 8px;
+                        font-size: 0.8em;
+                        color: var(--ion-color-primary-contrast);
+                        border-radius: 12px;
+                        background: var(--ion-color-primary);
+                    }
                 }
-            }
 
-            .edit {
-                cursor: pointer;
-                margin: 0;
-                padding: 0.4em 0.3em 0.4em 0.3em;
-
-                &:hover {
-                    color: var(--color);
+                .edit {
+                    margin: 0;
+                    padding: 0.4em 0.3em 0.4em 0.3em;
                 }
             }
         }

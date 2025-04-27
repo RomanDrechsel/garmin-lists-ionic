@@ -61,21 +61,16 @@ export class ListitemsTrashProvider {
     /**
      * erases a listitem from trash
      * @param trash list trash, the item should be erased
-     * @param item unique identifier of the listitem
+     * @param items model(s) of the listitem(s) to remove
      * @returns was the erase successful
      */
-    public async EraseListitem(trash: ListitemTrashModel | string | undefined, item: string | ListitemModel): Promise<boolean> {
-        if (typeof trash === "string") {
-            trash = await this.Backend.GetListitemTrash(trash, this.StoragePath);
-        }
-        if (trash) {
-            const before = trash.items.length;
-            const success = ListitemTrashUtils.RemoveItem(trash, item);
-            if (success.items.length < before) {
-                if (await this.Store(trash)) {
-                    Logger.Debug(`Removed listitem ${item} from trash of list ${ListitemTrashUtils.toLog(trash)}`);
-                    return true;
-                }
+    public async EraseListitem(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean> {
+        const before = trash.items.length;
+        const success = ListitemTrashUtils.RemoveItem(trash, items);
+        if (success.items.length < before) {
+            if (await this.Store(trash)) {
+                Logger.Debug(`Removed listitem ${items} from trash of list ${ListitemTrashUtils.toLog(trash)}`);
+                return true;
             }
         }
         return false;

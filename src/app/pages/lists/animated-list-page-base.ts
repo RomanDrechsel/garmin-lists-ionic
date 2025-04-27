@@ -1,23 +1,21 @@
+import type { Animation, IonContentCustomEvent, ScrollDetail } from "@ionic/core";
 import { Subscription } from "rxjs";
+import { CreateListitemAnimation, type ListitemAnimationDirection } from "src/app/animations/listitem.animation";
 import { EPrefProperty } from "../../services/storage/preferences.service";
-import { PageBase } from "../page-base";
+import { ListPageBase } from "./list-page-base";
 
-export abstract class AnimatedListPageBase extends PageBase {
-    private readonly _animationDelay = 30;
-
+export abstract class AnimatedListPageBase extends ListPageBase {
     protected _initAnimationDone = false;
-    protected _animationDirection: "left" | "right" | "top" | "bottom" = "left";
+    protected _animationDirection: ListitemAnimationDirection = "left";
 
     private _animateItems = true;
+
+    private _itemAnimations: Animation[] | undefined;
 
     private _animationSubscription?: Subscription;
 
     public get InitialAnimationDone(): boolean {
         return this._initAnimationDone;
-    }
-
-    public get ItemAnimationClass(): string {
-        return `animation-${this._animationDirection}`;
     }
 
     public override async ionViewWillEnter() {
@@ -42,54 +40,80 @@ export abstract class AnimatedListPageBase extends PageBase {
         }
     }
 
-    protected async onItemsChanged() {
-        this.reload();
-
-        await new Promise<void>(resolve => setTimeout(() => resolve(), 10));
-
-        if (!this._initAnimationDone && this._animateItems) {
-            const querySelector = "#animated-list .animated-item.animated:not(.animation-running)";
-            const toanimated = Array.from(document.querySelectorAll(querySelector)).filter((el: Element) => this.animateElement(el as HTMLElement));
-
-            console.log(`found ${toanimated.length} items to animate`);
-
-            toanimated.forEach((el: Element, index: number) => {
-                const html_el = el as HTMLElement;
-                if (html_el) {
-                    html_el.style.transitionDelay = `${index * this._animationDelay}ms`;
-                    if (index == toanimated.length - 1) {
-                        html_el.addEventListener(
-                            "transitionend",
-                            (ev: TransitionEvent) => {
-                                this._initAnimationDone = true;
-                                Array.from(document.querySelectorAll("#animated-list .animated-item")).forEach(el => {
-                                    if (el instanceof HTMLElement) {
-                                        //el.classList.remove("animated", "animation-running", this.ItemAnimationClass);
-                                        el.style.transitionDelay = "";
-                                    }
-                                });
-                            },
-                            { once: true },
-                        );
-                    }
-                    html_el.classList.add("animation-running");
-                } else {
-                    console.log("no html element", el);
-                }
-            });
-            if (toanimated.length == 0) {
-                console.log("no items to animate");
-                this._initAnimationDone = true;
-            }
-        } else {
-            this._initAnimationDone = true;
+    public override onScroll(event: IonContentCustomEvent<ScrollDetail>) {
+        super.onScroll(event);
+        if (this._itemAnimations) {
+            this._itemAnimations.forEach(a => a.progressEnd(1, 1));
+            this.finishAnimation();
         }
     }
 
-    private animateElement(el?: HTMLElement): boolean {
-        if (!el) {
-            return false;
+    protected async onItemsChanged() {
+        await new Promise<void>(resolve => setTimeout(() => resolve(), 1));
+        const content = document.querySelector("#main-content") as HTMLElement;
+        const viewport = content?.offsetHeight ?? window.innerHeight;
+
+        const all_items = Array.from((this._itemsListRef?.nativeElement as HTMLElement)?.querySelectorAll(".animated-item") ?? []);
+        if (all_items.length == 0) {
+            this.finishAnimation();
         }
-        return el.offsetTop < window.scrollY + window.innerHeight;
+
+        if (!this._initAnimationDone && this._animateItems) {
+            all_items.forEach((el: Element, index: number) => {
+                if (el.classList.contains("animating")) {
+                    return;
+                }
+
+                const ref = this.refElement(el as HTMLElement);
+                if (this.animateElement(ref, viewport)) {
+                    el.classList.add("animating");
+                    setTimeout(() => {
+                        const animation = CreateListitemAnimation(el as HTMLElement, ref, this._animationDirection);
+                        animation.afterAddWrite(() => {
+                            this._itemAnimations = this._itemAnimations?.filter(a => a != animation);
+                            if (this._itemAnimations?.length == 0) {
+                                this.finishAnimation();
+                            }
+                        });
+                        if (this._itemAnimations) {
+                            this._itemAnimations.push(animation);
+                        } else {
+                            this._itemAnimations = [animation];
+                        }
+                        animation.play();
+                    }, index * 50);
+                } else {
+                    el.classList.remove("pre-animation-state", "animating");
+                }
+            });
+        } else {
+            all_items.forEach(el => {
+                el.classList.remove("pre-animation-state", "animating");
+            });
+            this.finishAnimation();
+        }
+    }
+
+    private finishAnimation() {
+        this._itemAnimations = undefined;
+        this._initAnimationDone = true;
+        this.reload();
+    }
+
+    private refElement(el?: HTMLElement): HTMLElement | undefined {
+        for (let i = 0; i < 5; i++) {
+            if (el && el.tagName.toLowerCase() == "ion-item-sliding") {
+                return el;
+            }
+            el = el?.parentElement as HTMLElement;
+        }
+        return undefined;
+    }
+
+    private animateElement(el?: HTMLElement, viewport?: number): boolean {
+        if (el) {
+            return el.offsetTop < window.scrollY + (viewport ? viewport : window.innerHeight);
+        }
+        return false;
     }
 }

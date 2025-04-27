@@ -1,9 +1,10 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, ViewChild } from "@angular/core";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonText, ScrollDetail } from "@ionic/angular/standalone";
-import { IonContentCustomEvent } from "@ionic/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonNote, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
+import type { EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
+import { MainToolbarListsCustomMenuComponent } from "src/app/components/main-toolbar-lists-custom-menu/main-toolbar-lists-custom-menu.component";
 import { EMenuItemType, MenuItem, MenuitemFactory } from "../../../classes/menu-items";
 import { DateUtils } from "../../../classes/utils/date-utils";
 import { MainToolbarComponent } from "../../../components/main-toolbar/main-toolbar.component";
@@ -15,41 +16,12 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     selector: "app-trash-lists",
     templateUrl: "./trash-lists.page.html",
     styleUrls: ["./trash-lists.page.scss"],
-    imports: [IonContent, IonText, IonNote, IonItem, IonImg, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent],
+    changeDetection: ChangeDetectionStrategy.Default,
+    imports: [IonCheckbox, IonLabel, IonContent, IonText, IonNote, IonItem, IonImg, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonFab, IonFabButton, CommonModule, TranslateModule, MainToolbarComponent, PageEmptyComponent, MainToolbarListsCustomMenuComponent],
 })
 export class TrashListsPage extends AnimatedListPageBase {
-    @ViewChild("listsContainer") private listsContainer!: IonList;
-    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
-    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
-    @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
-
     public Lists: List[] = [];
     private _trashChangedSubscription?: Subscription;
-    private _scrollPosition: "top" | "bottom" | number = "top";
-    private _trashInitialized = false;
-
-    public get ScrollPosition(): "top" | "bottom" | number {
-        return this._scrollPosition;
-    }
-
-    public get ShowScrollButtons(): boolean {
-        if (!this._trashInitialized) {
-            return false;
-        }
-        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
-    }
-
-    public get DisableScrollToTop(): boolean {
-        return this._scrollPosition == "top";
-    }
-
-    public get DisableScrollToBottom(): boolean {
-        return this._scrollPosition == "bottom";
-    }
-
-    public get TrashInitialized(): boolean {
-        return this._trashInitialized;
-    }
 
     constructor() {
         super();
@@ -58,19 +30,18 @@ export class TrashListsPage extends AnimatedListPageBase {
 
     public override async ionViewWillEnter() {
         super.ionViewWillEnter();
-        this._trashInitialized = false;
         this._trashChangedSubscription = this.ListsService.onTrashDatasetChanged$.subscribe(lists => {
             this.Lists = lists ?? [];
             if (lists) {
                 this.Lists = this.Lists.sort((a, b) => b.Deleted - a.Deleted);
-                this._trashInitialized = true;
+                this._itemsInitialized = true;
                 this.onItemsChanged();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
 
         this.Lists = (await this.ListsService.GetTrash()).sort((a: List, b: List) => b.Deleted - a.Deleted);
-        this._trashInitialized = true;
+        this._itemsInitialized = true;
         this.onItemsChanged();
     }
 
@@ -92,14 +63,21 @@ export class TrashListsPage extends AnimatedListPageBase {
         await this.restoreList(list);
     }
 
-    public async deleteList(list: List) {
-        await this.ListsService.EraseListFromTrash(list);
-        this.listsContainer.closeSlidingItems();
+    public async deleteList(lists: List | List[]): Promise<boolean | undefined> {
+        const success = await this.ListsService.EraseListFromTrash(lists);
+
+        if (success) {
+            this._itemsList?.closeSlidingItems();
+        }
+        return success;
     }
 
-    public async restoreList(list: List) {
-        await this.ListsService.RestoreListFromTrash(list);
-        this.listsContainer.closeSlidingItems();
+    public async restoreList(lists: List | List[]): Promise<boolean | undefined> {
+        const success = await this.ListsService.RestoreListFromTrash(lists);
+        if (success) {
+            this._itemsList?.closeSlidingItems();
+        }
+        return success;
     }
 
     public async emptyTrash(): Promise<boolean> {
@@ -115,23 +93,63 @@ export class TrashListsPage extends AnimatedListPageBase {
         }
     }
 
-    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
-        if (event.detail.scrollTop == 0) {
-            this._scrollPosition = "top";
-        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
-            this._scrollPosition = "bottom";
-        } else {
-            this._scrollPosition = event.detail.scrollTop;
+    public isListSelected(list: List): boolean {
+        return this._selectedItems.indexOf(list.Uuid) >= 0;
+    }
+
+    public clickOnItem(event: MouseEvent, list: List) {
+        if (!this._disableClick && this._editMode) {
+            this._disableClick = true;
+            if (this.isListSelected(list)) {
+                this._selectedItems = this._selectedItems.filter(l => l != list.Uuid);
+            } else {
+                this._selectedItems.push(list.Uuid);
+            }
+            setTimeout(() => {
+                this._disableClick = false;
+            }, 100);
         }
+        event.stopImmediatePropagation();
     }
 
-    public async ScrollToTop() {
-        await this.mainContent?.scrollToTop(300);
-        this.cdr.detectChanges();
-    }
-
-    public async ScrollToBottom(instant: boolean = true) {
-        await this.mainContent?.scrollToBottom(instant ? 0 : 300);
-        this.cdr.detectChanges();
+    protected override getEditMenuActions(): EditMenuAction[] {
+        let texts = [];
+        if (this._selectedItems.length == 1) {
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.list-restore", "comp-toolbar-edit-menu.trash-list-delete"]);
+            texts["restore"] = texts["comp-toolbar-edit-menu.list-restore"];
+            texts["delete"] = texts["comp-toolbar-edit-menu.trash-list-delete"];
+        } else {
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.lists-restore", "comp-toolbar-edit-menu.trash-lists-delete"], { num: this._selectedItems.length });
+            texts["restore"] = texts["comp-toolbar-edit-menu.lists-restore"];
+            texts["delete"] = texts["comp-toolbar-edit-menu.trash-lists-delete"];
+        }
+        return [
+            {
+                icon: "/assets/icons/undo.svg",
+                text: texts["restore"],
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    const restore = await this.restoreList(this.Lists.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                    if (restore === true) {
+                        this._selectedItems = [];
+                    } else if (restore === undefined) {
+                        this.editMenu?.enterEditMode();
+                    }
+                },
+            },
+            {
+                icon: "/assets/icons/trash.svg",
+                text: texts["delete"],
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    const del = await this.deleteList(this.Lists.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                    if (del === true) {
+                        this._selectedItems = [];
+                    } else if (del === undefined) {
+                        this.editMenu?.enterEditMode();
+                    }
+                },
+            },
+        ];
     }
 }

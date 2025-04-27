@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { FirstStartGuard } from "./pages/first-start/first-start.guard";
+import { OpenListOnStartGuard } from "./pages/lists/lists/open-list-on-start.guard";
 import { ConnectIQGuard } from "./services/connectiq/connect-iq-guard";
 
 export const routes: Routes = [
@@ -11,7 +12,7 @@ export const routes: Routes = [
     {
         path: "lists",
         loadComponent: () => import("./pages/lists/lists/lists.page").then(m => m.ListsPage),
-        canActivate: [FirstStartGuard],
+        canActivate: [FirstStartGuard, OpenListOnStartGuard],
     },
     {
         path: "lists/items/:uuid",

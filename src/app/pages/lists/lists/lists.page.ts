@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, ViewChild, WritableSignal } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonList, IonNote, IonReorder, IonReorderGroup, ItemReorderEventDetail, ScrollDetail } from "@ionic/angular/standalone";
-import { IonContentCustomEvent } from "@ionic/core";
+import { IonCheckbox, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonReorder, IonReorderGroup, ItemReorderEventDetail } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import { Observable, type Subscription } from "rxjs";
+import { type Subscription } from "rxjs";
+import { type EditMenuAction } from "src/app/components/main-toolbar-edit-menu-modal/main-toolbar-edit-menu-modal.component";
+import { MainToolbarListsCustomMenuComponent } from "src/app/components/main-toolbar-lists-custom-menu/main-toolbar-lists-custom-menu.component";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { List } from "src/app/services/lists/list";
 import { DateUtils } from "../../../classes/utils/date-utils";
@@ -18,59 +18,35 @@ import { AnimatedListPageBase } from "../animated-list-page-base";
     selector: "app-lists",
     templateUrl: "./lists.page.html",
     styleUrls: ["./lists.page.scss"],
-    imports: [IonReorderGroup, IonNote, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent],
+    changeDetection: ChangeDetectionStrategy.Default,
+    imports: [IonCheckbox, IonLabel, IonReorderGroup, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonFabButton, IonFab, IonItem, IonReorder, IonList, IonContent, IonImg, MainToolbarComponent, PageAddNewComponent, CommonModule, FormsModule, TranslateModule, PageEmptyComponent, MainToolbarListsCustomMenuComponent],
 })
 export class ListsPage extends AnimatedListPageBase {
-    @ViewChild("listsContainer") private listsContainer!: IonList;
-    @ViewChild("mainContent", { read: IonContent, static: false }) mainContent?: IonContent;
-    @ViewChild("mainContent", { read: ElementRef, static: false }) mainContentRef?: ElementRef;
-    @ViewChild("listContent", { read: ElementRef, static: false }) listContent?: ElementRef;
-
-    public Lists: WritableSignal<List[] | undefined> = this.ListsService.Lists;
-    private _listObserver?: Observable<List[] | undefined> = toObservable(this.ListsService.Lists);
+    private _lists: List[] | undefined;
     private _listsSubscription?: Subscription;
-    private _disableClick = false;
-    private _scrollPosition: "top" | "bottom" | number = "top";
 
-    private _listsInitialized = false;
-
-    public get ScrollPosition(): "top" | "bottom" | number {
-        return this._scrollPosition;
-    }
-
-    public get ShowScrollButtons(): boolean {
-        if (!this._listsInitialized) {
-            return false;
-        }
-        return (this.listContent?.nativeElement as HTMLElement)?.scrollHeight > (this.mainContentRef?.nativeElement as HTMLElement)?.clientHeight;
-    }
-
-    public get DisableScrollToTop(): boolean {
-        return this._scrollPosition == "top";
-    }
-
-    public get DisableScrollToBottom(): boolean {
-        return this._scrollPosition == "bottom";
-    }
-
-    public get ListsInitialized(): boolean {
-        return this._listsInitialized;
+    public get Lists(): List[] {
+        return this._lists ?? [];
     }
 
     constructor() {
         super();
-        this._animationDirection = "left";
+        this._animationDirection = "top";
     }
 
     public override async ionViewWillEnter(): Promise<void> {
-        super.ionViewWillEnter();
+        await super.ionViewWillEnter();
         this.ListsService.PurgeListDetails();
-        this._listsSubscription = this._listObserver?.subscribe(lists => {
+        this._lists = await this.ListsService.GetLists(true);
+        this._itemsInitialized = true;
+        this._listsSubscription = this.ListsService.onListsChanged$.subscribe(lists => {
             if (lists) {
-                this._listsInitialized = true;
+                this._lists = lists;
+                this._itemsInitialized = true;
                 this.onItemsChanged();
             }
         });
+        this.onItemsChanged();
     }
 
     public override async ionViewWillLeave(): Promise<void> {
@@ -82,8 +58,8 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public onSwipeRight(list: List) {
-        this.listsContainer.closeSlidingItems();
-        this.deleteList(list);
+        this._itemsList?.closeSlidingItems();
+        this.deleteLists(list);
     }
 
     public async addList() {
@@ -91,28 +67,31 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public onSwipeLeft(list: List) {
-        this.listsContainer.closeSlidingItems();
-        this.transmitList(list);
+        this._itemsList?.closeSlidingItems();
+        this.transmitLists(list);
     }
 
-    public async deleteList(list: List) {
-        const res = await this.ListsService.DeleteList(list);
-        if (res !== undefined) {
-            this.listsContainer.closeSlidingItems();
+    public async deleteLists(lists: List | List[]): Promise<boolean | undefined> {
+        this._itemsList?.closeSlidingItems();
+        const success = await this.ListsService.DeleteList(lists);
+        if (success === true) {
             this.reload();
         }
+        return success;
     }
 
-    public async emptyList(list: List) {
-        if ((await this.ListsService.EmptyList(list)) === true) {
-            this.listsContainer.closeSlidingItems();
+    public async emptyLists(lists: List | List[]): Promise<boolean | undefined> {
+        this._itemsList?.closeSlidingItems();
+        const success = await this.ListsService.EmptyList(lists);
+        if (success === true) {
             this.reload();
         }
+        return success;
     }
 
-    public async transmitList(list: List) {
-        await this.ListsService.TransferList(list.Uuid);
-        this.listsContainer.closeSlidingItems();
+    public async transmitLists(lists: List | List[]): Promise<boolean | undefined> {
+        this._itemsList?.closeSlidingItems();
+        return await this.ListsService.TransferList(lists);
     }
 
     public async editList(event: MouseEvent, list: List) {
@@ -130,15 +109,27 @@ export class ListsPage extends AnimatedListPageBase {
         }
     }
 
-    public gotoList(event: MouseEvent, list: List) {
-        if (!this._disableClick) {
-            this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { title: list.Name } });
-            event.stopImmediatePropagation();
+    public clickOnItem(event: MouseEvent, list: List) {
+        if (!this._disableClick && this._initAnimationDone) {
+            this._disableClick = true;
+            if (this._editMode) {
+                if (this.isListSelected(list)) {
+                    this._selectedItems = this._selectedItems.filter(l => l != list.Uuid);
+                } else {
+                    this._selectedItems.push(list.Uuid);
+                }
+            } else {
+                this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { title: list.Name } });
+            }
+            setTimeout(() => {
+                this._disableClick = false;
+            }, 100);
         }
+        event.stopImmediatePropagation();
     }
 
     public async handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
-        const lists = event.detail.complete(this.Lists());
+        const lists = event.detail.complete(this._lists);
         await this.ListsService.ReorderLists(lists);
         event.stopImmediatePropagation();
     }
@@ -147,23 +138,64 @@ export class ListsPage extends AnimatedListPageBase {
         return this.Locale.getText("page_lists.updated", { date: DateUtils.formatDate(list.Updated ?? list.Created) });
     }
 
-    public onScroll(event: IonContentCustomEvent<ScrollDetail>) {
-        if (event.detail.scrollTop == 0) {
-            this._scrollPosition = "top";
-        } else if (Math.ceil(event.detail.scrollTop) >= (this.listContent?.nativeElement as HTMLElement)?.scrollHeight - event.target.scrollHeight || (this.listContent?.nativeElement as HTMLElement)?.scrollHeight < event.target.scrollHeight) {
-            this._scrollPosition = "bottom";
+    public isListSelected(list: List): boolean {
+        return this._selectedItems.indexOf(list.Uuid) >= 0;
+    }
+
+    public getEditMenuActions(): EditMenuAction[] {
+        let texts = [];
+        if (this._selectedItems.length == 1) {
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.list-transmit", "comp-toolbar-edit-menu.list-empty", "comp-toolbar-edit-menu.list-delete"]);
+            texts["transmit"] = texts["comp-toolbar-edit-menu.list-transmit"];
+            texts["delete"] = texts["comp-toolbar-edit-menu.list-delete"];
+            texts["empty"] = texts["comp-toolbar-edit-menu.list-empty"];
         } else {
-            this._scrollPosition = event.detail.scrollTop;
+            texts = this.Locale.getText(["comp-toolbar-edit-menu.lists-transmit", "comp-toolbar-edit-menu.lists-empty", "comp-toolbar-edit-menu.lists-delete"], { num: this._selectedItems.length });
+            texts["transmit"] = texts["comp-toolbar-edit-menu.lists-transmit"];
+            texts["delete"] = texts["comp-toolbar-edit-menu.lists-delete"];
+            texts["empty"] = texts["comp-toolbar-edit-menu.lists-empty"];
         }
-    }
 
-    public async ScrollToTop() {
-        await this.mainContent?.scrollToTop(300);
-        this.cdr.detectChanges();
-    }
-
-    public async ScrollToBottom(instant: boolean = true) {
-        await this.mainContent?.scrollToBottom(instant ? 0 : 300);
-        this.cdr.detectChanges();
+        return [
+            {
+                text: texts["transmit"],
+                icon: "/assets/icons/menu/devices.svg",
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    const transmit = await this.transmitLists(this.Lists.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                    if (transmit === true) {
+                        this._selectedItems = [];
+                    } else if (transmit === undefined) {
+                        this.editMenu?.enterEditMode();
+                    }
+                },
+            },
+            {
+                text: texts["empty"],
+                icon: "/assets/icons/menu/empty.svg",
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    const empty = await this.emptyLists(this.Lists.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                    if (empty === true) {
+                        this._selectedItems = [];
+                    } else if (empty === undefined) {
+                        this.editMenu?.enterEditMode();
+                    }
+                },
+            },
+            {
+                text: texts["delete"],
+                icon: "/assets/icons/trash.svg",
+                click: async () => {
+                    this.editMenu?.leaveEditMode(true);
+                    const del = await this.deleteLists(this.Lists.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                    if (del === true) {
+                        this._selectedItems = [];
+                    } else if (del === undefined) {
+                        this.editMenu?.enterEditMode();
+                    }
+                },
+            },
+        ];
     }
 }

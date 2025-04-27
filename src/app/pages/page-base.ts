@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild, inject } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, ViewChild } from "@angular/core";
 import { NavController } from "@ionic/angular/standalone";
 import { Subscription } from "rxjs";
 import { AppComponent } from "../app.component";
@@ -43,14 +43,11 @@ export abstract class PageBase {
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
+        AppService.AppToolbar = this.Toolbar;
     }
 
     public async ionViewDidEnter() {
         this.appComponent.setAppPages(this.ModifyMainMenu());
-        if (this.Toolbar != AppService.AppToolbar) {
-            AppService.AppToolbar?.Copy(this.Toolbar);
-            AppService.AppToolbar = this.Toolbar;
-        }
     }
 
     public async ionViewWillLeave() {
@@ -65,7 +62,6 @@ export abstract class PageBase {
     }
 
     protected async reload() {
-        this.cdr.detectChanges();
         /* else, scroll buttons won't be shown */
         await new Promise(resolve => setTimeout(resolve, 1));
         this.cdr.detectChanges();

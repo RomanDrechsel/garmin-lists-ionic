@@ -1,54 +1,59 @@
 @use "src/theme/content/lists/list.scss";
 
 ion-list {
-    ion-item {
-        ion-reorder {
-            margin-inline-start: 10px;
-        }
+    ion-item-sliding {
+        ion-item {
+            ion-label {
+                align-items: center;
 
-        .listpoint-indicator-wrapper {
-            width: 12px;
-            margin-inline-end: 4px;
+                .details {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 0.2em;
 
-            .listpoint-indicator {
-                background: var(--color);
-                width: 6px;
-                height: 6px;
-                border-radius: 100%;
-                position: absolute;
-                inset-inline-start: 10px;
-                margin-inline-end: 4px;
-                top: 20px;
-            }
+                    .listpoint-indicator-wrapper {
+                        width: 1em;
+                        max-width: 1em;
+                        display: flex;
+                        align-items: start;
+                        justify-content: center;
 
-            ion-icon {
-                width: 12px;
-                top: 16px;
-                position: absolute;
-            }
-        }
+                        .listpoint-indicator {
+                            position: relative;
+                            top: 0.4em;
+                            background: var(--color-text);
+                            width: 0.5em;
+                            height: 0.5em;
+                            border-radius: 100%;
+                        }
 
-        .details {
-            margin-block: 6px;
+                        ion-icon {
+                            position: relative;
+                            top: 0.2em;
+                            width: 100%;
+                            fill: var(--color-text);
+                        }
+                    }
 
-            .item {
-                font-size: 1.3em;
-                padding-top: 6px;
-                white-space: pre-line;
-            }
+                    .text {
+                        flex: 1;
 
-            .note {
-                --padding-top: 0;
-                white-space: pre-line;
-                min-height: 6px;
-            }
-        }
+                        .item {
+                            font-size: 1.3em;
+                            white-space: pre-line;
+                        }
 
-        &.hidden {
-            .details .item,
-            .details .note,
-            .listpoint-indicator {
-                opacity: 0.3;
+                        .note {
+                            --padding-top: 0;
+                            white-space: pre-line;
+                            color: var(--ion-color-medium);
+                        }
+                    }
+
+                    &.hidden {
+                        opacity: 0.3;
+                    }
+                }
             }
         }
     }

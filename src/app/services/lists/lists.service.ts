@@ -1,7 +1,7 @@
-import { Injectable, WritableSignal, inject, signal } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Keyboard } from "@capacitor/keyboard";
 import { AlertInput, ModalController, NavController } from "@ionic/angular/standalone";
-import { BehaviorSubject, Subscription, interval } from "rxjs";
+import { BehaviorSubject, interval, Subscription } from "rxjs";
 import { HelperUtils } from "../../classes/utils/helper-utils";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { ListEditor } from "../../components/list-editor/list-editor.component";
@@ -13,9 +13,9 @@ import { ConnectIQService } from "../connectiq/connect-iq.service";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { PopupsService } from "../popups/popups.service";
-import { Toast } from "../popups/toast";
-import { ListsBackendService } from "../storage/lists/lists-backend.service";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
+import { Toast } from "./../popups/toast";
+import { ListsBackendService } from "./../storage/lists/lists-backend.service";
 import { KeepInTrash } from "./keep-in-trash";
 import { List } from "./list";
 import { Listitem, ListitemModel } from "./listitem";
@@ -43,7 +43,7 @@ export class ListsService {
     private _syncLists: boolean = false;
     private _removeOldTrashEntriesTimer?: Subscription;
 
-    public readonly Lists: WritableSignal<List[] | undefined> = signal(undefined);
+    private _lists: List[] = [];
     private readonly _listIndex: Map<string | number, List> = new Map();
 
     private onTrashItemsDatasetChangedSubject = new BehaviorSubject<ListitemTrashModel | undefined>(undefined);
@@ -54,6 +54,9 @@ export class ListsService {
 
     private onListChangedSubject = new BehaviorSubject<List | undefined>(undefined);
     public onListChanged$ = this.onListChangedSubject.asObservable();
+
+    private onListsChangedSubject = new BehaviorSubject<List[] | undefined>(undefined);
+    public onListsChanged$ = this.onListsChangedSubject.asObservable();
 
     public constructor() {
         this.ListsProvider = new ListsProvider(this.Backend);
@@ -100,17 +103,17 @@ export class ListsService {
      * @returns array of all lists
      */
     public async GetLists(reload: boolean = false): Promise<List[]> {
-        if (reload || this.Lists()?.length == 0) {
+        if (reload || this._lists.length == 0) {
             AppService.AppToolbar?.ToggleProgressbar(true);
-            const lists = await this.ListsProvider.GetLists(true);
+            this._lists = await this.ListsProvider.GetLists(true);
             this._listIndex.clear();
-            lists.forEach(l => {
+            this._lists.forEach(l => {
                 this._listIndex.set(l.Uuid, l);
             });
-            this.orderLists(lists);
+            this._lists = this.orderLists(this._lists);
             AppService.AppToolbar?.ToggleProgressbar(false);
         }
-        return this.Lists()!;
+        return this._lists;
     }
 
     /**
@@ -193,46 +196,60 @@ export class ListsService {
 
     /**
      * prompts the user to delete a list
-     * @param list list to be deleted
+     * @param lists list to be deleted
      * @param force delete the list without prompt
      * @returns list deletion successful? undefined if the user canceled it
      */
-    public async DeleteList(list: List, force: boolean = false): Promise<boolean | undefined> {
+    public async DeleteList(lists: List | List[], force: boolean = false): Promise<boolean | undefined> {
         const del_on_watch = await this.Preferences.Get(EPrefProperty.DeleteListOnDevice, false);
         if (!force && (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmDeleteList, true))) {
+            let text = "";
+            if (Array.isArray(lists) && lists.length > 1) {
+                text = this.Locale.getText("service-lists.delete_confirm_plural");
+            } else {
+                text = this.Locale.getText("service-lists.delete_confirm", { name: StringUtils.shorten(Array.isArray(lists) ? lists[0].Name : lists.Name, 40) });
+            }
+
             const checkbox: AlertInput = {
                 label: this.Locale.getText("service-lists.delete_confirm_watch"),
                 type: "checkbox",
                 value: "del_on_watch",
                 checked: del_on_watch,
             };
-            const result = await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.delete_confirm", { name: StringUtils.shorten(list.Name, 40) }), inputs: [checkbox] });
+            const result = await this.Popups.Alert.YesNo({ message: text, inputs: [checkbox] });
             if (result !== false) {
                 const del_on_watch = Array.isArray(result) && result.includes("del_on_watch") ? true : false;
-                return this.removeList(list.Uuid, del_on_watch);
+                return this.removeList(lists, del_on_watch);
             } else {
                 return undefined;
             }
         } else {
-            return this.removeList(list.Uuid, del_on_watch);
+            return this.removeList(lists, del_on_watch);
         }
     }
 
     /**
      * prompts the user to delete all items of a list
-     * @param list list to be emptied
+     * @param lists list to be emptied
      * @param force empty the list without prompt
      * @returns deletion successful? undefined if user canceled it
      */
-    public async EmptyList(list: List, force: boolean = false): Promise<boolean | undefined> {
+    public async EmptyList(lists: List | List[], force: boolean = false): Promise<boolean | undefined> {
         if (!force && (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmEmptyList, true))) {
-            if (await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.empty_confirm", { name: StringUtils.shorten(list.Name, 40) }) })) {
-                return await this.emptyList(list);
+            let text = "";
+            if (Array.isArray(lists) && lists.length > 1) {
+                text = this.Locale.getText("service-lists.empty_confirm_plural");
+            } else {
+                text = this.Locale.getText("service-lists.empty_confirm", { name: StringUtils.shorten(Array.isArray(lists) ? lists[0].Name : lists.Name, 40) });
+            }
+
+            if (await this.Popups.Alert.YesNo({ message: text })) {
+                return await this.emptyList(lists);
             } else {
                 return undefined;
             }
         } else {
-            return await this.emptyList(list);
+            return await this.emptyList(lists);
         }
     }
 
@@ -280,7 +297,14 @@ export class ListsService {
 
         const item = await this.createNewListitemObj(list, args);
         list.AddItem(item);
-        return await this.StoreList(list, false, true, false);
+        const success = await this.StoreList(list, false, true, false);
+
+        if (success) {
+            this.putListInIndex(list);
+            this.onListsChangedSubject.next(await this.GetLists(true));
+        }
+
+        return success;
     }
 
     /**
@@ -305,38 +329,52 @@ export class ListsService {
 
     /**
      * prompts the user to delete an list item
-     * @param list list, the item is part of
-     * @param item item to be deleted
+     * @param list list, the item(s) are part of
+     * @param items item(s) to be deleted
      * @param force delete the listitem without prompting
      * @returns deletion successful? undefined if user canceled it
      */
-    public async DeleteListitem(list: List, item: Listitem, force: boolean = false): Promise<boolean | undefined> {
+    public async DeleteListitem(list: List, items: Listitem | Listitem[], force: boolean = false): Promise<boolean | undefined> {
         if (!force && (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmDeleteListitem, true))) {
-            if (await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.delete_item_confirm", { name: StringUtils.shorten(item.Item, 40) }) })) {
-                return this.removeListitem(list, item);
+            let text = "";
+            if (Array.isArray(items) && items.length > 1) {
+                text = this.Locale.getText("service-lists.delete_item_confirm_plural");
+            } else {
+                text = this.Locale.getText("service-lists.delete_item_confirm", { name: StringUtils.shorten(Array.isArray(items) ? items[0].Item : items.Item, 40) });
+            }
+            if (await this.Popups.Alert.YesNo({ message: text })) {
+                return this.removeListitem(list, items);
             } else {
                 return undefined;
             }
         } else {
-            return this.removeListitem(list, item);
+            return this.removeListitem(list, items);
         }
     }
 
     /**
      * prompts the user to finally erase a listitem from trash
      * @param trash trash of the list
-     * @param item the item in Trash to be erased
+     * @param items the item in Trash to be erased
      * @returns erase successful, undefined if user canceled it
      */
-    public async EraseListitemFromTrash(trash: ListitemTrashModel, item: ListitemModel): Promise<boolean | undefined> {
+    public async EraseListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean | undefined> {
         if (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmEraseListitem, true)) {
-            if (await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.erase_item_confirm", { name: StringUtils.shorten(item.item, 40) }) })) {
-                return this.eraseListitemFromTrash(trash, item);
+            let text = "";
+            if (Array.isArray(items) && items.length > 1) {
+                text = this.Locale.getText("service-lists.erase_item_confirm_plural");
+            } else {
+                text = this.Locale.getText("service-lists.erase_item_confirm", { name: StringUtils.shorten(Array.isArray(items) ? items[0].item : items.item, 40) });
+            }
+            text += this.Locale.getText("service-lists.undo_warning");
+
+            if (await this.Popups.Alert.YesNo({ message: text })) {
+                return this.eraseListitemFromTrash(trash, items);
             } else {
                 return undefined;
             }
         } else {
-            return this.eraseListitemFromTrash(trash, item);
+            return this.eraseListitemFromTrash(trash, items);
         }
     }
 
@@ -418,21 +456,41 @@ export class ListsService {
     /**
      * toggles the hidden state of a listitem
      * @param list list, the item is part of
-     * @param item listitem, hiddenstate should be toggled
+     * @param items listitem, hiddenstate should be toggled
+     * @param hide hide/show the listitem(s), if undefined the state is toggled
      */
-    public async ToggleHiddenListitem(list: List, item: Listitem): Promise<void> {
-        item.Hidden = !item.Hidden;
-        await this.StoreList(list, undefined, undefined, false);
+    public async ToggleHiddenListitem(list: List, items: Listitem | Listitem[], hide: boolean | undefined = undefined): Promise<boolean | undefined> {
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+        items.forEach(item => {
+            if (hide === undefined) {
+                item.Hidden = !item.Hidden;
+            } else {
+                item.Hidden = hide;
+            }
+        });
+        return await this.StoreList(list, undefined, undefined, false);
     }
 
     /**
      * lock the item, so it is not deleted when emptying the list
      * @param list list, the item is part of^
-     * @param item listitem, that should be locked/unlocked
+     * @param items listitem(s), that should be locked/unlocked
+     * @param pin lock/unlock the listitem(s), if undefined, the state is toggled
      */
-    public async ToggleLockListitem(list: List, item: Listitem): Promise<void> {
-        item.Locked = !item.Locked;
-        await this.StoreList(list, undefined, undefined, false);
+    public async ToggleLockListitem(list: List, items: Listitem | Listitem[], pin: boolean | undefined = undefined): Promise<boolean | undefined> {
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+        items.forEach(item => {
+            if (pin === undefined) {
+                item.Locked = !item.Locked;
+            } else {
+                item.Locked = pin;
+            }
+        });
+        return await this.StoreList(list, undefined, undefined, false);
     }
 
     /**
@@ -441,51 +499,70 @@ export class ListsService {
      * @param force erase the list without user prompt
      * @returns erase successful? undefined if user canceled it
      */
-    public async EraseListFromTrash(list: List, force: boolean = false): Promise<boolean | undefined> {
+    public async EraseListFromTrash(lists: List | List[], force: boolean = false): Promise<boolean | undefined> {
         if (!force && (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmEraseList, true))) {
-            const text = this.Locale.getText("service-lists.erase_confirm", { name: StringUtils.shorten(list.Name, 40) }) + this.Locale.getText("service-lists.undo_warning");
+            let text = this.Locale.getText("service-lists.undo_warning");
+            if (!Array.isArray(lists) || lists.length == 1) {
+                text = this.Locale.getText("service-lists.erase_confirm", { name: StringUtils.shorten(Array.isArray(lists) ? lists[0].Name : lists.Name, 40) }) + text;
+            } else {
+                text = this.Locale.getText("service-lists.erase_confirm_plural") + text;
+            }
+
             if (await this.Popups.Alert.YesNo({ message: text })) {
-                return this.eraseListFromTrash(list.Uuid);
+                return this.eraseListFromTrash(lists);
             } else {
                 return undefined;
             }
         } else {
-            return this.eraseListFromTrash(list.Uuid);
+            return this.eraseListFromTrash(lists);
         }
     }
 
     /**
      * prompts the user to restore a list from trash
-     * @param list list to be restored
+     * @param lists list(s) to be restored
      * @returns restore successful? undefined if user canceled it
      */
-    public async RestoreListFromTrash(list: List): Promise<boolean | undefined> {
+    public async RestoreListFromTrash(lists: List | List[]): Promise<boolean | undefined> {
         if (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmRestoreList, true)) {
-            if (await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.restore_confirm", { name: StringUtils.shorten(list.Name, 40) }) })) {
-                return this.restoreListFromTrash(list.Uuid);
+            let text = "";
+            if (!Array.isArray(lists) || lists.length == 1) {
+                text = this.Locale.getText("service-lists.restore_confirm", { name: StringUtils.shorten(Array.isArray(lists) ? lists[0].Name : lists.Name, 40) });
+            } else {
+                text = this.Locale.getText("service-lists.restore_confirm_plural");
+            }
+            if (await this.Popups.Alert.YesNo({ message: text })) {
+                return this.restoreListFromTrash(lists);
             } else {
                 return undefined;
             }
         } else {
-            return this.restoreListFromTrash(list.Uuid);
+            return this.restoreListFromTrash(lists);
         }
     }
 
     /**
      * prompts the user to restore a list item
-     * @param list list, to which the item should be restored
-     * @param item item in TRASH to be restored
+     * @param trash list, to which the item should be restored
+     * @param items item(s) in trash to be restored
      * @returns restore successful? undefined if user canceled it
      */
-    public async RestoreListitemFromTrash(trash: ListitemTrashModel, item: ListitemModel): Promise<boolean | undefined> {
+    public async RestoreListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean | undefined> {
         if (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmRestoreListitem, true)) {
-            if (await this.Popups.Alert.YesNo({ message: this.Locale.getText("service-lists.restore_item_confirm", { name: StringUtils.shorten(item.item, 40) }) })) {
-                return this.restoreListitemFromTrash(trash, item);
+            let text = "";
+            if (!Array.isArray(items) || items.length == 1) {
+                text = this.Locale.getText("service-lists.restore_item_confirm", { name: StringUtils.shorten(Array.isArray(items) ? items[0].item : items.item, 40) });
+            } else {
+                text = this.Locale.getText("service-lists.restore_item_confirm_plural");
+            }
+
+            if (await this.Popups.Alert.YesNo({ message: text })) {
+                return this.restoreListitemFromTrash(trash, items);
             } else {
                 return undefined;
             }
         } else {
-            return this.restoreListitemFromTrash(trash, item);
+            return this.restoreListitemFromTrash(trash, items);
         }
     }
 
@@ -544,12 +621,17 @@ export class ListsService {
      * @param list list to transfer (or the uuid)
      * @param device device to be transfered, if null the default device is used
      */
-    public async TransferList(list?: List | string | number, device?: ConnectIQDevice | number): Promise<boolean> {
+    public async TransferList(list?: List | List[] | string | number, device?: ConnectIQDevice | number): Promise<boolean | undefined> {
         if (typeof list === "string" || typeof list === "number") {
             list = await this.GetList(list);
         }
+
         if (!list) {
             return false;
+        }
+
+        if (!Array.isArray(list)) {
+            list = [list];
         }
 
         if (typeof device === "number") {
@@ -561,36 +643,64 @@ export class ListsService {
         }
 
         if (device && device.State == "Ready") {
+            const text_key = list.length > 1 ? "service-lists.transmit_confirm_plural" : "service-lists.transmit_confirm";
             const confirm = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmTransmitList, true);
-            const locale = this.Locale.getText(["service-lists.transmit_confirm", "yes", "no"], { device: device.Name });
-            if (!confirm || (await this.Popups.Alert.YesNo({ message: locale["service-lists.transmit_confirm"], button_yes: locale["yes"], button_no: locale["no"] }))) {
-                const toast = await this.Popups.Toast.Notice("service-lists.transmit_process", Toast.DURATION_INFINITE);
+            const locale = this.Locale.getText([text_key, "yes", "no"], { device: device.Name });
+            if (!confirm || (await this.Popups.Alert.YesNo({ message: locale[text_key], button_yes: locale["yes"], button_no: locale["no"] }))) {
+                const toast = await this.Popups.Toast.Notice(list.length == 1 ? "service-lists.transmit_process" : "service-lists.transmit_process_plural", Toast.DURATION_INFINITE);
                 AppService.AppToolbar?.ToggleProgressbar(true);
 
-                const payload = list.toDeviceObject();
-                const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload });
+                let errors = 0;
+                for (let i = 0; i < list.length; ++i) {
+                    if (device && device.State == "Ready") {
+                        const l = list[i];
+                        const payload = l.toDeviceObject();
+                        const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload });
+
+                        if (resp !== false) {
+                            Logger.Debug(`Transfered list ${l.toLog()} to device ${device.toLog()}`);
+                            continue;
+                        }
+                    }
+                    errors++;
+                    Logger.Debug(`Could not transfer list ${list[i].toLog()} to device ${device.toLog()}`);
+                }
                 toast.dismiss();
                 AppService.AppToolbar?.ToggleProgressbar(false);
-                if (resp !== false) {
-                    Logger.Debug(`Transfered list ${list.toLog()} to device ${device.toLog()}`);
-                    this.Popups.Toast.Success("service-lists.transmit_success");
+
+                if (errors > 0) {
+                    if (list.length == 1) {
+                        this.Popups.Toast.Error("service-lists.transmit_error");
+                    } else if (errors == list.length) {
+                        this.Popups.Toast.Error("service-lists.transmit_error_plural");
+                    } else {
+                        this.Popups.Toast.Error("service-lists.transmit_error_partial");
+                    }
+                    return false;
+                } else {
+                    if (list.length == 1) {
+                        this.Popups.Toast.Success("service-lists.transmit_success");
+                    } else {
+                        this.Popups.Toast.Success("service-lists.transmit_success_plural");
+                    }
                     if (await this.Preferences.Get<boolean>(EPrefProperty.OpenAppOnTransmit, false)) {
                         this.ConnectIQ.openApp(device);
                     }
                     return true;
-                } else {
-                    this.Popups.Toast.Error("service-lists.transmit_error");
-                    Logger.Debug(`Could not transfer list ${list.toLog()} to device ${device.toLog()}`);
                 }
             } else {
-                return true;
+                return undefined;
             }
         } else if (device) {
-            Logger.Debug(`Could not transfer list ${list.toLog()} to device ${device.toLog()}: device is state ${device.State}`);
+            Logger.Debug(`Could not transfer list ${list.length} list(s) to device ${device.toLog()}: device is state ${device.State}`);
         } else {
-            Logger.Debug(`Could not transfer list ${list.toLog()}, no device fould`);
+            Logger.Debug(`Could not transfer list ${list.length} list(s), no device fould`);
         }
-        this.Popups.Toast.Error("service-lists.transmit_error");
+        if (list.length == 1) {
+            this.Popups.Toast.Error("service-lists.transmit_error");
+        } else {
+            this.Popups.Toast.Error("service-lists.transmit_error_plural");
+        }
         return false;
     }
 
@@ -607,7 +717,7 @@ export class ListsService {
      * purges all details of lists in memory
      */
     public PurgeListDetails() {
-        this.Lists()?.forEach(l => {
+        this._lists.forEach(l => {
             l.PurgeDetails();
         });
     }
@@ -726,18 +836,19 @@ export class ListsService {
     private putListInIndex(list: List) {
         this._listIndex.set(list.Uuid, list);
         let lists = Array.from(this._listIndex.values());
-        this.orderLists(lists);
+        this._lists = this.orderLists(lists);
     }
 
     /**
      * removes a list from the index and publish it with the signal
      * @param list list to be removed
+     * @param fire_event if true, will emit onListsChanged event
      * @returns was the list removed successful
      */
-    private async removeListInIndex(list: List): Promise<boolean> {
+    private async removeListInIndex(list: List, fire_event: boolean = true): Promise<boolean> {
         if (this._listIndex.delete(list.Uuid)) {
             let lists = Array.from(this._listIndex.values());
-            await this.resetOrder(lists, true);
+            await this.resetOrder(lists, fire_event, false);
             return true;
         } else {
             return false;
@@ -748,9 +859,8 @@ export class ListsService {
      * orders the lists by 'Order' property and publish the list with the signal
      * @param lists lists array to be ordered and set in Lists-signal
      */
-    private orderLists(lists: List[]) {
-        lists = lists.sort((a: List, b: List) => (a.Order > b.Order ? 1 : -1));
-        this.Lists.set(lists);
+    private orderLists(lists: List[]): List[] {
+        return lists.sort((a: List, b: List) => (a.Order > b.Order ? 1 : -1));
     }
 
     /**
@@ -758,7 +868,7 @@ export class ListsService {
      * @param lists list to reset the 'Order' property
      * @param force_event publish the list with the signal
      */
-    private async resetOrder(lists: List[], force_event: boolean = false) {
+    private async resetOrder(lists: List[], force_event: boolean = false, fire_event: boolean = true) {
         let order = 0;
         let changed = false;
         lists = lists.sort((a: List, b: List) => (a.Order > b.Order ? 1 : -1));
@@ -767,12 +877,13 @@ export class ListsService {
             list.Order = order++;
             if (list.Dirty) {
                 changed = true;
-                await this.StoreList(list, undefined, undefined, false);
+                await this.StoreList(list, undefined, false, false);
             }
         }
+        this._lists = lists;
 
-        if (force_event || changed) {
-            this.Lists.set(lists);
+        if (fire_event && (force_event || changed)) {
+            this.onListsChangedSubject.next(this._lists);
         }
     }
 
@@ -781,30 +892,76 @@ export class ListsService {
      * @param uuid unique identifier of the list to be removed
      * @returns was the removal successful
      */
-    private async removeList(uuid: string | number, delete_on_watch: boolean = false): Promise<boolean> {
-        if (this._listIndex.has(uuid)) {
-            AppService.AppToolbar?.ToggleProgressbar(true);
-            const list = await this.ListsProvider.GetList(uuid);
-            if (list) {
-                list.Deleted = Date.now();
-                if ((await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true)) == false || (await this.TrashProvider.StoreList(list, true))) {
-                    if (await this.ListsProvider.RemoveList(list)) {
-                        await this.removeListInIndex(list);
-                        this.Popups.Toast.Success("service-lists.delete_success");
-                        Logger.Notice(`Removed list ${list.toLog()}`);
-                        if (delete_on_watch) {
-                            this.ConnectIQ.SendToDevice({ device: undefined, messageType: ConnectIQMessageType.DeleteList, data: uuid });
-                        }
-                        AppService.AppToolbar?.ToggleProgressbar(false);
-                        return true;
+    private async removeList(lists: List | List[], delete_on_watch: boolean = false): Promise<boolean> {
+        if (!Array.isArray(lists)) {
+            lists = [lists];
+        }
+        if (lists.length == 0) {
+            return true;
+        }
+
+        AppService.AppToolbar?.ToggleProgressbar(true);
+
+        const use_trash = await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true);
+        let errors = 0;
+        for (let i = 0; i < lists.length; i++) {
+            const list: List | undefined = lists[i];
+            if (list && this._listIndex.has(list.Uuid)) {
+                if (list.isPeek) {
+                    const read = await this.GetList(list.Uuid);
+                    if (read) {
+                        list.copyDetails(read);
+                    } else {
+                        errors++;
+                        Logger.Error(`Could not delete list ${list.toLog()}, not found in backend...`);
+                        continue;
                     }
                 }
+
+                let del = true;
+                list.Deleted = Date.now();
+                if (use_trash && !(await this.TrashProvider.StoreList(list, true))) {
+                    del = false;
+                    Logger.Error(`Could not store list {${list.toLog()}} in trash`);
+                    errors++;
+                    continue;
+                }
+
+                if (await this.ListsProvider.RemoveList(list)) {
+                    await this.removeListInIndex(list, false);
+                    Logger.Notice(`Removed list ${list.toLog()}`);
+                    if (delete_on_watch) {
+                        this.ConnectIQ.SendToDevice({ device: undefined, messageType: ConnectIQMessageType.DeleteList, data: list.Uuid });
+                    }
+                } else {
+                    errors++;
+                    Logger.Error(`Could not delete list ${list?.toLog()}`);
+                    await this.TrashProvider.RemoveList(list);
+                }
             }
-            Logger.Error(`Could not remove list ${list?.toLog() ?? uuid}`);
-            AppService.AppToolbar?.ToggleProgressbar(false);
         }
-        this.Popups.Toast.Error("service-lists.delete_error");
-        return false;
+
+        this.onListsChangedSubject.next(await this.GetLists(true));
+
+        AppService.AppToolbar?.ToggleProgressbar(false);
+
+        if (errors > 0) {
+            if (lists.length == 1) {
+                this.Popups.Toast.Error("service-lists.delete_error");
+            } else if (lists.length == errors) {
+                this.Popups.Toast.Error("service-lists.delete_error_plural");
+            } else {
+                this.Popups.Toast.Error("service-lists.delete_error_partial");
+            }
+        } else {
+            if (lists.length > 1) {
+                this.Popups.Toast.Success("service-lists.delete_success");
+            } else {
+                this.Popups.Toast.Success("service-lists.delete_success_plural");
+            }
+        }
+
+        return errors == 0;
     }
 
     /**
@@ -812,50 +969,80 @@ export class ListsService {
      * @param list list to be emptied
      * @returns was the list stored successful after emptying?
      */
-    private async emptyList(list: List): Promise<boolean> {
-        if (list.ItemsCount > 0) {
-            AppService.AppToolbar?.ToggleProgressbar(true);
-            if ((await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) == true) {
-                const del = await this.TrashItemsProvider.StoreListitem(
-                    list.Uuid,
-                    list.Items.filter(i => !i.Locked),
-                );
-                if (!del) {
-                    Logger.Error(`Could not empty list ${list.toLog()} and move items to trash`);
-                    AppService.AppToolbar?.ToggleProgressbar(false);
-                    return false;
-                }
+    private async emptyList(list: List | List[]): Promise<boolean> {
+        if (!Array.isArray(list)) {
+            list = [list];
+        }
+
+        if (list.length == 0) {
+            return true;
+        }
+
+        const use_trash = await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true);
+
+        AppService.AppToolbar?.ToggleProgressbar(true);
+
+        let errors = 0;
+        for (let i = 0; i < list.length; i++) {
+            let l: List | undefined = list[i];
+            if (l.isPeek) {
+                l = await this.GetList(l.Uuid);
             }
-            await this.ReorderListitems(
-                list,
-                list.Items.filter(i => i.Locked),
-                false,
-            );
-            if (await this.StoreList(list)) {
-                this.putListInIndex(list);
-                this.Popups.Toast.Success("service-lists.empty_success");
-                AppService.AppToolbar?.ToggleProgressbar(false);
-                return true;
-            } else {
-                this.Popups.Toast.Error("service_lists.empty_error");
-                AppService.AppToolbar?.ToggleProgressbar(false);
-                return false;
+
+            if (l && l.ItemsCount > 0) {
+                if (use_trash) {
+                    const del = await this.TrashItemsProvider.StoreListitem(
+                        l.Uuid,
+                        l.Items.filter(i => !i.Locked),
+                    );
+                    if (!del) {
+                        Logger.Error(`Could not empty list ${l.toLog()} and move items to trash`);
+                        errors++;
+                    }
+                }
+                await this.ReorderListitems(
+                    l,
+                    l.Items.filter(i => i.Locked),
+                    false,
+                );
+                if (await this.StoreList(l)) {
+                    this.putListInIndex(l);
+                    Logger.Debug(`Emptied list ${l.toLog()}`);
+                } else {
+                    errors++;
+                }
+            } else if (!l) {
+                errors++;
             }
         }
 
-        return true;
+        this.onListsChangedSubject.next(await this.GetLists(true));
+
+        if (errors > 0) {
+            if (list.length == errors) {
+                this.Popups.Toast.Error("service-lists.empty_error");
+            } else {
+                this.Popups.Toast.Error("service-lists.empty_error_partial");
+            }
+        } else {
+            this.Popups.Toast.Success("service-lists.empty_success");
+        }
+
+        AppService.AppToolbar?.ToggleProgressbar(false);
+
+        return errors == 0;
     }
 
     /**
      * removes a listitems from a list
      * @param list list, the item should be removed
-     * @param item listitem to remove
+     * @param items listitem to remove
      * @returns was the list stored successful after removal?
      */
-    private async removeListitem(list: List, item: Listitem): Promise<boolean> {
+    private async removeListitem(list: List, items: Listitem | Listitem[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        if (!(await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) || (await this.TrashItemsProvider.StoreListitem(list.Uuid, item))) {
-            list.RemoveItem(item);
+        if (!(await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) || (await this.TrashItemsProvider.StoreListitem(list.Uuid, items))) {
+            list.RemoveItem(items);
             return (await this.StoreList(list)) !== false;
         } else {
             AppService.AppToolbar?.ToggleProgressbar(true);
@@ -866,11 +1053,24 @@ export class ListsService {
     /**
      * erases a listitem from trash
      * @param trash trash of the list, the item should be erased
-     * @param item listitem to be erased
+     * @param items listitem(s) to be erased
      * @returns was the erase successful
      */
-    private async eraseListitemFromTrash(trash: ListitemTrashModel, item: ListitemModel): Promise<boolean> {
-        return this.TrashItemsProvider.EraseListitem(trash, item);
+    private async eraseListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean> {
+        AppService.AppToolbar?.ToggleProgressbar(true);
+        const success = await this.TrashItemsProvider.EraseListitem(trash, items);
+
+        if (success) {
+            const text = !Array.isArray(items) || items.length == 1 ? "service-lists.erase_item_success" : "service-lists.erase_item_success_plural";
+            this.Popups.Toast.Success(text);
+        } else {
+            const text = !Array.isArray(items) || items.length == 1 ? "service-lists.erase_item_error" : "service-lists.erase_item_error_plural";
+            this.Popups.Toast.Error(text);
+        }
+
+        AppService.AppToolbar?.ToggleProgressbar(false);
+
+        return success;
     }
 
     /**
@@ -882,7 +1082,12 @@ export class ListsService {
         const del = await this.TrashProvider.WipeTrash();
         if (del > 0) {
             Logger.Notice(`Erased ${del} list(s) from trash`);
+            this.Popups.Toast.Success("service-lists.empty_trash_success");
+        } else {
+            Logger.Error("Could not wipe lists trash");
+            this.Popups.Toast.Error("service-lists.empty_trash_error");
         }
+
         AppService.AppToolbar?.ToggleProgressbar(false);
 
         return del;
@@ -896,6 +1101,13 @@ export class ListsService {
     private async emptyListitemTrash(trash: ListitemTrashModel): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
         const ret = await this.TrashItemsProvider.EraseListitemTrash(trash);
+        if (ret) {
+            Logger.Notice(`Erased trash of list ${ListitemTrashUtils.toLog(trash)}`);
+            this.Popups.Toast.Success("service-lists.empty_trash_success");
+        } else {
+            Logger.Error(`Could not erase trash of list ${ListitemTrashUtils.toLog(trash)}`);
+            this.Popups.Toast.Error("service-lists.empty_trash_error");
+        }
         AppService.AppToolbar?.ToggleProgressbar(false);
         return ret;
     }
@@ -905,69 +1117,129 @@ export class ListsService {
      * @param list list to restore
      * @returns was the restore successful
      */
-    private async restoreListFromTrash(uuid: string | number): Promise<boolean> {
+    private async restoreListFromTrash(lists: List | List[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        //Read list from trash backend
-        const list = await this.TrashProvider.GetList(uuid);
-        if (list) {
-            //move it to the end...
-            list.Order = this.Lists()?.length ?? 0;
 
-            if (await this.ListsProvider.StoreList(list, true)) {
-                if (await this.TrashProvider.EraseLists(list.Uuid, false)) {
-                    Logger.Notice(`Restored list ${list.toLog()} from trash`);
-                } else {
-                    Logger.Error(`Restored list ${list.toLog()} from trash, but could not erase it from trash`);
+        if (!Array.isArray(lists)) {
+            lists = [lists];
+        }
+
+        let errors = 0;
+        const all_lists = await this.GetLists(true);
+        for (let i = 0; i < lists.length; i++) {
+            //read the full list with all items
+            const list = await this.TrashProvider.GetList(lists[i].Uuid);
+            if (list) {
+                //add it at the end
+                list.Order = this._lists.length + i;
+                if (all_lists.some(i => i.Uuid == list.Uuid)) {
+                    //if there is an item with this uuid, give the restored item a new one
+                    list.Uuid = await this.createUuid(list);
                 }
-                this.Popups.Toast.Success("service-lists.restore_success");
-                this.putListInIndex(list);
-                AppService.AppToolbar?.ToggleProgressbar(false);
-                this.syncListToWatch(list);
-                return true;
+                if (await this.ListsProvider.StoreList(list, true)) {
+                    if (await this.TrashProvider.EraseLists(list.Uuid, false)) {
+                        Logger.Notice(`Restored list ${list.toLog()} from trash`);
+                        this.putListInIndex(list);
+                        this.syncListToWatch(list);
+                    } else {
+                        Logger.Error(`Restored list ${list.toLog()} from trash, but could not erase it from trash`);
+                    }
+                } else {
+                    Logger.Error(`Could not restore list ${list.toLog()} from trash - could not store as new`);
+                    errors++;
+                }
+            } else {
+                Logger.Error(`Could not restore list ${lists[i].toLog()} from trash - not found`);
+                errors++;
             }
         }
-        Logger.Error(`Could not restore list ${list?.toLog() ?? "uuid:" + uuid} from trash`);
+
+        if (errors > 0) {
+            if (lists.length == 1) {
+                this.Popups.Toast.Error("service-lists.restore_error");
+            } else if (lists.length == errors) {
+                this.Popups.Toast.Error("service-lists.restore_error_plural");
+            } else {
+                this.Popups.Toast.Error("service-lists.restore_error_partial");
+            }
+        } else {
+            if (lists.length == 1) {
+                this.Popups.Toast.Success("service-lists.restore_success");
+            } else {
+                this.Popups.Toast.Success("service-lists.restore_success_plural");
+            }
+        }
+        this.onListsChangedSubject.next(await this.GetLists(true));
+
+        await new Promise<void>(resolve => setTimeout(resolve, 10000));
+
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return false;
+
+        return errors == 0;
     }
 
     /**
      * restores a listitem from the trash of a list
      * @param trash trash of the list
-     * @param item listitem to restore
+     * @param items listitem(s) to restore
      * @returns was the restore successful
      */
-    private async restoreListitemFromTrash(trash: ListitemTrashModel, item: ListitemModel): Promise<boolean> {
+    private async restoreListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
         const list = await this.GetList(trash.uuid);
+        let success = false;
         if (list) {
-            if (list.Items.some(i => i.Uuid == item.uuid)) {
-                item.uuid = await this.createUuid(list);
+            if (!Array.isArray(items)) {
+                items = [items];
             }
-            list.AddItem(item);
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (list.Items.some(i => i.Uuid == item.uuid)) {
+                    //if there is an item with this uuid, give the restored item a new one
+                    item.uuid = await this.createUuid(list);
+                }
+                list.AddItem(item);
+            }
 
             if (await this.ListsProvider.StoreList(list)) {
-                await this.TrashItemsProvider.EraseListitem(trash, item);
-                Logger.Debug(`Restored listitem ${ListitemTrashUtils.toLog(item)} from trash of list ${ListitemTrashUtils.toLog(trash)}`);
-                AppService.AppToolbar?.ToggleProgressbar(false);
+                await this.TrashItemsProvider.EraseListitem(trash, items);
+                Logger.Debug(`Restored ${items.length} listitem(s) from trash of list ${ListitemTrashUtils.toLog(trash)}`);
                 this.syncListToWatch(list);
-                return true;
+                success = true;
+                const text = !Array.isArray(items) || items.length == 1 ? "service-lists.restore_item_success" : "service-lists.restore_item_success_plural";
+                this.Popups.Toast.Success(text);
+            } else {
+                Logger.Error(`Could not restore ${items.length} listitem(s) from trash of list ${ListitemTrashUtils.toLog(trash)}`);
+                success = false;
+                const text = !Array.isArray(items) || items.length == 1 ? "service-lists.restore_item_error" : "service-lists.restore_item_error_plural";
+                this.Popups.Toast.Error(text);
             }
         }
-        Logger.Error(`Could not restore listitem ${ListitemTrashUtils.toLog(item)} from trash of list ${ListitemTrashUtils.toLog(trash)}`);
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return false;
+        return success;
     }
 
     /**
      * erases a list from trash
-     * @param uuid unique identifier of the list
+     * @param lists Lists to be erased
      */
-    private async eraseListFromTrash(uuid: string | number): Promise<boolean> {
+    private async eraseListFromTrash(lists: List | List[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        const ret = (await this.TrashProvider.EraseLists(uuid)) > 0;
+        if (!Array.isArray(lists)) {
+            lists = [lists];
+        }
+        const ret = await this.TrashProvider.EraseLists(lists.map(l => l.Uuid));
+
+        if (ret == lists.length) {
+            Logger.Debug(`Erased ${ret} list(s) from trash`);
+        } else {
+            Logger.Error(`Erased ${ret} list(s) from trash, but could not erase ${lists.length - ret} list(s)`);
+        }
+
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return ret;
+
+        return ret == lists.length;
     }
 
     /**
@@ -987,7 +1259,8 @@ export class ListsService {
             }
         }
         if (update) {
-            this.Lists.set(lists);
+            this._lists = lists;
+            this.onListsChangedSubject.next(this._lists);
         }
         return lists;
         1;
