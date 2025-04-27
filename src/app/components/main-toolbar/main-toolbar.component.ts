@@ -19,27 +19,29 @@ export class MainToolbarComponent {
     @ViewChild("backbutton", { read: IonBackButton }) private backBtn?: IonBackButton;
 
     private readonly cdr = inject(ChangeDetectorRef);
-
-    private _showProgressbar: boolean = false;
+    private static _activeProgressbars: number = 0;
 
     public get ShowProgressbar(): boolean {
-        return this._showProgressbar;
+        return MainToolbarComponent._activeProgressbars > 0;
+    }
+
+    public set ShowProgressbar(v: boolean) {
+        if (v) {
+            MainToolbarComponent._activeProgressbars++;
+        } else {
+            MainToolbarComponent._activeProgressbars--;
+            if (MainToolbarComponent._activeProgressbars < 0) {
+                MainToolbarComponent._activeProgressbars = 0;
+            }
+        }
+        this.cdr.detectChanges();
     }
 
     public get BackLink(): string | undefined {
         return this.backBtn?.defaultHref;
     }
 
-    public ToggleProgressbar(v: boolean) {
-        if (this._showProgressbar != v) {
-            this._showProgressbar = v;
-            this.cdr.detectChanges();
-        }
-    }
-
-    public Copy(toolbar?: MainToolbarComponent) {
-        if (toolbar) {
-            this.ToggleProgressbar(toolbar.ShowProgressbar);
-        }
+    public ToggleProgressbar(show: boolean) {
+        this.ShowProgressbar = show;
     }
 }

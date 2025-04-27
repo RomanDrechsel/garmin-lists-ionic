@@ -131,7 +131,7 @@ export class ListItemsPage extends AnimatedListPageBase {
     }
 
     public editItem(item: Listitem) {
-        if (this.List && !this._disableClick && this._initAnimationDone) {
+        if (this.List) {
             this.ListsService.EditListitem(this.List, item);
         }
     }

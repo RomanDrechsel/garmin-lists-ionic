@@ -43,14 +43,11 @@ export abstract class PageBase {
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
         });
+        AppService.AppToolbar = this.Toolbar;
     }
 
     public async ionViewDidEnter() {
         this.appComponent.setAppPages(this.ModifyMainMenu());
-        if (AppService.AppToolbar && this.Toolbar) {
-            this.Toolbar.Copy(AppService.AppToolbar);
-        }
-        AppService.AppToolbar = this.Toolbar;
     }
 
     public async ionViewWillLeave() {

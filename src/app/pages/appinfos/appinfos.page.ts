@@ -6,7 +6,7 @@ import { Browser } from "@capacitor/browser";
 import { Device } from "@capacitor/device";
 import { IonCol, IonContent, IonGrid, IonImg, IonItem, IonList, IonNote, IonRow, IonText } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import { Subscription, interval } from "rxjs";
+import { interval, Subscription } from "rxjs";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import { FileUtils } from "../../classes/utils/file-utils";
 import { WatchLoggingService } from "../../services/logging/watch-logging.service";
@@ -88,5 +88,11 @@ export class AppinfosPage extends PageBase {
             this.MemoryUsage = FileUtils.File.FormatSize(deviceinfo.memUsed);
         }
         this.cdr.detectChanges();
+    }
+
+    public async test() {
+        AppService.AppToolbar?.ToggleProgressbar(true);
+        await new Promise<void>(resolve => setTimeout(() => resolve(), 10000));
+        AppService.AppToolbar?.ToggleProgressbar(false);
     }
 }

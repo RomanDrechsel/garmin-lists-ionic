@@ -6,7 +6,6 @@ https://wiki.ubuntuusers.de/adb/
 
 TEST: animations
 TEST: editmode
-WIP: Progressbar is not shown after page change
 BUG: List-Editor: checkboxes doesn't match text color
 TODO: use SQLite as backend
 TODO: note function
