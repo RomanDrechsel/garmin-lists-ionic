@@ -31,7 +31,7 @@ export class ListsPage extends AnimatedListPageBase {
 
     constructor() {
         super();
-        this._animationDirection = "left";
+        this._animationDirection = "top";
     }
 
     public override async ionViewWillEnter(): Promise<void> {

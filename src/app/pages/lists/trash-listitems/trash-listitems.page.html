@@ -8,7 +8,7 @@
         <ion-list id="animated-list" #itemsList>
             <ion-item-sliding *ngFor="let item of Trash.items" [disabled]="EditMode || !InitialAnimationDone">
                 <ion-item lines="none" [button]="true" (click)="clickOnItem($event, item)" [ngClass]="{'selected-item': EditMode && isItemSelected(item)}">
-                    <ion-label class="animated-item">
+                    <ion-label class="animated-item" [ngClass]="{'pre-animation-state': !InitialAnimationDone}">
                         <div class="details" [ngClass]="{'hidden': item.hidden}">
                             <div class="listpoint-indicator-wrapper" slot="start">
                                 <div class="listpoint-indicator"></div>

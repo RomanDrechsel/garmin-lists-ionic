@@ -89,10 +89,4 @@ export class AppinfosPage extends PageBase {
         }
         this.cdr.detectChanges();
     }
-
-    public async test() {
-        AppService.AppToolbar?.ToggleProgressbar(true);
-        await new Promise<void>(resolve => setTimeout(() => resolve(), 10000));
-        AppService.AppToolbar?.ToggleProgressbar(false);
-    }
 }

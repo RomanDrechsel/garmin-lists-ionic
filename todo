@@ -6,6 +6,5 @@ https://wiki.ubuntuusers.de/adb/
 
 TEST: animations
 TEST: editmode
-BUG: List-Editor: checkboxes doesn't match text color
 TODO: use SQLite as backend
 TODO: note function

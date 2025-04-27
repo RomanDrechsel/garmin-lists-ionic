@@ -56,7 +56,7 @@ export class ListItemsPage extends AnimatedListPageBase {
 
     constructor() {
         super();
-        this._animationDirection = "top";
+        this._animationDirection = "left";
     }
 
     public override async ionViewWillEnter() {
@@ -73,9 +73,13 @@ export class ListItemsPage extends AnimatedListPageBase {
             if (listid) {
                 const uuid = Number(listid);
                 this._list = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
-                this._itemsInitialized = true;
-                this.onItemsChanged();
                 this.appComponent.setAppPages(this.ModifyMainMenu());
+                if (this._list) {
+                    this._itemsInitialized = true;
+                    this.onItemsChanged();
+                    this.Logger.Debug(`Autoload list ${this._list.Uuid}`);
+                    await this.Preferences.Set(EPrefProperty.OpenedList, this._list.Uuid);
+                }
             }
         })();
         this._useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true);
@@ -107,16 +111,10 @@ export class ListItemsPage extends AnimatedListPageBase {
         }
     }
 
-    public override async ionViewDidEnter() {
-        await super.ionViewDidEnter();
-        if (this.List) {
-            await this.Preferences.Set(EPrefProperty.OpenedList, this.List.Uuid);
-        }
-    }
-
     public override async ionViewWillLeave() {
         await super.ionViewWillLeave();
         await this.Preferences.Remove(EPrefProperty.OpenedList);
+        this.Logger.Debug(`Remove autoload list ${this.List?.Uuid}`);
         this._preferencesSubscription?.unsubscribe();
         this._listSubscription?.unsubscribe();
         this._connectIQSubscription?.unsubscribe();

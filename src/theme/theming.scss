@@ -207,7 +207,7 @@ ion-icon.info-icon {
 }
 
 ion-checkbox {
-    --border-color: var(--color-control-border);
+    --border-color: var(--ion-color-medium);
     --checkbox-background: var(--color-control-background);
 
     &::part(container) {

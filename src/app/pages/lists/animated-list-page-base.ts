@@ -81,7 +81,7 @@ export abstract class AnimatedListPageBase extends ListPageBase {
                             this._itemAnimations = [animation];
                         }
                         animation.play();
-                    }, index * 70);
+                    }, index * 50);
                 } else {
                     el.classList.remove("pre-animation-state", "animating");
                 }
@@ -97,6 +97,7 @@ export abstract class AnimatedListPageBase extends ListPageBase {
     private finishAnimation() {
         this._itemAnimations = undefined;
         this._initAnimationDone = true;
+        this.reload();
     }
 
     private refElement(el?: HTMLElement): HTMLElement | undefined {
