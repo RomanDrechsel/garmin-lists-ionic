@@ -4,9 +4,8 @@ https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
 ADB
 https://wiki.ubuntuusers.de/adb/
 
-WIP: animations
+TEST: animations
 TEST: editmode
-WIP: animations doesn't work properly
 BUG: Progressbar is not shown after page change
 BUG: List-Editor: checkboxes doesn't match text color
 TODO: use SQLite as backend
