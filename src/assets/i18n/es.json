@@ -412,8 +412,9 @@
         "database_trash": "Papelera:",
         "database_logs": "Registros:",
         "memory": "Memoria usada:",
-        "support": "He desarrollado la app en mi tiempo libre y sin ayuda financiera.<br />Es gratuita y de código abierto.<br /><br />Si te gusta y quieres apoyarme,<br />¿por qué no compras un café?",
-        "review": "O escribe una reseña amable en el <strong>Store ConnectIQ de Garmin</strong>",
+        "support": "He desarrollado la aplicación en mi tiempo libre y sin fines de lucro.<br />Seguirá siendo gratuita y de código abierto.<br /><br />Si te gusta y quieres apoyarme,<br />puedes invitarme a un café,",
+        "support2": "apoyarme a través de Paypal,",
+        "review": "escribir una reseña agradable en el <strong>Garmin ConnectIQ Store</strong>",
         "review_google": "o en <strong>Google Play</strong>",
         "thanks": "¡Gracias!",
         "website": "Para mis otros proyectos, visita mi sitio web:"

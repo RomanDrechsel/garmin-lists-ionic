@@ -412,9 +412,10 @@
         "database_trash": "ゴミ箱:",
         "database_logs": "ログ:",
         "memory": "メモリ使用量:",
-        "support": "このアプリは私の趣味で作成され、商業的な意図はありません。<br />無料でオープンソースのまま提供しています。<br /><br />もし気に入っていただけたら、コーヒーをご馳走していただけませんか？",
-        "review": "または、<strong>Garmin ConnectIQストア</strong>で素敵なレビューをお願いします。",
-        "review_google": "または<strong>Google Play</strong>で",
+        "support": "このアプリは私の自由時間に営利目的なしで開発したものです。<br />今後も無料かつオープンソースで提供されます。<br /><br />もし気に入っていただけたら、<br />コーヒーをごちそうしていただいたり、",
+        "support2": "Paypalで支援していただいたり、",
+        "review": "<strong>Garmin ConnectIQ Store</strong>に素敵なレビューを書いたり、",
+        "review_google": "<strong>Google Play</strong>に投稿していただけます。",
         "thanks": "ありがとうございます！",
         "website": "私の他のプロジェクトについては、私のウェブサイトをご覧ください。"
     },

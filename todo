@@ -6,8 +6,6 @@ https://wiki.ubuntuusers.de/adb/
 
 TEST: animations
 TEST: editmode
-WIP: Paypal Logo, not Bmac
-Translate: page_appinfos.support / page_appinfo.support2
-TODO: EdgeToEdge.enable() (see Google Play console)
+WIP: EdgeToEdge.enable() (see Google Play console)
 TODO: use SQLite as backend
 TODO: note function
