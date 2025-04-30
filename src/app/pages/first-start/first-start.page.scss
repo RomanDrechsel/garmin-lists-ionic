@@ -1,7 +1,7 @@
 :host {
     ion-content.page {
         --background: var(--ion-color-primary-tint);
-        --padding-top: 5%;
+        --padding-top: calc(var(--ion-safe-area-top) + 5%);
         --padding-bottom: 5%;
         --padding-start: 5%;
         --padding-end: 5%;

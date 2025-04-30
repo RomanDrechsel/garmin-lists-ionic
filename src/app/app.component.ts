@@ -2,7 +2,6 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectorRef, Component, inject, isDevMode, OnInit, ViewChild } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { App } from "@capacitor/app";
-import { StatusBar } from "@capacitor/status-bar";
 import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonRouterOutlet, IonSplitPane, IonToggle, NavController, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { EMenuItemType, MenuItem, MenuitemFactory, MenuitemFactoryList } from "./classes/menu-items";
@@ -46,10 +45,6 @@ export class AppComponent implements OnInit {
     }
 
     public async ngOnInit() {
-        if (AppService.isMobileApp) {
-            StatusBar.setBackgroundColor({ color: "#333745" });
-        }
-
         //exit app if back-stack is empty
         this.Platform.backButton.subscribeWithPriority(-1, async () => {
             await this.tapBackToExit();

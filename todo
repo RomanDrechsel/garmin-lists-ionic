@@ -7,5 +7,6 @@ https://wiki.ubuntuusers.de/adb/
 TEST: animations
 TEST: editmode
 WIP: EdgeToEdge.enable() (see Google Play console)
+BUG: First start page transition does not work correctly when garmin is disabled
 TODO: use SQLite as backend
 TODO: note function
