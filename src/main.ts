@@ -1,8 +1,9 @@
 import { HttpClient, provideHttpClient } from "@angular/common/http";
 import { enableProdMode, importProvidersFrom, inject, isDevMode, provideAppInitializer } from "@angular/core";
 import { bootstrapApplication } from "@angular/platform-browser";
-import { RouteReuseStrategy, provideRouter } from "@angular/router";
+import { provideRouter, RouteReuseStrategy } from "@angular/router";
 import { provideServiceWorker } from "@angular/service-worker";
+import { Capacitor } from "@capacitor/core";
 import { IonicRouteStrategy, provideIonicAngular } from "@ionic/angular/standalone";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
@@ -17,6 +18,9 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 export function initializeFactory(init: AppService) {
+    if ((window as any).AndroidSafeArea?.requestSafeAreaInsets && Capacitor.getPlatform() === "android") {
+        (window as any).AndroidSafeArea.requestSafeAreaInsets();
+    }
     init.InitializeApp();
 }
 

@@ -412,9 +412,10 @@
         "database_trash": "回收站：",
         "database_logs": "日志：",
         "memory": "内存使用：",
-        "support": "我在空闲时间开发了这个应用，没有任何财务目的。<br />它是并将继续保持免费和开源。<br /><br />如果你喜欢它并愿意支持我，<br />为什么不请我喝杯咖啡呢？",
-        "review": "或者在 <strong>Garmin Connect IQ 商店</strong> 中写个好评",
-        "review_google": "或在 <strong>Google Play</strong> 上",
+        "support": "我在空闲时间开发了这个应用程序，没有任何经济利益。<br />它将永远免费并保持开源。<br /><br />如果你喜欢它并希望支持我，<br />你可以请我喝杯咖啡，",
+        "support2": "通过Paypal支持我，",
+        "review": "在<strong>Garmin ConnectIQ Store</strong>上写一条好评，",
+        "review_google": "或者在<strong>Google Play</strong>上写一条好评。",
         "thanks": "谢谢！",
         "website": "查看我的其他项目，访问我的网站："
     },

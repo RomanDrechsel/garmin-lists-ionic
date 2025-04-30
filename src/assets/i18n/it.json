@@ -392,9 +392,10 @@
         "database_trash": "Cestino:",
         "database_logs": "Log:",
         "memory": "Consumo di memoria:",
-        "support": "Ho sviluppato questa app nel mio tempo libero e senza scopi commerciali.<br />Rimane gratuita e open source.<br /><br />Se ti piace e vuoi supportarmi,<br />perché non mi compri un caffè?",
-        "review": "Oppure lascia una recensione positiva nel <strong>Garmin Connect IQ Store</strong>",
-        "review_google": "o su <strong>Google Play</strong>",
+        "support": "Ho sviluppato l'app nel mio tempo libero e senza fini di lucro.<br />Rimarrà gratuita e open source.<br /><br />Se ti piace e vuoi sostenermi,<br />puoi offrirmi un caffè,",
+        "support2": "sostenermi tramite Paypal,",
+        "review": "lasciare una bella recensione sul <strong>Garmin ConnectIQ Store</strong>",
+        "review_google": "oppure su <strong>Google Play</strong>",
         "thanks": "Grazie!",
         "website": "Per i miei altri progetti, visita il mio sito web:"
     },

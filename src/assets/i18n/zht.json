@@ -412,9 +412,10 @@
         "database_trash": "垃圾桶：",
         "database_logs": "日誌：",
         "memory": "內存使用：",
-        "support": "我在業餘時間開發了這個應用，並沒有任何財務利益考量。<br />它將保持免費和開源。<br /><br />如果你喜歡這個應用並想支持我，<br />何不請我喝杯咖啡？",
-        "review": "或者在 <strong>Garmin ConnectIQ 商店</strong>上留下好評",
-        "review_google": "或者在 <strong>Google Play</strong> 上",
+        "support": "我在空閒時間開發了這個應用程式，並無任何經濟利益。<br />它將永遠免費並保持開源。<br /><br />如果你喜歡它並希望支持我，<br />你可以請我喝杯咖啡，",
+        "support2": "透過Paypal支持我，",
+        "review": "在<strong>Garmin ConnectIQ Store</strong>上寫一則好評，",
+        "review_google": "或者在<strong>Google Play</strong>上寫一則好評。",
         "thanks": "謝謝！",
         "website": "想查看我的其他項目，請訪問我的網站："
     },

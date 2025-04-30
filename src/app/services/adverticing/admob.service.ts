@@ -23,6 +23,10 @@ export class AdmobService {
         return this._isInitialized;
     }
 
+    public get SaveZoneBottom(): number {
+        return parseInt(window.getComputedStyle(document.documentElement).getPropertyValue("--ion-safe-area-bottom").replace("px", "") ?? 0);
+    }
+
     public async Initialize() {
         this._isInitialized = false;
 
@@ -70,7 +74,7 @@ export class AdmobService {
                 adId: "ca-app-pub-4693945059643494/5993520446",
                 adSize: BannerAdSize.ADAPTIVE_BANNER,
                 position: BannerAdPosition.BOTTOM_CENTER,
-                margin: 0,
+                margin: this.SaveZoneBottom,
                 isTesting: environment.publicRelease !== true,
                 //npa: true
             };
@@ -185,7 +189,7 @@ export class AdmobService {
                 this._bannerHeight = height;
                 this.Preferences.Set(EPrefProperty.AdmobBannerHeight, height);
             }
-            container.style.marginBottom = height + "px";
+            container.style.marginBottom = height + this.SaveZoneBottom + "px";
         }
     }
 }
