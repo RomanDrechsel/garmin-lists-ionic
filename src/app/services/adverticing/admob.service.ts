@@ -1,6 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import { AdMob, AdMobBannerSize, AdmobConsentDebugGeography, AdmobConsentInfo, AdmobConsentRequestOptions, AdmobConsentStatus, BannerAdOptions, BannerAdPluginEvents, BannerAdPosition, BannerAdSize } from "@capacitor-community/admob";
 import { KeyboardInfo } from "@capacitor/keyboard";
+import { EdgeToEdge } from "@capawesome/capacitor-android-edge-to-edge-support";
+import SysInfo from "src/app/plugins/sysinfo/sys-info";
 import { environment } from "../../../environments/environment";
 import { Logger } from "../logging/logger";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
@@ -31,7 +33,7 @@ export class AdmobService {
         this._isInitialized = false;
 
         this._bannerHeight = await this.Preferences.Get(EPrefProperty.AdmobBannerHeight, this._bannerHeight);
-        this.resizeContainer(this._bannerHeight);
+        await this.resizeContainer(this._bannerHeight);
 
         await AdMob.initialize({
             initializeForTesting: environment.publicRelease !== true,
@@ -74,7 +76,7 @@ export class AdmobService {
                 adId: "ca-app-pub-4693945059643494/5993520446",
                 adSize: BannerAdSize.ADAPTIVE_BANNER,
                 position: BannerAdPosition.BOTTOM_CENTER,
-                margin: this.SaveZoneBottom,
+                margin: await this.saveAreaBottom(),
                 isTesting: environment.publicRelease !== true,
                 //npa: true
             };
@@ -179,7 +181,7 @@ export class AdmobService {
      * resizes the space for the banner
      * @param height banner height in px
      */
-    private resizeContainer(height: number) {
+    private async resizeContainer(height: number) {
         const container = document.querySelector("ion-app") as HTMLElement;
         if (container) {
             if (height > 0) {
@@ -189,7 +191,13 @@ export class AdmobService {
                 this._bannerHeight = height;
                 this.Preferences.Set(EPrefProperty.AdmobBannerHeight, height);
             }
-            container.style.marginBottom = height + this.SaveZoneBottom + "px";
+            container.style.marginBottom = height + "px";
         }
+    }
+
+    private async saveAreaBottom(): Promise<number> {
+        const result = await EdgeToEdge.getInsets();
+        const density = await SysInfo.DisplayDensity();
+        return result.bottom / density.density;
     }
 }
