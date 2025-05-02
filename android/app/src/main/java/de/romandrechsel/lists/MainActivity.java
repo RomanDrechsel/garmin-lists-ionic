@@ -5,7 +5,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.webkit.WebView;
 
+import androidx.activity.EdgeToEdge;
+
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.PluginHandle;
 
 import de.romandrechsel.lists.garmin.ConnectIQPlugin;
 import de.romandrechsel.lists.sysinfo.SysInfoPlugin;
@@ -24,6 +27,7 @@ public class MainActivity extends BridgeActivity
     public void onStart()
     {
         super.onStart();
+        EdgeToEdge.enable(this);
         WebView webView = getBridge().getWebView();
         if (webView != null)
         {
@@ -31,8 +35,12 @@ public class MainActivity extends BridgeActivity
             webView.setVerticalScrollBarEnabled(true);
         }
 
-        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        SysInfoPlugin.GetInstance().SetNightMode(currentNightMode == Configuration.UI_MODE_NIGHT_YES);
+        SysInfoPlugin plugin = this.GetSysInfoPlugin();
+        if (plugin != null)
+        {
+            int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            plugin.SetNightMode(currentNightMode == Configuration.UI_MODE_NIGHT_YES);
+        }
     }
 
     @Override
@@ -49,6 +57,20 @@ public class MainActivity extends BridgeActivity
             int currentNightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
             isNightMode = currentNightMode == Configuration.UI_MODE_NIGHT_YES;
         }
-        SysInfoPlugin.GetInstance().SetNightMode(isNightMode);
+        SysInfoPlugin plugin = this.GetSysInfoPlugin();
+        if (plugin != null)
+        {
+            plugin.SetNightMode(isNightMode);
+        }
+    }
+
+    private SysInfoPlugin GetSysInfoPlugin()
+    {
+        PluginHandle handle = this.getBridge().getPlugin("SysInfo");
+        if (handle != null)
+        {
+            return (SysInfoPlugin) handle.getInstance();
+        }
+        return null;
     }
 }

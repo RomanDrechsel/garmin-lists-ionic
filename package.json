@@ -1,6 +1,6 @@
 {
     "name": "lists",
-    "version": "2025.04.3000",
+    "version": "2025.05.0200",
     "author": "Roman Drechsel",
     "homepage": "https://roman-drechsel.de",
     "scripts": {
@@ -65,7 +65,7 @@
         "eslint-plugin-import": "2.31.0",
         "eslint-plugin-jsdoc": "50.6.11",
         "eslint-plugin-prefer-arrow": "1.2.3",
-        "jasmine-core": "5.7.0",
+        "jasmine-core": "5.7.1",
         "jasmine-spec-reporter": "7.0.0",
         "karma": "6.4.4",
         "karma-chrome-launcher": "~3.2.0",

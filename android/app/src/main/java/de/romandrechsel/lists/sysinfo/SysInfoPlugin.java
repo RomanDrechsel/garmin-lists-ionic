@@ -14,19 +14,7 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "SysInfo")
 public class SysInfoPlugin extends Plugin
 {
-    private static SysInfoPlugin _instance = null;
-
     private Boolean _isNightMode = null;
-
-    SysInfoPlugin()
-    {
-        SysInfoPlugin._instance = this;
-    }
-
-    public static SysInfoPlugin GetInstance()
-    {
-        return SysInfoPlugin._instance;
-    }
 
     private static final String TAG = "SysInfoPlugin";
 
