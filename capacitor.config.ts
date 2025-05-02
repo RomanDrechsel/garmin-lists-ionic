@@ -30,7 +30,7 @@ const config: CapacitorConfig = {
             resizeOnFullScreen: false,
         },
         EdgeToEdge: {
-            backgroundColor: "#212166",
+            backgroundColor: "#73bbff",
         },
     },
 };

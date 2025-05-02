@@ -213,8 +213,13 @@ export class AppService {
 
     private async handleNightmode(isNightMode: boolean | undefined) {
         this.Logger.Debug(`NightMode set to '${isNightMode}'`);
-        EdgeToEdge.setBackgroundColor({ color: "#212166" });
-        StatusBar.setStyle({ style: Style.Dark });
+        if (isNightMode === true) {
+            EdgeToEdge.setBackgroundColor({ color: "#212166" });
+            StatusBar.setStyle({ style: Style.Dark });
+        } else {
+            EdgeToEdge.setBackgroundColor({ color: "#73bbff" });
+            StatusBar.setStyle({ style: Style.Light });
+        }
     }
 }
 
