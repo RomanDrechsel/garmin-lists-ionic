@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.webkit.WebView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.core.view.WindowCompat;
 
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.PluginHandle;
@@ -28,6 +29,7 @@ public class MainActivity extends BridgeActivity
     {
         super.onStart();
         EdgeToEdge.enable(this);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WebView webView = getBridge().getWebView();
         if (webView != null)
         {
