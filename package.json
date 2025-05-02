@@ -1,6 +1,6 @@
 {
     "name": "lists",
-    "version": "2025.04.3000",
+    "version": "2025.05.0202",
     "author": "Roman Drechsel",
     "homepage": "https://roman-drechsel.de",
     "scripts": {
@@ -37,6 +37,7 @@
         "@capacitor/share": "7.0.1",
         "@capacitor/splash-screen": "7.0.1",
         "@capacitor/status-bar": "7.0.1",
+        "@capawesome/capacitor-android-edge-to-edge-support": "^7.2.1",
         "@ionic/angular": "8.5.6",
         "@ionic/cli": "7.2.1",
         "@ngx-translate/core": "16.0.4",
@@ -64,7 +65,7 @@
         "eslint-plugin-import": "2.31.0",
         "eslint-plugin-jsdoc": "50.6.11",
         "eslint-plugin-prefer-arrow": "1.2.3",
-        "jasmine-core": "5.7.0",
+        "jasmine-core": "5.7.1",
         "jasmine-spec-reporter": "7.0.0",
         "karma": "6.4.4",
         "karma-chrome-launcher": "~3.2.0",

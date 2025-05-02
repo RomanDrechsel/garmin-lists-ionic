@@ -61,17 +61,17 @@
             </ion-segment-content>
         </ion-segment-view>
         <div class="fixed-bottom">
-            <ion-segment value="language" (ionChange)="segmentChange($event.detail.value)" #segment>
-                <ion-segment-button value="language" content-id="language">
+            <ion-segment value="language">
+                <ion-segment-button value="language" content-id="language" #segbtnLanguage>
                     <ion-icon src="/assets/icons/language.svg"></ion-icon>
                 </ion-segment-button>
-                <ion-segment-button value="garmin" content-id="garmin">
+                <ion-segment-button value="garmin" content-id="garmin" #segbtnGarmin>
                     <ion-icon src="/assets/icons/menu/devices.svg"></ion-icon>
                 </ion-segment-button>
-                <ion-segment-button value="garmin-hint" content-id="garmin-hint" [disabled]="!GarminActive">
+                <ion-segment-button value="garmin-hint" content-id="garmin-hint" [disabled]="!GarminActive" #segbtnGarminHint>
                     <ion-icon src="/assets/icons/info.svg"></ion-icon>
                 </ion-segment-button>
-                <ion-segment-button value="finish" content-id="finish">
+                <ion-segment-button value="finish" content-id="finish" #segbtnFinish>
                     <ion-icon src="/assets/icons/finish.svg"></ion-icon>
                 </ion-segment-button>
             </ion-segment>

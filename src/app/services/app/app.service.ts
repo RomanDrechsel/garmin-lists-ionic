@@ -2,8 +2,12 @@ import { inject, Injectable, isDevMode } from "@angular/core";
 import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
+import { StatusBar, Style } from "@capacitor/status-bar";
+import { EdgeToEdge } from "@capawesome/capacitor-android-edge-to-edge-support";
 import { Platform } from "@ionic/angular";
 import { NavController } from "@ionic/angular/standalone";
+import type { NightModeEventArgs } from "src/app/plugins/sysinfo/event-args/night-mode-event-args";
+import SysInfo from "src/app/plugins/sysinfo/sys-info";
 import { environment } from "../../../environments/environment";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { MainToolbarComponent } from "../../components/main-toolbar/main-toolbar.component";
@@ -70,6 +74,10 @@ export class AppService {
         AppService.Popups = this._popups;
         await Logger.Initialize(this.Logger);
         await Locale.Initialize(this.Locale);
+
+        await EdgeToEdge.enable();
+        this.handleNightmode((await SysInfo.NightMode()).isNightMode);
+
         await this.ListsService.Initialize();
 
         //no await ...
@@ -85,6 +93,10 @@ export class AppService {
 
         //no await...
         this.Admob.Initialize();
+
+        SysInfo.addListener<NightModeEventArgs>("NIGHTMODE", (data: NightModeEventArgs) => {
+            this.handleNightmode(data.isNightMode);
+        });
     }
 
     /**
@@ -197,6 +209,17 @@ export class AppService {
         }
 
         return meta;
+    }
+
+    private async handleNightmode(isNightMode: boolean | undefined) {
+        this.Logger.Debug(`NightMode set to '${isNightMode}'`);
+        if (isNightMode === true) {
+            EdgeToEdge.setBackgroundColor({ color: "#212166" });
+            StatusBar.setStyle({ style: Style.Dark });
+        } else {
+            EdgeToEdge.setBackgroundColor({ color: "#73bbff" });
+            StatusBar.setStyle({ style: Style.Light });
+        }
     }
 }
 

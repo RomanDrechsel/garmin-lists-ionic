@@ -27,7 +27,10 @@ const config: CapacitorConfig = {
         Keyboard: {
             resize: KeyboardResize.Body,
             style: KeyboardStyle.Default,
-            resizeOnFullScreen: true,
+            resizeOnFullScreen: false,
+        },
+        EdgeToEdge: {
+            backgroundColor: "#73bbff",
         },
     },
 };

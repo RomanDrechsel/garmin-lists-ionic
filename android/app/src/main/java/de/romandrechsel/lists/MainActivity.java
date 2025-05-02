@@ -1,20 +1,18 @@
 package de.romandrechsel.lists;
 
-import android.app.Activity;
-import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowCompat;
 
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.PluginHandle;
 
 import de.romandrechsel.lists.garmin.ConnectIQPlugin;
+import de.romandrechsel.lists.sysinfo.SysInfoPlugin;
 
 public class MainActivity extends BridgeActivity
 {
@@ -22,8 +20,8 @@ public class MainActivity extends BridgeActivity
     public void onCreate(Bundle savedInstanceState)
     {
         registerPlugin(ConnectIQPlugin.class);
+        registerPlugin(SysInfoPlugin.class);
         super.onCreate(savedInstanceState);
-        this.requestSafeAreaInsets();
     }
 
     @Override
@@ -31,55 +29,50 @@ public class MainActivity extends BridgeActivity
     {
         super.onStart();
         EdgeToEdge.enable(this);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WebView webView = getBridge().getWebView();
         if (webView != null)
         {
             webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
-            // Register JS interface for hot-reload safe area request
-            webView.addJavascriptInterface(this, "AndroidSafeArea");
+            webView.setVerticalScrollBarEnabled(true);
         }
-    }
 
-    private void setSafeAreaInsets(int left, int top, int right, int bottom)
-    {
-        // Inject CSS variables into the WebView for Ionic safe areas
-        String js = "document.documentElement.style.setProperty('--ion-safe-area-left', '" + left + "px');"
-                + "document.documentElement.style.setProperty('--ion-safe-area-top', '" + top + "px');"
-                + "document.documentElement.style.setProperty('--ion-safe-area-right', '" + right + "px');"
-                + "document.documentElement.style.setProperty('--ion-safe-area-bottom', '" + bottom + "px');";
-        getBridge().getWebView().evaluateJavascript(js, null);
-    }
-
-    @JavascriptInterface
-    public void requestSafeAreaInsets()
-    {
-        Context context = bridge.getContext();
-        if (context instanceof Activity activity)
+        SysInfoPlugin plugin = this.GetSysInfoPlugin();
+        if (plugin != null)
         {
-            activity.runOnUiThread(() ->
-            {
-                View rootView = activity.getWindow().getDecorView().getRootView();
-
-                WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(rootView);
-                if (insets != null)
-                {
-                    Insets systemInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                    Insets gestureInsets = insets.getInsets(WindowInsetsCompat.Type.systemGestures());
-                    float density = this.getResources().getDisplayMetrics().density;
-
-                    int leftInset = (int) (systemInsets.left / density);
-                    int topInset = (int) (systemInsets.top / density);
-                    int rightInset = (int) (systemInsets.right / density);
-                    int bottomInset = (int) (Math.max(systemInsets.bottom, gestureInsets.bottom) / density);
-
-                    if (insets.isVisible(WindowInsetsCompat.Type.ime()))
-                    {
-                        bottomInset = 0;
-                    }
-
-                    this.setSafeAreaInsets(leftInset, topInset, rightInset, bottomInset);
-                }
-            });
+            int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            plugin.SetNightMode(currentNightMode == Configuration.UI_MODE_NIGHT_YES);
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+        boolean isNightMode;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        {
+            isNightMode = getResources().getConfiguration().isNightModeActive();
+        }
+        else
+        {
+            int currentNightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            isNightMode = currentNightMode == Configuration.UI_MODE_NIGHT_YES;
+        }
+        SysInfoPlugin plugin = this.GetSysInfoPlugin();
+        if (plugin != null)
+        {
+            plugin.SetNightMode(isNightMode);
+        }
+    }
+
+    private SysInfoPlugin GetSysInfoPlugin()
+    {
+        PluginHandle handle = this.getBridge().getPlugin("SysInfo");
+        if (handle != null)
+        {
+            return (SysInfoPlugin) handle.getInstance();
+        }
+        return null;
     }
 }

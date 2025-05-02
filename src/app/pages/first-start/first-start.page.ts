@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Browser } from "@capacitor/browser";
 import { IonButton, IonContent, IonIcon, IonImg, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonSelect, IonSelectOption, IonText, IonToggle } from "@ionic/angular/standalone";
@@ -13,12 +13,14 @@ import { PageBase } from "../page-base";
     templateUrl: "./first-start.page.html",
     styleUrls: ["./first-start.page.scss"],
     standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.Default,
     imports: [IonSegmentButton, IonSegment, IonSegmentContent, IonSegmentView, IonButton, IonText, IonToggle, IonImg, IonContent, IonIcon, IonSelect, IonSelectOption, CommonModule, FormsModule, TranslateModule],
 })
 export class FirstStartPage extends PageBase {
-    @ViewChild("segment", { static: false, read: IonSegment }) segment?: IonSegment;
-    @ViewChild("selLanguage", { static: false, read: IonSelect }) selLanguage?: IonSelect;
+    @ViewChild("selLanguage", { static: false, read: IonSelect }) private _selLanguage?: IonSelect;
+    @ViewChild("segbtnGarmin", { static: false, read: ElementRef }) private _segbtnGarmin?: ElementRef;
+    @ViewChild("segbtnGarminHint", { static: false, read: ElementRef }) private _segbtnGarminHint?: ElementRef;
+    @ViewChild("segbtnFinish", { static: false, read: ElementRef }) private _segbtnFinish?: ElementRef;
 
     private _garminActive: boolean = true;
 
@@ -33,25 +35,14 @@ export class FirstStartPage extends PageBase {
     public override async ionViewDidEnter(): Promise<void> {
         await super.ionViewDidEnter();
         await this.Preferences.Set(EPrefProperty.GarminConnectIQ, true);
-        if (this.segment) {
-            this.segment.value = "language";
-        }
     }
 
     public async changeLanguage() {
-        this.selLanguage?.open();
+        this._selLanguage?.open();
     }
 
     public onChangeLanguage(event: SelectCustomEvent) {
         this.Locale.ChangeLanguage(event.detail.value);
-    }
-
-    public async segmentChange(segment: any): Promise<void> {
-        if (segment == "garmin-hint") {
-            if (this._garminActive && !this.ConnectIQ.Initialized) {
-                await this.ConnectIQ.Initialize();
-            }
-        }
     }
 
     public async onGarminChange(check: boolean) {
@@ -62,19 +53,23 @@ export class FirstStartPage extends PageBase {
         } else {
             await this.ConnectIQ.Shutdown();
         }
+        this._segbtnFinish?.nativeElement?.click();
     }
 
     public async nextLanguage() {
-        this.gotoSegment("garmin");
+        this._segbtnGarmin?.nativeElement?.click();
     }
 
     public async nextGarmin() {
-        const nextSegment = this.GarminActive ? "garmin-hint" : "finish";
-        this.gotoSegment(nextSegment);
+        if (this.GarminActive) {
+            this._segbtnGarminHint?.nativeElement?.click();
+        } else {
+            this._segbtnFinish?.nativeElement?.click();
+        }
     }
 
     public async nextGarminHint() {
-        this.gotoSegment("finish");
+        this._segbtnFinish?.nativeElement?.click();
     }
 
     public async Finish() {
@@ -88,13 +83,5 @@ export class FirstStartPage extends PageBase {
 
     public async openHomepage() {
         await Browser.open({ url: `https://${this.Config.Homepage}` });
-    }
-
-    private async gotoSegment(segment: string) {
-        if (this.segment) {
-            this.segment.value = segment;
-            this.segmentChange(segment);
-            this.cdr.detectChanges();
-        }
     }
 }
