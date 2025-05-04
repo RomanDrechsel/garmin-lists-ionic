@@ -2,13 +2,14 @@ import { Logger } from "../logging/logger";
 import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
-    private _uuid: string | number;
+    private _uuid?: number;
     private _name: string;
     private _created: number;
     private _updated: number;
     private _order: number;
     private _reset?: ListReset;
     private _itemsCount?: number;
+    private _trashItemsCount?: number;
     private _items?: Listitem[];
     private _deleted?: number;
     private _sync: boolean = false;
@@ -45,7 +46,7 @@ export class List {
      * in newer versions, the uuid is a number
      * in older versions it was a string
      */
-    public get Uuid(): string | number {
+    public get Uuid(): number | undefined {
         return this._uuid;
     }
 
@@ -53,7 +54,7 @@ export class List {
      * set the unique list id
      * @param uuid unique list id
      */
-    public set Uuid(uuid: string | number) {
+    public set Uuid(uuid: number) {
         this._uuid = uuid;
     }
 
@@ -109,6 +110,11 @@ export class List {
         } else {
             return this._itemsCount ?? 0;
         }
+    }
+
+    /** how may items are in trash for this list */
+    public get TrashItemsCount(): number {
+        return this._trashItemsCount ?? 0;
     }
 
     /** set the list of all items */
@@ -269,6 +275,17 @@ export class List {
     }
 
     /**
+     * copys all information from the model to this list
+     * @param model model to copy
+     * @returns true if data was updated
+     */
+    public copy(model: List): boolean {
+        //TODO: List.copy()
+        Logger.Debug(`NOT YET IMPLEMENTED: List.copy()`);
+        return false;
+    }
+
+    /**
      * create an object to send to a device
      * @returns device object representation
      */
@@ -401,7 +418,7 @@ export class List {
 }
 
 export declare type ListModel = {
-    uuid: string | number;
+    uuid?: number;
     name: string;
     created: number;
     order: number;

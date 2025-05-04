@@ -1,50 +1,42 @@
 import { inject, Injectable } from "@angular/core";
 import { Keyboard } from "@capacitor/keyboard";
 import { AlertInput, ModalController, NavController } from "@ionic/angular/standalone";
-import { BehaviorSubject, interval, Subscription } from "rxjs";
-import { HelperUtils } from "../../classes/utils/helper-utils";
-import { StringUtils } from "../../classes/utils/string-utils";
-import { ListEditor } from "../../components/list-editor/list-editor.component";
-import { ListItemEditor, ListItemEditorMultiple } from "../../components/list-item-editor/list-item-editor.component";
+import { BehaviorSubject, interval, type Subscription } from "rxjs";
+import { StringUtils } from "src/app/classes/utils/string-utils";
+import { ListEditor } from "src/app/components/list-editor/list-editor.component";
+import { ListItemEditor, ListItemEditorMultiple } from "src/app/components/list-item-editor/list-item-editor.component";
 import { AppService } from "../app/app.service";
-import { ConnectIQDevice } from "../connectiq/connect-iq-device";
+import type { ConnectIQDevice } from "../connectiq/connect-iq-device";
 import { ConnectIQMessageType } from "../connectiq/connect-iq-message-type";
 import { ConnectIQService } from "../connectiq/connect-iq.service";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { PopupsService } from "../popups/popups.service";
+import { Toast } from "../popups/toast";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
-import { Toast } from "./../popups/toast";
-import { ListsBackendService } from "./../storage/lists/lists-backend.service";
+import { type ListsOrder, type ListsOrderDirection } from "../storage/sqlite/sqlite-backend.service";
+import { SqliteBackendService } from "./../storage/sqlite/sqlite-backend.service";
 import { KeepInTrash } from "./keep-in-trash";
-import { List } from "./list";
-import { Listitem, ListitemModel } from "./listitem";
-import { ListitemsTrashProvider } from "./listitems-trash-provider";
-import { ListitemTrashModel, ListitemTrashUtils } from "./listitems-trash-utils";
-import { ListsProvider } from "./lists-provider";
-import { TrashProvider } from "./trash-provider";
+import { List, type ListReset } from "./list";
+import { Listitem } from "./listitem";
+import type { ListitemTrashModel } from "./listitems-trash-utils";
 
 @Injectable({
     providedIn: "root",
 })
 export class ListsService {
-    private readonly ListsProvider: ListsProvider;
-    private readonly TrashProvider: TrashProvider;
-    private readonly TrashItemsProvider: ListitemsTrashProvider;
     private readonly Preferences = inject(PreferencesService);
     private readonly ModalCtrl = inject(ModalController);
     private readonly Popups = inject(PopupsService);
     private readonly NavController = inject(NavController);
     private readonly Locale = inject(LocalizationService);
-    private readonly Backend = inject(ListsBackendService);
     private readonly ConnectIQ = inject(ConnectIQService);
+    private readonly BackendService = inject(SqliteBackendService);
 
     private _keepInTrashStock: KeepInTrash.Enum = KeepInTrash.Default;
     private _syncLists: boolean = false;
     private _removeOldTrashEntriesTimer?: Subscription;
-
-    private _lists: List[] = [];
-    private readonly _listIndex: Map<string | number, List> = new Map();
+    private readonly _listIndex: Map<number, List> = new Map();
 
     private onTrashItemsDatasetChangedSubject = new BehaviorSubject<ListitemTrashModel | undefined>(undefined);
     public onTrashItemsDatasetChanged$ = this.onTrashItemsDatasetChangedSubject.asObservable();
@@ -58,43 +50,17 @@ export class ListsService {
     private onListsChangedSubject = new BehaviorSubject<List[] | undefined>(undefined);
     public onListsChanged$ = this.onListsChangedSubject.asObservable();
 
-    public constructor() {
-        this.ListsProvider = new ListsProvider(this.Backend);
-        this.TrashItemsProvider = new ListitemsTrashProvider(this.Backend, this.onTrashItemsDatasetChangedSubject);
-        this.TrashProvider = new TrashProvider(this.Backend, this.TrashItemsProvider, this.onTrashDatasetChangedSubject);
-    }
-
     public async Initialize() {
-        this.KeepInTrashStock = await this.Preferences.Get<number>(EPrefProperty.TrashKeepinStock, this._keepInTrashStock);
+        await this.BackendService.Initialize();
         this._syncLists = await this.Preferences.Get<boolean>(EPrefProperty.SyncListOnDevice, false);
         this.Preferences.onPrefChanged$.subscribe(arg => {
             if (arg.prop == EPrefProperty.TrashKeepinStock) {
-                this.KeepInTrashStock = arg.value;
+                this.removeOldTrash(arg.value);
             } else if (arg.prop == EPrefProperty.SyncListOnDevice) {
                 this._syncLists = arg.value;
             }
         });
-        const count = (await this.GetLists(true)).length;
-        Logger.Debug(`Found ${count} list(s) in the backend`);
-    }
-
-    private set KeepInTrashStock(value: number | KeepInTrash.Enum) {
-        value = KeepInTrash.FromNumber(value);
-        this._keepInTrashStock = value;
-        if (KeepInTrash.StockPeriod(value)) {
-            this._removeOldTrashEntriesTimer?.unsubscribe();
-            this._removeOldTrashEntriesTimer = interval(value * 60 * 60 * 24).subscribe(() => {
-                this.TrashProvider.RemoveOldEntries(value);
-            });
-            this.TrashProvider.RemoveOldEntries(value);
-            this.TrashProvider.MaxEntryCount = undefined;
-            this.TrashItemsProvider.MaxEntryCount = undefined;
-        } else {
-            this._removeOldTrashEntriesTimer?.unsubscribe();
-            this._removeOldTrashEntriesTimer = undefined;
-            this.TrashProvider.MaxEntryCount = KeepInTrash.StockSize(value);
-            this.TrashItemsProvider.MaxEntryCount = KeepInTrash.StockSize(value);
-        }
+        await this.removeOldTrash(await this.Preferences.Get<number>(EPrefProperty.TrashKeepinStock, this._keepInTrashStock));
     }
 
     /**
@@ -102,18 +68,25 @@ export class ListsService {
      * @param reload force to reload lists from backend
      * @returns array of all lists
      */
-    public async GetLists(reload: boolean = false): Promise<List[]> {
-        if (reload || this._lists.length == 0) {
-            AppService.AppToolbar?.ToggleProgressbar(true);
-            this._lists = await this.ListsProvider.GetLists(true);
-            this._listIndex.clear();
-            this._lists.forEach(l => {
-                this._listIndex.set(l.Uuid, l);
-            });
-            this._lists = this.orderLists(this._lists);
-            AppService.AppToolbar?.ToggleProgressbar(false);
-        }
-        return this._lists;
+    public async GetLists(args?: { orderBy?: ListsOrder; orderDir?: ListsOrderDirection }): Promise<List[]> {
+        AppService.AppToolbar?.ToggleProgressbar(true);
+        const lists = await this.BackendService.queryLists({ peek: true, trash: false, orderBy: args?.orderBy, orderDir: args?.orderDir });
+        lists.forEach(l => {
+            const list = this._listIndex.get(l.Uuid!);
+            if (list) {
+                list.copy(l);
+            } else {
+                this._listIndex.set(l.Uuid!, l);
+            }
+        });
+        Array.from(this._listIndex.keys()).forEach(uuid => {
+            if (!lists.some(l => l.Uuid == uuid)) {
+                this._listIndex.delete(uuid);
+            }
+        });
+
+        AppService.AppToolbar?.ToggleProgressbar(false);
+        return lists;
     }
 
     /**
@@ -121,8 +94,8 @@ export class ListsService {
      * @returns array of lists in trash
      */
     public async GetTrash(): Promise<List[]> {
-        AppService.AppToolbar?.ToggleProgressbar(false);
-        const trash = await this.TrashProvider.GetLists(true);
+        AppService.AppToolbar?.ToggleProgressbar(true);
+        const trash = await this.BackendService.queryLists({ peek: true, trash: true, orderBy: "deleted", orderDir: "desc" });
         AppService.AppToolbar?.ToggleProgressbar(false);
         return trash;
     }
@@ -132,15 +105,18 @@ export class ListsService {
      * @param uuid unique id of the list
      * @returns List object
      */
-    public async GetList(uuid: string | number): Promise<List | undefined> {
-        if (!this._listIndex.has(uuid) || this._listIndex.get(uuid)!.isPeek) {
-            AppService.AppToolbar?.ToggleProgressbar(true);
-            const list = await this.ListsProvider.GetList(uuid);
-            if (list) {
-                this.putListInIndex(list);
+    public async GetList(uuid: number): Promise<List | undefined> {
+        AppService.AppToolbar?.ToggleProgressbar(true);
+        const list = await this.BackendService.queryList(uuid);
+        if (list) {
+            const index = this._listIndex.get(list.Uuid!);
+            if (index) {
+                index.copy(list);
             }
-            AppService.AppToolbar?.ToggleProgressbar(false);
+        } else {
+            this._listIndex.delete(uuid);
         }
+        AppService.AppToolbar?.ToggleProgressbar(false);
 
         return this._listIndex.get(uuid);
     }
@@ -150,11 +126,11 @@ export class ListsService {
      * @param uuid unique identifier of the list
      * @returns ListitemTrashModel object
      */
-    public async GetListitemTrash(uuid: string): Promise<ListitemTrashModel | undefined> {
+    public async GetListitemTrash(uuid: number | List): Promise<Listitem[] | undefined> {
         AppService.AppToolbar?.ToggleProgressbar(false);
-        const ret = await this.TrashItemsProvider.GetListitemsTrash(uuid);
+        const trash = await this.BackendService.queryListitems({ list: uuid, trash: true, orderBy: "deleted", orderDir: "desc" });
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return ret;
+        return trash;
     }
 
     /**
@@ -165,7 +141,8 @@ export class ListsService {
         if (list) {
             if (await this.StoreList(list)) {
                 Logger.Notice(`Created new list ${list.toLog()}`);
-                this.putListInIndex(list);
+                await this.addListToIndex(list);
+                await this.cleanOrderLists();
                 this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { created: true } });
             } else {
                 this.Popups.Toast.Error("service-lists.store_list_error");
@@ -185,7 +162,6 @@ export class ListsService {
             const store = await this.StoreList(list);
             if (store === true) {
                 Logger.Notice(`Edited list ${list.toLog()}`);
-                this.putListInIndex(list);
             } else if (store === false) {
                 this.Popups.Toast.Error("service-lists.store_list_error");
             }
@@ -219,12 +195,12 @@ export class ListsService {
             const result = await this.Popups.Alert.YesNo({ message: text, inputs: [checkbox] });
             if (result !== false) {
                 const del_on_watch = Array.isArray(result) && result.includes("del_on_watch") ? true : false;
-                return this.removeList(lists, del_on_watch);
+                return this.removeLists(lists, del_on_watch);
             } else {
                 return undefined;
             }
         } else {
-            return this.removeList(lists, del_on_watch);
+            return this.removeLists(lists, del_on_watch);
         }
     }
 
@@ -244,12 +220,12 @@ export class ListsService {
             }
 
             if (await this.Popups.Alert.YesNo({ message: text })) {
-                return await this.emptyList(lists);
+                return await this.emptyLists(lists);
             } else {
                 return undefined;
             }
         } else {
-            return await this.emptyList(lists);
+            return await this.emptyLists(lists);
         }
     }
 
@@ -287,24 +263,22 @@ export class ListsService {
     /**
      * adds an already created item to a list
      * @param list list, the item sould be part of
-     * @param item listitem to be added
+     * @param args information about listitem to be added
      * @returns item-adding successful?
      */
-    public async AddNewListitem(list: List, args: { item: string; note?: string; hidden?: boolean; locked?: boolean }): Promise<boolean | undefined> {
+    public async AddNewListitem(list: List, args: { item: string; note?: string; hidden?: boolean; locked?: boolean }): Promise<boolean> {
         if (!list || !args) {
             return false;
         }
 
-        const item = await this.createNewListitemObj(list, args);
+        const item = Listitem.Create({ uuid: -1, item: args.item, note: args.note, order: list.ItemsCount, created: Date.now(), hidden: args.hidden ?? false, locked: args.locked ?? false });
         list.AddItem(item);
-        const success = await this.StoreList(list, false, true, false);
-
-        if (success) {
-            this.putListInIndex(list);
-            this.onListsChangedSubject.next(await this.GetLists(true));
+        if (await this.StoreList(list, false, true, true)) {
+            this.onListsChangedSubject.next(await this.GetLists());
+            return true;
         }
 
-        return success;
+        return false;
     }
 
     /**
@@ -316,7 +290,7 @@ export class ListsService {
     public async EditListitem(list: List, item: Listitem): Promise<boolean | undefined> {
         const obj = await ListItemEditor(this.ModalCtrl, { list: list, item: item });
         if (obj) {
-            if (await this.StoreList(list, undefined, undefined, false)) {
+            if (await this.StoreList(list, undefined, true, false)) {
                 Logger.Debug(`Edited listitem ${item.toLog()}`);
                 return true;
             } else {
@@ -358,13 +332,13 @@ export class ListsService {
      * @param items the item in Trash to be erased
      * @returns erase successful, undefined if user canceled it
      */
-    public async EraseListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean | undefined> {
+    public async EraseListitemFromTrash(trash: List, items: Listitem | Listitem[]): Promise<boolean | undefined> {
         if (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmEraseListitem, true)) {
             let text = "";
             if (Array.isArray(items) && items.length > 1) {
                 text = this.Locale.getText("service-lists.erase_item_confirm_plural");
             } else {
-                text = this.Locale.getText("service-lists.erase_item_confirm", { name: StringUtils.shorten(Array.isArray(items) ? items[0].item : items.item, 40) });
+                text = this.Locale.getText("service-lists.erase_item_confirm", { name: StringUtils.shorten(Array.isArray(items) ? items[0].Item : items.Item, 40) });
             }
             text += this.Locale.getText("service-lists.undo_warning");
 
@@ -386,7 +360,7 @@ export class ListsService {
     public async WipeTrash(force: boolean = false): Promise<boolean | undefined> {
         if (!force && (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true))) {
             let text;
-            const count = await this.TrashProvider.Count();
+            const count = await this.BackendService.queryListsCount({ trash: true });
             if (count == 1) {
                 text = this.Locale.getText("service-lists.empty_trash_confirm_single");
             } else {
@@ -408,13 +382,13 @@ export class ListsService {
      * @param trash the list, the items in trash should be removed
      * @returns removal successful? undefined if the user canceled it
      */
-    public async EmptyListitemTrash(trash: ListitemTrashModel): Promise<boolean | undefined> {
+    public async EmptyListitemTrash(trash: List): Promise<boolean | undefined> {
         if (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true)) {
             let text;
-            if (trash.items.length == 1) {
+            if (trash.TrashItemsCount == 1) {
                 text = this.Locale.getText("service-lists.empty_trash_listitems_confirm_single");
             } else {
-                text = this.Locale.getText("service-lists.empty_trash_listitems_confirm", { count: trash.items.length });
+                text = this.Locale.getText("service-lists.empty_trash_listitems_confirm", { count: trash.TrashItemsCount });
             }
             text += this.Locale.getText("service-lists.undo_warning");
             if (await this.Popups.Alert.YesNo({ message: text })) {
@@ -424,32 +398,6 @@ export class ListsService {
             }
         } else {
             return this.emptyListitemTrash(trash);
-        }
-    }
-
-    /**
-     * corrects the order numbers of lists
-     * @param lists lists to be ordered
-     * @returns lists with updated order numbers
-     */
-    public async ReorderLists(lists: List[]): Promise<List[]> {
-        lists = await this.cleanOrderLists(lists);
-        return lists;
-    }
-
-    /**
-     * correct the order numbers of listitems
-     * @param list list, the items are part of
-     * @param items items to be ordered
-     * @returns list with reordered listitems
-     */
-    public async ReorderListitems(list: List, items: Listitem[], store: boolean = true): Promise<void> {
-        list.Items = items;
-        for (let i = 0; i < list.Items.length; i++) {
-            list.Items[i].Order = i;
-        }
-        if (store) {
-            await this.StoreList(list);
         }
     }
 
@@ -547,11 +495,11 @@ export class ListsService {
      * @param items item(s) in trash to be restored
      * @returns restore successful? undefined if user canceled it
      */
-    public async RestoreListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean | undefined> {
+    public async RestoreListitemFromTrash(trash: List, items: Listitem | Listitem[]): Promise<boolean | undefined> {
         if (await this.Preferences.Get<boolean>(EPrefProperty.ConfirmRestoreListitem, true)) {
             let text = "";
             if (!Array.isArray(items) || items.length == 1) {
-                text = this.Locale.getText("service-lists.restore_item_confirm", { name: StringUtils.shorten(Array.isArray(items) ? items[0].item : items.item, 40) });
+                text = this.Locale.getText("service-lists.restore_item_confirm", { name: StringUtils.shorten(Array.isArray(items) ? items[0].Item : items.Item, 40) });
             } else {
                 text = this.Locale.getText("service-lists.restore_item_confirm_plural");
             }
@@ -567,28 +515,6 @@ export class ListsService {
     }
 
     /**
-     * creates a unique identifier for a list or listitem
-     * @returns unique id
-     */
-    public async createUuid(list?: List): Promise<number> {
-        let uuid = HelperUtils.RandomNumber();
-        if (list) {
-            //create an uuid for a listitem
-            const trash = await this.TrashItemsProvider.GetListitemsTrash(list.Uuid);
-            while (list.Items.some(i => i.Uuid === uuid) || trash?.items.some(i => i.uuid === uuid)) {
-                uuid = HelperUtils.RandomNumber();
-            }
-        } else {
-            //create an uuid for a list
-            let uuid = HelperUtils.RandomNumber();
-            while ((await this.ListsProvider.Exists(uuid)) || (await this.TrashProvider.Exists(uuid))) {
-                uuid = HelperUtils.RandomNumber();
-            }
-        }
-        return uuid;
-    }
-
-    /**
      * stores a list in backend up there are any changes
      * @param list list to be stored
      * @param force store the list, even if there are no changes
@@ -598,40 +524,55 @@ export class ListsService {
         if (progressbar) {
             AppService.AppToolbar?.ToggleProgressbar(true);
         }
-        const store = await this.ListsProvider.StoreList(list, force);
-        if (progressbar) {
-            AppService.AppToolbar?.ToggleProgressbar(false);
+        let store: boolean | undefined;
+        await this.cleanOrderListitems(list, false);
+        if (!list.Uuid || list.Dirty || force) {
+            const uuid = await this.BackendService.storeList({ list: list, force: force });
+            if (uuid) {
+                list.Uuid = uuid;
+                list.Clean();
+                store = true;
+            } else {
+                store = false;
+            }
         }
-        if (store !== false) {
-            if (store === true && fire_event) {
+
+        if (store) {
+            if (fire_event) {
                 this.onListChangedSubject.next(list);
             }
             if (store !== undefined) {
                 //only sync, if the list was dirty
                 this.syncListToWatch(list);
             }
-            return store;
-        } else {
-            return false;
         }
+
+        if (progressbar) {
+            AppService.AppToolbar?.ToggleProgressbar(false);
+        }
+
+        return store;
     }
 
     /**
      * transfer a list to a device
-     * @param list list to transfer (or the uuid)
+     * @param lists list to transfer (or the uuid)
      * @param device device to be transfered, if null the default device is used
      */
-    public async TransferList(list?: List | List[] | string | number, device?: ConnectIQDevice | number): Promise<boolean | undefined> {
-        if (typeof list === "string" || typeof list === "number") {
-            list = await this.GetList(list);
+    public async TransferList(lists?: List | List[] | string | number, device?: ConnectIQDevice | number): Promise<boolean | undefined> {
+        if (typeof lists == "string") {
+            lists = parseInt(lists, 10);
+        }
+        if (typeof lists === "number") {
+            lists = await this.GetList(lists);
         }
 
-        if (!list) {
+        if (!lists) {
             return false;
         }
 
-        if (!Array.isArray(list)) {
-            list = [list];
+        if (!Array.isArray(lists)) {
+            lists = [lists];
         }
 
         if (typeof device === "number") {
@@ -643,17 +584,17 @@ export class ListsService {
         }
 
         if (device && device.State == "Ready") {
-            const text_key = list.length > 1 ? "service-lists.transmit_confirm_plural" : "service-lists.transmit_confirm";
+            const text_key = lists.length > 1 ? "service-lists.transmit_confirm_plural" : "service-lists.transmit_confirm";
             const confirm = await this.Preferences.Get<boolean>(EPrefProperty.ConfirmTransmitList, true);
             const locale = this.Locale.getText([text_key, "yes", "no"], { device: device.Name });
             if (!confirm || (await this.Popups.Alert.YesNo({ message: locale[text_key], button_yes: locale["yes"], button_no: locale["no"] }))) {
-                const toast = await this.Popups.Toast.Notice(list.length == 1 ? "service-lists.transmit_process" : "service-lists.transmit_process_plural", Toast.DURATION_INFINITE);
+                const toast = await this.Popups.Toast.Notice(lists.length == 1 ? "service-lists.transmit_process" : "service-lists.transmit_process_plural", Toast.DURATION_INFINITE);
                 AppService.AppToolbar?.ToggleProgressbar(true);
 
                 let errors = 0;
-                for (let i = 0; i < list.length; ++i) {
+                for (let i = 0; i < lists.length; ++i) {
                     if (device && device.State == "Ready") {
-                        const l = list[i];
+                        const l = lists[i];
                         const payload = l.toDeviceObject();
                         const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload });
 
@@ -663,22 +604,22 @@ export class ListsService {
                         }
                     }
                     errors++;
-                    Logger.Debug(`Could not transfer list ${list[i].toLog()} to device ${device.toLog()}`);
+                    Logger.Debug(`Could not transfer list ${lists[i].toLog()} to device ${device.toLog()}`);
                 }
                 toast.dismiss();
                 AppService.AppToolbar?.ToggleProgressbar(false);
 
                 if (errors > 0) {
-                    if (list.length == 1) {
+                    if (lists.length == 1) {
                         this.Popups.Toast.Error("service-lists.transmit_error");
-                    } else if (errors == list.length) {
+                    } else if (errors == lists.length) {
                         this.Popups.Toast.Error("service-lists.transmit_error_plural");
                     } else {
                         this.Popups.Toast.Error("service-lists.transmit_error_partial");
                     }
                     return false;
                 } else {
-                    if (list.length == 1) {
+                    if (lists.length == 1) {
                         this.Popups.Toast.Success("service-lists.transmit_success");
                     } else {
                         this.Popups.Toast.Success("service-lists.transmit_success_plural");
@@ -692,11 +633,11 @@ export class ListsService {
                 return undefined;
             }
         } else if (device) {
-            Logger.Debug(`Could not transfer list ${list.length} list(s) to device ${device.toLog()}: device is state ${device.State}`);
+            Logger.Debug(`Could not transfer list ${lists.length} list(s) to device ${device.toLog()}: device is state ${device.State}`);
         } else {
-            Logger.Debug(`Could not transfer list ${list.length} list(s), no device fould`);
+            Logger.Debug(`Could not transfer list ${lists.length} list(s), no device fould`);
         }
-        if (list.length == 1) {
+        if (lists.length == 1) {
             this.Popups.Toast.Error("service-lists.transmit_error");
         } else {
             this.Popups.Toast.Error("service-lists.transmit_error_plural");
@@ -705,19 +646,10 @@ export class ListsService {
     }
 
     /**
-     * wipes all listitem trashes of all lists
-     */
-    public async WipeListitemTrashes(): Promise<void> {
-        AppService.AppToolbar?.ToggleProgressbar(true);
-        await this.TrashItemsProvider.WipeTrashes();
-        AppService.AppToolbar?.ToggleProgressbar(false);
-    }
-
-    /**
      * purges all details of lists in memory
      */
     public PurgeListDetails() {
-        this._lists.forEach(l => {
+        this._listIndex.forEach(l => {
             l.PurgeDetails();
         });
     }
@@ -727,15 +659,7 @@ export class ListsService {
      * @returns number of lists in trash
      */
     public async GetTrashCount(): Promise<number> {
-        return this.TrashProvider.Count();
-    }
-
-    /**
-     * returns the number of lists with listitems in the trash
-     * @returns number of lists
-     */
-    public async GetItemsTrashCount(): Promise<number> {
-        return this.TrashItemsProvider.CountAll();
+        return this.BackendService.queryListsCount({ trash: true });
     }
 
     /**
@@ -743,57 +667,71 @@ export class ListsService {
      * @returns object with size of the lists and trashes
      */
     public async BackendSize(): Promise<{ lists: { size: number; files: number }; trash: { size: number; files: number } }> {
-        const lists = await this.ListsProvider.BackendSize();
-        const trash = await this.TrashProvider.BackendSize();
-        const itemtrash = await this.TrashItemsProvider.BackendSize();
-        trash.size += itemtrash.size;
-        trash.files += itemtrash.files;
-
-        return { lists: lists, trash: trash };
-    }
-
-    /**
-     * creates a new List object
-     * @param args list properties
-     * @returns list object
-     */
-    public async createNewListObj(args: { name: string }): Promise<List> {
-        return new List({ name: args.name, uuid: await this.createUuid(), created: Date.now(), order: this._listIndex.size });
-    }
-
-    /**
-     * creates a new Listitem object
-     * @param list  the list the item is part of
-     * @param args listitem properties
-     * @returns Listitem object
-     */
-    public async createNewListitemObj(list: List, args: { item: string; note?: string; hidden?: boolean; locked?: boolean }): Promise<Listitem> {
-        return Listitem.Create({ item: args.item, note: args.note, hidden: args.hidden, locked: args.locked, order: list.ItemsCount, uuid: await this.createUuid(), created: Date.now() });
+        //TODO: ListsService.BackendSize()
+        return { lists: { size: -1, files: -1 }, trash: { size: -1, files: -1 } };
     }
 
     /**
      * remove automatic synchronization from all lists
      */
     public async PurgeAllSyncs(): Promise<void> {
-        const lists = await this.GetLists(true);
+        const lists = await this.GetLists();
         for (let i = 0; i < lists.length; i++) {
             lists[i].Sync = false;
             await this.StoreList(lists[i], false, true, false);
         }
+        const trash = await this.GetTrash();
+        for (let i = 0; i < trash.length; i++) {
+            trash[i].Sync = false;
+            await this.StoreList(trash[i], false, true, false);
+        }
         Logger.Debug(`Removed automatic synchronization of all lists`);
+    }
+
+    public async createNewList(args: { name: string; order?: number; sync?: boolean; reset?: ListReset }): Promise<List> {
+        return new List({
+            name: args.name,
+            order: args.order ?? (await this.BackendService.getNextListOrder()),
+            created: Date.now(),
+            sync: args.sync,
+            reset: args.reset,
+            items: [],
+        });
+    }
+
+    public async createNewListitem(list: List | number, args: { item: string; note?: string; order?: number; hidden?: boolean; locked?: boolean }): Promise<Listitem> {
+        return new Listitem({
+            item: args.item,
+            note: args.note,
+            order: args.order ?? (await this.BackendService.getNextListitemOrder({ list: list })),
+            created: Date.now(),
+            hidden: args.hidden,
+            locked: args.locked,
+        });
     }
 
     /**
      * sync a list to the watch
      * @param obj config for list sync
      */
-    public async SyncList(obj: { list: List | string | number; only_if_definitive_device?: boolean; force_if_sync_is_disabled?: boolean }): Promise<void> {
+    public async SyncList(obj: { list: List | number; only_if_definitive_device?: boolean; force_if_sync_is_disabled?: boolean }): Promise<void> {
         const list_to_sync = obj.list instanceof List ? obj.list : await this.GetList(obj.list);
         if (!list_to_sync) {
             Logger.Error(`Could not sync list ${obj.list} to watch, does not exist`);
             return;
         }
         return this.syncListToWatch(list_to_sync, obj.only_if_definitive_device, obj.force_if_sync_is_disabled);
+    }
+
+    private async addListToIndex(list: List) {
+        if (!list.Uuid) {
+            await this.StoreList(list, true, true, true);
+        }
+        if (list.Uuid) {
+            this._listIndex.set(list.Uuid, list);
+        } else {
+            Logger.Error(`Could not store list ${list.toLog()} in index, no Uuid`);
+        }
     }
 
     /**
@@ -809,7 +747,7 @@ export class ListsService {
 
         const device = await this.ConnectIQ.GetDefaultDevice({ only_ready: true, select_device_if_undefined: !only_if_definitive_device });
         if (device) {
-            if (list.isPeek) {
+            if (list.isPeek && list.Uuid) {
                 list.copyDetails(await this.GetList(list.Uuid));
             }
             var payload = list.toDeviceObject();
@@ -830,69 +768,51 @@ export class ListsService {
     }
 
     /**
-     * publish changes in a list with the signal
-     * @param list list to be changed
-     */
-    private putListInIndex(list: List) {
-        this._listIndex.set(list.Uuid, list);
-        let lists = Array.from(this._listIndex.values());
-        this._lists = this.orderLists(lists);
-    }
-
-    /**
-     * removes a list from the index and publish it with the signal
-     * @param list list to be removed
-     * @param fire_event if true, will emit onListsChanged event
-     * @returns was the list removed successful
-     */
-    private async removeListInIndex(list: List, fire_event: boolean = true): Promise<boolean> {
-        if (this._listIndex.delete(list.Uuid)) {
-            let lists = Array.from(this._listIndex.values());
-            await this.resetOrder(lists, fire_event, false);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * orders the lists by 'Order' property and publish the list with the signal
-     * @param lists lists array to be ordered and set in Lists-signal
-     */
-    private orderLists(lists: List[]): List[] {
-        return lists.sort((a: List, b: List) => (a.Order > b.Order ? 1 : -1));
-    }
-
-    /**
      * set the 'Order' property of all lists, as they are in the given list
      * @param lists list to reset the 'Order' property
      * @param force_event publish the list with the signal
      */
-    private async resetOrder(lists: List[], force_event: boolean = false, fire_event: boolean = true) {
+    private async cleanOrderLists(force_event: boolean = false, fire_event: boolean = true) {
         let order = 0;
         let changed = false;
-        lists = lists.sort((a: List, b: List) => (a.Order > b.Order ? 1 : -1));
+        let lists = Array.from(this._listIndex.values());
+        lists = lists.sort((a: List, b: List) => a.Order - b.Order);
         for (let i = 0; i < lists.length; i++) {
             const list = lists[i];
             list.Order = order++;
             if (list.Dirty) {
                 changed = true;
-                await this.StoreList(list, undefined, false, false);
+                await this.StoreList(list, false, false, false);
             }
         }
-        this._lists = lists;
 
         if (fire_event && (force_event || changed)) {
-            this.onListsChangedSubject.next(this._lists);
+            this.onListsChangedSubject.next(await this.GetLists());
+        }
+    }
+
+    /**
+     * correct the order numbers of listitems
+     * @param list list, the items are part of
+     * @param items items to be ordered
+     * @returns list with reordered listitems
+     */
+    private async cleanOrderListitems(list: List, store: boolean = true): Promise<void> {
+        for (let i = 0; i < list.Items.length; i++) {
+            list.Items[i].Order = i;
+        }
+        if (store) {
+            await this.StoreList(list);
         }
     }
 
     /**
      * move list to trash or removes it completely
-     * @param uuid unique identifier of the list to be removed
+     * @param lists list(s) to remove
+     * @param delete_on_watch if the list should be deleted on watch
      * @returns was the removal successful
      */
-    private async removeList(lists: List | List[], delete_on_watch: boolean = false): Promise<boolean> {
+    private async removeLists(lists: List | List[], delete_on_watch: boolean = false): Promise<boolean> {
         if (!Array.isArray(lists)) {
             lists = [lists];
         }
@@ -901,47 +821,42 @@ export class ListsService {
         }
 
         AppService.AppToolbar?.ToggleProgressbar(true);
+        //TODO: Refactor -> all in one query
 
         const use_trash = await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true);
         let errors = 0;
+        let deleted = 0;
         for (let i = 0; i < lists.length; i++) {
             const list: List | undefined = lists[i];
-            if (list && this._listIndex.has(list.Uuid)) {
-                if (list.isPeek) {
-                    const read = await this.GetList(list.Uuid);
-                    if (read) {
-                        list.copyDetails(read);
-                    } else {
+            if (list && list.Uuid && this._listIndex.has(list.Uuid)) {
+                if (use_trash) {
+                    list.Deleted = Date.now();
+                    if (!(await this.BackendService.moveListsToTrash({ lists: [list] /*TODO: refactor this...*/ }))) {
+                        Logger.Error(`Could not move list {${list.toLog()}} to trash`);
                         errors++;
-                        Logger.Error(`Could not delete list ${list.toLog()}, not found in backend...`);
+                        continue;
+                    }
+                } else {
+                    if (!(await this.BackendService.deleteLists({ lists: list }))) {
+                        Logger.Error(`Could not delete list ${list.toLog()}`);
+                        errors++;
                         continue;
                     }
                 }
 
-                let del = true;
-                list.Deleted = Date.now();
-                if (use_trash && !(await this.TrashProvider.StoreList(list, true))) {
-                    del = false;
-                    Logger.Error(`Could not store list {${list.toLog()}} in trash`);
-                    errors++;
-                    continue;
-                }
-
-                if (await this.ListsProvider.RemoveList(list)) {
-                    await this.removeListInIndex(list, false);
-                    Logger.Notice(`Removed list ${list.toLog()}`);
-                    if (delete_on_watch) {
-                        this.ConnectIQ.SendToDevice({ device: undefined, messageType: ConnectIQMessageType.DeleteList, data: list.Uuid });
-                    }
-                } else {
-                    errors++;
-                    Logger.Error(`Could not delete list ${list?.toLog()}`);
-                    await this.TrashProvider.RemoveList(list);
+                deleted++;
+                this._listIndex.delete(list.Uuid);
+                Logger.Notice(`Removed list ${list.toLog()}`);
+                if (delete_on_watch) {
+                    this.ConnectIQ.SendToDevice({ device: undefined, messageType: ConnectIQMessageType.DeleteList, data: list.Uuid });
                 }
             }
         }
 
-        this.onListsChangedSubject.next(await this.GetLists(true));
+        if (deleted > 0) {
+            await this.cleanOrderLists();
+            this.onListsChangedSubject.next(await this.GetLists());
+        }
 
         AppService.AppToolbar?.ToggleProgressbar(false);
 
@@ -966,60 +881,54 @@ export class ListsService {
 
     /**
      * deletes all listitems in the list
-     * @param list list to be emptied
+     * @param lists list to be emptied
      * @returns was the list stored successful after emptying?
      */
-    private async emptyList(list: List | List[]): Promise<boolean> {
-        if (!Array.isArray(list)) {
-            list = [list];
+    private async emptyLists(lists: List | List[]): Promise<boolean> {
+        if (!Array.isArray(lists)) {
+            lists = [lists];
         }
 
-        if (list.length == 0) {
+        if (lists.length == 0) {
             return true;
         }
+
+        //TODO: refactor: all in one query
 
         const use_trash = await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true);
 
         AppService.AppToolbar?.ToggleProgressbar(true);
 
         let errors = 0;
-        for (let i = 0; i < list.length; i++) {
-            let l: List | undefined = list[i];
-            if (l.isPeek) {
-                l = await this.GetList(l.Uuid);
-            }
+        for (let i = 0; i < lists.length; i++) {
+            let l = lists[i];
 
             if (l && l.ItemsCount > 0) {
                 if (use_trash) {
-                    const del = await this.TrashItemsProvider.StoreListitem(
-                        l.Uuid,
-                        l.Items.filter(i => !i.Locked),
-                    );
+                    const del = await this.BackendService.moveListitemsToTrash({ list: l, force: false });
                     if (!del) {
                         Logger.Error(`Could not empty list ${l.toLog()} and move items to trash`);
                         errors++;
                     }
-                }
-                await this.ReorderListitems(
-                    l,
-                    l.Items.filter(i => i.Locked),
-                    false,
-                );
-                if (await this.StoreList(l)) {
-                    this.putListInIndex(l);
-                    Logger.Debug(`Emptied list ${l.toLog()}`);
                 } else {
-                    errors++;
+                    const del = await this.BackendService.deleteAllListitems({ lists: [l] /*TODO: refactor this */, force: false });
+                    if (!del) {
+                        Logger.Error(`Could not empty list ${l.toLog()}`);
+                        errors++;
+                    }
                 }
+                await this.refreshList(l);
+                await this.cleanOrderListitems(l, true);
+                Logger.Debug(`Emptied list ${l.toLog()}`);
             } else if (!l) {
                 errors++;
             }
         }
 
-        this.onListsChangedSubject.next(await this.GetLists(true));
+        this.onListsChangedSubject.next(await this.GetLists());
 
         if (errors > 0) {
-            if (list.length == errors) {
+            if (lists.length == errors) {
                 this.Popups.Toast.Error("service-lists.empty_error");
             } else {
                 this.Popups.Toast.Error("service-lists.empty_error_partial");
@@ -1041,13 +950,35 @@ export class ListsService {
      */
     private async removeListitem(list: List, items: Listitem | Listitem[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        if (!(await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) || (await this.TrashItemsProvider.StoreListitem(list.Uuid, items))) {
-            list.RemoveItem(items);
-            return (await this.StoreList(list)) !== false;
-        } else {
-            AppService.AppToolbar?.ToggleProgressbar(true);
-            return false;
+
+        if (!Array.isArray(items)) {
+            items = [items];
         }
+
+        let success = false;
+        if (await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) {
+            success = await this.BackendService.moveListitemsToTrash({ list: list, items: items });
+            if (success) {
+                Logger.Debug(`Moved ${items.length} listitem(s) of list ${list.toLog()} to trash`);
+            } else {
+                Logger.Error(`Could not move ${items.length} listitem(s) of list ${list.toLog()} to trash`);
+            }
+        } else {
+            const del = await this.BackendService.deleteListitems({ list: list, items: items });
+            if (del >= 0) {
+                Logger.Debug(`Deleted ${del} listitem(s) from list ${list.toLog()}`);
+            } else {
+                Logger.Error(`Could not delete ${items.length} listitem(s) from list ${list.toLog()}`);
+            }
+            success = del >= 0;
+        }
+
+        if (success) {
+            await this.cleanOrderListitems(list, true);
+        }
+
+        AppService.AppToolbar?.ToggleProgressbar(false);
+        return success;
     }
 
     /**
@@ -1056,11 +987,14 @@ export class ListsService {
      * @param items listitem(s) to be erased
      * @returns was the erase successful
      */
-    private async eraseListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean> {
+    private async eraseListitemFromTrash(trash: List, items: Listitem | Listitem[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        const success = await this.TrashItemsProvider.EraseListitem(trash, items);
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+        const del = await this.BackendService.deleteListitems({ list: trash, items: items });
 
-        if (success) {
+        if (del >= 0) {
             const text = !Array.isArray(items) || items.length == 1 ? "service-lists.erase_item_success" : "service-lists.erase_item_success_plural";
             this.Popups.Toast.Success(text);
         } else {
@@ -1069,8 +1003,7 @@ export class ListsService {
         }
 
         AppService.AppToolbar?.ToggleProgressbar(false);
-
-        return success;
+        return del >= 0;
     }
 
     /**
@@ -1079,7 +1012,7 @@ export class ListsService {
      */
     private async wipeListsTrash(): Promise<number> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        const del = await this.TrashProvider.WipeTrash();
+        const del = await this.BackendService.deleteLists({ trash: true });
         if (del > 0) {
             Logger.Notice(`Erased ${del} list(s) from trash`);
             this.Popups.Toast.Success("service-lists.empty_trash_success");
@@ -1098,18 +1031,18 @@ export class ListsService {
      * @param list list to empty
      * @returns was the emptying successful?
      */
-    private async emptyListitemTrash(trash: ListitemTrashModel): Promise<boolean> {
+    private async emptyListitemTrash(trash: List): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        const ret = await this.TrashItemsProvider.EraseListitemTrash(trash);
-        if (ret) {
-            Logger.Notice(`Erased trash of list ${ListitemTrashUtils.toLog(trash)}`);
+        const ret = await this.BackendService.deleteListitems({ list: trash, trash: true });
+        if (ret >= 0) {
+            Logger.Notice(`Erased trash of list ${trash.toLog()}`);
             this.Popups.Toast.Success("service-lists.empty_trash_success");
         } else {
-            Logger.Error(`Could not erase trash of list ${ListitemTrashUtils.toLog(trash)}`);
+            Logger.Error(`Could not erase trash of list ${trash.toLog()}`);
             this.Popups.Toast.Error("service-lists.empty_trash_error");
         }
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return ret;
+        return ret >= 0;
     }
 
     /**
@@ -1124,104 +1057,82 @@ export class ListsService {
             lists = [lists];
         }
 
-        let errors = 0;
-        const all_lists = await this.GetLists(true);
-        for (let i = 0; i < lists.length; i++) {
-            //read the full list with all items
-            const list = await this.TrashProvider.GetList(lists[i].Uuid);
-            if (list) {
-                //add it at the end
-                list.Order = this._lists.length + i;
-                if (all_lists.some(i => i.Uuid == list.Uuid)) {
-                    //if there is an item with this uuid, give the restored item a new one
-                    list.Uuid = await this.createUuid(list);
-                }
-                if (await this.ListsProvider.StoreList(list, true)) {
-                    if (await this.TrashProvider.EraseLists(list.Uuid, false)) {
-                        Logger.Notice(`Restored list ${list.toLog()} from trash`);
-                        this.putListInIndex(list);
-                        this.syncListToWatch(list);
-                    } else {
-                        Logger.Error(`Restored list ${list.toLog()} from trash, but could not erase it from trash`);
-                    }
-                } else {
-                    Logger.Error(`Could not restore list ${list.toLog()} from trash - could not store as new`);
-                    errors++;
-                }
-            } else {
-                Logger.Error(`Could not restore list ${lists[i].toLog()} from trash - not found`);
-                errors++;
-            }
+        if (lists.length == 0) {
+            return true;
         }
 
-        if (errors > 0) {
-            if (lists.length == 1) {
-                this.Popups.Toast.Error("service-lists.restore_error");
-            } else if (lists.length == errors) {
-                this.Popups.Toast.Error("service-lists.restore_error_plural");
-            } else {
-                this.Popups.Toast.Error("service-lists.restore_error_partial");
+        let success = false;
+        if (await this.BackendService.restoreListsFromTrash({ lists: lists })) {
+            for (let i = 0; i < lists.length; i++) {
+                const list = lists[i];
+                await this.refreshList(list);
+                list.Order = this._listIndex.size;
+                await this.addListToIndex(list);
             }
-        } else {
+            this.cleanOrderLists(false, false);
+            for (let i = 0; i < lists.length; i++) {
+                await this.StoreList(lists[i]);
+            }
+
+            await this.cleanOrderLists(false, false);
+
             if (lists.length == 1) {
+                Logger.Debug(`Restored list ${lists[0].toLog()} from trash`);
                 this.Popups.Toast.Success("service-lists.restore_success");
             } else {
+                Logger.Debug(`Restored  ${lists.length} lists from trash`);
                 this.Popups.Toast.Success("service-lists.restore_success_plural");
             }
-        }
-        this.onListsChangedSubject.next(await this.GetLists(true));
-
-        await new Promise<void>(resolve => setTimeout(resolve, 10000));
-
-        AppService.AppToolbar?.ToggleProgressbar(false);
-
-        return errors == 0;
-    }
-
-    /**
-     * restores a listitem from the trash of a list
-     * @param trash trash of the list
-     * @param items listitem(s) to restore
-     * @returns was the restore successful
-     */
-    private async restoreListitemFromTrash(trash: ListitemTrashModel, items: ListitemModel | ListitemModel[]): Promise<boolean> {
-        AppService.AppToolbar?.ToggleProgressbar(true);
-        const list = await this.GetList(trash.uuid);
-        let success = false;
-        if (list) {
-            if (!Array.isArray(items)) {
-                items = [items];
-            }
-
-            for (let i = 0; i < items.length; i++) {
-                const item = items[i];
-                if (list.Items.some(i => i.Uuid == item.uuid)) {
-                    //if there is an item with this uuid, give the restored item a new one
-                    item.uuid = await this.createUuid(list);
-                }
-                list.AddItem(item);
-            }
-
-            if (await this.ListsProvider.StoreList(list)) {
-                await this.TrashItemsProvider.EraseListitem(trash, items);
-                Logger.Debug(`Restored ${items.length} listitem(s) from trash of list ${ListitemTrashUtils.toLog(trash)}`);
-                this.syncListToWatch(list);
-                success = true;
-                const text = !Array.isArray(items) || items.length == 1 ? "service-lists.restore_item_success" : "service-lists.restore_item_success_plural";
-                this.Popups.Toast.Success(text);
+            success = true;
+        } else {
+            if (lists.length == 1) {
+                Logger.Error(`Could not restore list ${lists[0].toLog()} from trash`);
+                this.Popups.Toast.Error("service-lists.restore_error");
             } else {
-                Logger.Error(`Could not restore ${items.length} listitem(s) from trash of list ${ListitemTrashUtils.toLog(trash)}`);
-                success = false;
-                const text = !Array.isArray(items) || items.length == 1 ? "service-lists.restore_item_error" : "service-lists.restore_item_error_plural";
-                this.Popups.Toast.Error(text);
+                Logger.Error(`Could not restore ${lists.length} lists from trash`);
+                this.Popups.Toast.Error("service-lists.restore_error_plural");
             }
         }
+        this.onListsChangedSubject.next(await this.GetLists());
+
         AppService.AppToolbar?.ToggleProgressbar(false);
+
         return success;
     }
 
     /**
-     * erases a list from trash
+     * restores a listitem from the trash of a list
+     * @param list list, the items to restore are in
+     * @param items listitem(s) to restore
+     * @returns was the restore successful
+     */
+    private async restoreListitemFromTrash(list: List, items: Listitem | Listitem[]): Promise<boolean> {
+        AppService.AppToolbar?.ToggleProgressbar(true);
+
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+
+        const restore = await this.BackendService.restoreListitemsFromTrash({ list: list, items: items });
+        if (restore > 0) {
+            Logger.Debug(`Restored ${restore} listitem(s) from trash of list ${list.toLog()}`);
+            await this.refreshList(list);
+            await this.cleanOrderListitems(list, true);
+            this.syncListToWatch(list);
+            const text = !Array.isArray(items) || items.length == 1 ? "service-lists.restore_item_success" : "service-lists.restore_item_success_plural";
+            this.Popups.Toast.Success(text);
+        } else {
+            Logger.Error(`Could not restore ${items.length} listitem(s) from trash of list ${list.toLog()}`);
+            const text = items.length == 1 ? "service-lists.restore_item_error" : "service-lists.restore_item_error_plural";
+            this.Popups.Toast.Error(text);
+        }
+
+        AppService.AppToolbar?.ToggleProgressbar(false);
+        return restore > 0;
+    }
+
+    /**
+     * erases lists from trash
      * @param lists Lists to be erased
      */
     private async eraseListFromTrash(lists: List | List[]): Promise<boolean> {
@@ -1229,40 +1140,43 @@ export class ListsService {
         if (!Array.isArray(lists)) {
             lists = [lists];
         }
-        const ret = await this.TrashProvider.EraseLists(lists.map(l => l.Uuid));
+        const ret = await this.BackendService.deleteLists({ lists: lists, trash: true });
 
-        if (ret == lists.length) {
+        if (ret > 0) {
             Logger.Debug(`Erased ${ret} list(s) from trash`);
         } else {
-            Logger.Error(`Erased ${ret} list(s) from trash, but could not erase ${lists.length - ret} list(s)`);
+            Logger.Error(`Could not erased ${ret} list(s) from trash`);
         }
 
         AppService.AppToolbar?.ToggleProgressbar(false);
 
-        return ret == lists.length;
+        return ret > 0;
     }
 
-    /**
-     * set new order numbers of list, depending on there position in the array
-     * @param lists lists to be ordered
-     * @returns reordered lists
-     */
-    private async cleanOrderLists(lists: List[]): Promise<List[]> {
-        let update = false;
-        let order = 0;
-        for (let i = 0; i < lists.length; i++) {
-            const list = lists[i];
-            list.Order = order++;
-            if (list.Dirty) {
-                await this.StoreList(list);
-                update = true;
-            }
+    private async refreshList(list: List): Promise<void> {
+        if (!list.Uuid) {
+            return;
         }
-        if (update) {
-            this._lists = lists;
-            this.onListsChangedSubject.next(this._lists);
+        const copy = await this.GetList(list.Uuid);
+        if (copy) {
+            list.copy(copy);
         }
-        return lists;
-        1;
+    }
+
+    private async removeOldTrash(value: number | KeepInTrash.Enum) {
+        value = KeepInTrash.FromNumber(value);
+        if (KeepInTrash.StockPeriod(value)) {
+            this._removeOldTrashEntriesTimer?.unsubscribe();
+            this._removeOldTrashEntriesTimer = interval(value * 60 * 60 * 24).subscribe(() => {
+                this.BackendService.removeOldTrash({ olderThan: value * 60 * 60 * 24 });
+            });
+            await this.BackendService.removeOldTrash({ olderThan: value * 60 * 60 * 24 });
+            this.BackendService.MaxTrashCount = undefined;
+        } else {
+            this._removeOldTrashEntriesTimer?.unsubscribe();
+            this._removeOldTrashEntriesTimer = undefined;
+            this.BackendService.MaxTrashCount = KeepInTrash.StockSize(value);
+            await this.BackendService.removeOldTrash({ maxCount: KeepInTrash.StockSize(value) });
+        }
     }
 }

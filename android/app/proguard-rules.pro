@@ -29,7 +29,8 @@
 # For the capacitor-community/sqlite plugin
 -keep class com.getcapacitor.community.database.sqlite.** { *; }
 -dontwarn com.getcapacitor.community.database.sqlite.**
-
+-keep class net.sqlcipher.** { *; }
+-keepclassmembers class net.sqlcipher.** { *; }
 
 # General ProGuard rules for ConnectIQ
 -keep class com.garmin.android.connectiq.** { *; }
