@@ -1,8 +1,9 @@
+import { HelperUtils } from "src/app/classes/utils/helper-utils";
 import { Logger } from "../logging/logger";
 import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
-    private _uuid?: number;
+    private _uuid: number;
     private _name: string;
     private _created: number;
     private _updated: number;
@@ -18,7 +19,7 @@ export class List {
     private static readonly ListRevision = 1;
 
     public constructor(obj: ListModel, itemcount?: number) {
-        this._uuid = obj.uuid;
+        this._uuid = obj.uuid ?? HelperUtils.RandomNegativNumber();
         this._name = obj.name;
         this._order = obj.order;
         this._created = obj.created;
@@ -39,6 +40,7 @@ export class List {
         this._deleted = obj.deleted;
         this._sync = obj.sync ?? false;
         this._dirty = true;
+        this.cleanItemsOrder();
     }
 
     /**
@@ -46,7 +48,7 @@ export class List {
      * in newer versions, the uuid is a number
      * in older versions it was a string
      */
-    public get Uuid(): number | undefined {
+    public get Uuid(): number {
         return this._uuid;
     }
 
@@ -187,15 +189,14 @@ export class List {
             return true;
         }
 
-        if (this._items) {
-            for (let i = 0; i < this._items.length; i++) {
-                if (this._items[i].Dirty) {
-                    return true;
-                }
-            }
-        }
+        return this.Items.some(i => i.Dirty);
+    }
 
-        return false;
+    /**
+     * is the list already stored in backend?
+     */
+    public get isVirtual(): boolean {
+        return this._uuid < 0;
     }
 
     /**
@@ -205,8 +206,10 @@ export class List {
      */
     public AddItem(item: Listitem | ListitemModel): Listitem {
         if (!(item instanceof Listitem)) {
-            item = Listitem.Create(item);
+            item = new Listitem(item);
         }
+
+        this.cleanItemsOrder();
 
         item.Order = this.Items.length;
         if (!this._items) {
@@ -237,10 +240,7 @@ export class List {
         });
         this._itemsCount = this._items.length;
 
-        let order = 0;
-        this._items.forEach(i => {
-            i.Order = order++;
-        });
+        this.cleanItemsOrder();
         this._dirty = true;
         this.Updated = Date.now();
     }
@@ -253,6 +253,31 @@ export class List {
         this._itemsCount = 0;
         this._dirty = true;
         this.Updated = Date.now();
+    }
+
+    /**
+     * reorder the items
+     * @param items items to order
+     */
+    public ReorderItems(items?: Listitem[]) {
+        if (items) {
+            this._items = items;
+            for (let i = 0; i < items.length; i++) {
+                items[i].Order = i;
+            }
+        }
+    }
+
+    /**
+     * set the order property of all items in a row
+     */
+    public cleanItemsOrder() {
+        if (this._items) {
+            this._items = this._items.sort((a, b) => a.Order - b.Order);
+            for (let i = 0; i < this._items.length; i++) {
+                this._items[i].Order = i;
+            }
+        }
     }
 
     /**

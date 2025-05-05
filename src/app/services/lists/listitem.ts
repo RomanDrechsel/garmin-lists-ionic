@@ -1,7 +1,8 @@
+import { HelperUtils } from "src/app/classes/utils/helper-utils";
 import { Logger } from "../logging/logger";
 
 export class Listitem {
-    private _uuid?: number | string;
+    private _uuid: number;
     private _order: number;
     private _created: number;
     private _updated: number;
@@ -13,7 +14,7 @@ export class Listitem {
     private _dirty: boolean = false;
 
     constructor(obj: ListitemModel) {
-        this._uuid = obj.uuid;
+        this._uuid = obj.uuid ?? HelperUtils.RandomNegativNumber();
         this._item = obj.item;
         this._note = obj.note;
         this._order = obj.order;
@@ -26,12 +27,12 @@ export class Listitem {
     }
 
     /** get unique id in backend */
-    public get Uuid(): string | number | undefined {
+    public get Uuid(): number {
         return this._uuid;
     }
 
     /** set the unique id for backend */
-    public set Uuid(uuid: string) {
+    public set Uuid(uuid: number) {
         this._uuid = uuid;
     }
 
@@ -150,6 +151,13 @@ export class Listitem {
     }
 
     /**
+     * is the item already stored in backend?
+     */
+    public get isVirtual(): boolean {
+        return this._uuid < 0;
+    }
+
+    /**
      * create an object to send to a device
      * @param arr array to append to, or undefined to create a new array
      * @returns device object representation
@@ -241,7 +249,7 @@ export class Listitem {
 }
 
 export declare type ListitemModel = {
-    uuid?: number | string;
+    uuid?: number;
     item: string;
     note?: string;
     order: number;

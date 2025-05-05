@@ -13,7 +13,7 @@ import { StringUtils } from "../../classes/utils/string-utils";
 import { MainToolbarComponent } from "../../components/main-toolbar/main-toolbar.component";
 import { AdmobService } from "../adverticing/admob.service";
 import { ConnectIQService } from "../connectiq/connect-iq.service";
-import { ListsService } from "../lists/legacy-fs/lists.service";
+import { ListsService } from "../lists/lists.service";
 import { Locale } from "../localization/locale";
 import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";

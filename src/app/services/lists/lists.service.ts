@@ -19,7 +19,6 @@ import { SqliteBackendService } from "./../storage/sqlite/sqlite-backend.service
 import { KeepInTrash } from "./keep-in-trash";
 import { List, type ListReset } from "./list";
 import { Listitem } from "./listitem";
-import type { ListitemTrashModel } from "./listitems-trash-utils";
 
 @Injectable({
     providedIn: "root",
@@ -38,7 +37,7 @@ export class ListsService {
     private _removeOldTrashEntriesTimer?: Subscription;
     private readonly _listIndex: Map<number, List> = new Map();
 
-    private onTrashItemsDatasetChangedSubject = new BehaviorSubject<ListitemTrashModel | undefined>(undefined);
+    private onTrashItemsDatasetChangedSubject = new BehaviorSubject<{ trash: List | undefined; trashItems: Listitem[] | undefined } | undefined>(undefined);
     public onTrashItemsDatasetChanged$ = this.onTrashItemsDatasetChangedSubject.asObservable();
 
     private onTrashDatasetChangedSubject = new BehaviorSubject<List[] | undefined>(undefined);
@@ -230,6 +229,19 @@ export class ListsService {
     }
 
     /**
+     * reorder the lists
+     * @param lists
+     */
+    public async ReorderLists(lists: List[]): Promise<void> {
+        AppService.AppToolbar?.ToggleProgressbar(true);
+        for (let i = 0; i < lists.length - 1; ++i) {
+            lists[i].Order = i;
+            await this.StoreList(lists[i], false, false, false);
+        }
+        AppService.AppToolbar?.ToggleProgressbar(false);
+    }
+
+    /**
      * opens the listitem editor to create a new listitem
      * @param list list, the new item should be part of
      * @returns item-creation successful?
@@ -266,13 +278,11 @@ export class ListsService {
      * @param args information about listitem to be added
      * @returns item-adding successful?
      */
-    public async AddNewListitem(list: List, args: { item: string; note?: string; hidden?: boolean; locked?: boolean }): Promise<boolean> {
+    public async AddNewListitem(list: List, args: { item: string; order?: number; locked?: boolean; hidden?: boolean }): Promise<boolean> {
         if (!list || !args) {
             return false;
         }
-
-        const item = Listitem.Create({ uuid: -1, item: args.item, note: args.note, order: list.ItemsCount, created: Date.now(), hidden: args.hidden ?? false, locked: args.locked ?? false });
-        list.AddItem(item);
+        list.AddItem({ item: args.item, order: args.order ?? -1, locked: args.locked, hidden: args.hidden, created: Date.now() });
         if (await this.StoreList(list, false, true, true)) {
             this.onListsChangedSubject.next(await this.GetLists());
             return true;
@@ -374,6 +384,26 @@ export class ListsService {
             }
         } else {
             return (await this.wipeListsTrash()) > 0;
+        }
+    }
+
+    public async WipeListitemTrash(list?: List, force: boolean = false): Promise<boolean | undefined> {
+        if (!force && (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true))) {
+            const count = await this.BackendService.queryListitemsCount({ list: list, trash: true });
+            if (
+                count > 0 &&
+                (await this.Popups.Alert.YesNo({
+                    message: "page_settings_trash.confirm_clearitemstrash",
+                    button_yes: "page_settings_trash.confirm_clearitemstrash_ok",
+                    button_no: "page_settings_trash.confirm_clearitemstrash_cancel",
+                    translate: true,
+                }))
+            ) {
+                return (await this.wipeListitemTrash(list)) > 0;
+            }
+            return undefined;
+        } else {
+            return (await this.wipeListitemTrash(list)) > 0;
         }
     }
 
@@ -663,6 +693,15 @@ export class ListsService {
     }
 
     /**
+     * return the number of listitems in the trash of a list
+     * @param list the list
+     * @returns number of listitems in trash
+     */
+    public async GetTrashitemsCount(list?: List): Promise<number> {
+        return this.BackendService.queryListitemsCount({ list: list, trash: true });
+    }
+
+    /**
      * return the size in bytes and number of files of the lists- and trash-backends
      * @returns object with size of the lists and trashes
      */
@@ -798,9 +837,7 @@ export class ListsService {
      * @returns list with reordered listitems
      */
     private async cleanOrderListitems(list: List, store: boolean = true): Promise<void> {
-        for (let i = 0; i < list.Items.length; i++) {
-            list.Items[i].Order = i;
-        }
+        list.cleanItemsOrder();
         if (store) {
             await this.StoreList(list);
         }
@@ -1022,7 +1059,21 @@ export class ListsService {
         }
 
         AppService.AppToolbar?.ToggleProgressbar(false);
+        return del;
+    }
 
+    private async wipeListitemTrash(lists?: List | List[] | number | number[]): Promise<number> {
+        AppService.AppToolbar?.ToggleProgressbar(true);
+        if (lists && !Array.isArray(lists)) {
+            lists = lists instanceof List ? ([lists] as List[]) : ([lists] as number[]);
+        }
+        lists = lists as List[] | number[];
+        const del = await this.BackendService.deleteAllListitems({ lists: lists, trash: true, force: true });
+        if (del > 0) {
+            Logger.Notice(`Erased ${del} listitems from trash`);
+        } else {
+            Logger.Error(`Could not wipe listitem trash of ${lists ? lists.length : "all"} lists`);
+        }
         return del;
     }
 

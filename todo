@@ -7,5 +7,7 @@ https://wiki.ubuntuusers.de/adb/
 TEST: animations
 TEST: editmode
 WIP: use SQLite as backend
-TODO: REmove Translation: service-lists.restore_error_partial
+TODO: Remove translation: service-lists.restore_error_partial
+TODO: Remove translation: page_settings_trash.confirm_cleartrash, page_settings_trash.confirm_cleartrash_ok, page_settings_trash.confirm_cleartrash_cancel
+TODO: Move translation page_settings_trash.confirm_clearitemstrash", button_yes: "page_settings_trash.confirm_clearitemstrash_ok", button_no: "page_settings_trash.confirm_clearitemstrash_cancel -> to service-lists.
 TODO: note function

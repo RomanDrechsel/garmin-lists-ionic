@@ -50,6 +50,12 @@ export class SqliteBackendService {
         return 0;
     }
 
+    public async queryListitemsCount(args: { list?: number | List; trash?: boolean }): Promise<number> {
+        //TODO: SqliteBackendService.queryListitemsCount()
+        Logger.Debug("NOT IMPLEMENTED YET: SqliteBackendService.queryListitemsCount()");
+        return 0;
+    }
+
     public async storeList(args: { list: List; force?: boolean }): Promise<number | undefined> {
         //TODO: SqliteBackendService.storeList()
         Logger.Debug("NOT IMPLEMENTED YET: SqliteBackendService.storeList()");
@@ -86,10 +92,10 @@ export class SqliteBackendService {
         return 0;
     }
 
-    public async deleteAllListitems(args?: { lists?: number[] | List[]; force?: boolean }): Promise<boolean> {
+    public async deleteAllListitems(args?: { lists?: number[] | List[]; trash?: boolean; force?: boolean }): Promise<number> {
         //TODO: SqliteBackendService.deleteAllListitems()
         Logger.Debug("NOT IMPLEMENTED YET: SqliteBackendService.deleteAllListitems()");
-        return false;
+        return 0;
     }
 
     public async restoreListsFromTrash(args?: { lists: number[] | List[] }): Promise<number> {
