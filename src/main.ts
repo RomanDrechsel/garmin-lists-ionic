@@ -16,10 +16,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);
 }
 
-export function initializeFactory(init: AppService) {
-    init.InitializeApp();
-}
-
 if (environment.production) {
     enableProdMode();
 }
@@ -48,6 +44,6 @@ bootstrapApplication(AppComponent, {
                 },
             }),
         ]),
-        provideAppInitializer(() => initializeFactory(inject(AppService))),
+        provideAppInitializer(() => inject(AppService).InitializeApp()),
     ],
 }).catch(err => console.log(err));

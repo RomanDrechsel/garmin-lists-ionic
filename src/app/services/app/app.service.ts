@@ -2,6 +2,7 @@ import { inject, Injectable, isDevMode } from "@angular/core";
 import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
+import { SplashScreen } from "@capacitor/splash-screen";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import { EdgeToEdge } from "@capawesome/capacitor-android-edge-to-edge-support";
 import { Platform } from "@ionic/angular";
@@ -71,6 +72,7 @@ export class AppService {
      * initialize app services
      */
     public async InitializeApp() {
+        await this.Platform.ready();
         AppService.Popups = this._popups;
         await Logger.Initialize(this.Logger);
         await Locale.Initialize(this.Locale);
@@ -79,6 +81,7 @@ export class AppService {
         this.handleNightmode((await SysInfo.NightMode()).isNightMode);
 
         await this.ListsService.Initialize();
+        console.log("ListService init");
 
         //no await ...
         (async () => {
@@ -97,6 +100,8 @@ export class AppService {
         SysInfo.addListener<NightModeEventArgs>("NIGHTMODE", (data: NightModeEventArgs) => {
             this.handleNightmode(data.isNightMode);
         });
+
+        await SplashScreen.hide();
     }
 
     /**

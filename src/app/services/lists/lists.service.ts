@@ -2,6 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Keyboard } from "@capacitor/keyboard";
 import { AlertInput, ModalController, NavController } from "@ionic/angular/standalone";
 import { BehaviorSubject, interval, type Subscription } from "rxjs";
+import { HelperUtils } from "src/app/classes/utils/helper-utils";
 import { StringUtils } from "src/app/classes/utils/string-utils";
 import { ListEditor } from "src/app/components/list-editor/list-editor.component";
 import { ListItemEditor, ListItemEditorMultiple } from "src/app/components/list-item-editor/list-item-editor.component";
@@ -94,7 +95,7 @@ export class ListsService {
      */
     public async GetTrash(): Promise<List[]> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        const trash = await this.BackendService.queryLists({ peek: true, trash: true, orderBy: "deleted", orderDir: "desc" });
+        const trash = await this.BackendService.queryLists({ peek: true, trash: true, orderBy: "deleted", orderDir: "DESC" });
         AppService.AppToolbar?.ToggleProgressbar(false);
         return trash;
     }
@@ -106,11 +107,13 @@ export class ListsService {
      */
     public async GetList(uuid: number): Promise<List | undefined> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        const list = await this.BackendService.queryList(uuid);
+        const list = await this.BackendService.queryList({ list: uuid });
         if (list) {
-            const index = this._listIndex.get(list.Uuid!);
+            const index = this._listIndex.get(list.Uuid);
             if (index) {
                 index.copy(list);
+            } else {
+                this._listIndex.set(list.Uuid, list);
             }
         } else {
             this._listIndex.delete(uuid);
@@ -127,7 +130,7 @@ export class ListsService {
      */
     public async GetListitemTrash(uuid: number | List): Promise<Listitem[] | undefined> {
         AppService.AppToolbar?.ToggleProgressbar(false);
-        const trash = await this.BackendService.queryListitems({ list: uuid, trash: true, orderBy: "deleted", orderDir: "desc" });
+        const trash = await this.BackendService.queryListitems({ list: uuid, trash: true, orderBy: "deleted", orderDir: "DESC" });
         AppService.AppToolbar?.ToggleProgressbar(false);
         return trash;
     }
@@ -279,10 +282,7 @@ export class ListsService {
      * @returns item-adding successful?
      */
     public async AddNewListitem(list: List, args: { item: string; order?: number; locked?: boolean; hidden?: boolean }): Promise<boolean> {
-        if (!list || !args) {
-            return false;
-        }
-        list.AddItem({ item: args.item, order: args.order ?? -1, locked: args.locked, hidden: args.hidden, created: Date.now() });
+        list.AddItem({ uuid: HelperUtils.RandomNegativNumber(), list_id: list.Uuid, item: args.item, order: args.order ?? -1, locked: args.locked ? 1 : 0, hidden: args.hidden ? 1 : 0, created: Date.now(), modified: Date.now() });
         if (await this.StoreList(list, false, true, true)) {
             this.onListsChangedSubject.next(await this.GetLists());
             return true;
@@ -558,12 +558,14 @@ export class ListsService {
         await this.cleanOrderListitems(list, false);
         if (!list.Uuid || list.Dirty || force) {
             const uuid = await this.BackendService.storeList({ list: list, force: force });
-            if (uuid) {
+            if (uuid === false) {
+                store = false;
+            } else if (uuid) {
                 list.Uuid = uuid;
                 list.Clean();
                 store = true;
             } else {
-                store = false;
+                store = undefined;
             }
         }
 
@@ -728,24 +730,35 @@ export class ListsService {
     }
 
     public async createNewList(args: { name: string; order?: number; sync?: boolean; reset?: ListReset }): Promise<List> {
-        return new List({
-            name: args.name,
-            order: args.order ?? (await this.BackendService.getNextListOrder()),
-            created: Date.now(),
-            sync: args.sync,
-            reset: args.reset,
-            items: [],
-        });
+        return new List(
+            {
+                name: args.name,
+                order: args.order ?? (await this.BackendService.getNextListOrder()),
+                created: Date.now(),
+                modified: Date.now(),
+                sync: args.sync ? 1 : 0,
+                reset: args.reset ? (args.reset.active ? 1 : 0) : 0,
+                reset_interval: args.reset ? args.reset.interval : "daily",
+                reset_hour: args.reset?.hour ?? 0,
+                reset_minute: args.reset?.minute ?? 0,
+                reset_day: args.reset?.day ?? 0,
+                reset_weekday: args.reset?.weekday ?? 0,
+            },
+            [],
+        );
     }
 
     public async createNewListitem(list: List | number, args: { item: string; note?: string; order?: number; hidden?: boolean; locked?: boolean }): Promise<Listitem> {
         return new Listitem({
+            uuid: HelperUtils.RandomNegativNumber(),
+            list_id: typeof list === "number" ? list : list.Uuid,
             item: args.item,
             note: args.note,
             order: args.order ?? (await this.BackendService.getNextListitemOrder({ list: list })),
             created: Date.now(),
-            hidden: args.hidden,
-            locked: args.locked,
+            modified: Date.now(),
+            hidden: args.hidden ? 1 : 0,
+            locked: args.locked ? 1 : 0,
         });
     }
 

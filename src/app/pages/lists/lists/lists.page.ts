@@ -37,7 +37,7 @@ export class ListsPage extends AnimatedListPageBase {
     public override async ionViewWillEnter(): Promise<void> {
         await super.ionViewWillEnter();
         this.ListsService.PurgeListDetails();
-        this._lists = await this.ListsService.GetLists({ orderBy: "order", orderDir: "asc" });
+        this._lists = await this.ListsService.GetLists({ orderBy: "order", orderDir: "ASC" });
         this._itemsInitialized = true;
         this._listsSubscription = this.ListsService.onListsChanged$.subscribe(lists => {
             if (lists) {
@@ -134,7 +134,7 @@ export class ListsPage extends AnimatedListPageBase {
     }
 
     public UpdatedString(list: List): string {
-        return this.Locale.getText("page_lists.updated", { date: DateUtils.formatDate(list.Updated ?? list.Created) });
+        return this.Locale.getText("page_lists.updated", { date: DateUtils.formatDate(list.Modified ?? list.Created) });
     }
 
     public isListSelected(list: List): boolean {

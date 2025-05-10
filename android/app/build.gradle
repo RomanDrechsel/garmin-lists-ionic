@@ -21,6 +21,7 @@ android {
         release {
             manifestPlaceholders appname: '@string/app_name'
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ndk {
                 debugSymbolLevel 'FULL'
@@ -50,6 +51,7 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
+
     implementation 'com.garmin.connectiq:ciq-companion-app-sdk:2.0.3@aar'
     implementation 'com.google.code.gson:gson:2.12.1'
 }

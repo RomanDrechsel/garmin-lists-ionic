@@ -1,29 +1,30 @@
 import { HelperUtils } from "src/app/classes/utils/helper-utils";
-import { Logger } from "../logging/logger";
+import type { DatabaseType } from "../storage/sqlite/sqlite-backend.service";
 
 export class Listitem {
     private _uuid: number;
     private _order: number;
     private _created: number;
-    private _updated: number;
+    private _modified: number;
     private _item: string;
     private _note?: string;
     private _hidden: boolean = false;
     private _locked: boolean = false;
     private _deleted?: number;
     private _dirty: boolean = false;
+    private _legacyUuid?: string;
 
     constructor(obj: ListitemModel) {
         this._uuid = obj.uuid ?? HelperUtils.RandomNegativNumber();
         this._item = obj.item;
         this._note = obj.note;
         this._order = obj.order;
-        this._hidden = obj.hidden ?? false;
-        this._locked = obj.locked ?? false;
-        this._created = obj.created ?? Date.now();
-        this._updated = obj.updated ?? Date.now();
-        this._dirty = obj.dirty ?? false;
+        this._hidden = obj.hidden === 1;
+        this._locked = obj.locked === 1;
+        this._created = obj.created;
+        this._modified = obj.modified;
         this._deleted = obj.deleted;
+        this._dirty = true;
     }
 
     /** get unique id in backend */
@@ -60,14 +61,14 @@ export class Listitem {
     }
 
     /** get updated timestamp */
-    public get Updated(): number | undefined {
-        return this._updated;
+    public get Modified(): number {
+        return this._modified;
     }
 
     /** set updated timestamp */
-    public set Updated(updated: number) {
-        if (this._updated != updated) {
-            this._updated = updated;
+    public set Modified(updated: number) {
+        if (this._modified != updated) {
+            this._modified = updated;
             this._dirty = true;
         }
     }
@@ -173,24 +174,19 @@ export class Listitem {
         return undefined;
     }
 
-    /**
-     * create an object to store in backend, returns undefined if to changes on the list
-     * @returns object for backend storage
-     */
-    public toBackend(): ListitemModel {
-        this.Clean();
-
-        return {
-            uuid: this._uuid,
-            item: this._item,
-            note: this._note,
-            order: this._order,
-            hidden: this._hidden,
-            locked: this._locked,
-            created: this._created,
-            updated: this._updated,
-            deleted: this._deleted,
-        };
+    public toBackend(): Map<string, DatabaseType> {
+        return new Map<string, DatabaseType>([
+            ["uuid", this._uuid],
+            ["item", this._item],
+            ["note", this._note ?? null],
+            ["order", this._order],
+            ["hidden", this._hidden ? 1 : 0],
+            ["locked", this._locked ? 1 : 0],
+            ["created", this._created],
+            ["modified", this._modified],
+            ["deleted", this._deleted ?? null],
+            ["legacy_uuid", this._legacyUuid ?? null],
+        ]);
     }
 
     /**
@@ -198,7 +194,7 @@ export class Listitem {
      * @returns
      */
     public toLog(): string {
-        return `id:${this.Uuid ?? "?"}`;
+        return `id:${this.Uuid}`;
     }
 
     /**
@@ -219,44 +215,18 @@ export class Listitem {
         }
         return other.Uuid === this.Uuid;
     }
-
-    /**
-     * creates a listitem object from backend
-     * @param obj backend object
-     * @returns Listitem object
-     */
-    public static fromBackend(obj: any): Listitem | undefined {
-        const props = ["uuid", "item", "created", "order"];
-        for (let i = 0; i < props.length; i++) {
-            if (!obj.hasOwnProperty(props[i])) {
-                Logger.Error(`Could not read listitem from backend, property ${props[i]} not found`);
-                return undefined;
-            }
-        }
-        return new Listitem({
-            uuid: obj.uuid,
-            item: obj.item,
-            note: obj.note,
-            order: obj.order,
-            hidden: obj.hidden,
-            locked: obj.locked,
-            created: obj.created,
-            updated: obj.updated,
-            deleted: obj.deleted,
-            dirty: false,
-        });
-    }
 }
 
 export declare type ListitemModel = {
-    uuid?: number;
+    uuid: number;
+    list_id: number;
     item: string;
     note?: string;
     order: number;
+    hidden?: number;
+    locked?: number;
     created: number;
-    hidden?: boolean;
-    locked?: boolean;
-    updated?: number;
+    modified: number;
     deleted?: number;
-    dirty?: boolean;
+    legacy_uuid?: string;
 };
