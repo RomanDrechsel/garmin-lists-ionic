@@ -247,13 +247,13 @@ export class SqliteBackendService {
         return 0;
     }
 
-    public async moveListitemsToTrash(args: { list: number | List; items?: number[] | Listitem[]; force?: boolean }): Promise<boolean> {
+    public async moveListitemsToTrash(args: { list: number | List; items?: number[] | Listitem[]; force?: boolean }): Promise<number | false> {
         const uuid = args.list instanceof List ? args.list.Uuid : args.list;
 
         if (args.items?.length && typeof args.items[0] === "number" && args.force !== true) {
             //we need the listitem object, to check if they are locked...
             const query = `SELECT * FROM \`listitems\` WHERE \`list_id\` = ? AND \`deleted\` IS NULL AND \`uuid\` IN (${args.items.map(i => "?").join(", ")})`;
-            const models = (await this._database.query(query, args.items)).values as ListitemModel[] | undefined;
+            const models = (await this._database.query(query, [uuid, ...args.items])).values as ListitemModel[] | undefined;
             if (models) {
                 const items: Listitem[] = [];
                 models.forEach(m => {
@@ -263,18 +263,34 @@ export class SqliteBackendService {
             }
         }
 
-        //WIP: delete all items in args.items
+        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Uuid)) || [];
+
+        let query = "UPDATE `listitems` SET `deleted` = ? WHERE `list_id` = ? AND `deleted` IS NULL";
+        if (args.items?.length) {
+            query += ` AND \`uuid\` IN (` + item_uuids.map(i => "?").join(", ") + `)`;
+        }
+
+        const ret = await this._database.run(query, [Date.now(), uuid, ...item_uuids]);
+        if (ret.changes?.changes) {
+            return ret.changes.changes;
+        }
 
         return false;
     }
 
-    public async deleteListitems(args: { list: number | List; items?: number[] | Listitem[]; trash?: boolean }): Promise<number> {
-        //TODO: SqliteBackendService.deleteListitems()
-        Logger.Debug("NOT IMPLEMENTED YET: SqliteBackendService.deleteListitems()");
-        return 0;
+    public async deleteListitems(args: { list: number | List; items?: number[] | Listitem[]; trash?: boolean }): Promise<number | false> {
+        const uuid = args.list instanceof List ? args.list.Uuid : args.list;
+        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Uuid)) || [];
+        const query = `DELETE FROM \`listitems\` WHERE \`list_id\` = ? AND \`deleted\` ${args.trash !== false ? "IS NOT NULL" : "IS NULL"} AND \`uuid\` IN (` + item_uuids.map(i => "?").join(", ") + `)`;
+        const ret = await this._database.run(query, [uuid, ...item_uuids]);
+        if (ret.changes?.changes) {
+            return ret.changes.changes;
+        }
+
+        return false;
     }
 
-    public async deleteAllListitems(args?: { lists?: number[] | List[]; trash?: boolean; force?: boolean }): Promise<number> {
+    public async deleteAllListitems(args?: { lists?: number[] | List[]; trash?: boolean; force?: boolean }): Promise<number | false> {
         //TODO: SqliteBackendService.deleteAllListitems()
         Logger.Debug("NOT IMPLEMENTED YET: SqliteBackendService.deleteAllListitems()");
         return 0;

@@ -38,7 +38,7 @@ export class ListsService {
     private _removeOldTrashEntriesTimer?: Subscription;
     private readonly _listIndex: Map<number, List> = new Map();
 
-    private onTrashItemsDatasetChangedSubject = new BehaviorSubject<{ trash: List | undefined; trashItems: Listitem[] | undefined } | undefined>(undefined);
+    private onTrashItemsDatasetChangedSubject = new BehaviorSubject<List | undefined>(undefined);
     public onTrashItemsDatasetChanged$ = this.onTrashItemsDatasetChangedSubject.asObservable();
 
     private onTrashDatasetChangedSubject = new BehaviorSubject<List[] | undefined>(undefined);
@@ -399,11 +399,11 @@ export class ListsService {
                     translate: true,
                 }))
             ) {
-                return (await this.wipeListitemTrash(list)) > 0;
+                return this.emptyListitemTrash(list);
             }
             return undefined;
         } else {
-            return (await this.wipeListitemTrash(list)) > 0;
+            return this.emptyListitemTrash(list);
         }
     }
 
@@ -415,10 +415,10 @@ export class ListsService {
     public async EmptyListitemTrash(trash: List): Promise<boolean | undefined> {
         if (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true)) {
             let text;
-            if (trash.TrashItemsCount == 1) {
+            if (trash.ItemsInTrashCount == 1) {
                 text = this.Locale.getText("service-lists.empty_trash_listitems_confirm_single");
             } else {
-                text = this.Locale.getText("service-lists.empty_trash_listitems_confirm", { count: trash.TrashItemsCount });
+                text = this.Locale.getText("service-lists.empty_trash_listitems_confirm", { count: trash.ItemsInTrashCount });
             }
             text += this.Locale.getText("service-lists.undo_warning");
             if (await this.Popups.Alert.YesNo({ message: text })) {
@@ -950,26 +950,30 @@ export class ListsService {
         AppService.AppToolbar?.ToggleProgressbar(true);
 
         let errors = 0;
+        let deleted: number | false = 0;
         for (let i = 0; i < lists.length; i++) {
             let l = lists[i];
 
             if (l && l.ItemsCount > 0) {
                 if (use_trash) {
-                    const del = await this.BackendService.moveListitemsToTrash({ list: l, force: false });
-                    if (!del) {
+                    deleted = await this.BackendService.moveListitemsToTrash({ list: l, force: false });
+                    if (deleted === false) {
                         Logger.Error(`Could not empty list ${l.toLog()} and move items to trash`);
                         errors++;
+                    } else {
+                        Logger.Debug(`Emptied list ${l.toLog()} and moved ${deleted} items to trash`);
                     }
                 } else {
-                    const del = await this.BackendService.deleteAllListitems({ lists: [l] /*TODO: refactor this */, force: false });
-                    if (!del) {
+                    deleted = await this.BackendService.deleteAllListitems({ lists: [l] /*TODO: refactor this */, force: false });
+                    if (deleted === false) {
                         Logger.Error(`Could not empty list ${l.toLog()}`);
                         errors++;
+                    } else {
+                        Logger.Debug(`Emptied list ${l.toLog()} and deleted ${deleted} items`);
                     }
                 }
                 await this.refreshList(l);
                 await this.cleanOrderListitems(l, true);
-                Logger.Debug(`Emptied list ${l.toLog()}`);
             } else if (!l) {
                 errors++;
             }
@@ -1005,30 +1009,29 @@ export class ListsService {
             items = [items];
         }
 
-        let success = false;
+        let deleted: number | false = false;
         if (await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) {
-            success = await this.BackendService.moveListitemsToTrash({ list: list, items: items });
-            if (success) {
+            deleted = await this.BackendService.moveListitemsToTrash({ list: list, items: items });
+            if (deleted) {
                 Logger.Debug(`Moved ${items.length} listitem(s) of list ${list.toLog()} to trash`);
             } else {
                 Logger.Error(`Could not move ${items.length} listitem(s) of list ${list.toLog()} to trash`);
             }
         } else {
-            const del = await this.BackendService.deleteListitems({ list: list, items: items });
-            if (del >= 0) {
-                Logger.Debug(`Deleted ${del} listitem(s) from list ${list.toLog()}`);
+            deleted = await this.BackendService.deleteListitems({ list: list, items: items, trash: false });
+            if (deleted) {
+                Logger.Debug(`Deleted ${deleted} listitem(s) from list ${list.toLog()}`);
             } else {
                 Logger.Error(`Could not delete ${items.length} listitem(s) from list ${list.toLog()}`);
             }
-            success = del >= 0;
         }
 
-        if (success) {
+        if (deleted && deleted > 0) {
             await this.cleanOrderListitems(list, true);
         }
 
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return success;
+        return deleted ? deleted > 0 : false;
     }
 
     /**
@@ -1042,18 +1045,24 @@ export class ListsService {
         if (!Array.isArray(items)) {
             items = [items];
         }
-        const del = await this.BackendService.deleteListitems({ list: trash, items: items });
+        const del = await this.BackendService.deleteListitems({ list: trash, items: items, trash: true });
 
-        if (del >= 0) {
+        if (del) {
+            Logger.Notice(`Erased ${del} listitem(s) from trash of list ${trash.toLog()}`);
             const text = !Array.isArray(items) || items.length == 1 ? "service-lists.erase_item_success" : "service-lists.erase_item_success_plural";
             this.Popups.Toast.Success(text);
+            if (trash.ItemsInTrash) {
+                trash.ItemsInTrash = trash.ItemsInTrash.filter(i => !items.find(ii => ii.Uuid == i.Uuid));
+            }
+            this.onTrashItemsDatasetChangedSubject.next(trash);
         } else {
+            Logger.Error(`Could not erease ${items.length} listitem(s) from trash of list ${trash.toLog()}`);
             const text = !Array.isArray(items) || items.length == 1 ? "service-lists.erase_item_error" : "service-lists.erase_item_error_plural";
             this.Popups.Toast.Error(text);
         }
 
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return del >= 0;
+        return del ? del >= 0 : false;
     }
 
     /**
@@ -1082,12 +1091,12 @@ export class ListsService {
         }
         lists = lists as List[] | number[];
         const del = await this.BackendService.deleteAllListitems({ lists: lists, trash: true, force: true });
-        if (del > 0) {
-            Logger.Notice(`Erased ${del} listitems from trash`);
+        if (del !== false) {
+            Logger.Notice(`Erased ${del} listitem(s) from trash`);
         } else {
             Logger.Error(`Could not wipe listitem trash of ${lists ? lists.length : "all"} lists`);
         }
-        return del;
+        return del !== false ? del : -1;
     }
 
     /**
@@ -1095,18 +1104,26 @@ export class ListsService {
      * @param list list to empty
      * @returns was the emptying successful?
      */
-    private async emptyListitemTrash(trash: List): Promise<boolean> {
+    private async emptyListitemTrash(trash?: List): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        const ret = await this.BackendService.deleteListitems({ list: trash, trash: true });
-        if (ret >= 0) {
-            Logger.Notice(`Erased trash of list ${trash.toLog()}`);
+        const ret = await this.BackendService.deleteAllListitems({ lists: trash ? [trash] : undefined, trash: true });
+        if (ret !== false) {
+            if (trash) {
+                Logger.Notice(`Erased trash of list ${trash.toLog()}`);
+            } else {
+                Logger.Notice(`Erased trash of all lists`);
+            }
             this.Popups.Toast.Success("service-lists.empty_trash_success");
         } else {
-            Logger.Error(`Could not erase trash of list ${trash.toLog()}`);
+            if (trash) {
+                Logger.Error(`Could not erase trash of list ${trash.toLog()}`);
+            } else {
+                Logger.Error(`Could not erase trash of all lists`);
+            }
             this.Popups.Toast.Error("service-lists.empty_trash_error");
         }
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return ret >= 0;
+        return ret !== false;
     }
 
     /**

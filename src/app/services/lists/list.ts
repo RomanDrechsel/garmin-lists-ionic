@@ -10,8 +10,9 @@ export class List {
     private _order: number;
     private _reset?: ListReset;
     private _itemsCount?: number;
-    private _trashItemsCount?: number;
     private _items?: Listitem[];
+    private _trashItemsCount?: number;
+    private _itemsInTrash?: Listitem[];
     private _deleted?: number;
     private _sync: boolean = false;
     private _legacyUuid?: string;
@@ -128,11 +129,6 @@ export class List {
         }
     }
 
-    /** how may items are in trash for this list */
-    public get TrashItemsCount(): number {
-        return this._trashItemsCount ?? 0;
-    }
-
     /** set the list of all items */
     public set Items(items: Listitem[] | undefined) {
         this._items = items;
@@ -140,6 +136,24 @@ export class List {
             this._itemsCount = this._items.length;
         }
         this._dirty = true;
+    }
+
+    /** how may items are in trash for this list */
+    public get ItemsInTrashCount(): number {
+        return this._trashItemsCount ?? 0;
+    }
+
+    /** return the listitems, that are in trash for this list */
+    public get ItemsInTrash(): Listitem[] | undefined {
+        return this._itemsInTrash;
+    }
+
+    /** set the items in trash for this list */
+    public set ItemsInTrash(items: Listitem[] | undefined) {
+        this._itemsInTrash = items;
+        if (this._itemsInTrash) {
+            this._trashItemsCount = this._itemsInTrash.length;
+        }
     }
 
     /** get the list of all items */
