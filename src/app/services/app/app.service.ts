@@ -2,10 +2,12 @@ import { inject, Injectable, isDevMode } from "@angular/core";
 import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
+import { SplashScreen } from "@capacitor/splash-screen";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import { EdgeToEdge } from "@capawesome/capacitor-android-edge-to-edge-support";
 import { Platform } from "@ionic/angular";
 import { NavController } from "@ionic/angular/standalone";
+import { WebViewCache } from "capacitor-plugin-webview-cache";
 import type { NightModeEventArgs } from "src/app/plugins/sysinfo/event-args/night-mode-event-args";
 import SysInfo from "src/app/plugins/sysinfo/sys-info";
 import { environment } from "../../../environments/environment";
@@ -71,12 +73,34 @@ export class AppService {
      * initialize app services
      */
     public async InitializeApp() {
+        const timeout = window.setTimeout(() => {
+            SplashScreen.hide({ fadeOutDuration: 0 });
+            Logger.Error(`Something went wrong! App did not start in time.`);
+        }, 10000);
+
+        const last_version = await this.Preferences.Get<number>(EPrefProperty.LastVersion, -1);
+        const build = Number((await App.getInfo()).build);
+        let clear_cache = false;
+        if (!Number.isNaN(build) && build > last_version) {
+            await WebViewCache.clearCache();
+            clear_cache = true;
+        }
+        await this.Preferences.Set(EPrefProperty.LastVersion, build);
+
         AppService.Popups = this._popups;
         await Logger.Initialize(this.Logger);
-        await Locale.Initialize(this.Locale);
+
+        if (clear_cache) {
+            Logger.Notice(`Cleared browser cache due to new app version (${last_version} -> ${build})`);
+        }
 
         await EdgeToEdge.enable();
         this.handleNightmode((await SysInfo.NightMode()).isNightMode);
+        SysInfo.addListener<NightModeEventArgs>("NIGHTMODE", (data: NightModeEventArgs) => {
+            this.handleNightmode(data.isNightMode);
+        });
+
+        await Locale.Initialize(this.Locale);
 
         await this.ListsService.Initialize();
 
@@ -92,11 +116,12 @@ export class AppService {
         })();
 
         //no await...
-        this.Admob.Initialize();
+        (async () => {
+            await this.Admob.Initialize();
+        })();
 
-        SysInfo.addListener<NightModeEventArgs>("NIGHTMODE", (data: NightModeEventArgs) => {
-            this.handleNightmode(data.isNightMode);
-        });
+        await SplashScreen.hide({ fadeOutDuration: 500 });
+        window.clearTimeout(timeout);
     }
 
     /**
@@ -214,10 +239,10 @@ export class AppService {
     private async handleNightmode(isNightMode: boolean | undefined) {
         this.Logger.Debug(`NightMode set to '${isNightMode}'`);
         if (isNightMode === true) {
-            EdgeToEdge.setBackgroundColor({ color: "#212166" });
+            EdgeToEdge.setBackgroundColor({ color: "#002794" });
             StatusBar.setStyle({ style: Style.Dark });
         } else {
-            EdgeToEdge.setBackgroundColor({ color: "#73bbff" });
+            EdgeToEdge.setBackgroundColor({ color: "#0077ff" });
             StatusBar.setStyle({ style: Style.Light });
         }
     }

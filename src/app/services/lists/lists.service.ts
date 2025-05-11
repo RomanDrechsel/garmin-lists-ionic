@@ -74,8 +74,8 @@ export class ListsService {
                 this._syncLists = arg.value;
             }
         });
-        const count = (await this.GetLists(true)).length;
-        Logger.Debug(`Found ${count} list(s) in the backend`);
+        Logger.Debug("Lists service initialized");
+        Logger.Debug(`Found ${(await this.GetLists(true)).length} list(s) in the backend`);
     }
 
     private set KeepInTrashStock(value: number | KeepInTrash.Enum) {
@@ -121,7 +121,7 @@ export class ListsService {
      * @returns array of lists in trash
      */
     public async GetTrash(): Promise<List[]> {
-        AppService.AppToolbar?.ToggleProgressbar(false);
+        AppService.AppToolbar?.ToggleProgressbar(true);
         const trash = await this.TrashProvider.GetLists(true);
         AppService.AppToolbar?.ToggleProgressbar(false);
         return trash;
@@ -151,7 +151,7 @@ export class ListsService {
      * @returns ListitemTrashModel object
      */
     public async GetListitemTrash(uuid: string): Promise<ListitemTrashModel | undefined> {
-        AppService.AppToolbar?.ToggleProgressbar(false);
+        AppService.AppToolbar?.ToggleProgressbar(true);
         const ret = await this.TrashItemsProvider.GetListitemsTrash(uuid);
         AppService.AppToolbar?.ToggleProgressbar(false);
         return ret;
@@ -1041,13 +1041,17 @@ export class ListsService {
      */
     private async removeListitem(list: List, items: Listitem | Listitem[]): Promise<boolean> {
         AppService.AppToolbar?.ToggleProgressbar(true);
+        let success = false;
+
         if (!(await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true)) || (await this.TrashItemsProvider.StoreListitem(list.Uuid, items))) {
             list.RemoveItem(items);
-            return (await this.StoreList(list)) !== false;
+            success = (await this.StoreList(list)) !== false;
         } else {
-            AppService.AppToolbar?.ToggleProgressbar(true);
-            return false;
+            success = false;
         }
+
+        AppService.AppToolbar?.ToggleProgressbar(false);
+        return success;
     }
 
     /**
@@ -1263,6 +1267,5 @@ export class ListsService {
             this.onListsChangedSubject.next(this._lists);
         }
         return lists;
-        1;
     }
 }

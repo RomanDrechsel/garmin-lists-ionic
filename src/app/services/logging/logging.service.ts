@@ -66,6 +66,7 @@ export class LoggingService {
         this.LogLevel = await this.Preferences.Get<ELogType>(EPrefProperty.LogMode, this.LogLevel);
         const autodelete = await this.Preferences.Get(EPrefProperty.LogsAutoDelete, this.AutoDelete);
         await this.SetAutodelete(autodelete);
+        this.Debug("Logging initialized");
     }
 
     /**
