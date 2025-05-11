@@ -74,8 +74,8 @@ export class ListsService {
                 this._syncLists = arg.value;
             }
         });
-        const count = (await this.GetLists(true)).length;
-        Logger.Debug(`Found ${count} list(s) in the backend`);
+        Logger.Debug("Lists service initialized");
+        Logger.Debug(`Found ${(await this.GetLists(true)).length} list(s) in the backend`);
     }
 
     private set KeepInTrashStock(value: number | KeepInTrash.Enum) {

@@ -10,8 +10,8 @@ const config: CapacitorConfig = {
     plugins: {
         SplashScreen: {
             launchShowDuration: 500,
-            launchAutoHide: true,
-            launchFadeOutDuration: 200,
+            launchAutoHide: false,
+            launchFadeOutDuration: 600,
             backgroundColor: "#008DF5FF",
             androidSplashResourceName: "splash",
             androidScaleType: "CENTER_CROP",
@@ -22,7 +22,7 @@ const config: CapacitorConfig = {
             useDialog: true,
         },
         StatusBar: {
-            overlaysWebView: false,
+            overlaysWebView: true,
         },
         Keyboard: {
             resize: KeyboardResize.Body,
@@ -30,7 +30,7 @@ const config: CapacitorConfig = {
             resizeOnFullScreen: false,
         },
         EdgeToEdge: {
-            backgroundColor: "#73bbff",
+            backgroundColor: "#0077ff",
         },
     },
 };
