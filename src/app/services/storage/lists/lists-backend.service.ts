@@ -353,7 +353,7 @@ export class ListsBackendService {
      * @returns the uuid or undefined, if the pattern not matches
      */
     private static getUuidFromFilename(filename: string): string | undefined {
-        const regex = new RegExp("[^-]*)-.*.json$");
+        const regex = new RegExp(/^([^-]*)/);
         const match = filename.match(regex);
         return match ? match[1] : undefined;
     }
