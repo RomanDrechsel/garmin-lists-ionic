@@ -3,6 +3,7 @@ import { Preferences } from "@capacitor/preferences";
 import { BehaviorSubject } from "rxjs";
 
 export enum EPrefProperty {
+    "LastVersion" = "LISTS_LastVersion",
     "FirstStart" = "LISTS_FirstStart",
     "GarminConnectIQ" = "LISTS_GarminConnectIQ",
     "AppLanguage" = "LISTS_AppLanguage",

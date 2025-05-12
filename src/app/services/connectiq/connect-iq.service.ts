@@ -112,6 +112,7 @@ export class ConnectIQService {
 
             this._initialized = init.success;
             this.onInitializedSubject.next(init.success);
+            Logger.Debug("ConnectIQ initialized");
         } else {
             Logger.Important(`Not on a native device, skipping initialization of ConnectIQ service`);
         }
