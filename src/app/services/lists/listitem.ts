@@ -1,5 +1,5 @@
 import { HelperUtils } from "src/app/classes/utils/helper-utils";
-import type { DatabaseType } from "../storage/sqlite/sqlite-backend.service";
+import type { DatabaseType } from "../storage/lists/sqlite/sqlite-backend.service";
 
 export class Listitem {
     private _uuid: number;

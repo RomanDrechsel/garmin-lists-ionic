@@ -1,8 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import type { SQLiteDBConnection } from "@capacitor-community/sqlite";
-import { List, type ListModel } from "../../lists/list";
-import { Listitem, ListitemModel } from "../../lists/listitem";
-import { Logger } from "../../logging/logger";
+import { List, type ListModel } from "../../../lists/list";
+import { Listitem, ListitemModel } from "../../../lists/listitem";
+import { Logger } from "../../../logging/logger";
 import { SqliteUpgradeStatementsMain } from "./sqlite-upgrade-statments";
 import { SqliteService } from "./sqlite.service";
 

@@ -14,9 +14,8 @@ import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { PopupsService } from "../popups/popups.service";
 import { Toast } from "../popups/toast";
+import { type ListsOrder, type ListsOrderDirection, SqliteBackendService } from "../storage/lists/sqlite/sqlite-backend.service";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
-import { type ListsOrder, type ListsOrderDirection } from "../storage/sqlite/sqlite-backend.service";
-import { SqliteBackendService } from "./../storage/sqlite/sqlite-backend.service";
 import { KeepInTrash } from "./keep-in-trash";
 import { List, type ListReset } from "./list";
 import { Listitem } from "./listitem";
@@ -61,6 +60,7 @@ export class ListsService {
             }
         });
         await this.removeOldTrash(await this.Preferences.Get<number>(EPrefProperty.TrashKeepinStock, this._keepInTrashStock));
+        Logger.Debug(`Lists service initialized`);
     }
 
     /**
@@ -745,6 +745,8 @@ export class ListsService {
                 reset_weekday: args.reset?.weekday ?? 0,
             },
             [],
+            undefined,
+            true,
         );
     }
 
@@ -1027,7 +1029,16 @@ export class ListsService {
         }
 
         if (deleted && deleted > 0) {
+            items.forEach(i => {
+                i.Deleted = Date.now();
+            });
+            list.Items = list.Items.filter(i => !i.Deleted);
             await this.cleanOrderListitems(list, true);
+            this.onListChangedSubject.next(list);
+            this.onTrashItemsDatasetChangedSubject.next(list);
+            this.Popups.Toast.Success(items.length == 1 ? "service-lists.delete_item_success" : "service-lists.delete_item_success_plural", undefined, true);
+        } else {
+            this.Popups.Toast.Error(items.length == 1 ? "service-lists.delete_item_error" : "service-lists.delete_item_error_plural", undefined, true);
         }
 
         AppService.AppToolbar?.ToggleProgressbar(false);

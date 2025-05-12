@@ -1,5 +1,5 @@
 import { HelperUtils } from "src/app/classes/utils/helper-utils";
-import { DatabaseType } from "./../storage/sqlite/sqlite-backend.service";
+import { DatabaseType } from "../storage/lists/sqlite/sqlite-backend.service";
 import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
@@ -20,7 +20,7 @@ export class List {
 
     private static readonly ListRevision = 1;
 
-    public constructor(obj: ListModel, itemsobjs?: ListitemModel[], itemcount?: number) {
+    public constructor(obj: ListModel, itemsobjs?: ListitemModel[], itemcount?: number, dirty?: boolean) {
         this._uuid = obj.uuid ?? HelperUtils.RandomNegativNumber();
         this._name = obj.name;
         this._order = obj.order;
@@ -56,6 +56,9 @@ export class List {
         }
         this._itemsCount = this._items?.length ?? itemcount;
         this.cleanItemsOrder();
+        if (dirty !== undefined) {
+            this._dirty = dirty;
+        }
     }
 
     /**
