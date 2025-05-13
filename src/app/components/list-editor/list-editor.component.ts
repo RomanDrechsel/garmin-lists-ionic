@@ -207,7 +207,7 @@ export class ListEditorComponent {
     }
 
     public async onDelete() {
-        if (this.Params?.list && (await this.ListsService.DeleteList(this.Params.list))) {
+        if (this.Params?.list && (await this.ListsService.DeleteLists(this.Params.list))) {
             this.cancel();
         }
     }

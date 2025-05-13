@@ -67,19 +67,24 @@ export class ListItemsPage extends AnimatedListPageBase {
             this._listTitle = listtitle;
         }
 
-        (async () => {
-            // no wait
-            const uuid = Number(this.Route.snapshot.paramMap.get("uuid"));
-            if (uuid && Number(uuid) != Number.NaN) {
-                this._list = await this.ListsService.GetList(uuid);
-                this.appComponent.setAppPages(this.ModifyMainMenu());
-                if (this._list) {
-                    this._itemsInitialized = true;
-                    this.Preferences.Set(EPrefProperty.OpenedList, this._list.Uuid);
-                    this.onItemsChanged();
+        if (!this._list || this._list.isPeek) {
+            (async () => {
+                // no wait
+                const uuid = Number(this.Route.snapshot.paramMap.get("uuid"));
+                if (uuid && Number(uuid) != Number.NaN) {
+                    this._list = await this.ListsService.GetList(uuid);
+                    this.appComponent.setAppPages(this.ModifyMainMenu());
+                    if (this._list) {
+                        this._itemsInitialized = true;
+                        this.Preferences.Set(EPrefProperty.OpenedList, this._list.Uuid);
+                        this.onItemsChanged();
+                    }
                 }
-            }
-        })();
+            })();
+        } else {
+            this._itemsInitialized = true;
+        }
+
         this._useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashListitems, true);
         this._preferencesSubscription = this.Preferences.onPrefChanged$.subscribe(prop => {
             if (prop.prop == EPrefProperty.TrashListitems) {
@@ -133,7 +138,7 @@ export class ListItemsPage extends AnimatedListPageBase {
 
     public async EmptyList(): Promise<boolean> {
         if (this.List) {
-            const del = await this.ListsService.EmptyList(this.List);
+            const del = await this.ListsService.EmptyLists(this.List, false);
             return del ?? false;
         }
         return false;
@@ -142,7 +147,7 @@ export class ListItemsPage extends AnimatedListPageBase {
     public async DeleteItem(items: Listitem | Listitem[]) {
         let success: boolean | undefined = undefined;
         if (this.List) {
-            success = await this.ListsService.DeleteListitem(this.List, items, false);
+            success = await this.ListsService.DeleteListitem(this.List, items, false, false);
             if (success) {
                 this.appComponent.setAppPages(this.ModifyMainMenu());
             }
@@ -191,7 +196,7 @@ export class ListItemsPage extends AnimatedListPageBase {
 
     public async DeleteList(): Promise<boolean> {
         if (this.List) {
-            const del = await this.ListsService.DeleteList(this.List);
+            const del = await this.ListsService.DeleteLists(this.List);
             if (del === true) {
                 this.NavController.navigateBack("/lists");
             }

@@ -55,9 +55,10 @@ export class TrashListitemsPage extends AnimatedListPageBase {
             this.onItemsChanged();
         }
 
-        this._trashChangedSubscription = this.ListsService.onTrashItemsDatasetChanged$.subscribe(trash => {
+        this._trashChangedSubscription = this.ListsService.onTrashItemsDatasetChanged$.subscribe(async trash => {
             if (trash && trash.equals(this.Trash)) {
                 this.Trash = trash;
+                this.Trash.ItemsInTrash = await this.ListsService.GetListitemTrash(this.Trash);
                 this._itemsInitialized = true;
                 this.onItemsChanged();
                 this.appComponent.setAppPages(this.ModifyMainMenu());

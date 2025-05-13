@@ -73,7 +73,7 @@ export class ListsPage extends AnimatedListPageBase {
 
     public async deleteLists(lists: List | List[]): Promise<boolean | undefined> {
         this._itemsList?.closeSlidingItems();
-        const success = await this.ListsService.DeleteList(lists);
+        const success = await this.ListsService.DeleteLists(lists);
         if (success === true) {
             this.reload();
         }
@@ -82,7 +82,7 @@ export class ListsPage extends AnimatedListPageBase {
 
     public async emptyLists(lists: List | List[]): Promise<boolean | undefined> {
         this._itemsList?.closeSlidingItems();
-        const success = await this.ListsService.EmptyList(lists);
+        const success = await this.ListsService.EmptyLists(lists);
         if (success === true) {
             this.reload();
         }

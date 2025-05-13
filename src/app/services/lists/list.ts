@@ -1,5 +1,5 @@
 import { HelperUtils } from "src/app/classes/utils/helper-utils";
-import { DatabaseType } from "../storage/lists/sqlite/sqlite-backend.service";
+import { DatabaseType } from "../storage/lists/main-sqlite-backend.service";
 import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
@@ -335,7 +335,7 @@ export class List {
      * @param model model to copy
      * @returns true if data was updated
      */
-    public copy(other: List) {
+    public clone(other: List) {
         this._uuid = other._uuid;
         this._name = other._name;
         this._order = other._order;
@@ -345,8 +345,11 @@ export class List {
         this._sync = other._sync;
         this._reset = other._reset;
         this._legacyUuid = other._legacyUuid;
-        if (!this._items && other._items) {
+        if (other._items) {
             this._items = other._items;
+        }
+        if (other._itemsInTrash) {
+            this._itemsInTrash = other._itemsInTrash;
         }
         this._itemsCount = other._itemsCount;
         this._trashItemsCount = other._trashItemsCount;

@@ -31,7 +31,7 @@ export class TrashSettingsPage extends PageBase {
 
     public set UseTrashListitems(value: boolean) {
         this.Preferences.Set(EPrefProperty.TrashListitems, value);
-        this._useTrash = value;
+        this._useTrashListitems = value;
     }
 
     public get UseTrashListitems(): boolean {

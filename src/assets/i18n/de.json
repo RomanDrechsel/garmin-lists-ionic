@@ -64,7 +64,6 @@
         "delete_confirm_watch": "Liste auch auf der Uhr löschen",
         "delete_error": "Die Liste konnte nicht gelöscht werden!",
         "delete_error_plural": "Die Listen konnten nicht gelöscht werden!",
-        "delete_error_partial": "Es konnten nicht alle Listen gelöscht werden!",
         "delete_success": "Die Liste wurde gelöscht.",
         "delete_success_plural": "Die Listen wurden gelöscht.",
         "delete_item_confirm": "Möchtest du den Punkt <strong>{{name}}</strong> wirklich löschen?",
