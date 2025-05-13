@@ -285,8 +285,6 @@ export class MainSqliteBackendService {
             return false;
         }
 
-        //WIP: Test this
-
         try {
             await this._database.beginTransaction();
             if (!(await this._database.isTransactionActive())) {

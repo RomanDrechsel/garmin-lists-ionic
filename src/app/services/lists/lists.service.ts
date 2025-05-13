@@ -365,11 +365,12 @@ export class ListsService {
 
     /**
      * prompts the user to empty the lists trash
-     * @param force empty the trash without prompt
+     * @param no_prompt empty the trash without prompt
      * @returns empty successfull, undefined if user canceled it
      */
-    public async WipeTrash(force: boolean = false): Promise<boolean | undefined> {
-        if (!force && (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true))) {
+    public async WipeTrash(no_prompt: boolean = false): Promise<boolean | undefined> {
+        //WIP: this is next ...
+        if (!no_prompt && (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true))) {
             let text;
             const count = await this.BackendService.queryListsCount({ trash: true });
             if (count == 1) {
@@ -1250,12 +1251,22 @@ export class ListsService {
         const del = await this.BackendService.deleteLists({ lists: lists, trash: true });
 
         if (del !== false) {
-            Logger.Debug(`Erased ${del} list(s) from trash`);
+            if (del > 0) {
+                if (del == 1) {
+                    this.Popups.Toast.Success("service-lists.erase_success", undefined, true);
+                } else {
+                    this.Popups.Toast.Success("service-lists.erase_success_plural", undefined, true);
+                }
+                Logger.Debug(`Erased ${del} list(s) from trash`);
+                this.onTrashDatasetChangedSubject.next(await this.GetTrash());
+            }
         } else {
             if (lists.length == 1) {
                 Logger.Error(`Could not erase list '${lists[0].toLog()}' from trash`);
+                this.Popups.Toast.Error("service-lists.erase_error", undefined, true);
             } else {
                 Logger.Error(`Could not erased ${lists.length} lists from trash`);
+                this.Popups.Toast.Error("service-lists.erase_error_plural", undefined, true);
             }
         }
 
