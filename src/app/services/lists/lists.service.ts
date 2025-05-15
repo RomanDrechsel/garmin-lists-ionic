@@ -130,7 +130,7 @@ export class ListsService {
      */
     public async GetListitemTrash(uuid: number | List): Promise<Listitem[] | undefined> {
         AppService.AppToolbar?.ToggleProgressbar(false);
-        const trash = await this.BackendService.queryListitems({ list: uuid, trash: true, orderBy: "deleted", orderDir: "DESC" });
+        const trash = await this.BackendService.queryListitems({ list: uuid, trash: true, itemsOrderBy: "deleted", itemsOrderDir: "DESC" });
         AppService.AppToolbar?.ToggleProgressbar(false);
         return trash;
     }
@@ -368,30 +368,33 @@ export class ListsService {
      * @param no_prompt empty the trash without prompt
      * @returns empty successfull, undefined if user canceled it
      */
-    public async WipeTrash(no_prompt: boolean = false): Promise<boolean | undefined> {
-        //WIP: this is next ...
-        if (!no_prompt && (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true))) {
+    public async WipeTrash(no_prompt: boolean = false, prompt_anyway: boolean = false): Promise<boolean | undefined> {
+        if (prompt_anyway || (!no_prompt && (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true)))) {
             let text;
             const count = await this.BackendService.queryListsCount({ trash: true });
-            if (count == 1) {
-                text = this.Locale.getText("service-lists.empty_trash_confirm_single");
+            if (count > 0) {
+                if (count == 1) {
+                    text = this.Locale.getText("service-lists.empty_trash_confirm_single");
+                } else {
+                    text = this.Locale.getText("service-lists.empty_trash_confirm", { count: count });
+                }
+                text += this.Locale.getText("service-lists.undo_warning");
+                if (await this.Popups.Alert.YesNo({ message: text })) {
+                    return (await this.wipeListsTrash()) >= 0;
+                } else {
+                    return undefined;
+                }
             } else {
-                text = this.Locale.getText("service-lists.empty_trash_confirm", { count: count });
-            }
-            text += this.Locale.getText("service-lists.undo_warning");
-            if (await this.Popups.Alert.YesNo({ message: text })) {
-                return (await this.wipeListsTrash()) > 0;
-            } else {
-                return undefined;
+                return true;
             }
         } else {
-            return (await this.wipeListsTrash()) > 0;
+            return (await this.wipeListsTrash()) >= 0;
         }
     }
 
-    public async WipeListitemTrash(force: boolean = false): Promise<boolean | undefined> {
-        if (!force && (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true))) {
-            const count = await this.BackendService.queryListitemsCount({ list: undefined, trash: true });
+    public async WipeListitemTrash(no_prompt: boolean = false, prompt_anyway: boolean = false): Promise<boolean | undefined> {
+        if (prompt_anyway || (!no_prompt && (await this.Preferences.Get(EPrefProperty.ConfirmEmptyTrash, true)))) {
+            const count = await this.BackendService.queryListitemsCount({ list: "all", trash: true });
             if (
                 count > 0 &&
                 (await this.Popups.Alert.YesNo({
@@ -701,7 +704,7 @@ export class ListsService {
      * @param list the list
      * @returns number of listitems in trash
      */
-    public async GetTrashitemsCount(list?: List): Promise<number> {
+    public async GetTrashitemsCount(list: List): Promise<number> {
         return this.BackendService.queryListitemsCount({ list: list, trash: true });
     }
 
@@ -1091,11 +1094,11 @@ export class ListsService {
 
     /**
      * empties the trash
-     * @returns was the erase successful
+     * @returns number of deleted lists
      */
     private async wipeListsTrash(): Promise<number> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        const del = await this.BackendService.deleteLists({ trash: true });
+        const del = await this.BackendService.deleteLists({ lists: undefined, trash: true });
         if (del !== false) {
             Logger.Notice(`Erased ${del} list(s) from trash`);
             this.Popups.Toast.Success("service-lists.empty_trash_success");
@@ -1109,6 +1112,7 @@ export class ListsService {
     }
 
     private async wipeListitemTrash(): Promise<number> {
+        //WIP: this is next
         AppService.AppToolbar?.ToggleProgressbar(true);
         const del = await this.BackendService.wipeListitems({ trash: true });
         if (del !== false) {
@@ -1219,7 +1223,7 @@ export class ListsService {
         }
 
         const restore = await this.BackendService.restoreListitemsFromTrash({ list: list, items: items });
-        if (restore > 0) {
+        if (restore && restore >= 0) {
             Logger.Debug(`Restored ${restore} listitem(s) from trash of list ${list.toLog()}`);
             await this.refreshList(list);
             await this.cleanOrderListitems(list, true);
@@ -1236,7 +1240,7 @@ export class ListsService {
         }
 
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return restore > 0;
+        return restore !== false && restore >= 0;
     }
 
     /**
@@ -1290,15 +1294,15 @@ export class ListsService {
         if (KeepInTrash.StockPeriod(value)) {
             this._removeOldTrashEntriesTimer?.unsubscribe();
             this._removeOldTrashEntriesTimer = interval(value * 60 * 60 * 24).subscribe(() => {
-                this.BackendService.removeOldTrash({ olderThan: value * 60 * 60 * 24 });
+                this.BackendService.cleanUp({ olderThan: value * 60 * 60 * 24 });
             });
-            await this.BackendService.removeOldTrash({ olderThan: value * 60 * 60 * 24 });
+            await this.BackendService.cleanUp({ olderThan: value * 60 * 60 * 24 });
             this.BackendService.MaxTrashCount = undefined;
         } else {
             this._removeOldTrashEntriesTimer?.unsubscribe();
             this._removeOldTrashEntriesTimer = undefined;
             this.BackendService.MaxTrashCount = KeepInTrash.StockSize(value);
-            await this.BackendService.removeOldTrash({ maxCount: KeepInTrash.StockSize(value) });
+            await this.BackendService.cleanUp({ maxCount: KeepInTrash.StockSize(value) });
         }
     }
 }

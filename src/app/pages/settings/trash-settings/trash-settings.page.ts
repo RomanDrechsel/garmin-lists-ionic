@@ -59,14 +59,14 @@ export class TrashSettingsPage extends PageBase {
     public async onUseTrashChanged(checked: boolean) {
         this.UseTrash = checked;
         if (checked == false) {
-            await this.ListsService.WipeTrash(true);
+            await this.ListsService.WipeTrash(false, true);
         }
     }
 
     public async onUseTrashListitemsChanged(checked: boolean) {
         this.UseTrashListitems = checked;
         if (checked == false) {
-            await this.ListsService.WipeListitemTrash();
+            await this.ListsService.WipeListitemTrash(false, true);
         }
     }
 
