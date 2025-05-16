@@ -80,12 +80,11 @@
   },
   "description": "Companion app for Lists app on your Garmin device",
   "browserslist": [
-    "Chrome >=79",
-    "ChromeAndroid >=79",
-    "Firefox >=70",
-    "Edge >=79",
-    "Safari >=14",
-    "iOS >=14"
+    "Chrome >=74",
+    "ChromeAndroid >=74",
+    "Android >= 9",
+    "last 2 Android versions",
+    "not dead"
   ],
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

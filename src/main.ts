@@ -26,7 +26,7 @@ bootstrapApplication(AppComponent, {
         provideIonicAngular({
             navAnimation: PageTransitionAnimation,
             innerHTMLTemplatesEnabled: true,
-            mode: undefined,
+            mode: "md",
         }),
         provideRouter(routes),
         provideServiceWorker("ngsw-worker.js", {

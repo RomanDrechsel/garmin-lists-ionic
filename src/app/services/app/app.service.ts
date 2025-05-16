@@ -75,11 +75,6 @@ export class AppService {
     public async InitializeApp() {
         await this.Platform.ready();
 
-        const timeout = window.setTimeout(() => {
-            SplashScreen.hide({ fadeOutDuration: 0 });
-            Logger.Error(`Something went wrong! App did not start in time.`);
-        }, 10000);
-
         const last_version = await this.Preferences.Get<number>(EPrefProperty.LastVersion, -1);
         const build = Number((await App.getInfo()).build);
         let clear_cache = false;
@@ -112,7 +107,6 @@ export class AppService {
         })();
 
         await SplashScreen.hide({ fadeOutDuration: 500 });
-        window.clearTimeout(timeout);
     }
 
     /**
