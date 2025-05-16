@@ -3,13 +3,18 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "outDir": "./out-tsc/app",
-        "types": []
+        "types": [],
+        "target": "ES2017",
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "lib": ["ES2017", "DOM"],
+        "sourceMap": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "skipLibCheck": true,
+        "strict": false,
+        "downlevelIteration": true
     },
-    "files": [
-        "src/main.ts",
-        "src/polyfills.ts"
-    ],
-    "include": [
-        "src/**/*.d.ts"
-    ]
+    "files": ["src/main.ts", "src/polyfills.ts"],
+    "include": ["src/**/*.d.ts"]
 }

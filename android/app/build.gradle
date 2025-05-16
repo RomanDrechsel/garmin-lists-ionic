@@ -7,8 +7,8 @@ android {
         applicationId 'de.romandrechsel.lists'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdk 36
-        versionCode 146
-        versionName "2025.05.1200"
+        versionCode 149
+        versionName "2025.05.1602"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

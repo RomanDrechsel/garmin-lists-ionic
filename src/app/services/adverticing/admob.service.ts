@@ -26,7 +26,7 @@ export class AdmobService {
     }
 
     public get SaveZoneBottom(): number {
-        return parseInt(window.getComputedStyle(document.documentElement).getPropertyValue("--ion-safe-area-bottom").replace("px", "") ?? 0);
+        return parseInt(window.getComputedStyle(document.documentElement).getPropertyValue("--ion-safe-area-bottom").replace("px", "") ?? "0");
     }
 
     public async Initialize() {
@@ -54,6 +54,10 @@ export class AdmobService {
         AdMob.addListener(BannerAdPluginEvents.FailedToLoad, (error: any) => {
             Logger.Error(`Admob banner error: `, error);
             this._bannerIsShown = false;
+        });
+
+        AdMob.addListener(BannerAdPluginEvents.Closed, () => {
+            console.log("banner closed");
         });
 
         if (environment.publicRelease === true) {
@@ -96,6 +100,7 @@ export class AdmobService {
         if (this._bannerIsShown === true) {
             await AdMob.hideBanner();
         }
+        this.resizeContainer(0);
         this._bannerIsShown = false;
     }
 
@@ -158,9 +163,7 @@ export class AdmobService {
      * @param info height of the keyboard
      */
     public async OnKeyboardShow(info: KeyboardInfo): Promise<void> {
-        if (window.innerHeight < 350) {
-            await this.HideBanner();
-        }
+        await this.HideBanner();
     }
 
     /**
