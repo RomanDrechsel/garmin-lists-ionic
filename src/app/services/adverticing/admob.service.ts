@@ -56,6 +56,10 @@ export class AdmobService {
             this._bannerIsShown = false;
         });
 
+        AdMob.addListener(BannerAdPluginEvents.Closed, () => {
+            console.log("banner closed");
+        });
+
         if (environment.publicRelease === true) {
             Logger.Debug(`Admob initialized`);
         } else {
@@ -96,6 +100,7 @@ export class AdmobService {
         if (this._bannerIsShown === true) {
             await AdMob.hideBanner();
         }
+        this.resizeContainer(0);
         this._bannerIsShown = false;
     }
 
@@ -158,9 +163,7 @@ export class AdmobService {
      * @param info height of the keyboard
      */
     public async OnKeyboardShow(info: KeyboardInfo): Promise<void> {
-        if (window.innerHeight < 350) {
-            await this.HideBanner();
-        }
+        await this.HideBanner();
     }
 
     /**

@@ -93,6 +93,8 @@ export class ListItemEditorComponent implements OnInit {
         this._keyboardUpListerner = undefined;
         this._keyboardDownListener?.remove();
         this._keyboardDownListener = undefined;
+        Keyboard.hide();
+        this.Admob.OnKeyboardHide();
     }
 
     public async onSubmit(): Promise<boolean | undefined> {
