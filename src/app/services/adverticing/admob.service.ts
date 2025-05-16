@@ -26,7 +26,7 @@ export class AdmobService {
     }
 
     public get SaveZoneBottom(): number {
-        return parseInt(window.getComputedStyle(document.documentElement).getPropertyValue("--ion-safe-area-bottom").replace("px", "") ?? 0);
+        return parseInt(window.getComputedStyle(document.documentElement).getPropertyValue("--ion-safe-area-bottom").replace("px", "") ?? "0");
     }
 
     public async Initialize() {

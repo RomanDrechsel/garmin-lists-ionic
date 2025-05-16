@@ -98,14 +98,14 @@ export class ListItemEditorComponent implements OnInit {
     public async onSubmit(): Promise<boolean | undefined> {
         if (this.Params?.list == undefined) {
             this.cancel();
-            return;
+            return undefined;
         }
 
         let title = this.Form.get("item")?.value;
         if (title) {
             title = title.trim();
         } else {
-            return;
+            return undefined;
         }
         let note = this.Form.get("note")?.value;
         if (note) {
