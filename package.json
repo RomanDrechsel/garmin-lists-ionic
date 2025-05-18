@@ -1,6 +1,6 @@
 {
   "name": "lists",
-  "version": "2025.05.1600",
+  "version": "2025.05.1800",
   "author": "Roman Drechsel",
   "homepage": "https://roman-drechsel.de",
   "scripts": {
@@ -79,11 +79,10 @@
   },
   "description": "Companion app for Lists app on your Garmin device",
   "browserslist": [
-    "Chrome >=74",
-    "ChromeAndroid >=74",
-    "Android >= 9",
-    "last 2 Android versions",
-    "not dead"
+    "ChromeAndroid >= 64",
+    "Chrome >= 64",
+    "samsung >= 12.0",
+    "Android >= 9"
   ],
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
