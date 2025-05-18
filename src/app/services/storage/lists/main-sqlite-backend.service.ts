@@ -355,7 +355,7 @@ export class MainSqliteBackendService {
      * @param args.trash if true, only lists from trash will be deleted
      * @returns number of lists deleted, or false if failed
      */
-    public async deleteLists(args: { lists?: number[] | List[]; trash?: boolean }): Promise<number | false> {
+    public async deleteLists(args: { lists?: number[] | List[]; trash?: boolean }): Promise<{ lists: number; items: number } | false> {
         if (!(await this.CheckConnection())) {
             return false;
         }
@@ -376,6 +376,8 @@ export class MainSqliteBackendService {
             return false;
         }
 
+        const deleted = { lists: 0, items: 0 };
+
         const uuids = args.lists?.map(l => (l instanceof List ? l.Uuid : l)) ?? [];
         let uuids_delete: number[] | undefined = undefined;
         if (uuids.length == 0) {
@@ -384,7 +386,7 @@ export class MainSqliteBackendService {
                 const ret = await this._database!.query(query_all);
                 if (ret.values) {
                     if (ret.values.length == 0) {
-                        return 0;
+                        return deleted;
                     }
 
                     uuids_delete = ret.values.map(uuid => uuid.uuid);
@@ -408,12 +410,16 @@ export class MainSqliteBackendService {
                 uuids_delete = uuids;
             }
             if (ret.changes?.changes && ret.changes?.changes > 0) {
+                deleted.lists += ret.changes.changes;
                 query = "DELETE FROM `listitems` WHERE `list_id` IN (" + uuids_delete!.map(() => "?").join(",") + ")";
-                await this._database!.run(query, uuids_delete!, false);
+                const ret2 = await this._database!.run(query, uuids_delete!, false);
+                if (ret2.changes?.changes && ret2.changes?.changes > 0) {
+                    deleted.items += ret2.changes.changes;
+                }
             }
             await this._database!.commitTransaction();
 
-            return ret.changes?.changes ?? 0;
+            return deleted;
         } catch (e) {
             await this._database!.rollbackTransaction();
             Logger.Error(`Could not delete ${args.lists?.length ?? "all"} list(s) in backend:`, e);
@@ -591,7 +597,6 @@ export class MainSqliteBackendService {
      * @returns number of removed lists or items, false on error
      */
     public async cleanUp(args: { olderThan?: number; maxCount?: number }): Promise<number | false> {
-        Logger.Debug(`Perform backend cleanup:`);
         if (!(await this.CheckConnection())) {
             Logger.Error("MainSqliteBackendService.cleanUp() failed: no connection to database");
             return false;
@@ -604,7 +609,6 @@ export class MainSqliteBackendService {
 
         if (args.olderThan) {
             const ts = Date.now() - args.olderThan * 1000;
-            Logger.Debug(`Remove all trash items, older than ${new Date(ts).toLocaleString()} ...`);
 
             //First, remove all old lists from trash...
             let list_uuids: string[] = [];
@@ -617,24 +621,76 @@ export class MainSqliteBackendService {
             }
 
             if (list_uuids.length > 0) {
-                try {
-                    const delete_trash = `DELETE FROM \`lists\` WHERE \`deleted\` IS NOT NULL AND \`deleted\` < ?`;
-
-                    const del = await this._database!.run(delete_trash, [ts]);
-                    if (del.changes?.changes) {
-                        deleted.lists += del.changes.changes;
-                        const delete_items = `DELETE FROM \`list_items\` WHERE \`list_uuid\` IN (${list_uuids.map(v => "?").join(", ")})`;
-                        const delitems = await this._database!.run(delete_items, list_uuids);
-                        //WIP:
-                    }
-                } catch (e) {
-                    Logger.Error(`MainSqliteBackendService.cleanUp() failed at deleting trash lists ${list_uuids.join(", ")}:`, e);
+                const del = await this.deleteLists({ lists: list_uuids.map(uuid => Number(uuid)), trash: true });
+                if (del !== false) {
+                    deleted.lists += del.lists;
+                    deleted.items += del.items;
+                } else {
+                    Logger.Error(`Could not cleanUp trash lists older than ${new Date(ts).toLocaleString()}`);
                 }
             }
 
-            //WIP:
+            try {
+                // now delete all listitems of lists, that are not in trash
+                const query = `DELETE FROM \`listitems\` WHERE \`deleted\` IS NOT NULL AND \`deleted\` < ?`;
+                const delitems = await this._database!.run(query, [ts]);
+                if (delitems.changes?.changes) {
+                    deleted.items += delitems.changes.changes;
+                }
+            } catch (e) {
+                Logger.Error(`MainSqliteBackendService.cleanUp() failed at deleting trash listitems:`, e);
+            }
+
+            if (deleted.lists > 0 || deleted.items > 0) {
+                Logger.Notice(`Deleted ${deleted.lists} list(s) and ${deleted.items} listitem(s) older than ${new Date(ts).toLocaleString()} from trash`);
+            }
         }
-        return 0;
+
+        if (args.maxCount && args.maxCount > 0) {
+            let list_uuids: string[] = [];
+            try {
+                const get_lists = `SELECT \`uuid\` FROM \`lists\` WHERE \`deleted\` IS NOT NULL ORDER BY \`deleted\` ASC LIMIT 50, -1`;
+                const lists = await this._database!.query(get_lists);
+                list_uuids = lists.values?.map((v: any) => v.uuid) ?? [];
+            } catch (e) {
+                Logger.Error(`MainSqliteBackendService.cleanUp() failed at getting list uuids to clean up trash:`, e);
+            }
+
+            if (list_uuids.length > 0) {
+                const del = await this.deleteLists({ lists: list_uuids.map(uuid => Number(uuid)), trash: true });
+                if (del !== false) {
+                    deleted.lists += del.lists;
+                    deleted.items += del.items;
+                } else {
+                    Logger.Error(`Could not cleanUp trash lists with maximum number of ${args.maxCount}`);
+                }
+            }
+
+            const query = `DELETE FROM \`listitems\`
+                WHERE \`uuid\` IN (
+                    SELECT \`uuid\`
+                    FROM (
+                        SELECT \`uuid\`, ROW_NUMBER() OVER (PARTITION BY \`list_id\` ORDER BY \`deleted\` DESC) AS \`row_num\` FROM \`listitems\` WHERE \`deleted\` IS NOT NULL
+                    )
+                    WHERE \`row_num\` > ?
+                );`;
+            try {
+                const del = await this._database!.run(query, [args.maxCount]);
+                if (del.changes?.changes) {
+                    deleted.items += del.changes.changes;
+                }
+            } catch (e) {
+                Logger.Error(`Could not cleanUp trash listitems with maximum number of ${args.maxCount}:`, e);
+            }
+
+            if (deleted.lists > 0 || deleted.items > 0) {
+                Logger.Notice(`Deleted ${deleted.lists} list(s) and ${deleted.items} listitem(s) due to not the latest ${args.maxCount} in trash`);
+            }
+        }
+
+        //WIP: remove orphren listitems
+
+        return deleted.lists + deleted.items;
     }
 
     /**

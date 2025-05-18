@@ -901,14 +901,16 @@ export class ListsService {
                 });
             }
         } else {
-            deleted = await this.BackendService.deleteLists({ lists: lists, trash: false });
-            if (deleted === false) {
+            const del = await this.BackendService.deleteLists({ lists: lists, trash: false });
+            if (del === false) {
+                deleted = false;
                 if (lists.length == 1) {
                     Logger.Error(`Could not delete list {${lists[0].toLog()}}`);
                 } else {
                     Logger.Error(`Could not delete ${lists.length} lists`);
                 }
             } else {
+                deleted = del.lists;
                 if (lists.length == 1) {
                     Logger.Debug(`Deleted list {${lists[0].toLog()}}`);
                 } else {
@@ -1100,7 +1102,7 @@ export class ListsService {
         AppService.AppToolbar?.ToggleProgressbar(true);
         const del = await this.BackendService.deleteLists({ lists: undefined, trash: true });
         if (del !== false) {
-            Logger.Notice(`Erased ${del} list(s) from trash`);
+            Logger.Notice(`Erased ${del.lists} list(s) with ${del.items} item(s) from trash`);
             this.Popups.Toast.Success("service-lists.empty_trash_success");
         } else {
             Logger.Error("Could not wipe lists trash");
@@ -1108,11 +1110,10 @@ export class ListsService {
         }
 
         AppService.AppToolbar?.ToggleProgressbar(false);
-        return del !== false ? del : -1;
+        return del !== false ? del.lists : -1;
     }
 
     private async wipeListitemTrash(): Promise<number> {
-        //WIP: this is next
         AppService.AppToolbar?.ToggleProgressbar(true);
         const del = await this.BackendService.wipeListitems({ trash: true });
         if (del !== false) {
@@ -1255,13 +1256,13 @@ export class ListsService {
         const del = await this.BackendService.deleteLists({ lists: lists, trash: true });
 
         if (del !== false) {
-            if (del > 0) {
-                if (del == 1) {
+            if (del.lists > 0) {
+                if (del.lists == 1) {
                     this.Popups.Toast.Success("service-lists.erase_success", undefined, true);
                 } else {
                     this.Popups.Toast.Success("service-lists.erase_success_plural", undefined, true);
                 }
-                Logger.Debug(`Erased ${del} list(s) from trash`);
+                Logger.Debug(`Erased ${del.lists} list(s) with ${del.items} item(s) from trash`);
                 this.onTrashDatasetChangedSubject.next(await this.GetTrash());
             }
         } else {
