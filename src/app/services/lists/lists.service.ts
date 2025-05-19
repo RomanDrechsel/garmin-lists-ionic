@@ -15,6 +15,7 @@ import { Logger } from "../logging/logger";
 import { PopupsService } from "../popups/popups.service";
 import { Toast } from "../popups/toast";
 import { type ListsOrder, type ListsOrderDirection, MainSqliteBackendService } from "../storage/lists/main-sqlite-backend.service";
+import { SqliteBackendConverter } from "../storage/lists/sqlite-backend-converter";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 import { KeepInTrash } from "./keep-in-trash";
 import { List, type ListReset } from "./list";
@@ -60,6 +61,7 @@ export class ListsService {
             }
         });
         await this.removeOldTrash(await this.Preferences.Get<number>(EPrefProperty.TrashKeepinStock, this._keepInTrashStock));
+        await new SqliteBackendConverter(this.BackendService, this.ModalCtrl).CheckLegacyBackend();
         Logger.Debug(`Lists service initialized`);
     }
 

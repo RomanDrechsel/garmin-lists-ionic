@@ -201,6 +201,7 @@ export class AdmobService {
     private async saveAreaBottom(): Promise<number> {
         const result = await EdgeToEdge.getInsets();
         const density = await SysInfo.DisplayDensity();
+        Logger.Debug("SaveArea: ", result, density);
         return result.bottom / density.density;
     }
 }

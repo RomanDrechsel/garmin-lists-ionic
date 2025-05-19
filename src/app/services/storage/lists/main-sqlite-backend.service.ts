@@ -648,6 +648,8 @@ export class MainSqliteBackendService {
 
         if (args.maxCount && args.maxCount > 0) {
             let list_uuids: string[] = [];
+            let del_lists = 0;
+            let del_items = 0;
             try {
                 const get_lists = `SELECT \`uuid\` FROM \`lists\` WHERE \`deleted\` IS NOT NULL ORDER BY \`deleted\` ASC LIMIT 50, -1`;
                 const lists = await this._database!.query(get_lists);
@@ -659,8 +661,8 @@ export class MainSqliteBackendService {
             if (list_uuids.length > 0) {
                 const del = await this.deleteLists({ lists: list_uuids.map(uuid => Number(uuid)), trash: true });
                 if (del !== false) {
-                    deleted.lists += del.lists;
-                    deleted.items += del.items;
+                    del_lists = del.lists;
+                    del_items += del.items;
                 } else {
                     Logger.Error(`Could not cleanUp trash lists with maximum number of ${args.maxCount}`);
                 }
@@ -677,18 +679,33 @@ export class MainSqliteBackendService {
             try {
                 const del = await this._database!.run(query, [args.maxCount]);
                 if (del.changes?.changes) {
-                    deleted.items += del.changes.changes;
+                    del_items += del.changes.changes;
                 }
             } catch (e) {
                 Logger.Error(`Could not cleanUp trash listitems with maximum number of ${args.maxCount}:`, e);
             }
 
-            if (deleted.lists > 0 || deleted.items > 0) {
-                Logger.Notice(`Deleted ${deleted.lists} list(s) and ${deleted.items} listitem(s) due to not the latest ${args.maxCount} in trash`);
+            if (del_lists > 0 || del_items > 0) {
+                Logger.Notice(`Deleted ${del_lists} list(s) and ${del_items} listitem(s) due to not the latest ${args.maxCount} in trash`);
+                deleted.lists += del_lists;
+                deleted.items += del_items;
             }
         }
 
-        //WIP: remove orphren listitems
+        const query = "DELETE FROM `listitems` WHERE `list_id` NOT IN (SELECT uuid FROM `lists`)";
+        try {
+            const del = await this._database!.run(query);
+            if (del.changes?.changes) {
+                deleted.items += del.changes.changes;
+                Logger.Notice(`Deleted ${del.changes.changes} orphan listitem(s) in backend`);
+            }
+        } catch (e) {
+            Logger.Error("Could not cleanUp orphan listitems:", e);
+        }
+
+        if (deleted.lists > 0 || deleted.items > 0) {
+            Logger.Notice(`Cleaned up ${deleted.lists} list(s) and ${deleted.items} item(s) in backend`);
+        }
 
         return deleted.lists + deleted.items;
     }
