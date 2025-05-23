@@ -2,7 +2,7 @@ import { HelperUtils } from "src/app/classes/utils/helper-utils";
 import type { DatabaseType } from "../storage/lists/main-sqlite-backend.service";
 
 export class Listitem {
-    private _uuid: number;
+    private _id: number;
     private _order: number;
     private _created: number;
     private _modified: number;
@@ -15,7 +15,7 @@ export class Listitem {
     private _legacyUuid?: string;
 
     constructor(obj: ListitemModel) {
-        this._uuid = obj.uuid ?? HelperUtils.RandomNegativNumber();
+        this._id = obj.id ?? HelperUtils.RandomNegativNumber();
         this._item = obj.item;
         this._note = obj.note;
         this._order = obj.order;
@@ -28,13 +28,13 @@ export class Listitem {
     }
 
     /** get unique id in backend */
-    public get Uuid(): number {
-        return this._uuid;
+    public get Id(): number {
+        return this._id;
     }
 
     /** set the unique id for backend */
-    public set Uuid(uuid: number) {
-        this._uuid = uuid;
+    public set Id(uuid: number) {
+        this._id = uuid;
     }
 
     /** get the order number */
@@ -155,7 +155,7 @@ export class Listitem {
      * is the item already stored in backend?
      */
     public get isVirtual(): boolean {
-        return this._uuid < 0;
+        return this._id < 0;
     }
 
     /**
@@ -165,7 +165,7 @@ export class Listitem {
      */
     public toDeviceObject(): string[] | undefined {
         if (!this.Hidden) {
-            const ret: string[] = [`it${this._order}_uuid=${this._uuid}`, `it${this._order}_i=${this._item}`];
+            const ret: string[] = [`it${this._order}_uuid=${this._id}`, `it${this._order}_i=${this._item}`];
             if (this._note) {
                 ret.push(`it${this._order}_n=${this._note}`);
             }
@@ -176,7 +176,7 @@ export class Listitem {
 
     public toBackend(): Map<string, DatabaseType> {
         return new Map<string, DatabaseType>([
-            ["uuid", this._uuid],
+            ["id", this._id],
             ["item", this._item],
             ["note", this._note ?? null],
             ["order", this._order],
@@ -194,7 +194,7 @@ export class Listitem {
      * @returns
      */
     public toLog(): string {
-        return `id:${this.Uuid}`;
+        return `id:${this.Id}`;
     }
 
     /**
@@ -213,12 +213,12 @@ export class Listitem {
         if (!other) {
             return false;
         }
-        return other.Uuid === this.Uuid;
+        return other.Id === this.Id;
     }
 }
 
 export declare type ListitemModel = {
-    uuid: number;
+    id: number;
     list_id: number;
     item: string;
     note?: string;

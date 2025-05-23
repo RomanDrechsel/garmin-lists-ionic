@@ -91,9 +91,9 @@ export class TrashListitemsPage extends AnimatedListPageBase {
         if (!this._disableClick && this._editMode) {
             this._disableClick = true;
             if (this.isItemSelected(item)) {
-                this._selectedItems = this._selectedItems.filter(l => l != item.Uuid);
+                this._selectedItems = this._selectedItems.filter(l => l != item.Id);
             } else {
-                this._selectedItems.push(item.Uuid);
+                this._selectedItems.push(item.Id);
             }
             setTimeout(() => {
                 this._disableClick = false;
@@ -128,7 +128,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
     }
 
     public isItemSelected(item: Listitem): boolean {
-        return this._selectedItems.indexOf(item.Uuid) >= 0;
+        return this._selectedItems.indexOf(item.Id) >= 0;
     }
 
     protected override getEditMenuActions(): EditMenuAction[] {
@@ -149,7 +149,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
                 click: async () => {
                     if (this.Trash?.ItemsInTrash) {
                         this.editMenu?.leaveEditMode(true);
-                        const restore = await this.restoreItems(this.Trash.ItemsInTrash.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                        const restore = await this.restoreItems(this.Trash.ItemsInTrash.filter(l => this._selectedItems.indexOf(l.Id) >= 0));
                         if (restore === true) {
                             this._selectedItems = [];
                         } else if (restore === undefined) {
@@ -164,7 +164,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
                 click: async () => {
                     if (this.Trash?.ItemsInTrash) {
                         this.editMenu?.leaveEditMode(true);
-                        const del = await this.deleteItems(this.Trash.ItemsInTrash.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                        const del = await this.deleteItems(this.Trash.ItemsInTrash.filter(l => this._selectedItems.indexOf(l.Id) >= 0));
                         if (del === true) {
                             this._selectedItems = [];
                         } else if (del === undefined) {

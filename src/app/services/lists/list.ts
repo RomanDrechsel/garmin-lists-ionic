@@ -3,7 +3,7 @@ import { DatabaseType } from "../storage/lists/main-sqlite-backend.service";
 import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
-    private _uuid: number;
+    private _id: number;
     private _name: string;
     private _created: number;
     private _modified: number;
@@ -21,7 +21,7 @@ export class List {
     private static readonly ListRevision = 1;
 
     public constructor(obj: ListModel, itemsobjs?: ListitemModel[], itemcount?: number, dirty?: boolean) {
-        this._uuid = obj.uuid ?? HelperUtils.RandomNegativNumber();
+        this._id = obj.id ?? HelperUtils.RandomNegativNumber();
         this._name = obj.name;
         this._order = obj.order;
         this._created = obj.created;
@@ -66,16 +66,16 @@ export class List {
      * in newer versions, the uuid is a number
      * in older versions it was a string
      */
-    public get Uuid(): number {
-        return this._uuid;
+    public get Id(): number {
+        return this._id;
     }
 
     /**
      * set the unique list id
      * @param uuid unique list id
      */
-    public set Uuid(uuid: number) {
-        this._uuid = uuid;
+    public set Id(uuid: number) {
+        this._id = uuid;
     }
 
     /** set list title */
@@ -227,7 +227,7 @@ export class List {
      * is the list already stored in backend?
      */
     public get isVirtual(): boolean {
-        return this._uuid < 0;
+        return this._id < 0;
     }
 
     /**
@@ -336,7 +336,7 @@ export class List {
      * @returns true if data was updated
      */
     public clone(other: List) {
-        this._uuid = other._uuid;
+        this._id = other._id;
         this._name = other._name;
         this._order = other._order;
         this._created = other._created;
@@ -361,7 +361,7 @@ export class List {
      * @returns device object representation
      */
     public toDeviceObject(): string[] {
-        const ret: string[] = ["uuid=" + this._uuid, "t=" + this._name, "d=" + this._modified, "o=" + this._order, "rev=" + List.ListRevision];
+        const ret: string[] = ["uuid=" + this._id, "t=" + this._name, "d=" + this._modified, "o=" + this._order, "rev=" + List.ListRevision];
 
         if (this._items) {
             for (let i = 0; i < this._items.length; i++) {
@@ -397,7 +397,7 @@ export class List {
 
     public toBackend(): Map<string, DatabaseType> {
         return new Map<string, DatabaseType>([
-            ["uuid", this._uuid],
+            ["id", this._id],
             ["name", this._name],
             ["order", this._order],
             ["created", this._created],
@@ -419,7 +419,7 @@ export class List {
      * @returns
      */
     public toLog(): string {
-        return `uuid:${this.Uuid}`;
+        return `${this._name} (id:${this.Id})`;
     }
 
     /**
@@ -428,7 +428,7 @@ export class List {
      * @returns
      */
     public static toLog(model: ListModel): string {
-        return `uuid:${model.uuid}`;
+        return `${model.name} (id:${model.id})`;
     }
 
     /**
@@ -440,12 +440,12 @@ export class List {
         if (!other) {
             return false;
         }
-        return this.Uuid === other.Uuid;
+        return this.Id === other.Id;
     }
 }
 
 export declare type ListModel = {
-    uuid?: number;
+    id?: number;
     name: string;
     order: number;
     created: number;

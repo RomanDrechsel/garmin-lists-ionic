@@ -9,7 +9,7 @@ export const MainUpgradeStatements = (): capSQLiteUpgradeOptions => {
                 toVersion: 1,
                 statements: [
                     `CREATE TABLE IF NOT EXISTS \`lists\` (
-                    \`uuid\` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    \`id\` INTEGER PRIMARY KEY AUTOINCREMENT,
                     \`name\` TEXT NOT NULL,
                     \`order\` INTEGER NOT NULL,
                     \`created\` REAL NOT NULL,
@@ -25,7 +25,7 @@ export const MainUpgradeStatements = (): capSQLiteUpgradeOptions => {
                     \`legacy_uuid\` TEXT
                 )`,
                     `CREATE TABLE IF NOT EXISTS \`listitems\` (
-                    \`uuid\` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    \`id\` INTEGER PRIMARY KEY AUTOINCREMENT,
                     \`list_id\` INTEGER NOT NULL,
                     \`item\` TEXT NOT NULL,
                     \`note\` TEXT,

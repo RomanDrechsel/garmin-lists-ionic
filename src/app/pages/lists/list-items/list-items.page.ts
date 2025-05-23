@@ -76,7 +76,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                     this.appComponent.setAppPages(this.ModifyMainMenu());
                     if (this._list) {
                         this._itemsInitialized = true;
-                        this.Preferences.Set(EPrefProperty.OpenedList, this._list.Uuid);
+                        this.Preferences.Set(EPrefProperty.OpenedList, this._list.Id);
                         this.onItemsChanged();
                     }
                 }
@@ -105,10 +105,10 @@ export class ListItemsPage extends AnimatedListPageBase {
             this.appComponent.setAppPages(this.ModifyMainMenu());
         });
 
-        if (this.List && this.List.Sync && this._informedSyncForNewlist != this.List.Uuid && (await this.Preferences.Get(EPrefProperty.SyncListOnDevice, false)) == false) {
+        if (this.List && this.List.Sync && this._informedSyncForNewlist != this.List.Id && (await this.Preferences.Get(EPrefProperty.SyncListOnDevice, false)) == false) {
             const new_created = this.Route.snapshot.queryParamMap.get("created");
             if (new_created) {
-                this._informedSyncForNewlist = this.List.Uuid;
+                this._informedSyncForNewlist = this.List.Id;
                 await this.informSyncSettings();
             }
         }
@@ -226,14 +226,14 @@ export class ListItemsPage extends AnimatedListPageBase {
                     MenuitemFactory(EMenuItemType.Devices, {
                         title_id: "page_listitems.menu_devices",
                         onClick: async () => {
-                            this.ListsService.TransferList(this.List!.Uuid);
+                            this.ListsService.TransferList(this.List!.Id);
                             return true;
                         },
                     }),
                 );
             }
             menu.push(
-                MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: `${this.List.Uuid}`, disabled: !this._useTrash }),
+                MenuitemFactory(EMenuItemType.ListitemsTrash, { url_addition: `${this.List.Id}`, disabled: !this._useTrash }),
                 MenuitemFactory(EMenuItemType.EditList, { onClick: () => this.EditList() }),
                 MenuitemFactory(EMenuItemType.EmptyList, { onClick: () => this.EmptyList(), disabled: this.List.Items.length <= 0 }),
                 MenuitemFactory(EMenuItemType.DeleteList, { onClick: () => this.DeleteList() }),
@@ -247,9 +247,9 @@ export class ListItemsPage extends AnimatedListPageBase {
             this._disableClick = true;
             if (this._editMode) {
                 if (this.isItemSelected(item)) {
-                    this._selectedItems = this._selectedItems.filter(l => l != item.Uuid);
+                    this._selectedItems = this._selectedItems.filter(l => l != item.Id);
                 } else {
-                    this._selectedItems.push(item.Uuid);
+                    this._selectedItems.push(item.Id);
                 }
             } else {
                 this.editItem(item);
@@ -275,7 +275,7 @@ export class ListItemsPage extends AnimatedListPageBase {
     }
 
     public isItemSelected(item: Listitem): boolean {
-        return this._selectedItems.indexOf(item.Uuid) >= 0;
+        return this._selectedItems.indexOf(item.Id) >= 0;
     }
 
     private async informSyncSettings(): Promise<void> {
@@ -292,7 +292,7 @@ export class ListItemsPage extends AnimatedListPageBase {
         let hide_items = false;
         for (let i = 0; i < this._selectedItems.length; i++) {
             const item_uuid = this._selectedItems[i];
-            const item = this._list!.Items.find(i => i.Uuid == item_uuid);
+            const item = this._list!.Items.find(i => i.Id == item_uuid);
             if (item) {
                 if (!item.Locked) {
                     pin_items = true;
@@ -327,7 +327,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                     this.editMenu?.leaveEditMode(true);
                     if (this.List) {
                         const pin = await this.PinItem(
-                            this.List.Items.filter(l => this._selectedItems.indexOf(l.Uuid!) >= 0),
+                            this.List.Items.filter(l => this._selectedItems.indexOf(l.Id!) >= 0),
                             pin_items,
                         );
                         if (pin === true) {
@@ -345,7 +345,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                     this.editMenu?.leaveEditMode(true);
                     if (this.List) {
                         const hide = await this.HideItem(
-                            this.List.Items.filter(l => this._selectedItems.indexOf(l.Uuid!) >= 0),
+                            this.List.Items.filter(l => this._selectedItems.indexOf(l.Id!) >= 0),
                             hide_items,
                         );
                         if (hide === true) {
@@ -362,7 +362,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                 click: async () => {
                     this.editMenu?.leaveEditMode(true);
                     if (this.List) {
-                        const del = await this.DeleteItem(this.List.Items.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0));
+                        const del = await this.DeleteItem(this.List.Items.filter(l => this._selectedItems.indexOf(l.Id) >= 0));
                         if (del === true) {
                             this._selectedItems = [];
                         } else if (del === undefined) {

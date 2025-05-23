@@ -12,5 +12,6 @@ TODO: Remove translation: service-lists.restore_error_partial / service-lists.de
 TODO: Remove translation: page_settings_trash.confirm_cleartrash, page_settings_trash.confirm_cleartrash_ok, page_settings_trash.confirm_cleartrash_cancel
 TODO: Move translation page_settings_trash.confirm_clearitemstrash", button_yes: "page_settings_trash.confirm_clearitemstrash_ok", button_no: "page_settings_trash.confirm_clearitemstrash_cancel -> to service-lists.
 TODO: translate: service-lists.delete_item_success_plural / service-lists.delete_item_error_plural / service-lists.erase_success_plural / service-lists.erase_error_plural
+TODO: translate: comp-legacy-backend-import.\*
 
 TODO: note function

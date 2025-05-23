@@ -19,6 +19,10 @@ export class MainSqliteBackendService {
 
     public MaxTrashCount: number | undefined = undefined;
 
+    public get Database(): SQLiteDBConnection | undefined {
+        return this._database;
+    }
+
     public async Initialize(): Promise<boolean> {
         await this._sqliteService.addUpgradeStatement(MainUpgradeStatements());
         try {
@@ -60,14 +64,14 @@ export class MainSqliteBackendService {
             for (let i = 0; i < lists.length; i++) {
                 if (args.peek === false) {
                     const queryItems = `SELECT * FROM \`listitems\` WHERE \`list_id\` = ? AND \`deleted\` IS NULL ORDER BY \`${args.orderBy}\` ${args.orderDir}`;
-                    const items = (await this._database!.query(queryItems, [lists[i].uuid])).values as ListitemModel[] | undefined;
+                    const items = (await this._database!.query(queryItems, [lists[i].id])).values as ListitemModel[] | undefined;
                     if (!items) {
                         Logger.Error(`Could not query items of list ${List.toLog(lists[i])}`);
                     }
                     ret.push(new List(lists[i], items, undefined, false));
                 } else {
                     const queryItems = `SELECT COUNT(*) AS \`count\` FROM \`listitems\` WHERE \`list_id\` = ? AND \`deleted\` IS NULL`;
-                    const queryCount = (await this._database!.query(queryItems, [lists[i].uuid])).values;
+                    const queryCount = (await this._database!.query(queryItems, [lists[i].id])).values;
                     if (!queryCount) {
                         Logger.Error(`Could not query number of items of list ${List.toLog(lists[i])}`);
                     }
@@ -92,7 +96,7 @@ export class MainSqliteBackendService {
         if (!(await this.CheckConnection())) {
             return undefined;
         }
-        const uuid = args.list instanceof List ? args.list.Uuid : args.list;
+        const uuid = args.list instanceof List ? args.list.Id : args.list;
         let list: ListModel | undefined;
 
         try {
@@ -146,7 +150,7 @@ export class MainSqliteBackendService {
             return undefined;
         }
 
-        const uuid = args.list instanceof List ? args.list.Uuid : args.list;
+        const uuid = args.list instanceof List ? args.list.Id : args.list;
         if (!args.itemsOrderBy) {
             args.itemsOrderBy = "order";
         }
@@ -228,7 +232,7 @@ export class MainSqliteBackendService {
         }
 
         if (args.list.isPeek) {
-            const copy = await this.queryList({ list: args.list.Uuid });
+            const copy = await this.queryList({ list: args.list.Id });
             if (copy) {
                 args.list.copyDetails(copy);
             }
@@ -267,9 +271,9 @@ export class MainSqliteBackendService {
             } else {
                 const query = `UPDATE \`lists\` SET ${Array.from(backend.keys())
                     .map(key => `\`${key}\`=?`)
-                    .join(", ")} WHERE \`uuid\`=${args.list.Uuid}`;
+                    .join(", ")} WHERE \`uuid\`=${args.list.Id}`;
                 await this._database!.run(query, Array.from(backend.values()), false);
-                list_uuid = args.list.Uuid;
+                list_uuid = args.list.Id;
             }
 
             const uuid_map = new Map<number, number>();
@@ -288,12 +292,12 @@ export class MainSqliteBackendService {
                             const query = `INSERT INTO \`listitems\` (${keys}) VALUES (${qms})`;
                             const ret = await this._database!.run(query, Array.from(itemBackend.values()), false);
                             if (ret.changes?.lastId) {
-                                uuid_map.set(item.Uuid, ret.changes.lastId);
+                                uuid_map.set(item.Id, ret.changes.lastId);
                             }
                         } else {
                             const query = `UPDATE \`listitems\` SET ${Array.from(itemBackend.keys())
                                 .map(key => `\`${key}\`=?`)
-                                .join(", ")} WHERE \`uuid\`=${item.Uuid}`;
+                                .join(", ")} WHERE \`uuid\`=${item.Id}`;
                             await this._database!.run(query, Array.from(itemBackend.values()), false);
                         }
                     }
@@ -303,11 +307,11 @@ export class MainSqliteBackendService {
             }
 
             await this._database!.commitTransaction();
-            args.list.Uuid = list_uuid;
+            args.list.Id = list_uuid;
             uuid_map.forEach((val: number, key: number) => {
-                const item = args.list.Items.find(i => i.Uuid == key);
+                const item = args.list.Items.find(i => i.Id == key);
                 if (item) {
-                    item.Uuid = val;
+                    item.Id = val;
                 }
             });
             args.list.Clean();
@@ -331,7 +335,7 @@ export class MainSqliteBackendService {
             return false;
         }
 
-        const uuids = args.lists?.map(l => (l instanceof List ? l.Uuid : l)) ?? [];
+        const uuids = args.lists?.map(l => (l instanceof List ? l.Id : l)) ?? [];
         let query = `UPDATE \`lists\` SET \`deleted\` = ? WHERE \`deleted\` IS NULL`;
         if (uuids.length > 0) {
             query += ` AND \`uuid\` IN (${uuids.map(u => `?`).join(", ")})`;
@@ -378,7 +382,7 @@ export class MainSqliteBackendService {
 
         const deleted = { lists: 0, items: 0 };
 
-        const uuids = args.lists?.map(l => (l instanceof List ? l.Uuid : l)) ?? [];
+        const uuids = args.lists?.map(l => (l instanceof List ? l.Id : l)) ?? [];
         let uuids_delete: number[] | undefined = undefined;
         if (uuids.length == 0) {
             const query_all = `SELECT \`uuid\` FROM \`lists\` WHERE \`deleted\` ${args.trash === false ? "IS NULL" : "IS NOT NULL"};`;
@@ -438,8 +442,8 @@ export class MainSqliteBackendService {
         if (!(await this.CheckConnection())) {
             return false;
         }
-        const uuid = args.list instanceof List ? args.list.Uuid : args.list;
-        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Uuid)) || [];
+        const uuid = args.list instanceof List ? args.list.Id : args.list;
+        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Id)) || [];
 
         let query = "UPDATE `listitems` SET `deleted` = ? WHERE `list_id` = ? AND `deleted` IS NULL";
         if (args.items?.length) {
@@ -475,8 +479,8 @@ export class MainSqliteBackendService {
             return false;
         }
 
-        const uuid = args.list instanceof List ? args.list.Uuid : args.list;
-        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Uuid)) || [];
+        const uuid = args.list instanceof List ? args.list.Id : args.list;
+        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Id)) || [];
 
         let query = `DELETE FROM \`listitems\` WHERE \`list_id\` = ? AND \`deleted\` ${args.trash === true ? "IS NOT NULL" : "IS NULL"}`;
 
@@ -508,7 +512,7 @@ export class MainSqliteBackendService {
             return false;
         }
 
-        const uuids = args.lists?.map(l => (typeof l === "number" ? l : l.Uuid)) ?? [];
+        const uuids = args.lists?.map(l => (typeof l === "number" ? l : l.Id)) ?? [];
 
         let query = `UPDATE \`lists\` SET \`deleted\` = NULL, \`modified\` = ? WHERE \`deleted\` IS NOT NULL`;
         if (uuids.length > 0) {
@@ -538,8 +542,8 @@ export class MainSqliteBackendService {
             return false;
         }
         let start_order = await this.getNextListitemOrder({ list: args.list });
-        const list_uuid = typeof args.list === "number" ? args.list : args.list.Uuid;
-        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Uuid)) || [];
+        const list_uuid = typeof args.list === "number" ? args.list : args.list.Id;
+        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Id)) || [];
         let query = `UPDATE \`listitems\` SET \`deleted\` = NULL WHERE \`list_id\` = ?`;
         if (item_uuids.length > 0) {
             query += ` AND \`uuid\` IN (${item_uuids.map(i => "?").join(", ")})`;
@@ -741,7 +745,7 @@ export class MainSqliteBackendService {
             return 0;
         }
 
-        const uuid = args.list instanceof List ? args.list.Uuid : args.list;
+        const uuid = args.list instanceof List ? args.list.Id : args.list;
         const query = `SELECT \`order\` FROM \`listitems\` WHERE \`list_id\`=? AND \`deleted\` IS NULL ORDER BY \`order\` DESC LIMIT 1`;
         try {
             const ret = await this._database!.query(query, [uuid]);
@@ -762,7 +766,7 @@ export class MainSqliteBackendService {
         if (!(await this.CheckConnection())) {
             return;
         }
-        const uuid = args.list instanceof List ? args.list.Uuid : args.list;
+        const uuid = args.list instanceof List ? args.list.Id : args.list;
         const query = `UPDATE \`lists\` SET \`modified\` = ? WHERE \`uuid\` = ?`;
         await this._database!.run(query, [Date.now(), uuid]);
     }

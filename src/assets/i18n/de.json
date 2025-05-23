@@ -222,6 +222,10 @@
         "trash-item-delete": "Listenpunkt entgültig löschen",
         "trash-items-delete": "{{num}} Listenpunkte endgültig löschen"
     },
+    "comp-legacy-backend-import": {
+        "title": "Bitte einen Moment Geduld..",
+        "text": "Das Backend wird konvertiert und angepasst.<br /><br />Dies kann einen Moment dauern..."
+    },
     "page_firststart": {
         "welcome": "Willkommen bei Listen",
         "language1": "Bitte wähle die gewünschte Sprache für die App:",

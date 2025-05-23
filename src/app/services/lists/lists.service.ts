@@ -14,8 +14,8 @@ import { LocalizationService } from "../localization/localization.service";
 import { Logger } from "../logging/logger";
 import { PopupsService } from "../popups/popups.service";
 import { Toast } from "../popups/toast";
+import { FileBackendConverter } from "../storage/lists/file-backend/file-backend-converter";
 import { type ListsOrder, type ListsOrderDirection, MainSqliteBackendService } from "../storage/lists/main-sqlite-backend.service";
-import { SqliteBackendConverter } from "../storage/lists/sqlite-backend-converter";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 import { KeepInTrash } from "./keep-in-trash";
 import { List, type ListReset } from "./list";
@@ -61,7 +61,7 @@ export class ListsService {
             }
         });
         await this.removeOldTrash(await this.Preferences.Get<number>(EPrefProperty.TrashKeepinStock, this._keepInTrashStock));
-        await new SqliteBackendConverter(this.BackendService, this.ModalCtrl).CheckLegacyBackend();
+        await new FileBackendConverter(this.BackendService, this.ModalCtrl).CheckLegacyBackend();
         Logger.Debug(`Lists service initialized`);
     }
 
@@ -74,15 +74,15 @@ export class ListsService {
         AppService.AppToolbar?.ToggleProgressbar(true);
         const lists = await this.BackendService.queryLists({ peek: true, trash: false, orderBy: args?.orderBy, orderDir: args?.orderDir });
         lists.forEach(l => {
-            const list = this._listIndex.get(l.Uuid!);
+            const list = this._listIndex.get(l.Id!);
             if (list) {
                 list.clone(l);
             } else {
-                this._listIndex.set(l.Uuid!, l);
+                this._listIndex.set(l.Id!, l);
             }
         });
         Array.from(this._listIndex.keys()).forEach(uuid => {
-            if (!lists.some(l => l.Uuid == uuid)) {
+            if (!lists.some(l => l.Id == uuid)) {
                 this._listIndex.delete(uuid);
             }
         });
@@ -111,11 +111,11 @@ export class ListsService {
         AppService.AppToolbar?.ToggleProgressbar(true);
         const list = await this.BackendService.queryList({ list: uuid });
         if (list) {
-            const index = this._listIndex.get(list.Uuid);
+            const index = this._listIndex.get(list.Id);
             if (index) {
                 index.clone(list);
             } else {
-                this._listIndex.set(list.Uuid, list);
+                this._listIndex.set(list.Id, list);
             }
         } else {
             this._listIndex.delete(uuid);
@@ -148,7 +148,7 @@ export class ListsService {
                 await this.addListToIndex(list);
                 await this.cleanOrderLists();
                 this.onListsChangedSubject.next(await this.GetLists());
-                this.NavController.navigateForward(`/lists/items/${list.Uuid}`, { queryParams: { created: true } });
+                this.NavController.navigateForward(`/lists/items/${list.Id}`, { queryParams: { created: true } });
             } else {
                 this.Popups.Toast.Error("service-lists.store_list_error");
             }
@@ -285,7 +285,7 @@ export class ListsService {
      * @returns item-adding successful?
      */
     public async AddNewListitem(list: List, args: { item: string; order?: number; locked?: boolean; hidden?: boolean }): Promise<boolean> {
-        list.AddItem({ uuid: HelperUtils.RandomNegativNumber(), list_id: list.Uuid, item: args.item, order: args.order ?? -1, locked: args.locked ? 1 : 0, hidden: args.hidden ? 1 : 0, created: Date.now(), modified: Date.now() });
+        list.AddItem({ id: HelperUtils.RandomNegativNumber(), list_id: list.Id, item: args.item, order: args.order ?? -1, locked: args.locked ? 1 : 0, hidden: args.hidden ? 1 : 0, created: Date.now(), modified: Date.now() });
         if (await this.StoreList(list, false, true, true)) {
             this.onListsChangedSubject.next(await this.GetLists());
             return true;
@@ -563,12 +563,12 @@ export class ListsService {
         }
         let store: boolean | undefined;
         await this.cleanOrderListitems(list, false);
-        if (!list.Uuid || list.Dirty || force) {
+        if (!list.Id || list.Dirty || force) {
             const uuid = await this.BackendService.storeList({ list: list, force: force });
             if (uuid === false) {
                 store = false;
             } else if (uuid) {
-                list.Uuid = uuid;
+                list.Id = uuid;
                 list.Clean();
                 store = true;
             } else {
@@ -759,8 +759,8 @@ export class ListsService {
 
     public async createNewListitem(list: List | number, args: { item: string; note?: string; order?: number; hidden?: boolean; locked?: boolean }): Promise<Listitem> {
         return new Listitem({
-            uuid: HelperUtils.RandomNegativNumber(),
-            list_id: typeof list === "number" ? list : list.Uuid,
+            id: HelperUtils.RandomNegativNumber(),
+            list_id: typeof list === "number" ? list : list.Id,
             item: args.item,
             note: args.note,
             order: args.order ?? (await this.BackendService.getNextListitemOrder({ list: list })),
@@ -785,11 +785,11 @@ export class ListsService {
     }
 
     private async addListToIndex(list: List) {
-        if (!list.Uuid) {
+        if (!list.Id) {
             await this.StoreList(list, true, true, true);
         }
-        if (list.Uuid) {
-            this._listIndex.set(list.Uuid, list);
+        if (list.Id) {
+            this._listIndex.set(list.Id, list);
         } else {
             Logger.Error(`Could not store list ${list.toLog()} in index, no Uuid`);
         }
@@ -808,8 +808,8 @@ export class ListsService {
 
         const device = await this.ConnectIQ.GetDefaultDevice({ only_ready: true, select_device_if_undefined: !only_if_definitive_device });
         if (device) {
-            if (list.isPeek && list.Uuid) {
-                list.copyDetails(await this.GetList(list.Uuid));
+            if (list.isPeek && list.Id) {
+                list.copyDetails(await this.GetList(list.Id));
             }
             var payload = list.toDeviceObject();
             if (!payload) {
@@ -923,13 +923,13 @@ export class ListsService {
 
         if (deleted && deleted > 0) {
             lists.forEach(l => {
-                this._listIndex.delete(l.Uuid);
+                this._listIndex.delete(l.Id);
             });
             await this.cleanOrderLists();
             lists.forEach(l => {
                 this.onListChangedSubject.next(l);
                 if (delete_on_watch) {
-                    this.ConnectIQ.SendToDevice({ device: undefined, messageType: ConnectIQMessageType.DeleteList, data: l.Uuid });
+                    this.ConnectIQ.SendToDevice({ device: undefined, messageType: ConnectIQMessageType.DeleteList, data: l.Id });
                 }
             });
             this.onListsChangedSubject.next(await this.GetLists());
@@ -1283,10 +1283,10 @@ export class ListsService {
     }
 
     private async refreshList(list: List): Promise<void> {
-        if (!list.Uuid) {
+        if (!list.Id) {
             return;
         }
-        const copy = await this.GetList(list.Uuid);
+        const copy = await this.GetList(list.Id);
         if (copy) {
             list.clone(copy);
         }
