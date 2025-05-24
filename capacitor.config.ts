@@ -33,7 +33,7 @@ const config: CapacitorConfig = {
             backgroundColor: "#0077ff",
         },
         CapacitorSQLite: {
-            androidIsEncryption: true,
+            androidIsEncryption: false,
             androidBiometric: {
                 biometricAuth: false,
                 biometricTitle: "Biometric login for capacitor sqlite",

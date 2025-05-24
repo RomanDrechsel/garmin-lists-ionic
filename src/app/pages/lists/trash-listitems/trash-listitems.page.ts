@@ -44,7 +44,7 @@ export class TrashListitemsPage extends AnimatedListPageBase {
 
     public override async ionViewWillEnter() {
         await super.ionViewWillEnter();
-        const listid = Number(this.Route.snapshot.paramMap.get("uuid"));
+        const listid = Number(this.Route.snapshot.paramMap.get("id"));
         if (listid && !Number.isNaN(listid)) {
             this._listUuid = listid;
             this.Trash = await this.ListsService.GetList(listid);

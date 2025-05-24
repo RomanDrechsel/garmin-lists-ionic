@@ -61,7 +61,9 @@ export class ListsService {
             }
         });
         await this.removeOldTrash(await this.Preferences.Get<number>(EPrefProperty.TrashKeepinStock, this._keepInTrashStock));
-        await new FileBackendConverter(this.BackendService, this.ModalCtrl).CheckLegacyBackend();
+        await new FileBackendConverter(this.BackendService, this.ModalCtrl).CheckLegacyBackend(async () => {
+            await this.GetLists();
+        });
         Logger.Debug(`Lists service initialized`);
     }
 
@@ -81,9 +83,9 @@ export class ListsService {
                 this._listIndex.set(l.Id!, l);
             }
         });
-        Array.from(this._listIndex.keys()).forEach(uuid => {
-            if (!lists.some(l => l.Id == uuid)) {
-                this._listIndex.delete(uuid);
+        Array.from(this._listIndex.keys()).forEach(id => {
+            if (!lists.some(l => l.Id == id)) {
+                this._listIndex.delete(id);
             }
         });
 
@@ -104,12 +106,12 @@ export class ListsService {
 
     /**
      * gets a specific list with all items
-     * @param uuid unique id of the list
+     * @param id unique id of the list
      * @returns List object
      */
-    public async GetList(uuid: number): Promise<List | undefined> {
+    public async GetList(id: number): Promise<List | undefined> {
         AppService.AppToolbar?.ToggleProgressbar(true);
-        const list = await this.BackendService.queryList({ list: uuid });
+        const list = await this.BackendService.queryList({ list: id });
         if (list) {
             const index = this._listIndex.get(list.Id);
             if (index) {
@@ -118,21 +120,21 @@ export class ListsService {
                 this._listIndex.set(list.Id, list);
             }
         } else {
-            this._listIndex.delete(uuid);
+            this._listIndex.delete(id);
         }
         AppService.AppToolbar?.ToggleProgressbar(false);
 
-        return this._listIndex.get(uuid);
+        return this._listIndex.get(id);
     }
 
     /**
      * returns the listitems in trash of a list
-     * @param uuid unique identifier of the list
+     * @param id unique identifier of the list
      * @returns ListitemTrashModel object
      */
-    public async GetListitemTrash(uuid: number | List): Promise<Listitem[] | undefined> {
+    public async GetListitemTrash(id: number | List): Promise<Listitem[] | undefined> {
         AppService.AppToolbar?.ToggleProgressbar(false);
-        const trash = await this.BackendService.queryListitems({ list: uuid, trash: true, itemsOrderBy: "deleted", itemsOrderDir: "DESC" });
+        const trash = await this.BackendService.queryListitems({ list: id, trash: true, itemsOrderBy: "deleted", itemsOrderDir: "DESC" });
         AppService.AppToolbar?.ToggleProgressbar(false);
         return trash;
     }
@@ -564,11 +566,11 @@ export class ListsService {
         let store: boolean | undefined;
         await this.cleanOrderListitems(list, false);
         if (!list.Id || list.Dirty || force) {
-            const uuid = await this.BackendService.storeList({ list: list, force: force });
-            if (uuid === false) {
+            const list_id = await this.BackendService.storeList({ list: list, force: force });
+            if (list_id === false) {
                 store = false;
-            } else if (uuid) {
-                list.Id = uuid;
+            } else if (list_id) {
+                list.Id = list_id;
                 list.Clean();
                 store = true;
             } else {

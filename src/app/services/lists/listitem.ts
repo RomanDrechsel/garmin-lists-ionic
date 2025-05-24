@@ -33,8 +33,8 @@ export class Listitem {
     }
 
     /** set the unique id for backend */
-    public set Id(uuid: number) {
-        this._id = uuid;
+    public set Id(id: number) {
+        this._id = id;
     }
 
     /** get the order number */

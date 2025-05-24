@@ -1,8 +1,8 @@
-import type { SQLiteDBConnection } from "@capacitor-community/sqlite";
+import { SQLiteDBConnection } from "@capacitor-community/sqlite";
 import { Logger } from "src/app/services/logging/logger";
-import type { DatabaseType, MainSqliteBackendService } from "../main-sqlite-backend.service";
-import type { FileBackendListModel } from "./file-backend-list-model";
-import type { FileBackendListitemModel } from "./file-backend-listitem-model";
+import { DatabaseType, MainSqliteBackendService } from "../main-sqlite-backend.service";
+import { FileBackendListModel } from "./file-backend-list-model";
+import { FileBackendListitemModel } from "./file-backend-listitem-model";
 
 export class FileBackendSqliteBackend {
     private readonly _database?: SQLiteDBConnection;
@@ -16,10 +16,10 @@ export class FileBackendSqliteBackend {
      * @param model list model
      * @returns true if the storage was successfull, false otherwise
      */
-    public async storeList(model: FileBackendListModel): Promise<boolean> {
+    public async storeList(model: FileBackendListModel): Promise<{ success: boolean; items: number }> {
         if (!this._database) {
             Logger.Error(`Could not store legacy list ${model.name} (uuid:${model.uuid}) in new backend: backend not initalized`);
-            return false;
+            return { success: false, items: 0 };
         }
 
         if ((await this._database!.isTransactionActive()).result) {
@@ -31,15 +31,15 @@ export class FileBackendSqliteBackend {
             await this._database!.beginTransaction();
             if (!(await this._database!.isTransactionActive()).result) {
                 Logger.Error(`Could not start sql transaction in 'FileBackendSqliteBackend.storeList()'`);
-                return false;
+                return { success: false, items: 0 };
             }
         } catch (e) {
             Logger.Error(`Could not start sql transaction in 'FileBackendSqliteBackend.storeList()'`, e);
-            return false;
+            return { success: false, items: 0 };
         }
 
         //first we check if there is already a list with the legacy uuid
-        let list_id = await this.LegacyUuidToUuid({ legacy_uuid: model.uuid, type: "list" });
+        let list_id = await this.LegacyUuidToId({ legacy_uuid: model.uuid, type: "list" });
         let query;
         let params: DatabaseType[] = [model.name, model.order, model.created, model.updated ?? model.created, model.deleted ?? null, model.sync ? 1 : 0, model.reset ? 1 : 0, model.reset?.interval ?? null, model.reset?.hour ?? null, model.reset?.minute ?? null, model.reset?.day ?? null, model.reset?.weekday ?? null, model.uuid];
 
@@ -60,26 +60,28 @@ export class FileBackendSqliteBackend {
         } catch (e) {
             Logger.Error(`Could not store legacy list '${model.name}' (uuid:${model.uuid}) in new backend`, e);
             await this._database.rollbackTransaction();
-            return false;
+            return { success: false, items: 0 };
         }
 
         if (list_id) {
+            let items = 0;
             if (model.items?.length) {
                 for (let i = 0; i < model.items.length; i++) {
-                    await this.storeListiem(model.items[i], list_id, false);
+                    if (await this.storeListitem(model.items[i], list_id, false)) 7;
+                    items++;
                 }
             }
             try {
                 await this._database.commitTransaction();
                 Logger.Notice(`Transfered list ${model.name} (${model.uuid}) with ${model.items?.length ?? 0} items to new backend`);
-                return true;
+                return { success: true, items: items };
             } catch (e) {
                 Logger.Error(`Could not commit transaction in 'FileBackendSqliteBackend.storeList()': `, e);
             }
         } else {
             await this._database.rollbackTransaction();
         }
-        return false;
+        return { success: false, items: 0 };
     }
 
     /**
@@ -87,14 +89,14 @@ export class FileBackendSqliteBackend {
      * @param model listitem model
      * @returns was the storage successfull?
      */
-    public async storeListiem(model: FileBackendListitemModel, list_id: number, transaction: boolean): Promise<boolean> {
+    public async storeListitem(model: FileBackendListitemModel, list_id: number, transaction?: boolean): Promise<boolean> {
         if (!this._database) {
             return false;
         }
 
-        const item_id = await this.LegacyUuidToUuid({ legacy_uuid: model.uuid, type: "listitem" });
+        const item_id = await this.LegacyUuidToId({ legacy_uuid: model.uuid, type: "listitem" });
         let query;
-        let params: DatabaseType[] = [list_id, model.item, model.note ?? null, model.order, model.hidden ? 1 : 0, model.locked ? 1 : 0, model.created, model.updated ?? model.created, model.deleted ?? null, model.uuid];
+        let params: DatabaseType[] = [list_id, model.item, model.note?.length ? model.note : null, model.order, model.hidden ? 1 : 0, model.locked ? 1 : 0, model.created, model.updated ?? model.created, model.deleted ?? null, model.uuid];
 
         if (item_id) {
             // update existing listitem
@@ -102,7 +104,7 @@ export class FileBackendSqliteBackend {
             params.push(item_id);
         } else {
             //insert new listitem
-            query = "INSERT INTO `listitems` (`list_id`, `item`, `note`, `order`, `hidden`, `locked, `created`, `modified`, `deleted`, `legacy_uuid`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            query = "INSERT INTO `listitems` (`list_id`, `item`, `note`, `order`, `hidden`, `locked`, `created`, `modified`, `deleted`, `legacy_uuid`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         }
 
         try {
@@ -119,7 +121,7 @@ export class FileBackendSqliteBackend {
      * @param legacy_uuid uuid of the list in the old backend
      * @returns uuid of this list in new backend, undefined if there is no list, or false in something went wrong
      */
-    public async LegacyUuidToUuid(args: { legacy_uuid: string | number; type: "list" | "listitem" }): Promise<number | false | undefined> {
+    public async LegacyUuidToId(args: { legacy_uuid: string | number; type: "list" | "listitem" }): Promise<number | false | undefined> {
         if (!this._database) {
             return false;
         }
@@ -136,7 +138,7 @@ export class FileBackendSqliteBackend {
         try {
             const result = await this._database.query(query, [args.legacy_uuid]);
             if (result.values && result.values.length > 0) {
-                return parseInt(result.values[0].uuid);
+                return parseInt(result.values[0].id);
             } else {
                 return undefined;
             }

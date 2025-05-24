@@ -63,7 +63,6 @@ export class List {
 
     /**
      * get unique list id
-     * in newer versions, the uuid is a number
      * in older versions it was a string
      */
     public get Id(): number {
@@ -72,10 +71,10 @@ export class List {
 
     /**
      * set the unique list id
-     * @param uuid unique list id
+     * @param id unique list id
      */
-    public set Id(uuid: number) {
-        this._id = uuid;
+    public set Id(id: number) {
+        this._id = id;
     }
 
     /** set list title */

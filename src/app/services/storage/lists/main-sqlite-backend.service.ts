@@ -86,7 +86,7 @@ export class MainSqliteBackendService {
 
     /**
      * query a cetain list
-     * @param args.list the list to query (or the uuid)
+     * @param args.list the list to query (or the id)
      * @param args.itemsTrash if true, it queries the items in the trash of the list
      * @param args.itemsOrderBy how to order the items of the list (default is 'order' property)
      * @param args.itemsOrderDir the direction of the ordering (default is ASC)
@@ -96,19 +96,19 @@ export class MainSqliteBackendService {
         if (!(await this.CheckConnection())) {
             return undefined;
         }
-        const uuid = args.list instanceof List ? args.list.Id : args.list;
+        const list_id = args.list instanceof List ? args.list.Id : args.list;
         let list: ListModel | undefined;
 
         try {
-            const query = `SELECT * FROM \`lists\` WHERE \`uuid\` = ? AND \`deleted\` IS NULL LIMIT 1;`;
-            const ret = (await this._database!.query(query, [uuid])).values as ListModel[] | undefined;
+            const query = `SELECT * FROM \`lists\` WHERE \`id\` = ? AND \`deleted\` IS NULL LIMIT 1;`;
+            const ret = (await this._database!.query(query, [list_id])).values as ListModel[] | undefined;
             if (ret) {
                 list = ret[0];
             } else {
                 throw "Empty result";
             }
         } catch (e) {
-            Logger.Error(`Could not query list uuid:${uuid} from backend: `, e);
+            Logger.Error(`Could not query list id:${list_id} from backend: `, e);
             return undefined;
         }
 
@@ -122,7 +122,7 @@ export class MainSqliteBackendService {
             let listitems: ListitemModel[] | undefined;
             try {
                 const query = `SELECT * FROM \`listitems\` WHERE \`list_id\`=? AND deleted ${!args.itemsTrash ? "IS NULL" : "IS NOT NULL"} ORDER BY \`${args.itemsOrderBy}\` ${args.itemsOrderDir}`;
-                listitems = (await this._database!.query(query, [uuid])).values as ListitemModel[] | undefined;
+                listitems = (await this._database!.query(query, [list_id])).values as ListitemModel[] | undefined;
                 if (!listitems) {
                     throw "Empty result";
                 }
@@ -139,7 +139,7 @@ export class MainSqliteBackendService {
 
     /**
      * queries all items of a list
-     * @param args.list list to query items from (or the uuid)
+     * @param args.list list to query items from (or the id)
      * @param args.trash whether to query trashed items
      * @param args.orderBy how to order the items of the list (default is 'order' property)
      * @param args.orderDir the direction of the ordering (default is ASC)
@@ -150,7 +150,7 @@ export class MainSqliteBackendService {
             return undefined;
         }
 
-        const uuid = args.list instanceof List ? args.list.Id : args.list;
+        const list_id = args.list instanceof List ? args.list.Id : args.list;
         if (!args.itemsOrderBy) {
             args.itemsOrderBy = "order";
         }
@@ -158,7 +158,7 @@ export class MainSqliteBackendService {
             args.itemsOrderDir = "ASC";
         }
         const query = `SELECT * FROM \`listitems\` WHERE \`list_id\`=? AND deleted ${!args.trash ? "IS NULL" : "IS NOT NULL"} ORDER BY \`${args.itemsOrderBy}\` ${args.itemsOrderDir}`;
-        const models = (await this._database!.query(query, [uuid])).values as ListitemModel[] | undefined;
+        const models = (await this._database!.query(query, [list_id])).values as ListitemModel[] | undefined;
         if (models) {
             const items: Listitem[] = [];
             models.forEach(m => {
@@ -220,7 +220,7 @@ export class MainSqliteBackendService {
      * stores a list in backend
      * @param args.list list object to store
      * @param args.force force storing the list, even if it is not dirty
-     * @returns uuid if the list, or false on error, undefined if nothing needs to be stored
+     * @returns id of the list, or false on error, undefined if nothing needs to be stored
      */
     public async storeList(args: { list: List; force?: boolean }): Promise<number | false | undefined> {
         if (!(await this.CheckConnection())) {
@@ -256,35 +256,35 @@ export class MainSqliteBackendService {
             return false;
         }
 
-        let list_uuid: number | undefined = undefined;
+        let list_id: number | undefined = undefined;
 
         try {
             if (args.list.isVirtual) {
-                backend.delete("uuid");
+                backend.delete("id");
                 const keys = "`" + Array.from(backend.keys()).join("`, `") + "`";
                 const qms = Array.from(backend.keys())
                     .map(() => "?")
                     .join(", ");
                 const query = `INSERT INTO \`lists\` (${keys}) VALUES (${qms})`;
                 const ret = await this._database!.run(query, Array.from(backend.values()), false);
-                list_uuid = ret.changes?.lastId;
+                list_id = ret.changes?.lastId;
             } else {
                 const query = `UPDATE \`lists\` SET ${Array.from(backend.keys())
                     .map(key => `\`${key}\`=?`)
-                    .join(", ")} WHERE \`uuid\`=${args.list.Id}`;
+                    .join(", ")} WHERE \`id\`=${args.list.Id}`;
                 await this._database!.run(query, Array.from(backend.values()), false);
-                list_uuid = args.list.Id;
+                list_id = args.list.Id;
             }
 
-            const uuid_map = new Map<number, number>();
-            if (list_uuid) {
+            const listid_map = new Map<number, number>();
+            if (list_id) {
                 for (let i = 0; i < args.list.Items.length; i++) {
                     const item = args.list.Items[i];
                     if (item.isVirtual || item.Dirty || args.force) {
                         const itemBackend = item.toBackend();
-                        itemBackend.set("list_id", list_uuid);
+                        itemBackend.set("list_id", list_id);
                         if (item.isVirtual) {
-                            itemBackend.delete("uuid");
+                            itemBackend.delete("id");
                             const keys = "`" + Array.from(itemBackend.keys()).join("`, `") + "`";
                             const qms = Array.from(itemBackend.keys())
                                 .map(() => "?")
@@ -292,23 +292,23 @@ export class MainSqliteBackendService {
                             const query = `INSERT INTO \`listitems\` (${keys}) VALUES (${qms})`;
                             const ret = await this._database!.run(query, Array.from(itemBackend.values()), false);
                             if (ret.changes?.lastId) {
-                                uuid_map.set(item.Id, ret.changes.lastId);
+                                listid_map.set(item.Id, ret.changes.lastId);
                             }
                         } else {
                             const query = `UPDATE \`listitems\` SET ${Array.from(itemBackend.keys())
                                 .map(key => `\`${key}\`=?`)
-                                .join(", ")} WHERE \`uuid\`=${item.Id}`;
+                                .join(", ")} WHERE \`id\`=${item.Id}`;
                             await this._database!.run(query, Array.from(itemBackend.values()), false);
                         }
                     }
                 }
             } else {
-                throw "no uuid";
+                throw "no id";
             }
 
             await this._database!.commitTransaction();
-            args.list.Id = list_uuid;
-            uuid_map.forEach((val: number, key: number) => {
+            args.list.Id = list_id;
+            listid_map.forEach((val: number, key: number) => {
                 const item = args.list.Items.find(i => i.Id == key);
                 if (item) {
                     item.Id = val;
@@ -321,13 +321,13 @@ export class MainSqliteBackendService {
             return false;
         }
 
-        return list_uuid;
+        return list_id;
     }
 
     /**
      * moves the given lists to trash
      *
-     * @param args.lists list of uuids or List objects to move to trash
+     * @param args.lists list of ids or List objects to move to trash
      * @returns number of moved lists, false on error
      */
     public async moveListsToTrash(args: { lists?: number[] | List[] }): Promise<number | false> {
@@ -335,19 +335,19 @@ export class MainSqliteBackendService {
             return false;
         }
 
-        const uuids = args.lists?.map(l => (l instanceof List ? l.Id : l)) ?? [];
+        const list_ids = args.lists?.map(l => (l instanceof List ? l.Id : l)) ?? [];
         let query = `UPDATE \`lists\` SET \`deleted\` = ? WHERE \`deleted\` IS NULL`;
-        if (uuids.length > 0) {
-            query += ` AND \`uuid\` IN (${uuids.map(u => `?`).join(", ")})`;
+        if (list_ids.length > 0) {
+            query += ` AND \`id\` IN (${list_ids.map(u => `?`).join(", ")})`;
         }
 
         try {
-            const res = await this._database!.run(query, [Date.now(), ...uuids]);
+            const res = await this._database!.run(query, [Date.now(), ...list_ids]);
             if (res.changes?.changes) {
                 return res.changes.changes;
             }
         } catch (e) {
-            Logger.Error(`MainSqliteBackendService.moveListsToTrash() failed: `, e, uuids);
+            Logger.Error(`MainSqliteBackendService.moveListsToTrash() failed: `, e, list_ids);
         }
 
         return false;
@@ -355,7 +355,7 @@ export class MainSqliteBackendService {
 
     /**
      * finally deletes lists from backend
-     * @param args.lists array of lists (or uuids) to delete
+     * @param args.lists array of lists (or ids) to delete
      * @param args.trash if true, only lists from trash will be deleted
      * @returns number of lists deleted, or false if failed
      */
@@ -382,10 +382,10 @@ export class MainSqliteBackendService {
 
         const deleted = { lists: 0, items: 0 };
 
-        const uuids = args.lists?.map(l => (l instanceof List ? l.Id : l)) ?? [];
-        let uuids_delete: number[] | undefined = undefined;
-        if (uuids.length == 0) {
-            const query_all = `SELECT \`uuid\` FROM \`lists\` WHERE \`deleted\` ${args.trash === false ? "IS NULL" : "IS NOT NULL"};`;
+        const list_ids = args.lists?.map(l => (l instanceof List ? l.Id : l)) ?? [];
+        let list_ids_delete: number[] | undefined = undefined;
+        if (list_ids.length == 0) {
+            const query_all = `SELECT \`id\` FROM \`lists\` WHERE \`deleted\` ${args.trash === false ? "IS NULL" : "IS NOT NULL"};`;
             try {
                 const ret = await this._database!.query(query_all);
                 if (ret.values) {
@@ -393,7 +393,7 @@ export class MainSqliteBackendService {
                         return deleted;
                     }
 
-                    uuids_delete = ret.values.map(uuid => uuid.uuid);
+                    list_ids_delete = ret.values.map(id => id.id);
                 } else {
                     return false;
                 }
@@ -404,19 +404,19 @@ export class MainSqliteBackendService {
         }
 
         let query = `DELETE FROM \`lists\` WHERE \`deleted\` ${args.trash === false ? "IS NULL" : "IS NOT NULL"}`;
-        if (uuids.length > 0) {
-            query += " AND `uuid` IN (" + uuids.map(() => "?").join(",") + ")";
+        if (list_ids.length > 0) {
+            query += " AND `id` IN (" + list_ids.map(() => "?").join(",") + ")";
         }
 
         try {
-            const ret = await this._database!.run(query, uuids, false);
-            if (uuids.length > 0) {
-                uuids_delete = uuids;
+            const ret = await this._database!.run(query, list_ids, false);
+            if (list_ids.length > 0) {
+                list_ids_delete = list_ids;
             }
             if (ret.changes?.changes && ret.changes?.changes > 0) {
                 deleted.lists += ret.changes.changes;
-                query = "DELETE FROM `listitems` WHERE `list_id` IN (" + uuids_delete!.map(() => "?").join(",") + ")";
-                const ret2 = await this._database!.run(query, uuids_delete!, false);
+                query = "DELETE FROM `listitems` WHERE `list_id` IN (" + list_ids_delete!.map(() => "?").join(",") + ")";
+                const ret2 = await this._database!.run(query, list_ids_delete!, false);
                 if (ret2.changes?.changes && ret2.changes?.changes > 0) {
                     deleted.items += ret2.changes.changes;
                 }
@@ -442,19 +442,19 @@ export class MainSqliteBackendService {
         if (!(await this.CheckConnection())) {
             return false;
         }
-        const uuid = args.list instanceof List ? args.list.Id : args.list;
-        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Id)) || [];
+        const list_id = args.list instanceof List ? args.list.Id : args.list;
+        const item_ids = args.items?.map(i => (typeof i === "number" ? i : i.Id)) || [];
 
         let query = "UPDATE `listitems` SET `deleted` = ? WHERE `list_id` = ? AND `deleted` IS NULL";
         if (args.items?.length) {
-            query += ` AND \`uuid\` IN (` + item_uuids.map(i => "?").join(", ") + `)`;
+            query += ` AND \`id\` IN (` + item_ids.map(i => "?").join(", ") + `)`;
         }
         if (args.force !== true) {
             query += " AND `locked` <> 1";
         }
 
         try {
-            const ret = await this._database!.run(query, [Date.now(), uuid, ...item_uuids]);
+            const ret = await this._database!.run(query, [Date.now(), list_id, ...item_ids]);
             if (ret.changes?.changes) {
                 await this.updateListModified({ list: args.list });
                 return ret.changes.changes;
@@ -468,8 +468,8 @@ export class MainSqliteBackendService {
 
     /**
      * finally delete listitems
-     * @param args.list list or uuid, from which the items should be deleted
-     * @param args.items list of items or uuids to delete, if not set all items will be deleted from the list
+     * @param args.list list or id, from which the items should be deleted
+     * @param args.items list of items or ids to delete, if not set all items will be deleted from the list
      * @param args.trash if set to true, the items will be deleted from the trash
      * @param args.force if set to true, locked items will also be deleted (only if not trash)
      * @returns number of deleted items, false on error
@@ -479,19 +479,19 @@ export class MainSqliteBackendService {
             return false;
         }
 
-        const uuid = args.list instanceof List ? args.list.Id : args.list;
-        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Id)) || [];
+        const list_id = args.list instanceof List ? args.list.Id : args.list;
+        const item_ids = args.items?.map(i => (typeof i === "number" ? i : i.Id)) || [];
 
         let query = `DELETE FROM \`listitems\` WHERE \`list_id\` = ? AND \`deleted\` ${args.trash === true ? "IS NOT NULL" : "IS NULL"}`;
 
-        if (item_uuids.length > 0) {
-            query += ` AND \`uuid\` IN (` + item_uuids.map(i => "?").join(", ") + `)`;
+        if (item_ids.length > 0) {
+            query += ` AND \`id\` IN (` + item_ids.map(i => "?").join(", ") + `)`;
         }
         if (args.trash !== true && args.force !== true) {
             query += " AND `locked` <> 1";
         }
 
-        const ret = await this._database!.run(query, [uuid, ...item_uuids]);
+        const ret = await this._database!.run(query, [list_id, ...item_ids]);
         if (ret.changes?.changes) {
             if (args.trash === false) {
                 await this.updateListModified({ list: args.list });
@@ -504,7 +504,7 @@ export class MainSqliteBackendService {
 
     /**
      * restores lists from trash
-     * @param args.lists list uuids or List objects to restore, or undefined to restore all
+     * @param args.lists list ids or List objects to restore, or undefined to restore all
      * @returns number of restored lists, or false on error
      */
     public async restoreListsFromTrash(args: { lists?: number[] | List[] }): Promise<number | false> {
@@ -512,29 +512,29 @@ export class MainSqliteBackendService {
             return false;
         }
 
-        const uuids = args.lists?.map(l => (typeof l === "number" ? l : l.Id)) ?? [];
+        const list_ids = args.lists?.map(l => (typeof l === "number" ? l : l.Id)) ?? [];
 
         let query = `UPDATE \`lists\` SET \`deleted\` = NULL, \`modified\` = ? WHERE \`deleted\` IS NOT NULL`;
-        if (uuids.length > 0) {
-            query += ` AND \`uuid\` IN (${uuids.map(() => "?").join(",")})`;
+        if (list_ids.length > 0) {
+            query += ` AND \`id\` IN (${list_ids.map(() => "?").join(",")})`;
         }
 
         try {
-            const ret = await this._database!.run(query, [Date.now(), ...uuids]);
+            const ret = await this._database!.run(query, [Date.now(), ...list_ids]);
             if (ret.changes?.changes) {
                 return ret.changes.changes;
             }
             return 0;
         } catch (e) {
-            Logger.Error("MainSqliteBackendService.restoreListsFromTrash() failed", e, uuids);
+            Logger.Error("MainSqliteBackendService.restoreListsFromTrash() failed", e, list_ids);
             return false;
         }
     }
 
     /**
      * restore listitems from trash
-     * @param args.list list or uuid of list to restore items from trash
-     * @param args.items list of items or uuids to restore from trash
+     * @param args.list list or id of list to restore items from trash
+     * @param args.items list of items or ids to restore from trash
      * @returns number of restored items, false on error
      */
     public async restoreListitemsFromTrash(args: { list: number | List; items?: number[] | Listitem[] }): Promise<number | false> {
@@ -542,15 +542,15 @@ export class MainSqliteBackendService {
             return false;
         }
         let start_order = await this.getNextListitemOrder({ list: args.list });
-        const list_uuid = typeof args.list === "number" ? args.list : args.list.Id;
-        const item_uuids = args.items?.map(i => (typeof i === "number" ? i : i.Id)) || [];
+        const list_id = typeof args.list === "number" ? args.list : args.list.Id;
+        const item_ids = args.items?.map(i => (typeof i === "number" ? i : i.Id)) || [];
         let query = `UPDATE \`listitems\` SET \`deleted\` = NULL WHERE \`list_id\` = ?`;
-        if (item_uuids.length > 0) {
-            query += ` AND \`uuid\` IN (${item_uuids.map(i => "?").join(", ")})`;
+        if (item_ids.length > 0) {
+            query += ` AND \`id\` IN (${item_ids.map(i => "?").join(", ")})`;
         }
         let updated = 0;
         try {
-            const res = await this._database!.run(query, [list_uuid, ...item_uuids]);
+            const res = await this._database!.run(query, [list_id, ...item_ids]);
             if (res.changes?.changes) {
                 updated = res.changes?.changes;
             }
@@ -560,9 +560,9 @@ export class MainSqliteBackendService {
         }
 
         if (updated > 0) {
-            for (let i = 0; i < item_uuids.length; i++) {
-                query = `UPDATE \`listitems\` SET \`order\` = ?, \`modified\` = ? WHERE \`list_id\` = ? AND \`uuid\` = ?`;
-                await this._database!.run(query, [start_order++, Date.now(), list_uuid, item_uuids[i]]);
+            for (let i = 0; i < item_ids.length; i++) {
+                query = `UPDATE \`listitems\` SET \`order\` = ?, \`modified\` = ? WHERE \`list_id\` = ? AND \`id\` = ?`;
+                await this._database!.run(query, [start_order++, Date.now(), list_id, item_ids[i]]);
             }
             await this.updateListModified({ list: args.list });
         }
@@ -615,17 +615,17 @@ export class MainSqliteBackendService {
             const ts = Date.now() - args.olderThan * 1000;
 
             //First, remove all old lists from trash...
-            let list_uuids: string[] = [];
+            let list_ids: number[] = [];
             try {
-                const get_lists = `SELECT \`uuid\` FROM \`lists\` WHERE \`deleted\` IS NOT NULL AND \`deleted\` < ?`;
+                const get_lists = `SELECT \`id\` FROM \`lists\` WHERE \`deleted\` IS NOT NULL AND \`deleted\` < ?`;
                 const lists = await this._database!.query(get_lists, [ts]);
-                list_uuids = lists.values?.map((v: any) => v.uuid) ?? [];
+                list_ids = lists.values?.map((v: any) => Number(v.id)) ?? [];
             } catch (e) {
-                Logger.Error(`MainSqliteBackendService.cleanUp() failed at getting list uuids to clean up trash:`, e);
+                Logger.Error(`MainSqliteBackendService.cleanUp() failed at getting list ids to clean up trash:`, e);
             }
 
-            if (list_uuids.length > 0) {
-                const del = await this.deleteLists({ lists: list_uuids.map(uuid => Number(uuid)), trash: true });
+            if (list_ids.length > 0) {
+                const del = await this.deleteLists({ lists: list_ids, trash: true });
                 if (del !== false) {
                     deleted.lists += del.lists;
                     deleted.items += del.items;
@@ -651,19 +651,19 @@ export class MainSqliteBackendService {
         }
 
         if (args.maxCount && args.maxCount > 0) {
-            let list_uuids: string[] = [];
+            let list_ids: number[] = [];
             let del_lists = 0;
             let del_items = 0;
             try {
-                const get_lists = `SELECT \`uuid\` FROM \`lists\` WHERE \`deleted\` IS NOT NULL ORDER BY \`deleted\` ASC LIMIT 50, -1`;
+                const get_lists = `SELECT \`id\` FROM \`lists\` WHERE \`deleted\` IS NOT NULL ORDER BY \`deleted\` ASC LIMIT 50, -1`;
                 const lists = await this._database!.query(get_lists);
-                list_uuids = lists.values?.map((v: any) => v.uuid) ?? [];
+                list_ids = lists.values?.map((v: any) => Number(v.id)) ?? [];
             } catch (e) {
-                Logger.Error(`MainSqliteBackendService.cleanUp() failed at getting list uuids to clean up trash:`, e);
+                Logger.Error(`MainSqliteBackendService.cleanUp() failed at getting list ids to clean up trash:`, e);
             }
 
-            if (list_uuids.length > 0) {
-                const del = await this.deleteLists({ lists: list_uuids.map(uuid => Number(uuid)), trash: true });
+            if (list_ids.length > 0) {
+                const del = await this.deleteLists({ lists: list_ids, trash: true });
                 if (del !== false) {
                     del_lists = del.lists;
                     del_items += del.items;
@@ -673,10 +673,10 @@ export class MainSqliteBackendService {
             }
 
             const query = `DELETE FROM \`listitems\`
-                WHERE \`uuid\` IN (
-                    SELECT \`uuid\`
+                WHERE \`id\` IN (
+                    SELECT \`id\`
                     FROM (
-                        SELECT \`uuid\`, ROW_NUMBER() OVER (PARTITION BY \`list_id\` ORDER BY \`deleted\` DESC) AS \`row_num\` FROM \`listitems\` WHERE \`deleted\` IS NOT NULL
+                        SELECT \`id\`, ROW_NUMBER() OVER (PARTITION BY \`list_id\` ORDER BY \`deleted\` DESC) AS \`row_num\` FROM \`listitems\` WHERE \`deleted\` IS NOT NULL
                     )
                     WHERE \`row_num\` > ?
                 );`;
@@ -696,7 +696,7 @@ export class MainSqliteBackendService {
             }
         }
 
-        const query = "DELETE FROM `listitems` WHERE `list_id` NOT IN (SELECT uuid FROM `lists`)";
+        const query = "DELETE FROM `listitems` WHERE `list_id` NOT IN (SELECT id FROM `lists`)";
         try {
             const del = await this._database!.run(query);
             if (del.changes?.changes) {
@@ -737,7 +737,7 @@ export class MainSqliteBackendService {
 
     /**
      * gets the value of the next 'order' property for a listitem in a list
-     * @param args.list uuid or list object
+     * @param args.list id or list object
      * @returns order property
      */
     public async getNextListitemOrder(args: { list: number | List }): Promise<number> {
@@ -745,10 +745,10 @@ export class MainSqliteBackendService {
             return 0;
         }
 
-        const uuid = args.list instanceof List ? args.list.Id : args.list;
+        const list_id = args.list instanceof List ? args.list.Id : args.list;
         const query = `SELECT \`order\` FROM \`listitems\` WHERE \`list_id\`=? AND \`deleted\` IS NULL ORDER BY \`order\` DESC LIMIT 1`;
         try {
-            const ret = await this._database!.query(query, [uuid]);
+            const ret = await this._database!.query(query, [list_id]);
             if (ret.values?.[0]?.order) {
                 return ret.values[0].order + 1;
             }
@@ -766,9 +766,9 @@ export class MainSqliteBackendService {
         if (!(await this.CheckConnection())) {
             return;
         }
-        const uuid = args.list instanceof List ? args.list.Id : args.list;
-        const query = `UPDATE \`lists\` SET \`modified\` = ? WHERE \`uuid\` = ?`;
-        await this._database!.run(query, [Date.now(), uuid]);
+        const list_id = args.list instanceof List ? args.list.Id : args.list;
+        const query = `UPDATE \`lists\` SET \`modified\` = ? WHERE \`id\` = ?`;
+        await this._database!.run(query, [Date.now(), list_id]);
     }
 
     private async CheckConnection(): Promise<boolean> {

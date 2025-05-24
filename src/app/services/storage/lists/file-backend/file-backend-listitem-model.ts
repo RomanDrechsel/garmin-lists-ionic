@@ -1,4 +1,4 @@
-export declare type FileBackendListitemModel = {
+export type FileBackendListitemModel = {
     uuid: number | string;
     item: string;
     note?: string;

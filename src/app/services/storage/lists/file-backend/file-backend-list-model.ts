@@ -1,6 +1,6 @@
 import type { FileBackendListitemModel } from "./file-backend-listitem-model";
 
-export declare type FileBackendListModel = {
+export type FileBackendListModel = {
     uuid: string | number;
     name: string;
     created: number;
@@ -12,7 +12,7 @@ export declare type FileBackendListModel = {
     items?: FileBackendListitemModel[];
 };
 
-export declare type FileBackendListReset = {
+export type FileBackendListReset = {
     active: boolean;
     interval: "daily" | "weekly" | "monthly";
     hour: number;

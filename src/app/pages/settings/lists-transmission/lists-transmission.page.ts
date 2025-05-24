@@ -76,9 +76,9 @@ export class ListsTransmissionPage extends PageBase {
 
         const synclist = this.Route.snapshot.queryParamMap.get("syncList");
         if (synclist !== null) {
-            const uuid = Number(synclist);
-            if (!Number.isNaN(uuid)) {
-                this._listToSync = uuid;
+            const id = Number(synclist);
+            if (!Number.isNaN(id)) {
+                this._listToSync = id;
             }
         }
 

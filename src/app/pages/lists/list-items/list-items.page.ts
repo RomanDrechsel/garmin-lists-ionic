@@ -70,9 +70,9 @@ export class ListItemsPage extends AnimatedListPageBase {
         if (!this._list || this._list.isPeek) {
             (async () => {
                 // no wait
-                const uuid = Number(this.Route.snapshot.paramMap.get("uuid"));
-                if (uuid && Number(uuid) != Number.NaN) {
-                    this._list = await this.ListsService.GetList(uuid);
+                const id = Number(this.Route.snapshot.paramMap.get("id"));
+                if (id && Number(id) != Number.NaN) {
+                    this._list = await this.ListsService.GetList(id);
                     this.appComponent.setAppPages(this.ModifyMainMenu());
                     if (this._list) {
                         this._itemsInitialized = true;
@@ -291,8 +291,8 @@ export class ListItemsPage extends AnimatedListPageBase {
         let pin_items = false;
         let hide_items = false;
         for (let i = 0; i < this._selectedItems.length; i++) {
-            const item_uuid = this._selectedItems[i];
-            const item = this._list!.Items.find(i => i.Id == item_uuid);
+            const item_id = this._selectedItems[i];
+            const item = this._list!.Items.find(i => i.Id == item_id);
             if (item) {
                 if (!item.Locked) {
                     pin_items = true;
