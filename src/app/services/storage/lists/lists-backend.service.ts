@@ -127,7 +127,6 @@ export class ListsBackendService {
         const uri = StringUtils.concat([path, filename], "/");
         try {
             await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(trash), encoding: Encoding.UTF8, recursive: true });
-            await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(trash), encoding: Encoding.UTF8, recursive: true });
             return true;
         } catch (error) {
             Logger.Error(`Could not store file ${uri} in ${backend ?? ""} backend`, error);
