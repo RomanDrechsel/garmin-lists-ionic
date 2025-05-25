@@ -126,7 +126,8 @@
         "watch_outdated_dontremind": "non notificarmi più per questa versione",
         "openapp_btn": "Apri app",
         "openapp_nodevice": "Nessun dispositivo attivo trovato!",
-        "openapp_success": "App aperta sull'orologio."
+        "openapp_success": "App aperta sull'orologio.",
+        "init_failed": "Il supporto Garmin non può essere attivato."
     },
     "comp-listeditor": {
         "title_new": "Crea una nuova lista",

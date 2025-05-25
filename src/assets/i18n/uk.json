@@ -126,7 +126,8 @@
         "watch_outdated_dontremind": "Не повідомляти про цю версію",
         "openapp_btn": "Відкрити додаток",
         "openapp_nodevice": "Не знайдено активного пристрою!",
-        "openapp_success": "Додаток відкрито на годиннику."
+        "openapp_success": "Додаток відкрито на годиннику.",
+        "init_failed": "Не вдалося активувати підтримку Garmin."
     },
     "comp-listeditor": {
         "title_new": "Створіть новий список",

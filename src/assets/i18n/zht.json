@@ -126,7 +126,8 @@
         "watch_outdated_dontremind": "不再提醒此版本",
         "openapp_btn": "打開應用",
         "openapp_nodevice": "未找到活動設備！",
-        "openapp_success": "應用已在手錶上打開。"
+        "openapp_success": "應用已在手錶上打開。",
+        "init_failed": "無法啟用Garmin支援。"
     },
     "comp-listeditor": {
         "title_new": "新增清單",

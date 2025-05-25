@@ -126,7 +126,8 @@
         "watch_outdated_dontremind": "Do not notify again for this version",
         "openapp_btn": "Open app",
         "openapp_nodevice": "No active device found!",
-        "openapp_success": "App opened on the watch."
+        "openapp_success": "App opened on the watch.",
+        "init_failed": "Garmin support could not be enabled!"
     },
     "comp-listeditor": {
         "title_new": "Create new list",

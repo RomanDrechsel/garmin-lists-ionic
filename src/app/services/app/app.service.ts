@@ -103,7 +103,7 @@ export class AppService {
 
         //no await ...
         (async () => {
-            if ((await this.Preferences.Get(EPrefProperty.FirstStart, true)) == false && (await this.Preferences.Get<boolean>(EPrefProperty.GarminConnectIQ, true))) {
+            if ((await this.Preferences.Get(EPrefProperty.FirstStart, true)) == false && (await this.Preferences.Get<boolean>(EPrefProperty.GarminConnectIQ, true)) !== false) {
                 const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, true) : false;
                 const garmin_debugapp = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugApp, false) : false;
                 await this.ConnectIQ.Initialize({ simulator: garmin_simulator, debug_app: garmin_debugapp });
@@ -232,7 +232,7 @@ export class AppService {
         return meta;
     }
 
-    private async handleNightmode(isNightMode: boolean | undefined) {
+    private handleNightmode(isNightMode: boolean | undefined) {
         this.Logger.Debug(`NightMode set to '${isNightMode}'`);
         if (isNightMode === true) {
             EdgeToEdge.setBackgroundColor({ color: "#002794" });

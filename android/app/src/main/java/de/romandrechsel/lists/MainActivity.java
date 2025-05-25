@@ -30,6 +30,7 @@ public class MainActivity extends BridgeActivity
         super.onStart();
         EdgeToEdge.enable(this);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         WebView webView = getBridge().getWebView();
         if (webView != null)
         {

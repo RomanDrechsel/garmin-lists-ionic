@@ -654,8 +654,19 @@ export class ListsService {
                 for (let i = 0; i < list.length; ++i) {
                     if (device && device.State == "Ready") {
                         const l = list[i];
+                        let peek = false;
+                        if (l.isPeek) {
+                            peek = true;
+                            const copy = await this.GetList(l.Uuid);
+                            if (copy) {
+                                l.copyDetails(copy);
+                            }
+                        }
                         const payload = l.toDeviceObject();
                         const resp = await this.ConnectIQ.SendToDevice({ device: device, messageType: ConnectIQMessageType.List, data: payload });
+                        if (peek) {
+                            l.PurgeDetails();
+                        }
 
                         if (resp !== false) {
                             Logger.Debug(`Transfered list ${l.toLog()} to device ${device.toLog()}`);
@@ -809,10 +820,15 @@ export class ListsService {
 
         const device = await this.ConnectIQ.GetDefaultDevice({ only_ready: true, select_device_if_undefined: !only_if_definitive_device });
         if (device) {
+            let peek = false;
             if (list.isPeek) {
+                peek = true;
                 list.copyDetails(await this.GetList(list.Uuid));
             }
             var payload = list.toDeviceObject();
+            if (peek) {
+                list.PurgeDetails();
+            }
             if (!payload) {
                 Logger.Error(`Could not sync new list to watch, list serialization failed`);
                 return;
