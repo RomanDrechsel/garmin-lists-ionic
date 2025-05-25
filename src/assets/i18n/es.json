@@ -126,7 +126,8 @@
         "watch_outdated_dontremind": "No recordarme esta versión",
         "openapp_btn": "Abrir app",
         "openapp_nodevice": "¡No se encontró dispositivo activo!",
-        "openapp_success": "App abierta en el reloj."
+        "openapp_success": "App abierta en el reloj.",
+        "init_failed": "No se pudo activar el soporte de Garmin."
     },
     "comp-listeditor": {
         "title_new": "Crear nueva lista",

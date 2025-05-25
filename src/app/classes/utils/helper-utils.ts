@@ -22,6 +22,10 @@ export namespace HelperUtils {
         return result;
     };
 
+    export const RandomNegativNumber = (): number => {
+        return RandomNumber(Number.MIN_SAFE_INTEGER) * -1;
+    };
+
     function bytesToInteger(bytes: Uint8Array): number {
         return bytes.reduce((acc, byte, i) => acc + (byte << (8 * (bytes.length - i - 1))), 0);
     }

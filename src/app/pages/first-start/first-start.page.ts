@@ -53,7 +53,6 @@ export class FirstStartPage extends PageBase {
         } else {
             await this.ConnectIQ.Shutdown();
         }
-        this._segbtnFinish?.nativeElement?.click();
     }
 
     public async nextLanguage() {
@@ -62,6 +61,12 @@ export class FirstStartPage extends PageBase {
 
     public async nextGarmin() {
         if (this.GarminActive) {
+            if (!this.ConnectIQ.Initialized) {
+                //no await ...
+                if (!(await this.ConnectIQ.Initialize())) {
+                    return;
+                }
+            }
             this._segbtnGarminHint?.nativeElement?.click();
         } else {
             this._segbtnFinish?.nativeElement?.click();
@@ -74,6 +79,11 @@ export class FirstStartPage extends PageBase {
 
     public async Finish() {
         await this.Preferences.Set(EPrefProperty.FirstStart, false);
+        if (this.GarminActive && !this.ConnectIQ.Initialized) {
+            if (!(await this.ConnectIQ.Initialize())) {
+                return;
+            }
+        }
         this.NavController.navigateRoot("/lists", { animated: true, replaceUrl: true });
     }
 

@@ -57,39 +57,17 @@ export class TrashSettingsPage extends PageBase {
     }
 
     public async onUseTrashChanged(checked: boolean) {
-        if (checked == false) {
-            const count = await this.ListsService.GetTrashCount();
-            if (
-                count > 0 &&
-                (await this.Popups.Alert.YesNo({
-                    message: "page_settings_trash.confirm_cleartrash",
-                    button_yes: "page_settings_trash.confirm_cleartrash_ok",
-                    button_no: "page_settings_trash.confirm_cleartrash_cancel",
-                    translate: true,
-                }))
-            ) {
-                await this.ListsService.WipeTrash(true);
-            }
-        }
         this.UseTrash = checked;
+        if (checked == false) {
+            await this.ListsService.WipeTrash(true);
+        }
     }
 
     public async onUseTrashListitemsChanged(checked: boolean) {
-        if (checked == false) {
-            const count = await this.ListsService.GetItemsTrashCount();
-            if (
-                count > 0 &&
-                (await this.Popups.Alert.YesNo({
-                    message: "page_settings_trash.confirm_clearitemstrash",
-                    button_yes: "page_settings_trash.confirm_clearitemstrash_ok",
-                    button_no: "page_settings_trash.confirm_clearitemstrash_cancel",
-                    translate: true,
-                }))
-            ) {
-                await this.ListsService.WipeListitemTrashes();
-            }
-        }
         this.UseTrashListitems = checked;
+        if (checked == false) {
+            await this.ListsService.WipeListitemTrash();
+        }
     }
 
     public async onInStockChanged(instock: number) {

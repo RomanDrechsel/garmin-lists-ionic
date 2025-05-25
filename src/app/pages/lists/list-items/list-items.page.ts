@@ -69,10 +69,9 @@ export class ListItemsPage extends AnimatedListPageBase {
 
         (async () => {
             // no wait
-            const listid = this.Route.snapshot.paramMap.get("uuid");
-            if (listid) {
-                const uuid = Number(listid);
-                this._list = await this.ListsService.GetList(!Number.isNaN(uuid) ? uuid : listid);
+            const uuid = Number(this.Route.snapshot.paramMap.get("uuid"));
+            if (uuid && Number(uuid) != Number.NaN) {
+                this._list = await this.ListsService.GetList(uuid);
                 this.appComponent.setAppPages(this.ModifyMainMenu());
                 if (this._list) {
                     this._itemsInitialized = true;
@@ -179,12 +178,15 @@ export class ListItemsPage extends AnimatedListPageBase {
 
     public async HandleReorder(event: CustomEvent<ItemReorderEventDetail>) {
         if (!this._disableClick && this._initAnimationDone && this._list) {
-            await this.ListsService.ReorderListitems(this._list, event.detail.complete(this._list.Items) as Listitem[]);
+            this._list.ReorderItems(event.detail.complete(this._list.Items) as Listitem[]);
+            await this.ListsService.StoreList(this._list, false, true, true);
+
             this._disableClick = true;
             setTimeout(() => {
                 this._disableClick = false;
             }, 300);
         }
+        event.stopImmediatePropagation();
     }
 
     public async DeleteList(): Promise<boolean> {
@@ -320,7 +322,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                     this.editMenu?.leaveEditMode(true);
                     if (this.List) {
                         const pin = await this.PinItem(
-                            this.List.Items.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0),
+                            this.List.Items.filter(l => this._selectedItems.indexOf(l.Uuid!) >= 0),
                             pin_items,
                         );
                         if (pin === true) {
@@ -338,7 +340,7 @@ export class ListItemsPage extends AnimatedListPageBase {
                     this.editMenu?.leaveEditMode(true);
                     if (this.List) {
                         const hide = await this.HideItem(
-                            this.List.Items.filter(l => this._selectedItems.indexOf(l.Uuid) >= 0),
+                            this.List.Items.filter(l => this._selectedItems.indexOf(l.Uuid!) >= 0),
                             hide_items,
                         );
                         if (hide === true) {
