@@ -126,7 +126,8 @@
         "watch_outdated_dontremind": "इस संस्करण के लिए पुनः स्मरण न करें",
         "openapp_btn": "ऐप खोलें",
         "openapp_nodevice": "कोई सक्रिय डिवाइस नहीं मिला!",
-        "openapp_success": "घड़ी पर ऐप खुल गया।"
+        "openapp_success": "घड़ी पर ऐप खुल गया।",
+        "init_failed": "Garmin समर्थन सक्रिय नहीं किया जा सका।"
     },
     "comp-listeditor": {
         "title_new": "नई सूची बनाएं",

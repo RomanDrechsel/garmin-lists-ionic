@@ -79,7 +79,7 @@ export class ConnectIQService {
      * initialize service
      * @param obj use debug devices or live devices, and use garmin simulator or live phone
      */
-    public async Initialize(obj?: { simulator?: boolean; debug_app?: boolean }) {
+    public async Initialize(obj?: { simulator?: boolean; debug_app?: boolean }): Promise<boolean> {
         Logger.Debug(`Start initializing ConnectIQ service...`);
         const all_listeners = Array.from(this._watchListeners.values());
         for (let i = 0; i < all_listeners.length; i++) {
@@ -106,16 +106,20 @@ export class ConnectIQService {
                 } else {
                     this._alwaysTransmitToDevice = undefined;
                 }
+                Logger.Debug("ConnectIQ initialized");
             } else {
                 Logger.Error(`Could not initialize ConnectIQ service`, init);
+                this.Popup.Toast.Error("service-connectiq.init_failed", undefined, true);
             }
 
             this._initialized = init.success;
             this.onInitializedSubject.next(init.success);
-            Logger.Debug("ConnectIQ initialized");
+            return this._initialized;
         } else {
             Logger.Important(`Not on a native device, skipping initialization of ConnectIQ service`);
         }
+
+        return false;
     }
 
     public async Shutdown() {
