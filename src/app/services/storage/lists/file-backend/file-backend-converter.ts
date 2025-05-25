@@ -298,7 +298,6 @@ export class FileBackendConverter {
     private async deleteFile(file: string): Promise<void> {
         await Filesystem.deleteFile({ path: file });
         Logger.Debug(`Delete legacy file '${file}'`);
-        return;
     }
 
     /**

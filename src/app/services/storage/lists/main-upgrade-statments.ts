@@ -23,7 +23,7 @@ export const MainUpgradeStatements = (): capSQLiteUpgradeOptions => {
                     \`reset_day\` INTEGER,
                     \`reset_weekday\` INTEGER,
                     \`legacy_uuid\` TEXT
-                )`,
+                );`,
                     `CREATE TABLE IF NOT EXISTS \`listitems\` (
                     \`id\` INTEGER PRIMARY KEY AUTOINCREMENT,
                     \`list_id\` INTEGER NOT NULL,
@@ -36,12 +36,12 @@ export const MainUpgradeStatements = (): capSQLiteUpgradeOptions => {
                     \`modified\` REAL NOT NULL,
                     \`deleted\` REAL,
                     \`legacy_uuid\` TEXT
-                )`,
-                    `CREATE INDEX IF NOT EXISTS \`idx_lists_order\` ON \`lists\` (\`order\`)`,
-                    `CREATE INDEX IF NOT EXISTS \`idx_lists_deleted\` ON \`lists\` (\`deleted\`)`,
-                    `CREATE INDEX IF NOT EXISTS \`idx_listitems_order\` ON \`listitems\` (\`order\`)`,
-                    `CREATE INDEX IF NOT EXISTS \`idx_listitems_deleted\` ON \`listitems\` (\`deleted\`)`,
-                    `CREATE INDEX IF NOT EXISTS \`idx_listitems_list_id\` ON \`listitems\` (\`list_id\`)`,
+                );`,
+                    `CREATE INDEX IF NOT EXISTS \`idx_lists_order\` ON \`lists\` (\`order\`);`,
+                    `CREATE INDEX IF NOT EXISTS \`idx_lists_deleted\` ON \`lists\` (\`deleted\`);`,
+                    `CREATE INDEX IF NOT EXISTS \`idx_listitems_order\` ON \`listitems\` (\`order\`);`,
+                    `CREATE INDEX IF NOT EXISTS \`idx_listitems_deleted\` ON \`listitems\` (\`deleted\`);`,
+                    `CREATE INDEX IF NOT EXISTS \`idx_listitems_list_id\` ON \`listitems\` (\`list_id\`);`,
                 ],
             },
         ],

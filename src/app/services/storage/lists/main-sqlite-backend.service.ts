@@ -25,15 +25,13 @@ export class MainSqliteBackendService {
 
     public async Initialize(): Promise<boolean> {
         await this._sqliteService.addUpgradeStatement(MainUpgradeStatements());
-        try {
-            this._database = await this._sqliteService.openDatabase(MainSqliteBackendService.DatabaseNameMain, false, "no-encryption", this._databaseVersion, false);
-        } catch (e) {
-            this._database = undefined;
-            Logger.Error("Error opening main database", e);
+        this._database = await this._sqliteService.openDatabase(MainSqliteBackendService.DatabaseNameMain, false, "no-encryption", this._databaseVersion, false);
+        if (this._database) {
+            Logger.Debug(`Found ${await this.queryListsCount()} list(s) in backend`);
+            return true;
+        } else {
             return false;
         }
-        Logger.Debug(`Found ${await this.queryListsCount()} list(s) in backend`);
-        return true;
     }
 
     /**

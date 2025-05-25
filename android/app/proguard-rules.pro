@@ -21,16 +21,24 @@
 #-renamesourcefileattribute SourceFile
 
 
-
-# General ProGuard rules for SQLCipher
--keep class net.sqlcipher.** { *; }
--dontwarn net.sqlcipher.**
-
 # For the capacitor-community/sqlite plugin
 -keep class com.getcapacitor.community.database.sqlite.** { *; }
 -dontwarn com.getcapacitor.community.database.sqlite.**
+
 -keep class net.sqlcipher.** { *; }
 -keepclassmembers class net.sqlcipher.** { *; }
+-dontwarn net.sqlcipher.**
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+-keep class com.getcapacitor.plugin.** { *; }
+-keep class com.getcapacitor.** { *; }
 
 # General ProGuard rules for ConnectIQ
 -keep class com.garmin.android.connectiq.** { *; }
