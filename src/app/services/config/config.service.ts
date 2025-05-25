@@ -17,7 +17,7 @@ export class ConfigService {
     /**
      * build version of the garmin app
      */
-    public readonly GarminAppVersion = 17;
+    public readonly GarminAppVersion = 19;
 
     /**
      * app-id for the Garmin ConnectIQ store

@@ -25,10 +25,6 @@ export class AdmobService {
         return this._isInitialized;
     }
 
-    public get SaveZoneBottom(): number {
-        return parseInt(window.getComputedStyle(document.documentElement).getPropertyValue("--ion-safe-area-bottom").replace("px", "") ?? "0");
-    }
-
     public async Initialize() {
         this._isInitialized = false;
 
@@ -57,7 +53,8 @@ export class AdmobService {
         });
 
         AdMob.addListener(BannerAdPluginEvents.Closed, () => {
-            console.log("banner closed");
+            Logger.Debug(`Admob banner closed`);
+            this._bannerIsShown = false;
         });
 
         if (environment.publicRelease === true) {
@@ -201,6 +198,10 @@ export class AdmobService {
     private async saveAreaBottom(): Promise<number> {
         const result = await EdgeToEdge.getInsets();
         const density = await SysInfo.DisplayDensity();
+        if (density.density < 1) {
+            Logger.Error(`Could not get screen density: `, density);
+            return 0;
+        }
         return result.bottom / density.density;
     }
 }
