@@ -4,6 +4,7 @@ import { BehaviorSubject } from "rxjs";
 
 export enum EPrefProperty {
     "FirstStart" = "LISTS_FirstStart",
+    "LastVersion" = "LISTS_LastVersion",
     "GarminConnectIQ" = "LISTS_GarminConnectIQ",
     "AppLanguage" = "LISTS_AppLanguage",
     "LogMode" = "LISTS_LogMode",

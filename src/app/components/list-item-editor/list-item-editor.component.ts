@@ -93,19 +93,21 @@ export class ListItemEditorComponent implements OnInit {
         this._keyboardUpListerner = undefined;
         this._keyboardDownListener?.remove();
         this._keyboardDownListener = undefined;
+        Keyboard.hide();
+        this.Admob.OnKeyboardHide();
     }
 
     public async onSubmit(): Promise<boolean | undefined> {
         if (this.Params?.list == undefined) {
             this.cancel();
-            return;
+            return undefined;
         }
 
         let title = this.Form.get("item")?.value;
         if (title) {
             title = title.trim();
         } else {
-            return;
+            return undefined;
         }
         let note = this.Form.get("note")?.value;
         if (note) {

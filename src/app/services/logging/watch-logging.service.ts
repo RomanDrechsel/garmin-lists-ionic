@@ -27,7 +27,7 @@ export class WatchLoggingService {
 
         let devices: ConnectIQDevice[] = [];
         if (uuid) {
-            const device = await this.ConnectIQ.GetDevice(uuid);
+            const device = await this.ConnectIQ.GetDevice(Number(uuid));
             if (device) {
                 devices = [device];
             }

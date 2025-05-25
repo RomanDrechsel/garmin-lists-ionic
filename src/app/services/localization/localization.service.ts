@@ -92,6 +92,7 @@ export class LocalizationService {
         }
 
         this.ChangeLanguage(lang, true);
+        Logger.Debug("Locale initialized");
     }
 
     /**

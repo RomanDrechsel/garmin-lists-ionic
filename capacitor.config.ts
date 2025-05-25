@@ -11,7 +11,7 @@ const config: CapacitorConfig = {
         SplashScreen: {
             launchShowDuration: 500,
             launchAutoHide: false,
-            launchFadeOutDuration: 800,
+            launchFadeOutDuration: 600,
             backgroundColor: "#008DF5FF",
             androidSplashResourceName: "splash",
             androidScaleType: "CENTER_CROP",
@@ -22,7 +22,7 @@ const config: CapacitorConfig = {
             useDialog: true,
         },
         StatusBar: {
-            overlaysWebView: false,
+            overlaysWebView: true,
         },
         Keyboard: {
             resize: KeyboardResize.Body,
@@ -30,15 +30,7 @@ const config: CapacitorConfig = {
             resizeOnFullScreen: false,
         },
         EdgeToEdge: {
-            backgroundColor: "#73bbff",
-        },
-        CapacitorSQLite: {
-            androidIsEncryption: true,
-            androidBiometric: {
-                biometricAuth: false,
-                biometricTitle: "Biometric login for capacitor sqlite",
-                biometricSubTitle: "Log in using your biometric",
-            },
+            backgroundColor: "#0077ff",
         },
     },
 };
