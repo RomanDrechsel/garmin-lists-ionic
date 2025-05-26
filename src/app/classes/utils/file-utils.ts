@@ -45,14 +45,18 @@ export namespace FileUtils {
      * @param dir Capacitor-directory
      * @returns object with information
      */
-    export async function GetDirStat(path: string, dir: Directory | undefined = undefined): Promise<{ files: number; size: number; }> {
-        const files = await Filesystem.readdir({ path: path, directory: dir });
-        if (files) {
-            let size = 0;
-            files.files.forEach(file => {
-                size += file.size;
-            });
-            return { files: files.files.length, size: size };
+    export async function GetDirStat(path: string, dir: Directory | undefined = undefined): Promise<{ files: number; size: number }> {
+        try {
+            const files = await Filesystem.readdir({ path: path, directory: dir });
+            if (files) {
+                let size = 0;
+                files.files.forEach(file => {
+                    size += file.size;
+                });
+                return { files: files.files.length, size: size };
+            }
+        } catch (e) {
+            Logger.Error(`Could not read directory '${path}' in ${dir}: `, e);
         }
 
         return { files: -1, size: -1 };
@@ -94,7 +98,12 @@ export namespace FileUtils {
      * @returns number of files
      */
     export async function GetFilesCount(path: string, dir: Directory | undefined = undefined): Promise<number> {
-        return (await Filesystem.readdir({ path: path, directory: dir })).files.length;
+        try {
+            return (await Filesystem.readdir({ path: path, directory: dir })).files.length;
+        } catch (e) {
+            Logger.Error(`Could not read files count of '${path}' in ${dir}:`, e);
+            return 0;
+        }
     }
 
     /**
@@ -116,7 +125,7 @@ export namespace FileUtils {
      * @param args configuration arguments
      * @returns array of File objects
      */
-    export async function GetFiles(args: { path: string; dir?: Directory; pattern?: string | RegExp; with_data?: boolean; }): Promise<File[]> {
+    export async function GetFiles(args: { path: string; dir?: Directory; pattern?: string | RegExp; with_data?: boolean }): Promise<File[]> {
         try {
             const ret: File[] = [];
             const files = await Filesystem.readdir({ path: args.path, directory: args.dir });
@@ -150,7 +159,12 @@ export namespace FileUtils {
      * @returns number of deleted files
      */
     export async function EmptyDir(path: string, dir?: Directory, keep_newer_than?: number): Promise<number> {
-        let files = (await Filesystem.readdir({ path: path, directory: dir })).files;
+        let files;
+        try {
+            files = (await Filesystem.readdir({ path: path, directory: dir })).files;
+        } catch (e) {
+            Logger.Error(`Could not empty directory '${path}' in ${dir}`, e);
+        }
         let count = 0;
         if (files) {
             for (let i = 0; i < files.length; i++) {

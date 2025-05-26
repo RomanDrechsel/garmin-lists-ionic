@@ -283,13 +283,15 @@ export class LoggingService {
             files = files.filter(f => (f.ctime ?? f.mtime) >= from && (f.ctime ?? f.mtime) <= to);
             files.sort((a, b) => b.mtime - a.mtime);
             return files;
-        } catch (e) {
+        } catch {}
+
+        try {
             let logfile = await Filesystem.stat({ path: this.LogFile, directory: LoggingService.LogDirectory });
             if (logfile) {
                 return [logfile as FileInfo];
             }
-            return [];
-        }
+        } catch {}
+        return [];
     }
 
     /**
