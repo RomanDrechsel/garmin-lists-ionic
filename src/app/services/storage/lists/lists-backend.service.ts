@@ -127,6 +127,7 @@ export class ListsBackendService {
         const uri = StringUtils.concat([path, filename], "/");
         try {
             await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(trash), encoding: Encoding.UTF8, recursive: true });
+            await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(trash), encoding: Encoding.UTF8, recursive: true });
             return true;
         } catch (error) {
             Logger.Error(`Could not store file ${uri} in ${backend ?? ""} backend`, error);
@@ -309,12 +310,7 @@ export class ListsBackendService {
      */
     private async getAllFiles(backend?: string, with_data: boolean = false): Promise<FileUtils.File[]> {
         const fullpath = backend ? StringUtils.concat([this.StorageRoot, backend], "/") : this.StorageRoot;
-        try {
-            return await FileUtils.GetFiles({ path: fullpath, dir: this.StorageDirectory, with_data: with_data });
-        } catch (error) {
-            Logger.Error(`Could not read list index for backend ${this.StorageDirectory}/${fullpath}`);
-            return [];
-        }
+        return await FileUtils.GetFiles({ path: fullpath, dir: this.StorageDirectory, with_data: with_data });
     }
 
     /**

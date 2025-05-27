@@ -2,6 +2,7 @@ import { formatDate } from "@angular/common";
 import { Injectable, isDevMode } from "@angular/core";
 import { Directory, Encoding, FileInfo, Filesystem } from "@capacitor/filesystem";
 import { FileUtils } from "src/app/classes/utils/file-utils";
+import SysInfo from "src/app/plugins/sysinfo/sys-info";
 import { StringUtils } from "../../classes/utils/string-utils";
 import { EPrefProperty, PreferencesService } from "../storage/preferences.service";
 
@@ -77,14 +78,38 @@ export class LoggingService {
     public Error(message: string, ...objs: any[]) {
         this.WriteInLogfile(message, ELogType.Error, ...objs);
         console.error(message, ...objs);
+        this.Logcat(message, ELogType.Error, ...objs);
+    }
+
+    /**
+     * log an error message without logcat entry
+     * @param message message text
+     * @param objs additional objects
+     */
+    public ErrorNoLogcat(message: string, ...objs: any[]) {
+        this.WriteInLogfile(message, ELogType.Error, ...objs);
+        console.error(message, ...objs);
     }
 
     /**
      * log a important message
      * @param message message text
-     * @param obj additional objects
+     * @param objs additional objects
      */
     public Important(message: string, ...objs: any[]) {
+        if (this.LogLevel >= ELogType.Important) {
+            this.WriteInLogfile(message, ELogType.Important, ...objs);
+            console.warn(message, ...objs);
+            this.Logcat(message, ELogType.Important, ...objs);
+        }
+    }
+
+    /**
+     * log an important message without logcat entry
+     * @param message message text
+     * @param objs additional objects
+     */
+    public ImportantNoLogcat(message: string, ...objs: any[]) {
         if (this.LogLevel >= ELogType.Important) {
             this.WriteInLogfile(message, ELogType.Important, ...objs);
             console.warn(message, ...objs);
@@ -100,14 +125,41 @@ export class LoggingService {
         if (this.LogLevel >= ELogType.Notice) {
             this.WriteInLogfile(message, ELogType.Notice, ...objs);
             console.info(message, ...objs);
+            this.Logcat(message, ELogType.Notice, ...objs);
         }
     }
+
+    /**
+     * log a notice message without logcat entry
+     * @param message message text
+     * @param objs additional objects
+     */
+    public NoticeNoLogcat(message: string, ...objs: any[]) {
+        if (this.LogLevel >= ELogType.Notice) {
+            this.WriteInLogfile(message, ELogType.Notice, ...objs);
+            console.info(message, ...objs);
+        }
+    }
+
     /**
      * log a debug message
      * @param message message text
      * @param obj additional objects
      */
     public Debug(message: string, ...objs: any[]) {
+        if (this.LogLevel >= ELogType.Debug) {
+            this.WriteInLogfile(message, ELogType.Debug, ...objs);
+            console.log(message, ...objs);
+            this.Logcat(message, ELogType.Debug, ...objs);
+        }
+    }
+
+    /**
+     * log a debug message without logcat entry
+     * @param message message text
+     * @param objs additional objects
+     */
+    public DebugNoLogcat(message: string, ...objs: any[]) {
         if (this.LogLevel >= ELogType.Debug) {
             this.WriteInLogfile(message, ELogType.Debug, ...objs);
             console.log(message, ...objs);
@@ -125,9 +177,45 @@ export class LoggingService {
         }
     }
 
-    public WithoutTag(message: string, ...objs: any[]) {
-        this.WriteInLogfile(message, undefined, ...objs);
-        console.log(message, ...objs);
+    /**
+     * writes a logcat entry to android
+     * @param message message text
+     * @param type logcat type
+     * @param objs additional objects
+     */
+    public async Logcat(message: string, type: ELogType, ...objs: any[]) {
+        if (objs.length > 0) {
+            objs.forEach(obj => {
+                if (obj) {
+                    if (obj instanceof Error) {
+                        message += "\nError: " + obj.name;
+                        message += "\nMessage: " + obj.message;
+                        if (obj.stack) {
+                            message += "\nStacktrace:\n" + obj.stack;
+                        }
+                    } else {
+                        message += "\n" + StringUtils.toString(obj);
+                    }
+                }
+            });
+        }
+        let logcat_level: "d" | "n" | "i" | "e" = "d";
+        switch (type) {
+            case ELogType.Debug:
+                logcat_level = "d";
+                break;
+            case ELogType.Notice:
+                logcat_level = "n";
+                break;
+            case ELogType.Important:
+                logcat_level = "i";
+                break;
+            case ELogType.Error:
+                logcat_level = "e";
+                break;
+        }
+
+        await SysInfo.Logcat({ level: logcat_level, message: message });
     }
 
     /**

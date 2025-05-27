@@ -66,7 +66,7 @@ export class TrashSettingsPage extends PageBase {
     public async onUseTrashListitemsChanged(checked: boolean) {
         this.UseTrashListitems = checked;
         if (checked == false) {
-            await this.ListsService.WipeListitemTrash();
+            await this.ListsService.WipeListitemTrashes();
         }
     }
 
