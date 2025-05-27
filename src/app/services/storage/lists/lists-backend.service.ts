@@ -310,12 +310,7 @@ export class ListsBackendService {
      */
     private async getAllFiles(backend?: string, with_data: boolean = false): Promise<FileUtils.File[]> {
         const fullpath = backend ? StringUtils.concat([this.StorageRoot, backend], "/") : this.StorageRoot;
-        try {
-            return await FileUtils.GetFiles({ path: fullpath, dir: this.StorageDirectory, with_data: with_data });
-        } catch (error) {
-            Logger.Error(`Could not read list index for backend ${this.StorageDirectory}/${fullpath}`);
-            return [];
-        }
+        return await FileUtils.GetFiles({ path: fullpath, dir: this.StorageDirectory, with_data: with_data });
     }
 
     /**

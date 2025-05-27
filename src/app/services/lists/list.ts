@@ -1,61 +1,43 @@
-import { HelperUtils } from "src/app/classes/utils/helper-utils";
-import { DatabaseType } from "./../storage/sqlite/sqlite-backend.service";
+import { Logger } from "../logging/logger";
 import { Listitem, ListitemModel } from "./listitem";
 
 export class List {
-    private _uuid: number;
+    private _uuid: string | number;
     private _name: string;
     private _created: number;
-    private _modified: number;
+    private _updated: number;
     private _order: number;
     private _reset?: ListReset;
     private _itemsCount?: number;
     private _items?: Listitem[];
-    private _trashItemsCount?: number;
-    private _itemsInTrash?: Listitem[];
     private _deleted?: number;
     private _sync: boolean = false;
-    private _legacyUuid?: string;
     private _dirty: boolean = false;
 
     private static readonly ListRevision = 1;
 
-    public constructor(obj: ListModel, itemsobjs?: ListitemModel[], itemcount?: number) {
-        this._uuid = obj.uuid ?? HelperUtils.RandomNegativNumber();
+    public constructor(obj: ListModel, itemcount?: number) {
+        this._uuid = obj.uuid;
         this._name = obj.name;
         this._order = obj.order;
         this._created = obj.created;
-        this._modified = obj.modified;
-        this._deleted = obj.deleted;
-        this._sync = obj.sync === 1;
-        if (obj.reset !== undefined) {
-            let interval: "daily" | "weekly" | "monthly";
-            if (obj.reset_interval === "daily" || obj.reset_interval === "weekly" || obj.reset_interval === "monthly") {
-                interval = obj.reset_interval as "daily" | "weekly" | "monthly";
-            } else {
-                interval = "daily";
-            }
-
-            this._reset = {
-                active: obj.reset === 1,
-                interval: interval,
-                hour: obj.reset_hour ?? 0,
-                minute: obj.reset_minute ?? 0,
-                day: obj.reset_day ?? 1,
-                weekday: obj.reset_weekday ?? 1,
-            };
-        }
-        this._legacyUuid = obj.legacy_uuid;
-
+        this._updated = obj.updated ?? Date.now();
         this._items = undefined;
-        if (itemsobjs) {
-            this._items = [];
-            itemsobjs.forEach((el: ListitemModel) => {
-                this._items!.push(new Listitem(el));
+        if (obj.items) {
+            let items: Listitem[] = [];
+            obj.items.forEach((el: ListitemModel) => {
+                const i = Listitem.fromBackend(el);
+                if (i) {
+                    items.push(i);
+                }
             });
+            this._items = items;
         }
         this._itemsCount = this._items?.length ?? itemcount;
-        this.cleanItemsOrder();
+        this._reset = obj.reset;
+        this._deleted = obj.deleted;
+        this._sync = obj.sync ?? false;
+        this._dirty = true;
     }
 
     /**
@@ -63,7 +45,7 @@ export class List {
      * in newer versions, the uuid is a number
      * in older versions it was a string
      */
-    public get Uuid(): number {
+    public get Uuid(): string | number {
         return this._uuid;
     }
 
@@ -71,7 +53,7 @@ export class List {
      * set the unique list id
      * @param uuid unique list id
      */
-    public set Uuid(uuid: number) {
+    public set Uuid(uuid: string | number) {
         this._uuid = uuid;
     }
 
@@ -80,7 +62,7 @@ export class List {
         if (this._name != name) {
             this._name = name;
             this._dirty = true;
-            this._modified = Date.now();
+            this._updated = Date.now();
         }
     }
 
@@ -95,16 +77,16 @@ export class List {
     }
 
     /** set updated timestamp */
-    public set Modified(modified: number) {
-        if (this._modified != modified) {
-            this._modified = modified;
+    public set Updated(updated: number) {
+        if (this._updated != updated) {
+            this._updated = updated;
             this._dirty = true;
         }
     }
 
     /** get updated timestamp */
-    public get Modified(): number {
-        return this._modified;
+    public get Updated(): number | undefined {
+        return this._updated;
     }
 
     /** set order number */
@@ -136,24 +118,6 @@ export class List {
             this._itemsCount = this._items.length;
         }
         this._dirty = true;
-    }
-
-    /** how may items are in trash for this list */
-    public get ItemsInTrashCount(): number {
-        return this._trashItemsCount ?? 0;
-    }
-
-    /** return the listitems, that are in trash for this list */
-    public get ItemsInTrash(): Listitem[] | undefined {
-        return this._itemsInTrash;
-    }
-
-    /** set the items in trash for this list */
-    public set ItemsInTrash(items: Listitem[] | undefined) {
-        this._itemsInTrash = items;
-        if (this._itemsInTrash) {
-            this._trashItemsCount = this._itemsInTrash.length;
-        }
     }
 
     /** get the list of all items */
@@ -217,14 +181,15 @@ export class List {
             return true;
         }
 
-        return this.Items.some(i => i.Dirty);
-    }
+        if (this._items) {
+            for (let i = 0; i < this._items.length; i++) {
+                if (this._items[i].Dirty) {
+                    return true;
+                }
+            }
+        }
 
-    /**
-     * is the list already stored in backend?
-     */
-    public get isVirtual(): boolean {
-        return this._uuid < 0;
+        return false;
     }
 
     /**
@@ -234,10 +199,8 @@ export class List {
      */
     public AddItem(item: Listitem | ListitemModel): Listitem {
         if (!(item instanceof Listitem)) {
-            item = new Listitem(item);
+            item = Listitem.Create(item);
         }
-
-        this.cleanItemsOrder();
 
         item.Order = this.Items.length;
         if (!this._items) {
@@ -246,7 +209,7 @@ export class List {
             this._items.push(item);
         }
         this._itemsCount = this._items.length;
-        this.Modified = Date.now();
+        this.Updated = Date.now();
         this._dirty = true;
         return item;
     }
@@ -268,9 +231,12 @@ export class List {
         });
         this._itemsCount = this._items.length;
 
-        this.cleanItemsOrder();
+        let order = 0;
+        this._items.forEach(i => {
+            i.Order = order++;
+        });
         this._dirty = true;
-        this.Modified = Date.now();
+        this.Updated = Date.now();
     }
 
     /**
@@ -280,32 +246,7 @@ export class List {
         this._items = undefined;
         this._itemsCount = 0;
         this._dirty = true;
-        this.Modified = Date.now();
-    }
-
-    /**
-     * reorder the items
-     * @param items items to order
-     */
-    public ReorderItems(items?: Listitem[]) {
-        if (items) {
-            this._items = items;
-            for (let i = 0; i < items.length; i++) {
-                items[i].Order = i;
-            }
-        }
-    }
-
-    /**
-     * set the order property of all items in a row
-     */
-    public cleanItemsOrder() {
-        if (this._items) {
-            this._items = this._items.sort((a, b) => a.Order - b.Order);
-            for (let i = 0; i < this._items.length; i++) {
-                this._items[i].Order = i;
-            }
-        }
+        this.Updated = Date.now();
     }
 
     /**
@@ -328,34 +269,11 @@ export class List {
     }
 
     /**
-     * copys all information from the model to this list
-     * @param model model to copy
-     * @returns true if data was updated
-     */
-    public copy(other: List) {
-        this._uuid = other._uuid;
-        this._name = other._name;
-        this._order = other._order;
-        this._created = other._created;
-        this._modified = other._modified;
-        this._deleted = other._deleted;
-        this._sync = other._sync;
-        this._reset = other._reset;
-        this._legacyUuid = other._legacyUuid;
-        if (!this._items && other._items) {
-            this._items = other._items;
-        }
-        this._itemsCount = other._itemsCount;
-        this._trashItemsCount = other._trashItemsCount;
-        this._dirty = other._dirty;
-    }
-
-    /**
      * create an object to send to a device
      * @returns device object representation
      */
     public toDeviceObject(): string[] {
-        const ret: string[] = ["uuid=" + this._uuid, "t=" + this._name, "d=" + this._modified, "o=" + this._order, "rev=" + List.ListRevision];
+        const ret: string[] = ["uuid=" + this._uuid, "t=" + this._name, "d=" + this._updated, "o=" + this._order, "rev=" + List.ListRevision];
 
         if (this._items) {
             for (let i = 0; i < this._items.length; i++) {
@@ -379,6 +297,38 @@ export class List {
     }
 
     /**
+     * create an object to store in backend, returns undefined if to changes on the list
+     * @param force force to create an object, even if nothing changed
+     * @returns object for backend storage, undefined if no changes
+     */
+    public toBackend(force: boolean = false): ListModel | undefined {
+        if (!this.Dirty && !force) {
+            return undefined;
+        } else {
+            const ret: ListModel = {
+                uuid: this._uuid,
+                name: this._name,
+                items: [],
+                created: this._created,
+                updated: this._updated ?? undefined,
+                deleted: this._deleted ?? undefined,
+                order: this._order,
+                reset: this._reset,
+                sync: this._sync,
+            };
+
+            if (this._items && this._items.length > 0) {
+                this._items.forEach(item => {
+                    ret.items!.push(item.toBackend());
+                });
+            }
+
+            this.Clean();
+            return ret;
+        }
+    }
+
+    /**
      * purges all unnecessary data from the list to save memory
      */
     public PurgeDetails() {
@@ -389,40 +339,12 @@ export class List {
         this._reset = undefined;
     }
 
-    public toBackend(): Map<string, DatabaseType> {
-        return new Map<string, DatabaseType>([
-            ["uuid", this._uuid],
-            ["name", this._name],
-            ["order", this._order],
-            ["created", this._created],
-            ["modified", this._modified],
-            ["deleted", this._deleted ?? null],
-            ["sync", this._sync ? 1 : 0],
-            ["reset", this._reset?.active ? 1 : 0],
-            ["reset_interval", this._reset?.interval ?? null],
-            ["reset_hour", this._reset?.hour ?? null],
-            ["reset_minute", this._reset?.minute ?? null],
-            ["reset_day", this._reset?.day ?? null],
-            ["reset_weekday", this._reset?.weekday ?? null],
-            ["legacy_uuid", this._legacyUuid ?? null],
-        ]);
-    }
-
     /**
      * string to identify list in logfiles
      * @returns
      */
     public toLog(): string {
         return `uuid:${this.Uuid}`;
-    }
-
-    /**
-     * string to identify list in logsfiles
-     * @param model  list model
-     * @returns
-     */
-    public static toLog(model: ListModel): string {
-        return `uuid:${model.uuid}`;
     }
 
     /**
@@ -436,23 +358,58 @@ export class List {
         }
         return this.Uuid === other.Uuid;
     }
+
+    /**
+     * creates a list object from backend
+     * @param obj backend object
+     * @returns List object
+     */
+    public static fromBackend(obj: any, only_peek: boolean = false): List | undefined {
+        const props = ["uuid", "name", "created", "order"];
+        for (let i = 0; i < props.length; i++) {
+            if (!obj.hasOwnProperty(props[i])) {
+                Logger.Error(`List could not been read from backend, property ${props[i]} not found}`);
+                return undefined;
+            }
+        }
+
+        const itemscount = obj.items?.length ?? 0;
+        if (only_peek) {
+            //remove items from memory...
+            obj.items = undefined;
+            obj.reset = undefined;
+        }
+
+        const list = new List(
+            {
+                uuid: obj.uuid,
+                name: obj.name,
+                created: obj.created,
+                order: obj.order,
+                updated: obj.updated,
+                deleted: obj.deleted,
+                items: obj.items,
+                reset: obj.reset,
+                sync: obj.sync,
+            },
+            itemscount,
+        );
+        list.Clean();
+
+        return list;
+    }
 }
 
 export declare type ListModel = {
-    uuid?: number;
+    uuid: string | number;
     name: string;
-    order: number;
     created: number;
-    modified: number;
+    order: number;
+    updated?: number;
     deleted?: number;
-    sync?: number;
-    reset?: number;
-    reset_interval?: string;
-    reset_hour?: number;
-    reset_minute?: number;
-    reset_day?: number;
-    reset_weekday?: number;
-    legacy_uuid?: string;
+    reset?: ListReset;
+    sync?: boolean;
+    items?: ListitemModel[];
 };
 
 export declare type ListReset = {

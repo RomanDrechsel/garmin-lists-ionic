@@ -64,7 +64,9 @@ export class PreferencesService {
     public async Get<T>(prop: EPrefProperty, default_value: T): Promise<T> {
         let pref = await Preferences.get({ key: prop });
         if (pref.value) {
-            return JSON.parse(pref.value);
+            try {
+                return JSON.parse(pref.value);
+            } catch {}
         }
 
         return default_value;
