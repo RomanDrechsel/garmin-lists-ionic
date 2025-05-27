@@ -74,6 +74,6 @@ export namespace ListitemTrashUtils {
 }
 
 export declare type ListitemTrashModel = {
-    uuid: number;
+    uuid: string | number;
     items: ListitemModel[];
 };

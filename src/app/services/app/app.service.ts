@@ -99,22 +99,34 @@ export class AppService {
 
         await Locale.Initialize(this.Locale);
 
-        await this.ListsService.Initialize();
+        try {
+            await this.ListsService.Initialize();
+        } catch (e) {
+            Logger.Error(`Could not initialize lists service: `, e);
+        }
 
         //no await ...
         (async () => {
-            if ((await this.Preferences.Get(EPrefProperty.FirstStart, true)) == false && (await this.Preferences.Get<boolean>(EPrefProperty.GarminConnectIQ, true)) !== false) {
-                const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, true) : false;
-                const garmin_debugapp = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugApp, false) : false;
-                await this.ConnectIQ.Initialize({ simulator: garmin_simulator, debug_app: garmin_debugapp });
-            } else {
-                this.Logger.Notice(`Starting without ConnectIQ support`);
+            try {
+                if ((await this.Preferences.Get(EPrefProperty.FirstStart, true)) == false && (await this.Preferences.Get<boolean>(EPrefProperty.GarminConnectIQ, true)) !== false) {
+                    const garmin_simulator = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugSimulator, true) : false;
+                    const garmin_debugapp = isDevMode() ? await this.Preferences.Get<boolean>(EPrefProperty.DebugApp, false) : false;
+                    await this.ConnectIQ.Initialize({ simulator: garmin_simulator, debug_app: garmin_debugapp });
+                } else {
+                    this.Logger.Notice(`Starting without ConnectIQ support`);
+                }
+            } catch (e) {
+                Logger.Error(`Could not initialize ConnectIQ service: `, e);
             }
         })();
 
         //no await...
         (async () => {
-            await this.Admob.Initialize();
+            try {
+                await this.Admob.Initialize();
+            } catch (e) {
+                Logger.Error(`Could not initialize Admob service: `, e);
+            }
         })();
 
         await SplashScreen.hide({ fadeOutDuration: 500 });

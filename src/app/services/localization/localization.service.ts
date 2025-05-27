@@ -123,7 +123,7 @@ export class LocalizationService {
             }
             await this.Preferences.Set(EPrefProperty.AppLanguage, this._currentLocale);
             Logger.Debug(`Changed language to ${this._currentCulture.name} (${this._currentLocale})`);
-            this.WarnForTranslation(!init);
+            this.WarnForTranslation(init);
         }
     }
 
@@ -140,9 +140,9 @@ export class LocalizationService {
     /**
      * display an alert, if an ai translation is used
      */
-    public async WarnForTranslation(force: boolean = true) {
+    public async WarnForTranslation(init: boolean = true) {
         if (["de", "en"].indexOf(this.CurrentLanguage.localeFile) < 0) {
-            if (force || (await this.Preferences.Get(EPrefProperty.FirstStart, true)) == true) {
+            if (!init) {
                 await AppService.Popups.Alert.Show({
                     message: this.getText("page_settings.language_hint", { email: this.Config.EMailAddress }),
                 });
