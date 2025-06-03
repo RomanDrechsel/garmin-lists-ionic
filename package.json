@@ -1,6 +1,6 @@
 {
   "name": "lists",
-  "version": "2025.05.2703",
+  "version": "2025.6.0300",
   "author": "Roman Drechsel",
   "homepage": "https://roman-drechsel.de",
   "scripts": {
@@ -52,11 +52,11 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "19.2.14",
-    "@angular-eslint/builder": "19.7.0",
-    "@angular-eslint/eslint-plugin": "19.7.0",
-    "@angular-eslint/eslint-plugin-template": "19.7.0",
-    "@angular-eslint/schematics": "19.7.0",
-    "@angular-eslint/template-parser": "19.7.0",
+    "@angular-eslint/builder": "19.7.1",
+    "@angular-eslint/eslint-plugin": "19.7.1",
+    "@angular-eslint/eslint-plugin-template": "19.7.1",
+    "@angular-eslint/schematics": "19.7.1",
+    "@angular-eslint/template-parser": "19.7.1",
     "@angular/cli": "19.2.14",
     "@angular/compiler-cli": "^19.2.14",
     "@angular/language-service": "^19.2.14",
