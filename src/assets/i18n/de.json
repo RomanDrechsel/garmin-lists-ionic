@@ -12,6 +12,7 @@
     "select": "Auswählen",
     "share": "Teilen",
     "next": "Weiter",
+    "back": "Zurück",
     "date": {
         "date_add": " Uhr",
         "today": "Heute",
@@ -302,7 +303,9 @@
         "trash": "Papierkorb",
         "trash_note": "Einstellungen zur Verwendung des Papierkorbs",
         "transmission": "Übertragungs-Einstellungen",
-        "transmission_note": "Einstellungen für das Übertragen von Listen auf deine Uhr"
+        "transmission_note": "Einstellungen für das Übertragen von Listen auf deine Uhr",
+        "export": "Exportieren",
+        "export_note": "Exportiere Listen und Einstellungen zu Listago"
     },
     "page_settings_logs": {
         "page_title": "Logging",
@@ -401,6 +404,21 @@
         "confirm_clearitemstrash": "Sollen die Papierkörbe geleert werden?<br /><br /><strong>Achtung:</strong> Die Aktion kann nichtmehr rückgängig gemacht werden!",
         "confirm_clearitemstrash_ok": "Papierkörbe leeren",
         "confirm_clearitemstrash_cancel": "Papierkörbe nicht leeren"
+    },
+    "page_settings_export": {
+        "page_title": "Exportieren",
+        "lists": "Möchtest du deine Listen exportieren?",
+        "lists_toggle": "Listen exportieren",
+        "trash": "Sollen auch die Listen und Listenpunkte im Papierkorb exportiert werden?",
+        "trash_toggle": "Papierkorb exportieren",
+        "settings": "Zusätzlich kannst du auch alle App-Einstellungen exportieren.",
+        "settings_toggle": "Einstellungen exportieren",
+        "export_to_zip": "In Zip-Datei exportieren",
+        "export_nothing": "Es wurde nichts zum Export ausgeählt",
+        "export_summary": "Folgende Inhalte werden exportiert:",
+        "export_summary_lists": "Listen",
+        "export_summary_trash": "Papierkorb",
+        "export_summary_settings": "Einstellungen"
     },
     "page_appinfos": {
         "page_title": "App Informationen",

@@ -120,6 +120,20 @@ ion-select {
 
 ion-toggle {
     --handle-background: var(--color-toggle-handle-background);
+
+    &::part(label) {
+        margin-inline-end: 0.5em;
+        margin-inline-start: 1em;
+        margin-block-start: 0;
+        text-wrap: wrap;
+    }
+
+    &.toggle-label-placement-start {
+        &::part(label) {
+            margin-inline-end: 1em;
+            margin-inline-start: 0.5em;
+        }
+    }
 }
 
 ion-modal,

@@ -51,6 +51,15 @@
             <ion-icon slot="end" src="./assets/icons/chevron_forward.svg"></ion-icon>
         </ion-item>
 
+        <!-- export -->
+        <ion-item [button]="true" routerDirection="forward" [routerLink]="['/settings/export']" lines="full">
+            <ion-label>
+                <div>{{'page_settings.export'|translate}}</div>
+                <ion-note>{{'page_settings.export_note'|translate}}</ion-note>
+            </ion-label>
+            <ion-icon slot="end" src="./assets/icons/chevron_forward.svg"></ion-icon>
+        </ion-item>
+
         <!-- logging -->
         <ion-item [button]="true" routerDirection="forward" [routerLink]="['/settings/logging']" lines="full">
             <ion-label>

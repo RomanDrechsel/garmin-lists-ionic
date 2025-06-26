@@ -4,8 +4,6 @@ https://developer.garmin.com/connect-iq/core-topics/mobile-sdk-for-android/
 ADB
 https://wiki.ubuntuusers.de/adb/
 
-TEST: animations
-TEST: editmode
-
-TODO: use SQLite as backend
-TODO: note function
+WIP: export
+TODO: translate page_settings.export / page_settings.export_note / back
+TODO: translate page_settings_export.*
