@@ -10,8 +10,8 @@ import { Logger } from "../../logging/logger";
     providedIn: "root",
 })
 export class ListsBackendService {
-    private readonly StorageDirectory: Directory = Directory.Data;
-    private readonly StorageRoot: string = "lists";
+    public static readonly StorageDirectory: Directory = Directory.Data;
+    public static readonly StorageRoot: string = "lists";
 
     /**
      * returns all lists in the subfolder
@@ -98,10 +98,10 @@ export class ListsBackendService {
      */
     public async StoreList(list: ListModel, backend?: string): Promise<boolean> {
         const filename = ListsBackendService.createFilename(list);
-        const path = backend ? StringUtils.concat([this.StorageRoot, backend], "/") : this.StorageRoot;
+        const path = backend ? StringUtils.concat([ListsBackendService.StorageRoot, backend], "/") : ListsBackendService.StorageRoot;
         const uri = StringUtils.concat([path, filename], "/");
         try {
-            const newuri = (await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(list), encoding: Encoding.UTF8, recursive: true })).uri;
+            const newuri = (await Filesystem.writeFile({ path: uri, directory: ListsBackendService.StorageDirectory, data: JSON.stringify(list), encoding: Encoding.UTF8, recursive: true })).uri;
             if (newuri) {
                 await this.RemoveLists(`${list.uuid}`, backend, [filename]);
             }
@@ -123,11 +123,11 @@ export class ListsBackendService {
     public async StoreListitemTrash(trash: ListitemTrashModel, backend?: string): Promise<boolean> {
         ListitemTrashUtils.SortItems(trash);
         const filename = `${trash.uuid}.json`;
-        const path = backend ? StringUtils.concat([this.StorageRoot, backend], "/") : this.StorageRoot;
+        const path = backend ? StringUtils.concat([ListsBackendService.StorageRoot, backend], "/") : ListsBackendService.StorageRoot;
         const uri = StringUtils.concat([path, filename], "/");
         try {
-            await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(trash), encoding: Encoding.UTF8, recursive: true });
-            await Filesystem.writeFile({ path: uri, directory: this.StorageDirectory, data: JSON.stringify(trash), encoding: Encoding.UTF8, recursive: true });
+            await Filesystem.writeFile({ path: uri, directory: ListsBackendService.StorageDirectory, data: JSON.stringify(trash), encoding: Encoding.UTF8, recursive: true });
+            await Filesystem.writeFile({ path: uri, directory: ListsBackendService.StorageDirectory, data: JSON.stringify(trash), encoding: Encoding.UTF8, recursive: true });
             return true;
         } catch (error) {
             Logger.Error(`Could not store file ${uri} in ${backend ?? ""} backend`, error);
@@ -309,8 +309,8 @@ export class ListsBackendService {
      * @returns list of all files in the folder
      */
     private async getAllFiles(backend?: string, with_data: boolean = false): Promise<FileUtils.File[]> {
-        const fullpath = backend ? StringUtils.concat([this.StorageRoot, backend], "/") : this.StorageRoot;
-        return await FileUtils.GetFiles({ path: fullpath, dir: this.StorageDirectory, with_data: with_data });
+        const fullpath = backend ? StringUtils.concat([ListsBackendService.StorageRoot, backend], "/") : ListsBackendService.StorageRoot;
+        return await FileUtils.GetFiles({ path: fullpath, dir: ListsBackendService.StorageDirectory, with_data: with_data });
     }
 
     /**

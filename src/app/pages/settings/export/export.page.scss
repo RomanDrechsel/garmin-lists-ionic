@@ -42,6 +42,15 @@
                             fill: var(--ion-color-light-shade);
                         }
 
+                        ion-buttons {
+                            justify-content: end;
+                            margin-block: 1em;
+
+                            ion-button {
+                                --color: var(--ion-color-primary);
+                            }
+                        }
+
                         .content-icon {
                             width: 20vh;
                             height: 20vh;
@@ -54,6 +63,66 @@
 
                             &.first {
                                 margin-top: 10%;
+                            }
+
+                            &.margin {
+                                margin-top: 20%;
+                            }
+                        }
+
+                        .export-list {
+                            ion-list {
+                                ion-item {
+                                    --export-item-color: var(--color-text);
+                                    --export-item-color-tint: var(--color-text-tint);
+                                    --color: var(--export-item-color);
+
+                                    &.enabled,
+                                    &.success {
+                                        --export-item-color: var(--ion-color-success);
+                                        --export-item-color-tint: var(--ion-color-success-tint);
+                                    }
+
+                                    &.disabled,
+                                    &.failed {
+                                        --export-item-color: var(--ion-color-danger);
+                                        --export-item-color-tint: var(--ion-color-danger-tint);
+                                    }
+
+                                    &.running {
+                                        --export-item-color: var(--ion-color-primary);
+                                        --export-item-color-tint: var(--ion-color-primary-tint);
+                                    }
+
+                                    &.success,
+                                    &.failed {
+                                        ion-text {
+                                            font-weight: bold;
+                                        }
+                                    }
+
+                                    ion-icon {
+                                        fill: var(--export-item-color);
+                                        margin-inline-end: 0.5em;
+                                        --inner-padding-top: 6px;
+                                    }
+
+                                    ion-progress-bar {
+                                        --background: var(--export-item-color-tint);
+                                        --progress-background: var(--export-item-color);
+                                    }
+
+                                    &.disabled,
+                                    &.enabled {
+                                        ion-label {
+                                            margin-bottom: 6px;
+                                        }
+
+                                        ion-progress-bar {
+                                            visibility: hidden;
+                                        }
+                                    }
+                                }
                             }
                         }
 

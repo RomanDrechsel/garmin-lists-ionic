@@ -418,7 +418,10 @@
         "export_summary": "Folgende Inhalte werden exportiert:",
         "export_summary_lists": "Listen",
         "export_summary_trash": "Papierkorb",
-        "export_summary_settings": "Einstellungen"
+        "export_summary_settings": "Einstellungen",
+        "export_summary_nothing": "Es gibt nichts zu exportieren.",
+        "export_cancel": "Export abbrechen",
+        "export_error": "Der Export konnte nicht abgeschlossen werden!"
     },
     "page_appinfos": {
         "page_title": "App Informationen",

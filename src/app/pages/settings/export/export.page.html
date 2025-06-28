@@ -49,11 +49,30 @@
                     <ion-icon class="content-icon" src="/assets/icons/store.svg"></ion-icon>
 
                     <div class="text first">{{'page_settings_export.export_summary'|translate}}</div>
-                    <div class="export-list">
-                        <div [ngClass]="['export-item', item.status]" *ngFor="let item of ExportItems">
-                            <ion-icon [src]="'/assets/icons/export/'+item.status+'.svg'"></ion-icon>
-                            <div class="export-item-title">{{item.locale | translate}}</div>
-                        </div>
+
+                    <div *ngIf="SomethingEnabled">
+                        <ion-card class="export-list" *ngIf="ExportItems?.length">
+                            <ion-list>
+                                <ion-item lines="full" [ngClass]="['export-item', item.status]" *ngFor="let item of ExportItems">
+                                    <ion-icon slot="start" [src]="'/assets/icons/export/item_'+item.status+'.svg'"></ion-icon>
+                                    <ion-label>
+                                        <ion-text class="export-item-title">{{item.locale|translate}}</ion-text>
+                                        <ion-progress-bar [value]="item.done"></ion-progress-bar>
+                                    </ion-label>
+                                </ion-item>
+                            </ion-list>
+                        </ion-card>
+
+                        <ion-buttons>
+                            <ion-button (click)="exportToZip()" fill="outline" *ngIf="!ExportRunning"> {{'page_settings_export.export_to_zip'|translate}} </ion-button>
+                            <ion-button (click)="stopExport()" fill="outline" *ngIf="ExportRunning"> {{'cancel'|translate}} </ion-button>
+                        </ion-buttons>
+                    </div>
+                    <div *ngIf="!SomethingEnabled || !ExportItems?.length">
+                        <div class="text margin">{{'page_settings_export.export_summary_nothing'|translate}}</div>
+                        <ion-buttons>
+                            <ion-button (click)="cancel()" fill="outline"> {{'page_settings_export.export_cancel'|translate}} </ion-button>
+                        </ion-buttons>
                     </div>
                 </div>
                 <div class="buttons left">

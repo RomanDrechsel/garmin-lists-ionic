@@ -2,7 +2,7 @@ import { ListsBackendService } from "../storage/lists/lists-backend.service";
 import { List } from "./list";
 
 export class ListsProvider {
-    protected StoragePath = "lists";
+    public static StoragePath = "lists";
 
     public constructor(protected readonly Backend: ListsBackendService) {}
 
@@ -11,7 +11,7 @@ export class ListsProvider {
      * @returns array of all lists
      */
     public async GetLists(peek: boolean): Promise<List[]> {
-        const models = await this.Backend.GetLists(this.StoragePath);
+        const models = await this.Backend.GetLists(ListsProvider.StoragePath);
         let lists: List[] = [];
         for (let i = 0; i < models.length; i++) {
             const list = List.fromBackend(models[i], peek);
@@ -29,7 +29,7 @@ export class ListsProvider {
      * @returns List object, if it was found, otherwise undefined
      */
     public async GetList(uuid: string | number): Promise<List | undefined> {
-        const model = await this.Backend.GetList(`${uuid}`, this.StoragePath);
+        const model = await this.Backend.GetList(`${uuid}`, ListsProvider.StoragePath);
         if (model) {
             return List.fromBackend(model, false);
         }
@@ -50,7 +50,7 @@ export class ListsProvider {
 
         const model = list.toBackend(force);
         if (model) {
-            return await this.Backend.StoreList(model, this.StoragePath);
+            return await this.Backend.StoreList(model, ListsProvider.StoragePath);
         }
         return undefined;
     }
@@ -61,7 +61,7 @@ export class ListsProvider {
      * @returns was the removal successful
      */
     public async RemoveList(list: List): Promise<boolean> {
-        return (await this.Backend.RemoveLists(`${list.Uuid}`, this.StoragePath)) > 0;
+        return (await this.Backend.RemoveLists(`${list.Uuid}`, ListsProvider.StoragePath)) > 0;
     }
 
     /**
@@ -70,7 +70,7 @@ export class ListsProvider {
      * @returns does a list with this Uuid exist
      */
     public async Exists(uuid: string | number): Promise<boolean> {
-        return this.Backend.ListExists(uuid, this.StoragePath);
+        return this.Backend.ListExists(uuid, ListsProvider.StoragePath);
     }
 
     /**
@@ -78,7 +78,7 @@ export class ListsProvider {
      * @returns number of lists
      */
     public async Count(): Promise<number> {
-        return this.Backend.CountFiles(this.StoragePath);
+        return this.Backend.CountFiles(ListsProvider.StoragePath);
     }
 
     /**
@@ -86,6 +86,6 @@ export class ListsProvider {
      * @returns size in bytes and number of entries
      */
     public async BackendSize(): Promise<{ size: number; files: number }> {
-        return this.Backend.GetSize(this.StoragePath);
+        return this.Backend.GetSize(ListsProvider.StoragePath);
     }
 }
