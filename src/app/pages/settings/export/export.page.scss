@@ -168,6 +168,43 @@
                     min-width: 25%;
                 }
             }
+
+            &.done {
+                ion-icon {
+                    fill: var(--ion-color-success);
+                    width: 60%;
+                    max-width: 30vh;
+                    height: auto;
+                    aspect-ratio: 1/1;
+                    margin: 10% auto;
+                }
+
+                .text {
+                    text-align: center;
+                    margin-bottom: 2em;
+                }
+
+                ion-buttons {
+                    justify-content: space-evenly;
+                }
+
+                .listago {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: space-evenly;
+                    margin-bottom: 2em;
+
+                    ion-img {
+                        width: 40%;
+                        margin-inline: 5%;
+                    }
+
+                    .listago-text {
+                        font-size: 1.2em;
+                    }
+                }
+            }
         }
     }
 }

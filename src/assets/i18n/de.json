@@ -13,6 +13,7 @@
     "share": "Teilen",
     "next": "Weiter",
     "back": "Zurück",
+    "done": "Fertig",
     "date": {
         "date_add": " Uhr",
         "today": "Heute",
@@ -413,7 +414,7 @@
         "trash_toggle": "Papierkorb exportieren",
         "settings": "Zusätzlich kannst du auch alle App-Einstellungen exportieren.",
         "settings_toggle": "Einstellungen exportieren",
-        "export_to_zip": "In Zip-Datei exportieren",
+        "export_to_zip": "Exportieren",
         "export_nothing": "Es wurde nichts zum Export ausgeählt",
         "export_summary": "Folgende Inhalte werden exportiert:",
         "export_summary_lists": "Listen",
@@ -421,7 +422,11 @@
         "export_summary_settings": "Einstellungen",
         "export_summary_nothing": "Es gibt nichts zu exportieren.",
         "export_cancel": "Export abbrechen",
-        "export_error": "Der Export konnte nicht abgeschlossen werden!"
+        "export_error": "Der Export konnte nicht abgeschlossen werden!",
+        "export_success": "Der Export wurde erfolgreich durchgeführt und das Archiv in <strong>DOCUMENTS</strong> gespeichert.",
+        "export_success_share": "Oder möchtest du das Archiv teilen?",
+        "export_success_share_title": "Listen Export",
+        "export_success_listago": "In <strong>Listago</strong> importieren"
     },
     "page_appinfos": {
         "page_title": "App Informationen",

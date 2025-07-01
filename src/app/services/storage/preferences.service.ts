@@ -79,4 +79,21 @@ export class PreferencesService {
     public async Remove(prop: EPrefProperty) {
         await Preferences.remove({ key: prop });
     }
+
+    public async Export(): Promise<string> {
+        const preferencesObject: { [key: string]: any } = {};
+
+        const ignore = ["FirstStart", "LastVersion", "DebugSimulator", "DebugApp", "OpenedList"];
+
+        for (const key in EPrefProperty) {
+            if (EPrefProperty.hasOwnProperty(key) && ignore.indexOf(key) < 0) {
+                const value = await this.Get(EPrefProperty[key as keyof typeof EPrefProperty], null);
+                if (value !== null) {
+                    preferencesObject[key] = value;
+                }
+            }
+        }
+
+        return JSON.stringify(preferencesObject, null, 2);
+    }
 }

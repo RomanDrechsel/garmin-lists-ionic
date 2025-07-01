@@ -6,9 +6,13 @@ import { ListitemsTrashProvider } from "./listitems-trash-provider";
 import { ListsProvider } from "./lists-provider";
 
 export class TrashProvider extends ListsProvider {
-    public static override readonly StoragePath = "trash";
+    public static override readonly StoragePath: string = "trash";
 
     private _maxEntryCount: number = -1;
+
+    public override get StoragePath(): string {
+        return TrashProvider.StoragePath;
+    }
 
     public constructor(backend: ListsBackendService, private ListitemsTrash: ListitemsTrashProvider, private _datasetChangedSubject: BehaviorSubject<List[] | undefined>) {
         super(backend);
@@ -32,9 +36,9 @@ export class TrashProvider extends ListsProvider {
      * @param seconds maximum age of the files in seconds
      */
     public async RemoveOldEntries(days: number): Promise<void> {
-        const oldlists = await this.Backend.GetOldEntries(days * 60 * 60 * 24, TrashProvider.StoragePath);
+        const oldlists = await this.Backend.GetOldEntries(days * 60 * 60 * 24, this.StoragePath);
         if (oldlists.length > 0) {
-            const removed = await this.Backend.RemoveLists(oldlists, TrashProvider.StoragePath);
+            const removed = await this.Backend.RemoveLists(oldlists, this.StoragePath);
             if (removed > 0) {
                 //remove old listitems trashes from Backend
                 await this.ListitemsTrash.EraseLists(oldlists);
@@ -55,7 +59,7 @@ export class TrashProvider extends ListsProvider {
         }
         const del_uuids = uuids.map(uuid => `${uuid}`);
 
-        const del = await this.Backend.RemoveLists(del_uuids, TrashProvider.StoragePath);
+        const del = await this.Backend.RemoveLists(del_uuids, this.StoragePath);
         if (erase_itemtrash) {
             await this.ListitemsTrash.EraseLists(del_uuids);
         }
@@ -68,8 +72,8 @@ export class TrashProvider extends ListsProvider {
      * @returns number of deleted lists
      */
     public async WipeTrash(): Promise<number> {
-        const lists = await this.Backend.GetLists(TrashProvider.StoragePath);
-        await this.Backend.WipeAll(TrashProvider.StoragePath);
+        const lists = await this.Backend.GetLists(this.StoragePath);
+        await this.Backend.WipeAll(this.StoragePath);
         await this.ListitemsTrash.EraseLists(lists.map(l => `${l.uuid}`));
         this._datasetChangedSubject.next(await this.GetLists(true));
         return lists.length;
@@ -81,7 +85,7 @@ export class TrashProvider extends ListsProvider {
      */
     private async limitEntryCount(maxcount: number): Promise<void> {
         if (maxcount > 0) {
-            let alllists = await this.Backend.GetLists(TrashProvider.StoragePath);
+            let alllists = await this.Backend.GetLists(this.StoragePath);
             if (alllists.length > maxcount) {
                 alllists = alllists.sort((a, b) => {
                     if (!a.deleted) {
@@ -93,7 +97,7 @@ export class TrashProvider extends ListsProvider {
                     return b.deleted - a.deleted;
                 });
                 const uuids = alllists.splice(maxcount).map(l => `${l.uuid}`);
-                const del = await this.Backend.RemoveLists(uuids, TrashProvider.StoragePath);
+                const del = await this.Backend.RemoveLists(uuids, this.StoragePath);
                 await this.ListitemsTrash.EraseLists(uuids);
                 if (del == uuids.length) {
                     Logger.Notice(`Removed ${del} old lists from trash due to the limit of ${maxcount} lists`);

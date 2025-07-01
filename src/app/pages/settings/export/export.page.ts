@@ -1,10 +1,12 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IonButton, IonButtons, IonCard, IonContent, IonIcon, IonItem, IonLabel, IonList, IonProgressBar, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonText, IonToggle } from "@ionic/angular/standalone";
+import { Share } from "@capacitor/share";
+import { IonButton, IonButtons, IonCard, IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonProgressBar, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonText, IonToggle } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
-import { BackendExporter } from "src/app/services/storage/export/backend-exporter";
+import { Logger } from "src/app/services/logging/logger";
+import { BackendExporter, ProgressListenerFactory } from "src/app/services/storage/export/backend-exporter";
 import { PageBase } from "../../page-base";
 
 @Component({
@@ -12,7 +14,7 @@ import { PageBase } from "../../page-base";
     templateUrl: "./export.page.html",
     styleUrls: ["./export.page.scss"],
     standalone: true,
-    imports: [IonButtons, IonText, IonItem, IonLabel, IonList, IonCard, IonToggle, IonButton, IonContent, IonIcon, IonSegment, IonToggle, IonSegmentButton, IonSegmentView, IonSegmentContent, IonProgressBar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
+    imports: [IonImg, IonButtons, IonText, IonItem, IonLabel, IonList, IonCard, IonToggle, IonButton, IonContent, IonIcon, IonSegment, IonToggle, IonSegmentButton, IonSegmentView, IonSegmentContent, IonProgressBar, CommonModule, FormsModule, TranslateModule, MainToolbarComponent],
 })
 export class ExportPage extends PageBase {
     @ViewChild("segbtnLists", { static: false, read: ElementRef }) private _segbtnLists?: ElementRef;
@@ -22,6 +24,7 @@ export class ExportPage extends PageBase {
 
     private _exportItems: Map<string, ExportItem>;
     private _exporter?: BackendExporter;
+    private _exportArchive?: string;
 
     public get ExportLists(): boolean {
         return this._exportItems.get("lists")?.status !== "disabled";
@@ -45,6 +48,10 @@ export class ExportPage extends PageBase {
 
     public get ExportItems(): ExportItem[] {
         return Array.from(this._exportItems.values()).sort((a, b) => a.order - b.order);
+    }
+
+    public get ExportDone(): boolean {
+        return this._exportArchive !== undefined;
     }
 
     constructor() {
@@ -94,6 +101,8 @@ export class ExportPage extends PageBase {
     }
 
     public async cancel() {
+        this._exporter?.ClearUp();
+        this._exporter = undefined;
         this.NavController.back();
     }
 
@@ -124,17 +133,65 @@ export class ExportPage extends PageBase {
             let result = true;
             switch (keys[i]) {
                 case "lists":
-                    result = await this._exporter.ExportLists();
+                    result = await this._exporter.ExportLists(
+                        ProgressListenerFactory(done => {
+                            item.done = done;
+                            if (done >= 1) {
+                                item.status = "success";
+                            } else {
+                                item.status = "running";
+                            }
+                        }),
+                    );
+                    break;
+                case "trash":
+                    result = await this._exporter.ExportTrash(
+                        ProgressListenerFactory(done => {
+                            item.done = done;
+                        }),
+                    );
+                    break;
+                case "settings":
+                    result = await this._exporter.ExportSettings(this.Preferences);
+                    if (result) {
+                        item.done = 1;
+                    }
                     break;
             }
 
             if (!result) {
+                item.status = "failed";
                 this.error();
                 return;
+            } else {
+                item.status = "success";
             }
         }
 
-        await this._exporter.Finalize();
+        const archive = await this._exporter.Finalize();
+        if (archive) {
+            this._exportArchive = archive;
+        }
+    }
+
+    public async Share() {
+        if (!this._exportArchive) {
+            return;
+        }
+        const title = this.Locale.getText("page_settings_export.export_success_share_title");
+        try {
+            await Share.share({
+                files: [this._exportArchive],
+                dialogTitle: title,
+                title: title,
+            });
+        } catch (e) {
+            Logger.Error(`Export: could not share '${this._exportArchive}': `, e);
+        }
+    }
+
+    public async Listago() {
+        this.Popups.Toast.Notice("TODO");
     }
 
     private async error() {
@@ -143,7 +200,7 @@ export class ExportPage extends PageBase {
                 i.status = "failed";
             }
         });
-        await this._exporter?.Stop();
+        await this._exporter?.ClearUp();
         this._exporter = undefined;
         await this.Popups.Toast.Error("page_settings_export.export_error", undefined, true);
     }

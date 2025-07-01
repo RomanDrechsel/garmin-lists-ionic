@@ -1,7 +1,7 @@
 <app-main-toolbar back="/settings">{{'page_settings_export.page_title'|translate}}</app-main-toolbar>
 
 <ion-content class="page">
-    <div class="container">
+    <div class="container" *ngIf="!ExportDone; else done">
         <ion-segment-view>
             <ion-segment-content id="lists">
                 <div class="content">
@@ -64,14 +64,14 @@
                         </ion-card>
 
                         <ion-buttons>
-                            <ion-button (click)="exportToZip()" fill="outline" *ngIf="!ExportRunning"> {{'page_settings_export.export_to_zip'|translate}} </ion-button>
-                            <ion-button (click)="stopExport()" fill="outline" *ngIf="ExportRunning"> {{'cancel'|translate}} </ion-button>
+                            <ion-button (click)="exportToZip()" color="secondary" fill="outline" *ngIf="!ExportRunning"> {{'page_settings_export.export_to_zip'|translate}} </ion-button>
+                            <ion-button (click)="stopExport()" color="secondary" fill="outline" *ngIf="ExportRunning"> {{'cancel'|translate}} </ion-button>
                         </ion-buttons>
                     </div>
                     <div *ngIf="!SomethingEnabled || !ExportItems?.length">
                         <div class="text margin">{{'page_settings_export.export_summary_nothing'|translate}}</div>
                         <ion-buttons>
-                            <ion-button (click)="cancel()" fill="outline"> {{'page_settings_export.export_cancel'|translate}} </ion-button>
+                            <ion-button (click)="cancel()" color="secondary" fill="outline"> {{'page_settings_export.export_cancel'|translate}} </ion-button>
                         </ion-buttons>
                     </div>
                 </div>
@@ -98,3 +98,22 @@
         </div>
     </div>
 </ion-content>
+<ng-template #done>
+    <div class="container done">
+        <ion-icon src="/assets/icons/done.svg"></ion-icon>
+        <div class="content">
+            <div class="text" [innerHTML]="'page_settings_export.export_success' | translate"></div>
+
+            <div class="listago" (click)="Listago()">
+                <ion-img src="/assets/img/listago.png"></ion-img>
+                <div class="listago-text" [innerHTML]="'page_settings_export.export_success_listago' | translate"></div>
+            </div>
+
+            <div class="text" [innerHTML]="'page_settings_export.export_success_share' | translate"></div>
+            <ion-buttons>
+                <ion-button fill="outline" color="secondary" (click)="cancel()">{{ 'done' | translate }}</ion-button>
+                <ion-button fill="solid" color="secondary" (click)="Share()">{{ 'share' | translate }}</ion-button>
+            </ion-buttons>
+        </div>
+    </div>
+</ng-template>
