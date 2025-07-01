@@ -1,6 +1,7 @@
 package de.romandrechsel.lists.sysinfo;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -11,6 +12,8 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+
+import de.romandrechsel.lists.logging.Logger;
 
 @CapacitorPlugin(name = "SysInfo")
 public class SysInfoPlugin extends Plugin
@@ -62,6 +65,32 @@ public class SysInfoPlugin extends Plugin
                     break;
             }
         }
+    }
+
+    @PluginMethod
+    public void AppInstalled(PluginCall call)
+    {
+        String packageName = call.getString("packageName", null);
+
+        boolean installed = false;
+        if (packageName != null)
+        {
+            PackageManager pm = this.getContext().getPackageManager();
+            try
+            {
+                pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+                installed = true;
+                Logger.Debug(TAG, "App '" + packageName + "' is installed");
+            }
+            catch (PackageManager.NameNotFoundException e)
+            {
+                Logger.Debug(TAG, "App '" + packageName + "' is NOT installed");
+            }
+        }
+
+        JSObject res = new JSObject();
+        res.put("installed", installed);
+        call.resolve(res);
     }
 
     public void SetNightMode(@NonNull Boolean isNightMode)
