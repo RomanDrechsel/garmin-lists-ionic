@@ -45,6 +45,7 @@
     "array-flat-polyfill": "^1.0.1",
     "capa-zip": "^7.0.3",
     "capacitor-email-composer": "^7.0.0",
+    "capacitor-intent-sender": "^7.0.0",
     "capacitor-plugin-webview-cache": "^4.0.0",
     "globalthis": "^1.0.4",
     "rxjs": "7.8.2",

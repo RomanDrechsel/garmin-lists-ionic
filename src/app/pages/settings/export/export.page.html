@@ -104,12 +104,13 @@
         <div class="content">
             <div class="text" [innerHTML]="'page_settings_export.export_success' | translate"></div>
 
-            <div class="listago" (click)="Listago()">
+            <div class="listago" (click)="Listago()" *ngIf="ListagoInstalled">
                 <ion-img src="/assets/img/listago.png"></ion-img>
                 <div class="listago-text" [innerHTML]="'page_settings_export.export_success_listago' | translate"></div>
             </div>
 
-            <div class="text" [innerHTML]="'page_settings_export.export_success_share' | translate"></div>
+            <div class="text" [innerHTML]="'page_settings_export.export_success_share_listago' | translate" *ngIf="ListagoInstalled"></div>
+            <div class="text" [innerHTML]="'page_settings_export.export_success_share' | translate" *ngIf="!ListagoInstalled"></div>
             <ion-buttons>
                 <ion-button fill="outline" color="secondary" (click)="cancel()">{{ 'done' | translate }}</ion-button>
                 <ion-button fill="solid" color="secondary" (click)="Share()">{{ 'share' | translate }}</ion-button>

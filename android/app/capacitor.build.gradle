@@ -25,6 +25,7 @@ dependencies {
     implementation project(':capawesome-capacitor-android-edge-to-edge-support')
     implementation project(':capa-zip')
     implementation project(':capacitor-email-composer')
+    implementation project(':capacitor-intent-sender')
     implementation project(':capacitor-plugin-webview-cache')
 
 }

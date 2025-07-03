@@ -50,5 +50,8 @@ project(':capa-zip').projectDir = new File('../node_modules/capa-zip/android')
 include ':capacitor-email-composer'
 project(':capacitor-email-composer').projectDir = new File('../node_modules/capacitor-email-composer/android')
 
+include ':capacitor-intent-sender'
+project(':capacitor-intent-sender').projectDir = new File('../node_modules/capacitor-intent-sender/android')
+
 include ':capacitor-plugin-webview-cache'
 project(':capacitor-plugin-webview-cache').projectDir = new File('../node_modules/capacitor-plugin-webview-cache/android')

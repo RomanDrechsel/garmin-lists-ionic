@@ -424,9 +424,11 @@
         "export_cancel": "Export abbrechen",
         "export_error": "Der Export konnte nicht abgeschlossen werden!",
         "export_success": "Der Export wurde erfolgreich durchgeführt und das Archiv in <strong>DOCUMENTS</strong> gespeichert.",
-        "export_success_share": "Oder möchtest du das Archiv teilen?",
+        "export_success_share": "Möchtest du das Archiv teilen?",
+        "export_success_share_listago": "Oder möchtest du das Archiv teilen?",
         "export_success_share_title": "Listen Export",
-        "export_success_listago": "In <strong>Listago</strong> importieren"
+        "export_success_listago": "In <strong>Listago</strong> importieren",
+        "export_success_listago_error": "Der Import ist fehlgeschlagen!"
     },
     "page_appinfos": {
         "page_title": "App Informationen",

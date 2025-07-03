@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: "root",
@@ -23,4 +24,9 @@ export class ConfigService {
      * app-id for the Garmin ConnectIQ store
      */
     public readonly GarminAppStoreId = "c04a5671-7e39-46e7-b911-1911dbb2fe05";
+
+    /**
+     * Package name of Listago app
+     */
+    public readonly ListagoApp = environment.production ? "de.romandrechsel.listago" : "de.romandrechsel.listago.dev";
 }
