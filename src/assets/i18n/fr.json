@@ -12,6 +12,8 @@
     "select": "Sélectionner",
     "share": "Partager",
     "next": "Suivant",
+    "back": "Retour",
+    "done": "Terminé",
     "date": {
         "date_add": "h",
         "today": "Aujourd'hui",
@@ -58,7 +60,6 @@
     },
     "service-lists": {
         "store_list_error": "La liste n'a pas pu être enregistrée !",
-        "store_listitem_error": "L'élément n'a pas pu être enregistré !",
         "delete_confirm": "Voulez-vous vraiment supprimer la liste <strong>{{name}}</strong> ?",
         "delete_confirm_plural": "Voulez-vous vraiment supprimer les listes ?",
         "delete_confirm_watch": "Supprimer également la liste sur la montre",
@@ -69,8 +70,6 @@
         "delete_success_plural": "Les listes ont été supprimées.",
         "delete_item_confirm": "Voulez-vous vraiment supprimer l'élément <strong>{{name}}</strong> ?",
         "delete_item_confirm_plural": "Voulez-vous vraiment supprimer les éléments ?",
-        "delete_item_success": "L'élément a été supprimé.",
-        "delete_item_error": "L'élément n'a pas pu être supprimé !",
         "empty_confirm": "Voulez-vous supprimer tous les éléments non verrouillés de la liste <strong>{{name}}</strong> ?",
         "empty_confirm_plural": "Voulez-vous supprimer tous les éléments non verrouillés des listes ?",
         "empty_success": "Tous les éléments de la liste ont été supprimés.",
@@ -79,8 +78,6 @@
         "undo_warning": "<br /><br /><strong>Attention :</strong> Cette action est irréversible !",
         "erase_confirm": "Voulez-vous supprimer définitivement la liste <strong>{{name}}</strong> ?",
         "erase_confirm_plural": "Voulez-vous supprimer définitivement les listes ?",
-        "erase_success": "La liste a été supprimée définitivement.",
-        "erase_error": "La liste n'a pas pu être supprimée !",
         "erase_item_confirm": "Voulez-vous supprimer définitivement l'élément <strong>{{name}}</strong> ?",
         "erase_item_confirm_plural": "Voulez-vous supprimer définitivement les éléments ?",
         "erase_item_success": "L'élément a été supprimé définitivement.",
@@ -165,7 +162,6 @@
     "comp-sharelog": {
         "title": "Sauvegarder le journal",
         "text": "Comment voulez-vous sauvegarder le journal<br /><strong>{{filename}}</strong> ?",
-        "text_web": "Le journal <strong>{{filename}}</strong> sera sauvegardé sur votre ordinateur.",
         "store": "Sauvegarder dans Documents",
         "share": "Partager",
         "email": "Envoyer par e-mail aux développeurs",
@@ -272,7 +268,6 @@
         "page_title": "Mes appareils",
         "known_devices": "Appareils connus",
         "install_app": "Vous devez d'abord installer l'application de liste sur votre montre.<br /><strong>Cliquez ici</strong> pour accéder au Garmin ConnectIQ Store.",
-        "reload_btn": "Recharger les appareils",
         "toggle": "Toujours envoyer à cet appareil",
         "select_btn": "Sélectionner un appareil",
         "device_state": {
@@ -302,7 +297,9 @@
         "trash": "Corbeille",
         "trash_note": "Paramètres pour l'utilisation de la corbeille",
         "transmission": "Paramètres de transmission",
-        "transmission_note": "Paramètres pour la transmission de listes à votre montre"
+        "transmission_note": "Paramètres pour la transmission de listes à votre montre",
+        "export": "Enregistrer",
+        "export_note": "Enregistre les listes et les paramètres ou exporte-les vers Listago"
     },
     "page_settings_logs": {
         "page_title": "Journalisation",
@@ -327,15 +324,11 @@
     },
     "page_settings_showlogs": {
         "page_title": "Journaux",
-        "log_onemore": "Un autre journal",
-        "log_more": "{{count}} journaux supplémentaires",
-        "log_empty": "Impossible de charger le journal.",
         "btn_delete": "Supprimer le journal",
         "btn_save": "Enregistrer le journal",
         "confirm_delete": "Voulez-vous vraiment supprimer le journal <strong>{{filename}}</strong> ?",
         "toast_deleted": "Le journal a été supprimé.",
         "select_logs": "Sélectionner le fichier journal :",
-        "logfile": "Fichier journal",
         "select_logday_title": "Sélectionnez les jours des fichiers journaux :",
         "no_log": "Aucun fichier journal trouvé !",
         "no_log_note": "Aucun fichier journal trouvé pour {{date}}."
@@ -394,13 +387,30 @@
         "instock_oneweek": "une semaine",
         "instock_onemonth": "un mois",
         "instock_hundredentries": "les 100 dernières entrées",
-        "instock_note": "Combien de temps les anciennes listes ou éléments doivent-ils être conservés dans la corbeille ?",
-        "confirm_cleartrash": "Vider la corbeille ?<br /><br /><strong>Attention :</strong> Cette action est irréversible !",
-        "confirm_cleartrash_ok": "Vider la corbeille",
-        "confirm_cleartrash_cancel": "Ne pas vider la corbeille",
-        "confirm_clearitemstrash": "Vider les corbeilles des éléments ?<br /><br /><strong>Attention :</strong> Cette action est irréversible !",
-        "confirm_clearitemstrash_ok": "Vider les corbeilles",
-        "confirm_clearitemstrash_cancel": "Ne pas vider les corbeilles"
+        "instock_note": "Combien de temps les anciennes listes ou éléments doivent-ils être conservés dans la corbeille ?"
+    },
+    "page_settings_export": {
+        "page_title": "Exporter",
+        "lists": "Souhaitez-vous exporter vos listes ?",
+        "lists_toggle": "Exporter les listes",
+        "trash": "Faut-il également exporter les listes et éléments dans la corbeille ?",
+        "trash_toggle": "Exporter la corbeille",
+        "settings": "Vous pouvez également exporter tous les paramètres de l'application.",
+        "settings_toggle": "Exporter les paramètres",
+        "export_to_zip": "Exporter",
+        "export_summary": "Le contenu suivant sera exporté :",
+        "export_summary_lists": "Listes",
+        "export_summary_trash": "Corbeille",
+        "export_summary_settings": "Paramètres",
+        "export_summary_nothing": "Il n'y a rien à exporter.",
+        "export_cancel": "Annuler l'exportation",
+        "export_error": "L'exportation n'a pas pu être complétée !",
+        "export_success": "L'exportation a réussi et l'archive a été enregistrée dans <strong>DOCUMENTS</strong>.",
+        "export_success_share": "Souhaitez-vous partager l'archive ?",
+        "export_success_share_listago": "Ou souhaitez-vous partager l'archive ?",
+        "export_success_share_title": "Exportation de listes",
+        "export_success_listago": "Importer dans <strong>Listago</strong>",
+        "export_success_listago_error": "Échec de l'importation !"
     },
     "page_appinfos": {
         "page_title": "Informations sur l'application",

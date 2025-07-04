@@ -12,6 +12,8 @@
     "select": "Select",
     "share": "Share",
     "next": "Next",
+    "back": "Back",
+    "done": "Done",
     "date": {
         "date_add": "",
         "today": "Today",
@@ -58,7 +60,6 @@
     },
     "service-lists": {
         "store_list_error": "The list could not be saved!",
-        "store_listitem_error": "the item could not be saved!",
         "delete_confirm": "Do you really want to delete the list <strong>{{name}}</strong>?",
         "delete_confirm_plural": "Do you really want to delete these lists?",
         "delete_confirm_watch": "Delete list on the watch too",
@@ -69,8 +70,6 @@
         "delete_success_plural": "The lists were deleted.",
         "delete_item_confirm": "Do you really want to delete the item <strong>{{name}}</strong>?",
         "delete_item_confirm_plural": "Do you really want to delete these items?",
-        "delete_item_success": "The item was deleted.",
-        "delete_item_error": "The item could not be deleted!",
         "empty_confirm": "Do you really want to delete all non-locked items from the list <strong>{{name}}</strong>?",
         "empty_confirm_plural": "Do you really want to delete all non-locked items from these lists?",
         "empty_success": "All items were deleted.",
@@ -79,8 +78,6 @@
         "undo_warning": "<br /><br /><strong>Warning: </strong> This could not be undone!",
         "erase_confirm": "Do you really want to delete the list <strong>{{name}}</strong> permanently?",
         "erase_confirm_plural": "Do you really want to delete these lists permanently?",
-        "erase_success": "The list has been deleted permanently.",
-        "erase_error": "The list could not be deleted!",
         "erase_item_confirm": "Do you really want to delete the item <strong>{{name}}</strong> permanently?",
         "erase_item_confirm_plural": "Do you really want to delete these items permanently?",
         "erase_item_success": "The item has been deleted permanently.",
@@ -165,7 +162,6 @@
     "comp-sharelog": {
         "title": "Store log",
         "text": "How do you want to store the logfile <br /><strong>{{filename}}</strong>?",
-        "text_web": "The logfile <strong>{{filename}}</strong> will be stored on your disk.",
         "store": "Store in Documents on your device",
         "share": "Share",
         "email": "Send as e-mail to developer",
@@ -272,7 +268,6 @@
         "page_title": "My devices",
         "known_devices": "Known devices",
         "install_app": "You need to install the Lists app on your device first.<br /><strong>Click here</strong> to get to the Garmin ConnectIQ Store.",
-        "reload_btn": "Reload devices",
         "toggle": "Always send to this device",
         "select_btn": "Select device",
         "device_state": {
@@ -302,7 +297,9 @@
         "trash": "Trash",
         "trash_note": "Settings for usage of the trash",
         "transmission": "Transmission settings",
-        "transmission_note": "Settings for transferring lists to your watch"
+        "transmission_note": "Settings for transferring lists to your watch",
+        "export": "Backup",
+        "export_note": "Save lists and settings or export them to Listago"
     },
     "page_settings_logs": {
         "page_title": "Log settings",
@@ -327,15 +324,11 @@
     },
     "page_settings_showlogs": {
         "page_title": "Logs",
-        "log_onemore": "One more log",
-        "log_more": "{{count}} more logs",
-        "log_empty": "The log could not be loaded.",
         "btn_delete": "Delete log",
         "btn_save": "Store log",
         "confirm_delete": "Should the log <strong>{{filename}}</strong> be deleted?",
         "toast_deleted": "The log was deleted.",
         "select_logs": "Select log file:",
-        "logfile": "log file",
         "select_logday_title": "Show log files of a certain day:",
         "no_log": "No log files found!",
         "no_log_note": "No log files were found for {{date}}"
@@ -394,13 +387,30 @@
         "instock_oneweek": "one week",
         "instock_onemonth": "one month",
         "instock_hundredentries": "last 100 entries",
-        "instock_note": "How long should old lists or list items be kept in the trash?",
-        "confirm_cleartrash": "Should the trash be emptied?<br /><br /><strong>Warning:</strong> The action can not be undone!",
-        "confirm_cleartrash_ok": "Empty trash",
-        "confirm_cleartrash_cancel": "Don't empty trash",
-        "confirm_clearitemstrash": "Should the trashes be emptied?<br /><br /><strong>Warning:</strong> The action can not be undone!",
-        "confirm_clearitemstrash_ok": "Empty trashes",
-        "confirm_clearitemstrash_cancel": "Don't empty trashes"
+        "instock_note": "How long should old lists or list items be kept in the trash?"
+    },
+    "page_settings_export": {
+        "page_title": "Export",
+        "lists": "Do you want to export your lists?",
+        "lists_toggle": "Export lists",
+        "trash": "Should lists and list items in the trash also be exported?",
+        "trash_toggle": "Export trash",
+        "settings": "You can also export all app settings.",
+        "settings_toggle": "Export settings",
+        "export_to_zip": "Export",
+        "export_summary": "The following content will be exported:",
+        "export_summary_lists": "Lists",
+        "export_summary_trash": "Trash",
+        "export_summary_settings": "Settings",
+        "export_summary_nothing": "There is nothing to export.",
+        "export_cancel": "Cancel export",
+        "export_error": "The export could not be completed!",
+        "export_success": "The export was successful and the archive was saved in <strong>DOCUMENTS</strong>.",
+        "export_success_share": "Do you want to share the archive?",
+        "export_success_share_listago": "Or would you like to share the archive?",
+        "export_success_share_title": "List Export",
+        "export_success_listago": "Import into <strong>Listago</strong>",
+        "export_success_listago_error": "Import failed!"
     },
     "page_appinfos": {
         "page_title": "App information",
