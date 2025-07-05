@@ -259,10 +259,12 @@ ion-accordion {
 }
 
 @media (prefers-color-scheme: dark) {
-    ion-button {
-        &.button-outline {
-            --border-color: var(--ion-color-secondary);
-            --color: var(--ion-color-secondary-contrast);
+    ion-button.button-outline {
+        --border-color: var(--ion-color-secondary);
+        --color: var(--ion-color-secondary-contrast);
+
+        &::part(native) {
+            color: var(--ion-color-secondary-contrast) !important;
         }
     }
 }

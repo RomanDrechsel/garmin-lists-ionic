@@ -46,7 +46,7 @@
                             justify-content: end;
                             margin-block: 1em;
 
-                            ion-button {
+                            ion-button:not(.button-outline) {
                                 --color: var(--ion-color-primary);
                             }
                         }
@@ -166,6 +166,10 @@
                 ion-segment-button {
                     --background-focused-opacity: 0;
                     min-width: 25%;
+
+                    ion-icon {
+                        fill: var(--color-text-tint);
+                    }
                 }
             }
 
@@ -213,6 +217,12 @@
     :host {
         ion-content.page {
             --background: var(--ion-color-primary-shade);
+
+            .container.done {
+                ion-icon {
+                    fill: var(--ion-color-success-tint);
+                }
+            }
         }
     }
 }
