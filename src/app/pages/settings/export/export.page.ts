@@ -112,7 +112,7 @@ export class ExportPage extends PageBase {
     }
 
     public async cancel() {
-        this._exporter?.ClearUp();
+        this._exporter?.CleanUp();
         this._exporter = undefined;
         this.NavController.back();
     }
@@ -142,16 +142,12 @@ export class ExportPage extends PageBase {
             }
 
             let result = true;
+            item.status = "running";
             switch (keys[i]) {
                 case "lists":
                     result = await this._exporter.ExportLists(
                         ProgressListenerFactory(done => {
                             item.done = done;
-                            if (done >= 1) {
-                                item.status = "success";
-                            } else {
-                                item.status = "running";
-                            }
                         }),
                     );
                     break;
@@ -232,7 +228,7 @@ export class ExportPage extends PageBase {
                 i.status = "failed";
             }
         });
-        await this._exporter?.ClearUp();
+        await this._exporter?.CleanUp();
         this._exporter = undefined;
         await this.Popups.Toast.Error("page_settings_export.export_error", undefined, true);
     }

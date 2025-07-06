@@ -122,7 +122,7 @@ export class BackendExporter {
         return true;
     }
 
-    public async ClearUp() {
+    public async CleanUp() {
         await this.removeOldFiles();
         try {
             await Filesystem.deleteFile({ path: this._exportArchive, directory: this._exportDir });
@@ -269,7 +269,6 @@ export class ProgressListener {
         if (this._total > 0) {
             this.onProgress(this._done / this._total);
         }
-        console.log(this);
     }
 
     protected onProgress(done: number): Promise<void> {
