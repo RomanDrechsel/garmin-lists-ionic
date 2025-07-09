@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { CapacitorException } from "@capacitor/core";
 import { Share } from "@capacitor/share";
 import { IonButton, IonButtons, IonCard, IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonProgressBar, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonText, IonToggle } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
@@ -193,7 +194,9 @@ export class ExportPage extends PageBase {
                 title: title,
             });
         } catch (e) {
-            Logger.Error(`Export: could not share '${this._exportArchive}': `, e);
+            if (!(e instanceof CapacitorException) || !e.message.includes("canceled")) {
+                Logger.Error(`Export: could not share '${this._exportArchive}': `, e);
+            }
         }
     }
 

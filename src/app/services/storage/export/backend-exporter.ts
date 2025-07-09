@@ -1,5 +1,6 @@
 import { Directory, Encoding, Filesystem, type ReaddirResult } from "@capacitor/filesystem";
 import { Zip } from "capa-zip";
+import { FileUtils } from "src/app/classes/utils/file-utils";
 import { StringUtils } from "src/app/classes/utils/string-utils";
 import { ListitemsTrashProvider } from "../../lists/listitems-trash-provider";
 import { ListsProvider } from "../../lists/lists-provider";
@@ -12,7 +13,9 @@ export class BackendExporter {
     private _isRunning = false;
     private _exportPath = "export";
     private _exportDir = Directory.Cache;
-    private _archiveName = "lists-export.zip";
+    private _archiveBasename = "lists-export";
+    private _archiveExtension = ".zip";
+    private _archiveFilename?: string = undefined;
     private _settingsFile = "settings.json";
 
     private get _tmpPath(): string {
@@ -20,7 +23,7 @@ export class BackendExporter {
     }
 
     private get _exportArchive(): string {
-        return StringUtils.concat([this._exportPath, this._archiveName], "/");
+        return this._archiveFilename ?? this._archiveBasename + this._archiveExtension;
     }
 
     public get Running(): boolean {
@@ -47,7 +50,8 @@ export class BackendExporter {
                 destination = "";
             try {
                 source = (await Filesystem.getUri({ path: this._tmpPath, directory: this._exportDir })).uri;
-                destination = (await Filesystem.getUri({ path: this._exportArchive, directory: this._exportDir })).uri;
+                destination = (await Filesystem.getUri({ path: StringUtils.concat(this._exportPath, this._exportArchive, "/"), directory: this._exportDir })).uri;
+
                 await Zip.zip({
                     sourcePath: source,
                     destinationPath: destination,
@@ -59,12 +63,17 @@ export class BackendExporter {
                 return false;
             }
 
-            await this.Stop();
-
             try {
-                await Filesystem.copy({ from: destination, to: this._archiveName, toDirectory: Directory.Documents });
+                if (await FileUtils.FileExists(this._exportArchive, Directory.Documents)) {
+                    const now = new Date();
+                    const tmp = `_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDay()).padStart(2, "0")}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
+                    this._archiveFilename = this._archiveBasename + tmp + this._archiveExtension;
+                }
+
+                await Filesystem.copy({ from: destination, to: this._exportArchive, toDirectory: Directory.Documents });
+                Logger.Notice(`Export: copied archive '${destination}' to '${this._exportArchive}' in '${Directory.Documents}'`);
             } catch (e) {
-                Logger.Error(`Export: could not copy archive '${destination}' to '${this._archiveName}' in DOCUMENTS`, e);
+                Logger.Error(`Export: could not copy archive '${destination}' to '${this._exportArchive}' in DOCUMENTS`, e);
                 return false;
             }
 
