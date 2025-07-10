@@ -400,7 +400,7 @@ export class List {
     }
 }
 
-export declare type ListModel = {
+export type ListModel = {
     uuid: string | number;
     name: string;
     created: number;
@@ -412,7 +412,7 @@ export declare type ListModel = {
     items?: ListitemModel[];
 };
 
-export declare type ListReset = {
+export type ListReset = {
     active: boolean;
     interval: "daily" | "weekly" | "monthly";
     hour: number;

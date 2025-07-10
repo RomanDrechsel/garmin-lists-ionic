@@ -244,7 +244,7 @@ export class Listitem {
     }
 }
 
-export declare type ListitemModel = {
+export type ListitemModel = {
     uuid: number | string;
     item: string;
     note?: string;
