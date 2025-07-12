@@ -135,15 +135,11 @@ export class BackendExporter {
         await this.removeOldFiles();
         try {
             await Filesystem.deleteFile({ path: this._exportArchive, directory: this._exportDir });
-        } catch (e) {
-            console.log(e);
-        }
+        } catch {}
 
         try {
             await Filesystem.rmdir({ path: this._exportPath, directory: this._exportDir, recursive: true });
-        } catch (e) {
-            console.log(e);
-        }
+        } catch {}
     }
 
     private async createTempDirectory(fullpath: string): Promise<boolean> {
