@@ -109,6 +109,10 @@
                 <div class="listago-text" [innerHTML]="'page_settings_export.export_success_listago' | translate"></div>
             </div>
 
+            <div class="listago" (click)="ListagoDev()" *ngIf="ListagoDevInstalled">
+                <div class="listago-text">Export to Listago-dev</div>
+            </div>
+
             <div class="text" [innerHTML]="'page_settings_export.export_success_share_listago' | translate" *ngIf="ListagoInstalled"></div>
             <div class="text" [innerHTML]="'page_settings_export.export_success_share' | translate" *ngIf="!ListagoInstalled"></div>
             <ion-buttons>

@@ -5,7 +5,6 @@ import { CapacitorException } from "@capacitor/core";
 import { Share } from "@capacitor/share";
 import { IonButton, IonButtons, IonCard, IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonProgressBar, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonText, IonToggle } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
-import { IntentSender } from "capacitor-intent-sender";
 import { MainToolbarComponent } from "src/app/components/main-toolbar/main-toolbar.component";
 import SysInfo from "src/app/plugins/sysinfo/sys-info";
 import { Logger } from "src/app/services/logging/logger";
@@ -29,6 +28,7 @@ export class ExportPage extends PageBase {
     private _exporter?: BackendExporter;
     private _exportArchive?: string;
     private _listagoInstalled: boolean = false;
+    private _listagoDevInstalled: boolean = false;
 
     public get ExportLists(): boolean {
         return this._exportItems.get("lists")?.status !== "disabled";
@@ -62,6 +62,10 @@ export class ExportPage extends PageBase {
         return this._listagoInstalled;
     }
 
+    public get ListagoDevInstalled(): boolean {
+        return this._listagoDevInstalled;
+    }
+
     constructor() {
         super();
         this._exportItems = new Map<string, ExportItem>([
@@ -72,7 +76,9 @@ export class ExportPage extends PageBase {
     }
 
     public override async ionViewWillEnter(): Promise<void> {
+        await super.ionViewWillEnter();
         this._listagoInstalled = (await SysInfo.AppInstalled({ packageName: this.Config.ListagoApp })).installed;
+        this._listagoDevInstalled = (await SysInfo.AppInstalled({ packageName: `${this.Config.ListagoApp}.dev`, silent: true })).installed;
     }
 
     public toLists() {
@@ -112,8 +118,8 @@ export class ExportPage extends PageBase {
         }
     }
 
-    public async cancel() {
-        this._exporter?.CleanUp();
+    public async cancel(delete_archive: boolean = true) {
+        this._exporter?.CleanUp(delete_archive);
         this._exporter = undefined;
         this.NavController.back();
     }
@@ -205,23 +211,36 @@ export class ExportPage extends PageBase {
             return;
         }
 
-        try {
-            await IntentSender.startActivity({
-                action: "android.intent.action.SEND",
-                type: "application/zip",
-                component: {
-                    package: this.Config.ListagoApp,
-                    class: "",
-                },
-                extras: {
-                    "android.intent.extra.STREAM": this._exportArchive,
-                },
-                flags: 1 | 2 /* read and write */,
-            });
-            this.cancel();
-        } catch (e) {
+        const success = (
+            await SysInfo.SendExportToListago({
+                zip: this._exportArchive,
+                dev: false,
+            })
+        ).success;
+
+        if (success) {
+            this.cancel(false);
+        } else {
             this.Popups.Toast.Error("page_settings_export.export_success_listago_error", undefined, true);
-            Logger.Error(`Export: could not start Listago intent for '${this._exportArchive}': `, e);
+        }
+    }
+
+    public async ListagoDev() {
+        if (!this._exportArchive) {
+            return;
+        }
+
+        const success = (
+            await SysInfo.SendExportToListago({
+                zip: this._exportArchive,
+                dev: true,
+            })
+        ).success;
+
+        if (success) {
+            this.cancel(false);
+        } else {
+            this.Popups.Toast.Error("page_settings_export.export_success_listago_error", undefined, true);
         }
     }
 

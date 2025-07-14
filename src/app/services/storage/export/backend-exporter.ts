@@ -32,7 +32,7 @@ export class BackendExporter {
 
     public async Initialize(): Promise<boolean> {
         //remove old export files if any exist
-        if (!(await this.removeOldFiles())) {
+        if (!(await this.removeExportFolder())) {
             return false;
         }
         this._isRunning = true;
@@ -40,7 +40,7 @@ export class BackendExporter {
     }
 
     public async Stop() {
-        await this.removeOldFiles();
+        await this.CleanUp();
         this._isRunning = false;
     }
 
@@ -131,15 +131,12 @@ export class BackendExporter {
         return true;
     }
 
-    public async CleanUp() {
-        await this.removeOldFiles();
-        try {
-            await Filesystem.deleteFile({ path: this._exportArchive, directory: this._exportDir });
-        } catch {}
-
-        try {
-            await Filesystem.rmdir({ path: this._exportPath, directory: this._exportDir, recursive: true });
-        } catch {}
+    public async CleanUp(delete_archive: boolean = false) {
+        if (delete_archive) {
+            await this.removeExportFolder();
+        } else {
+            await this.removeOldFiles();
+        }
     }
 
     private async createTempDirectory(fullpath: string): Promise<boolean> {
@@ -233,6 +230,22 @@ export class BackendExporter {
         }
 
         return true;
+    }
+
+    private async removeExportFolder(): Promise<boolean> {
+        try {
+            await Filesystem.stat({ path: this._exportPath, directory: this._exportDir });
+        } catch {
+            //diretory does not exist...
+            return true;
+        }
+        try {
+            await Filesystem.rmdir({ path: this._exportPath, directory: this._exportDir, recursive: true });
+            return true;
+        } catch (e) {
+            Logger.Error(`Could not remove export files from '${this._exportPath}' in '${this._exportDir}':`, e);
+        }
+        return false;
     }
 
     private async stats(fullpath: string): Promise<number> {

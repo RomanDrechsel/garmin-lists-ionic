@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: "root",
@@ -28,5 +27,5 @@ export class ConfigService {
     /**
      * Package name of Listago app
      */
-    public readonly ListagoApp = environment.production ? "de.romandrechsel.listago" : "de.romandrechsel.listago.dev";
+    public readonly ListagoApp = "de.romandrechsel.listago";
 }
