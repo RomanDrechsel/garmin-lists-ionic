@@ -69,7 +69,6 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
         if (iqDeviceStatus == IQDevice.IQDeviceStatus.CONNECTED)
         {
             this.setState(DeviceState.CheckingApp);
-
             try
             {
                 this.Manager.connectIQ.getApplicationInfo(DeviceManager.AppId, this.device, new IQApplicationInfoListener()
@@ -100,6 +99,7 @@ public class DeviceInfo implements ConnectIQ.IQDeviceEventListener, ConnectIQ.IQ
                         DeviceInfo.this.setState(DeviceState.AppNotInstalled);
                     }
                 });
+
             }
             catch (InvalidStateException e)
             {
