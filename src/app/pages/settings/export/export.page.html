@@ -51,7 +51,7 @@
                     <div class="text first">{{'page_settings_export.export_summary'|translate}}</div>
 
                     <div *ngIf="SomethingEnabled">
-                        <ion-card class="export-list" *ngIf="ExportItems?.length">
+                        <ion-card class="export-list" *ngIf="ExportItems.length">
                             <ion-list>
                                 <ion-item lines="full" [ngClass]="['export-item', item.status]" *ngFor="let item of ExportItems">
                                     <ion-icon slot="start" [src]="'/assets/icons/export/item_'+item.status+'.svg'"></ion-icon>
@@ -68,7 +68,7 @@
                             <ion-button (click)="stopExport()" color="secondary" fill="outline" *ngIf="ExportRunning"> {{'cancel'|translate}} </ion-button>
                         </ion-buttons>
                     </div>
-                    <div *ngIf="!SomethingEnabled || !ExportItems?.length">
+                    <div *ngIf="!SomethingEnabled || !ExportItems.length">
                         <div class="text margin">{{'page_settings_export.export_summary_nothing'|translate}}</div>
                         <ion-buttons>
                             <ion-button (click)="cancel()" color="secondary" fill="outline"> {{'page_settings_export.export_cancel'|translate}} </ion-button>
