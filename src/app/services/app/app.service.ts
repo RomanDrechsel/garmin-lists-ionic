@@ -7,7 +7,6 @@ import { StatusBar, Style } from "@capacitor/status-bar";
 import { EdgeToEdge } from "@capawesome/capacitor-android-edge-to-edge-support";
 import { Platform } from "@ionic/angular";
 import { NavController } from "@ionic/angular/standalone";
-import { WebViewCache } from "capacitor-plugin-webview-cache";
 import type { NightModeEventArgs } from "src/app/plugins/sysinfo/event-args/night-mode-event-args";
 import SysInfo from "src/app/plugins/sysinfo/sys-info";
 import { environment } from "../../../environments/environment";
@@ -77,19 +76,10 @@ export class AppService {
 
         const last_version = await this.Preferences.Get<number>(EPrefProperty.LastVersion, -1);
         const build = Number((await App.getInfo()).build);
-        let clear_cache = false;
-        if (last_version >= 0 && !Number.isNaN(build) && build > last_version) {
-            await WebViewCache.clearCache();
-            clear_cache = true;
-        }
         await this.Preferences.Set(EPrefProperty.LastVersion, build);
 
         AppService.Popups = this._popups;
         await Logger.Initialize(this.Logger);
-
-        if (clear_cache) {
-            Logger.Notice(`Cleared browser cache due to new app version (${last_version} -> ${build})`);
-        }
 
         await EdgeToEdge.enable();
         this.handleNightmode((await SysInfo.NightMode()).isNightMode);

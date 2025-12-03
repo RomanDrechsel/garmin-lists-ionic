@@ -5,7 +5,7 @@ import { Listitem, ListitemModel } from "./listitem";
 import { ListitemTrashModel, ListitemTrashUtils } from "./listitems-trash-utils";
 
 export class ListitemsTrashProvider {
-    private readonly StoragePath = "trash/items";
+    public static readonly StoragePath = "trash/items";
 
     private _maxEntryCount: number = -1;
 
@@ -35,7 +35,7 @@ export class ListitemsTrashProvider {
             items = [items];
         }
 
-        const trash = (await this.Backend.GetListitemTrash(`${listUuid}`, this.StoragePath)) ?? { uuid: listUuid, items: [] };
+        const trash = (await this.Backend.GetListitemTrash(`${listUuid}`, ListitemsTrashProvider.StoragePath)) ?? { uuid: listUuid, items: [] };
         items.forEach(i => {
             i.Deleted = Date.now();
             trash.items.push(i.toBackend());
@@ -55,7 +55,7 @@ export class ListitemsTrashProvider {
      * @returns ListitemTrashModel
      */
     public GetListitemsTrash(uuid: string | number): Promise<ListitemTrashModel | undefined> {
-        return this.Backend.GetListitemTrash(`${uuid}`, this.StoragePath);
+        return this.Backend.GetListitemTrash(`${uuid}`, ListitemsTrashProvider.StoragePath);
     }
 
     /**
@@ -82,7 +82,7 @@ export class ListitemsTrashProvider {
      * @returns was the deletion successful? undefined if there was no trash for this list
      */
     public async EraseListitemTrash(trash: ListitemTrashModel): Promise<boolean> {
-        const success = await this.Backend.RemoveAllListitems(trash, this.StoragePath);
+        const success = await this.Backend.RemoveAllListitems(trash, ListitemsTrashProvider.StoragePath);
         if (success === true) {
             trash.items = [];
             this._datasetChangedSubject.next(trash);
@@ -91,14 +91,14 @@ export class ListitemsTrashProvider {
     }
 
     public async EraseLists(uuids: string | string[]): Promise<number> {
-        return this.Backend.RemoveLists(uuids, this.StoragePath);
+        return this.Backend.RemoveLists(uuids, ListitemsTrashProvider.StoragePath);
     }
 
     /**
      * wipe all trashes of all lists
      */
     public async WipeTrashes(): Promise<void> {
-        const del = await this.Backend.WipeAll(this.StoragePath);
+        const del = await this.Backend.WipeAll(ListitemsTrashProvider.StoragePath);
         if (del > 0) {
             this._datasetChangedSubject.next(undefined);
             Logger.Notice(`Removed ${del} trash(s) of listitems`);
@@ -111,7 +111,7 @@ export class ListitemsTrashProvider {
      * @returns number of items in the trash
      */
     public async Count(uuid: string): Promise<number> {
-        const trash = await this.Backend.GetListitemTrash(uuid, this.StoragePath);
+        const trash = await this.Backend.GetListitemTrash(uuid, ListitemsTrashProvider.StoragePath);
         if (trash) {
             return trash.items.length;
         } else {
@@ -124,7 +124,7 @@ export class ListitemsTrashProvider {
      * @returns number of trashes
      */
     public async CountAll(): Promise<number> {
-        return this.Backend.CountFiles(this.StoragePath);
+        return this.Backend.CountFiles(ListitemsTrashProvider.StoragePath);
     }
 
     /**
@@ -132,7 +132,7 @@ export class ListitemsTrashProvider {
      * @returns size in bytes and number of entries
      */
     public async BackendSize(): Promise<{ size: number; files: number }> {
-        return this.Backend.GetSize(this.StoragePath);
+        return this.Backend.GetSize(ListitemsTrashProvider.StoragePath);
     }
 
     /**
@@ -145,10 +145,10 @@ export class ListitemsTrashProvider {
 
         if (trash.items.length > 0) {
             //store in backend
-            success = await this.Backend.StoreListitemTrash(trash, this.StoragePath);
+            success = await this.Backend.StoreListitemTrash(trash, ListitemsTrashProvider.StoragePath);
         } else {
             //no more items in trash, remove the file
-            success = (await this.Backend.RemoveAllListitems(trash, this.StoragePath)) !== false;
+            success = (await this.Backend.RemoveAllListitems(trash, ListitemsTrashProvider.StoragePath)) !== false;
         }
         if (success) {
             this._datasetChangedSubject.next(trash);
@@ -164,7 +164,7 @@ export class ListitemsTrashProvider {
      */
     private async limitEntryCount(maxcount: number, trashes?: ListitemTrashModel | ListitemTrashModel[]): Promise<void> {
         if (!trashes) {
-            trashes = await this.Backend.GetListitemsTrashes(this.StoragePath);
+            trashes = await this.Backend.GetListitemsTrashes(ListitemsTrashProvider.StoragePath);
         } else if (!Array.isArray(trashes)) {
             trashes = [trashes];
         }

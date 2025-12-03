@@ -12,6 +12,8 @@
     "select": "選択",
     "share": "共有",
     "next": "次へ",
+    "back": "戻る",
+    "done": "完了",
     "date": {
         "date_add": "",
         "today": "今日",
@@ -58,7 +60,6 @@
     },
     "service-lists": {
         "store_list_error": "リストを保存できませんでした！",
-        "store_listitem_error": "項目を保存できませんでした！",
         "delete_confirm": "リスト <strong>{{name}}</strong> を本当に削除しますか？",
         "delete_confirm_plural": "リストを本当に削除しますか？",
         "delete_confirm_watch": "ウォッチでもリストを削除",
@@ -69,8 +70,6 @@
         "delete_success_plural": "リストが削除されました。",
         "delete_item_confirm": "項目 <strong>{{name}}</strong> を本当に削除しますか？",
         "delete_item_confirm_plural": "項目を本当に削除しますか？",
-        "delete_item_success": "項目が削除されました。",
-        "delete_item_error": "項目を削除できませんでした！",
         "empty_confirm": "リスト <strong>{{name}}</strong> の全ての未ロック項目を削除しますか？",
         "empty_confirm_plural": "リスト内の全ての未ロック項目を削除しますか？",
         "empty_success": "すべてのリスト項目が削除されました。",
@@ -79,8 +78,6 @@
         "undo_warning": "<br /><br /><strong>警告:</strong> この操作は元に戻せません！",
         "erase_confirm": "リスト <strong>{{name}}</strong> を完全に削除しますか？",
         "erase_confirm_plural": "リストを完全に削除しますか？",
-        "erase_success": "リストが完全に削除されました。",
-        "erase_error": "リストを削除できませんでした！",
         "erase_item_confirm": "項目 <strong>{{name}}</strong> を完全に削除しますか？",
         "erase_item_confirm_plural": "項目を完全に削除しますか？",
         "erase_item_success": "項目が完全に削除されました。",
@@ -165,7 +162,6 @@
     "comp-sharelog": {
         "title": "ログを保存",
         "text": "ログを<br /><strong>{{filename}}</strong><br />としてどう保存しますか？",
-        "text_web": "ログ <strong>{{filename}}</strong> はあなたのPCに保存されます。",
         "store": "ドキュメントに保存",
         "share": "共有",
         "email": "開発者に電子メールで送信する",
@@ -272,7 +268,6 @@
         "page_title": "マイデバイス",
         "known_devices": "既知のデバイス",
         "install_app": "ウォッチにリストアプリをインストールする必要があります。<br /><strong>こちらをクリック</strong>してGarmin ConnectIQストアにアクセスしてください。",
-        "reload_btn": "デバイスを再読み込み",
         "toggle": "常にこのデバイスに送信",
         "select_btn": "デバイスを選択",
         "device_state": {
@@ -302,7 +297,9 @@
         "trash": "ゴミ箱",
         "trash_note": "ゴミ箱の設定",
         "transmission": "転送設定",
-        "transmission_note": "ウォッチへのリスト転送設定"
+        "transmission_note": "ウォッチへのリスト転送設定",
+        "export": "保存",
+        "export_note": "リストと設定を保存するか、Listago にエクスポートします"
     },
     "page_settings_logs": {
         "page_title": "ログ設定",
@@ -327,15 +324,11 @@
     },
     "page_settings_showlogs": {
         "page_title": "ログ",
-        "log_onemore": "もう1つのログ",
-        "log_more": "{{count}} 追加のログ",
-        "log_empty": "ログを読み込めませんでした。",
         "btn_delete": "ログを削除",
         "btn_save": "ログを保存",
         "confirm_delete": "本当にログ <strong>{{filename}}</strong> を削除しますか？",
         "toast_deleted": "ログが削除されました。",
         "select_logs": "ログファイルを選択:",
-        "logfile": "ログファイル",
         "select_logday_title": "ログファイルの日付を選択:",
         "no_log": "ログファイルが見つかりません！",
         "no_log_note": "{{date}} のログファイルが見つかりませんでした。"
@@ -394,13 +387,30 @@
         "instock_oneweek": "1週間",
         "instock_onemonth": "1ヶ月",
         "instock_hundredentries": "最新100項目",
-        "instock_note": "古いリストやリスト項目をゴミ箱にどのくらいの期間保持しますか？",
-        "confirm_cleartrash": "ゴミ箱を空にしますか？<br /><br /><strong>警告:</strong> この操作は元に戻せません！",
-        "confirm_cleartrash_ok": "ゴミ箱を空にする",
-        "confirm_cleartrash_cancel": "ゴミ箱を空にしない",
-        "confirm_clearitemstrash": "ゴミ箱を空にしますか？<br /><br /><strong>警告:</strong> この操作は元に戻せません！",
-        "confirm_clearitemstrash_ok": "ゴミ箱を空にする",
-        "confirm_clearitemstrash_cancel": "ゴミ箱を空にしない"
+        "instock_note": "古いリストやリスト項目をゴミ箱にどのくらいの期間保持しますか？"
+    },
+    "page_settings_export": {
+        "page_title": "エクスポート",
+        "lists": "リストをエクスポートしますか？",
+        "lists_toggle": "リストをエクスポート",
+        "trash": "ゴミ箱内のリストと項目もエクスポートしますか？",
+        "trash_toggle": "ゴミ箱をエクスポート",
+        "settings": "アプリの設定もすべてエクスポートできます。",
+        "settings_toggle": "設定をエクスポート",
+        "export_to_zip": "エクスポート",
+        "export_summary": "次の内容がエクスポートされます：",
+        "export_summary_lists": "リスト",
+        "export_summary_trash": "ゴミ箱",
+        "export_summary_settings": "設定",
+        "export_summary_nothing": "エクスポートするものがありません。",
+        "export_cancel": "エクスポートをキャンセル",
+        "export_error": "エクスポートに失敗しました！",
+        "export_success": "エクスポートに成功し、アーカイブは <strong>DOCUMENTS</strong> に保存されました。",
+        "export_success_share": "アーカイブを共有しますか？",
+        "export_success_share_listago": "またはアーカイブを共有しますか？",
+        "export_success_share_title": "リストのエクスポート",
+        "export_success_listago": "<strong>Listago</strong> にインポート",
+        "export_success_listago_error": "インポートに失敗しました！"
     },
     "page_appinfos": {
         "page_title": "アプリ情報",

@@ -12,6 +12,8 @@
     "select": "Обрати",
     "share": "Поділитися",
     "next": "Далі",
+    "back": "Назад",
+    "done": "Готово",
     "date": {
         "date_add": "",
         "today": "Сьогодні",
@@ -58,7 +60,6 @@
     },
     "service-lists": {
         "store_list_error": "Неможливість збереження списку!",
-        "store_listitem_error": "Неможливість збереження пункту!",
         "delete_confirm": "Чи хочете ви видалити список <strong>{{name}}</strong>?",
         "delete_confirm_plural": "Чи хочете ви видалити списки?",
         "delete_confirm_watch": "Видалити також зі смарт-годинника",
@@ -69,8 +70,6 @@
         "delete_success_plural": "Списки видалено.",
         "delete_item_confirm": "Чи хочете ви видалити пункт <strong>{{name}}</strong>?",
         "delete_item_confirm_plural": "Чи хочете ви видалити пункти?",
-        "delete_item_success": "Пункт видалено.",
-        "delete_item_error": "Неможливість видалення пункту!",
         "empty_confirm": "Чи хочете ви видалити всі непідгледжені пункти зі списку <strong>{{name}}</strong>?",
         "empty_confirm_plural": "Чи хочете ви видалити всі непідгледжені пункти зі списків?",
         "empty_success": "Всі пункти списку видалено.",
@@ -79,8 +78,6 @@
         "undo_warning": "<br /><br /><strong>Попередження:</strong> Це неможливо буде змінити!",
         "erase_confirm": "Чи хочете ви видалити список <strong>{{name}}</strong> назавжди?",
         "erase_confirm_plural": "Чи хочете ви видалити списки назавжди?",
-        "erase_success": "Список видалено назавжди.",
-        "erase_error": "Неможливість видалення списку!",
         "erase_item_confirm": "Чи хочете ви видалити пункт <strong>{{name}}</strong> назавжди?",
         "erase_item_confirm_plural": "Чи хочете ви видалити пункти назавжди?",
         "erase_item_success": "Пункт видалено назавжди.",
@@ -165,7 +162,6 @@
     "comp-sharelog": {
         "title": "Зберегти лог",
         "text": "Як хочеш зберегти лог <br /><strong>{{filename}}</strong><br />?",
-        "text_web": "Лог <strong>{{filename}}</strong> збережено на комп'ютері.",
         "store": "Зберігти у Документи",
         "share": "Поділитися",
         "email": "Надіслати розробнику на електронну пошту",
@@ -272,7 +268,6 @@
         "page_title": "Мої пристрої",
         "known_devices": "Знайдені пристрої",
         "install_app": "Спершу встановіть застосунок на своєму годиннику у <br /><strong>Garmin ConnectIQ Store</strong>",
-        "reload_btn": "Перезавантажити пристрій",
         "toggle": "Інформацію до цього пристрою відправляти завжди",
         "select_btn": "Вибрати пристрій",
         "device_state": {
@@ -302,7 +297,9 @@
         "trash": "Корзина",
         "trash_note": "Налаштування використання корзини",
         "transmission": "Налаштування передачі застосунку",
-        "transmission_note": "Налаштування передачі застосунку на свій годинник"
+        "transmission_note": "Налаштування передачі застосунку на свій годинник",
+        "export": "Зберегти",
+        "export_note": "Зберігайте списки та налаштування або експортуйте їх у Listago"
     },
     "page_settings_logs": {
         "page_title": "Записи",
@@ -327,15 +324,11 @@
     },
     "page_settings_showlogs": {
         "page_title": "Логи",
-        "log_onemore": "Є ще один лог",
-        "log_more": "{{count}} більше логів",
-        "log_empty": "Лог не можна завантажити.",
         "btn_delete": "Видалити лог",
         "btn_save": "Зберегти лог",
         "confirm_delete": "Підтвердити видалення логу <strong>{{filename}}</strong>?",
         "toast_deleted": "Лог видалено.",
         "select_logs": "Виберіть файл з логами:",
-        "logfile": "Файл з логами",
         "select_logday_title": "Оберіть дати файлів з логами:",
         "no_log": "Немає файлів з логами!",
         "no_log_note": "Для {{date}} не було знайдено жодного файла з логами."
@@ -394,13 +387,30 @@
         "instock_oneweek": "1 тиждень",
         "instock_onemonth": "1 місяць",
         "instock_hundredentries": "Останні 100 записів",
-        "instock_note": "Скільки днів зберігати вміст цієї папки?",
-        "confirm_cleartrash": "Видалити вміст папки збережених?<br /><br /> <strong>Увага!</strong> Вміст буде видалено назавжди!",
-        "confirm_cleartrash_ok": "Видалити вміст",
-        "confirm_cleartrash_cancel": "Ні, нічого не видаляти",
-        "confirm_clearitemstrash": "Видалити вміст окремої папки збережених?<br /><br /> <strong>Увага!</strong> Вміст буде видалено назавжди!",
-        "confirm_clearitemstrash_ok": "Видалити вміст",
-        "confirm_clearitemstrash_cancel": "Ні, нічого не видаляти"
+        "instock_note": "Скільки днів зберігати вміст цієї папки?"
+    },
+    "page_settings_export": {
+        "page_title": "Експорт",
+        "lists": "Бажаєте експортувати свої списки?",
+        "lists_toggle": "Експортувати списки",
+        "trash": "Також експортувати списки та елементи в кошику?",
+        "trash_toggle": "Експортувати кошик",
+        "settings": "Також можна експортувати всі налаштування додатку.",
+        "settings_toggle": "Експортувати налаштування",
+        "export_to_zip": "Експортувати",
+        "export_summary": "Буде експортовано такий вміст:",
+        "export_summary_lists": "Списки",
+        "export_summary_trash": "Кошик",
+        "export_summary_settings": "Налаштування",
+        "export_summary_nothing": "Немає нічого для експорту.",
+        "export_cancel": "Скасувати експорт",
+        "export_error": "Не вдалося завершити експорт!",
+        "export_success": "Експорт пройшов успішно, архів збережено в <strong>DOCUMENTS</strong>.",
+        "export_success_share": "Бажаєте поділитися архівом?",
+        "export_success_share_listago": "Або бажаєте поділитися архівом?",
+        "export_success_share_title": "Експорт списків",
+        "export_success_listago": "Імпортувати в <strong>Listago</strong>",
+        "export_success_listago_error": "Помилка імпорту!"
     },
     "page_appinfos": {
         "page_title": "Інформація про додаток",

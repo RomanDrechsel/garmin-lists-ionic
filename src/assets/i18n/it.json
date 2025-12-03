@@ -12,6 +12,8 @@
     "select": "Seleziona",
     "share": "Condividi",
     "next": "Prossimo",
+    "back": "Indietro",
+    "done": "Fatto",
     "date": {
         "date_add": "",
         "today": "Oggi",
@@ -58,7 +60,6 @@
     },
     "service-lists": {
         "store_list_error": "La lista non può essere salvata!",
-        "store_listitem_error": "Il punto non può essere salvato!",
         "delete_confirm": "Vuoi davvero eliminare la lista <strong>{{name}}</strong>?",
         "delete_confirm_plural": "Vuoi davvero eliminare le liste?",
         "delete_confirm_watch": "Elimina anche dall'orologio",
@@ -69,8 +70,6 @@
         "delete_success_plural": "Le liste sono state eliminate.",
         "delete_item_confirm": "Vuoi davvero eliminare il punto <strong>{{name}}</strong>?",
         "delete_item_confirm_plural": "Vuoi davvero eliminare i punti?",
-        "delete_item_success": "Il punto è stato eliminato.",
-        "delete_item_error": "Il punto non può essere eliminato!",
         "empty_confirm": "Vuoi davvero eliminare tutti i punti non bloccati della lista <strong>{{name}}</strong>?",
         "empty_confirm_plural": "Vuoi davvero eliminare tutti i punti non bloccati delle liste?",
         "empty_success": "Tutti i punti della lista sono stati eliminati.",
@@ -79,8 +78,6 @@
         "undo_warning": "<br /><br /><strong>Attenzione:</strong> Questa azione non può essere annullata!",
         "erase_confirm": "Vuoi davvero cancellare definitivamente la lista <strong>{{name}}</strong>?",
         "erase_confirm_plural": "Vuoi davvero cancellare definitivamente le liste?",
-        "erase_success": "La lista è stata cancellata definitivamente.",
-        "erase_error": "La lista non può essere cancellata!",
         "erase_item_confirm": "Vuoi davvero cancellare definitivamente il punto <strong>{{name}}</strong>?",
         "erase_item_confirm_plural": "Vuoi davvero cancellare definitivamente i punti?",
         "erase_item_success": "Il punto è stato cancellato definitivamente.",
@@ -165,7 +162,6 @@
     "comp-sharelog": {
         "title": "Salva il log",
         "text": "Come desideri salvare il log <br /><strong>{{filename}}</strong>?",
-        "text_web": "Il log <strong>{{filename}}</strong> verrà salvato sul tuo computer.",
         "store": "Salva in Documenti",
         "share": "Condividi",
         "email": "Inviare allo sviluppatore via e-mail",
@@ -272,7 +268,6 @@
         "page_title": "I miei dispositivi",
         "known_devices": "Dispositivi noti",
         "install_app": "Devi prima installare l'app Lista sul tuo orologio.<br /><strong>Clicca qui</strong> per andare allo store Garmin Connect IQ.",
-        "reload_btn": "Carica nuovamente i dispositivi",
         "toggle": "Invia sempre a questo dispositivo",
         "select_btn": "Seleziona dispositivo",
         "device_state": {
@@ -299,7 +294,9 @@
         "trash": "Cestino",
         "trash_note": "Impostazioni per l'utilizzo del cestino",
         "transmission": "Impostazioni di trasmissione",
-        "transmission_note": "Configurazione per il trasferimento delle liste sul tuo orologio"
+        "transmission_note": "Configurazione per il trasferimento delle liste sul tuo orologio",
+        "export": "Salva",
+        "export_note": "Salva le liste e le impostazioni oppure esportale su Listago"
     },
     "page_settings_logs": {
         "page_title": "Logging",
@@ -324,15 +321,11 @@
     },
     "page_settings_showlogs": {
         "page_title": "Logs",
-        "log_onemore": "Un altro log",
-        "log_more": "{{count}} altri log",
-        "log_empty": "Il log non è stato caricato.",
         "btn_delete": "Cancella log",
         "btn_save": "Salva log",
         "confirm_delete": "Vuoi cancellare il log <strong>{{filename}}</strong>?",
         "toast_deleted": "Il log è stato cancellato.",
         "select_logs": "Seleziona file di log:",
-        "logfile": "File di log",
         "select_logday_title": "Seleziona i giorni dei file di log:",
         "no_log": "Nessun file di log trovato!",
         "no_log_note": "Per {{date}} non sono stati trovati file di log."
@@ -374,13 +367,30 @@
         "instock_oneweek": "una settimana",
         "instock_onemonth": "un mese",
         "instock_hundredentries": "ultimi 100 elementi",
-        "instock_note": "Quanto tempo desideri mantenere gli elementi nel cestino prima della loro cancellazione automatica?",
-        "confirm_cleartrash": "Vuoi svuotare il cestino?<br /><br /><strong>Attenzione:</strong> Questa azione non può essere annullata!",
-        "confirm_cleartrash_ok": "Svuota cestino",
-        "confirm_cleartrash_cancel": "Non svuotare il cestino",
-        "confirm_clearitemstrash": "Vuoi svuotare i cestini?<br /><br /><strong>Attenzione:</strong> Questa azione non può essere annullata!",
-        "confirm_clearitemstrash_ok": "Svuota cestini",
-        "confirm_clearitemstrash_cancel": "Non svuotare i cestini"
+        "instock_note": "Quanto tempo desideri mantenere gli elementi nel cestino prima della loro cancellazione automatica?"
+    },
+    "page_settings_export": {
+        "page_title": "Esporta",
+        "lists": "Vuoi esportare le tue liste?",
+        "lists_toggle": "Esporta liste",
+        "trash": "Vuoi esportare anche le liste e gli elementi nel cestino?",
+        "trash_toggle": "Esporta cestino",
+        "settings": "Puoi anche esportare tutte le impostazioni dell'app.",
+        "settings_toggle": "Esporta impostazioni",
+        "export_to_zip": "Esporta",
+        "export_summary": "Verranno esportati i seguenti contenuti:",
+        "export_summary_lists": "Liste",
+        "export_summary_trash": "Cestino",
+        "export_summary_settings": "Impostazioni",
+        "export_summary_nothing": "Non c'è niente da esportare.",
+        "export_cancel": "Annulla esportazione",
+        "export_error": "L'esportazione non è riuscita!",
+        "export_success": "Esportazione riuscita e archivio salvato in <strong>DOCUMENTI</strong>.",
+        "export_success_share": "Vuoi condividere l'archivio?",
+        "export_success_share_listago": "Oppure vuoi condividere l'archivio?",
+        "export_success_share_title": "Esportazione liste",
+        "export_success_listago": "Importa in <strong>Listago</strong>",
+        "export_success_listago_error": "Importazione fallita!"
     },
     "page_appinfos": {
         "page_title": "Informazioni sull'app",

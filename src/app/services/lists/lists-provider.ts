@@ -2,7 +2,11 @@ import { ListsBackendService } from "../storage/lists/lists-backend.service";
 import { List } from "./list";
 
 export class ListsProvider {
-    protected StoragePath = "lists";
+    public static readonly StoragePath: string = "lists";
+
+    public get StoragePath(): string {
+        return ListsProvider.StoragePath;
+    }
 
     public constructor(protected readonly Backend: ListsBackendService) {}
 

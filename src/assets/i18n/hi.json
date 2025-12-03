@@ -12,6 +12,8 @@
     "select": "चुनें",
     "share": "साझा करें",
     "next": "आगे",
+    "back": "वापस",
+    "done": "पूर्ण",
     "date": {
         "date_add": " घड़ी",
         "today": "आज",
@@ -58,7 +60,6 @@
     },
     "service-lists": {
         "store_list_error": "सूची को सहेजा नहीं जा सका!",
-        "store_listitem_error": "पॉइंट को सहेजा नहीं जा सका!",
         "delete_confirm": "क्या आप वाकई सूची <strong>{{name}}</strong> को हटाना चाहते हैं?",
         "delete_confirm_plural": "क्या आप वाकई सूचियाँ हटाना चाहते हैं?",
         "delete_confirm_watch": "सूची को घड़ी से भी हटाएँ",
@@ -69,8 +70,6 @@
         "delete_success_plural": "सूचियाँ हटा दी गई हैं।",
         "delete_item_confirm": "क्या आप वाकई पॉइंट <strong>{{name}}</strong> को हटाना चाहते हैं?",
         "delete_item_confirm_plural": "क्या आप वाकई पॉइंट्स हटाना चाहते हैं?",
-        "delete_item_success": "पॉइंट हटा दिया गया है।",
-        "delete_item_error": "पॉइंट को हटाया नहीं जा सका!",
         "empty_confirm": "क्या आप सभी अनलॉक किए गए पॉइंट्स को सूची <strong>{{name}}</strong> से हटाना चाहते हैं?",
         "empty_confirm_plural": "क्या आप सभी अनलॉक किए गए पॉइंट्स को सूचियों से हटाना चाहते हैं?",
         "empty_success": "सभी सूची पॉइंट्स हटा दिए गए हैं।",
@@ -79,8 +78,6 @@
         "undo_warning": "<br /><br /><strong>चेतावनी:</strong> इसे वापस नहीं किया जा सकता है!",
         "erase_confirm": "क्या आप सूची <strong>{{name}}</strong> को स्थायी रूप से हटाना चाहते हैं?",
         "erase_confirm_plural": "क्या आप सूचियों को स्थायी रूप से हटाना चाहते हैं?",
-        "erase_success": "सूची स्थायी रूप से हटा दी गई है।",
-        "erase_error": "सूची को स्थायी रूप से हटाया नहीं जा सका!",
         "erase_item_confirm": "क्या आप पॉइंट <strong>{{name}}</strong> को स्थायी रूप से हटाना चाहते हैं?",
         "erase_item_confirm_plural": "क्या आप पॉइंट्स को स्थायी रूप से हटाना चाहते हैं?",
         "erase_item_success": "पॉइंट स्थायी रूप से हटा दिया गया है।",
@@ -165,7 +162,6 @@
     "comp-sharelog": {
         "title": "लॉग सहेजें",
         "text": "आप लॉग <br /><strong>{{filename}}</strong><br /> को कैसे सहेजना चाहेंगे?",
-        "text_web": "लॉग <strong>{{filename}}</strong> आपके कंप्यूटर पर सहेजा जाएगा।",
         "store": "Documents में सहेजें",
         "share": "साझा करें",
         "email": "डेवलपर को ईमेल भेजें",
@@ -272,7 +268,6 @@
         "page_title": "मेरे डिवाइस",
         "known_devices": "पहचाने गए डिवाइस",
         "install_app": "आपको पहले अपनी घड़ी पर सूची ऐप इंस्टॉल करनी होगी।<br /><strong>यहां क्लिक करें</strong> ताकि Garmin ConnectIQ स्टोर पर जा सकें।",
-        "reload_btn": "डिवाइस पुनः लोड करें",
         "toggle": "हमेशा इस डिवाइस पर भेजें",
         "select_btn": "डिवाइस चुनें",
         "device_state": {
@@ -302,7 +297,9 @@
         "trash": "कचरा",
         "trash_note": "कचरे के उपयोग के लिए सेटिंग्स",
         "transmission": "स्थानांतरण सेटिंग्स",
-        "transmission_note": "अपनी घड़ी पर सूचियों को स्थानांतरित करने की सेटिंग्स"
+        "transmission_note": "अपनी घड़ी पर सूचियों को स्थानांतरित करने की सेटिंग्स",
+        "export": "सहेजें",
+        "export_note": "सूचियों और सेटिंग्स को सहेजें या Listago पर निर्यात करें"
     },
     "page_settings_logs": {
         "page_title": "लॉगिंग",
@@ -327,15 +324,11 @@
     },
     "page_settings_showlogs": {
         "page_title": "लॉग्स",
-        "log_onemore": "एक और लॉग",
-        "log_more": "{{count}} और लॉग्स",
-        "log_empty": "लॉग लोड नहीं हो सका।",
         "btn_delete": "लॉग हटाएं",
         "btn_save": "लॉग सहेजें",
         "confirm_delete": "क्या लॉग <strong>{{filename}}</strong> को वास्तव में हटाया जाना चाहिए?",
         "toast_deleted": "लॉग हटा दिया गया।",
         "select_logs": "लॉग फ़ाइल चुनें:",
-        "logfile": "लॉग फ़ाइल",
         "select_logday_title": "लॉग फ़ाइलों के दिन चुनें:",
         "no_log": "कोई लॉग फ़ाइल नहीं मिली!",
         "no_log_note": "{{date}} के लिए कोई लॉग फ़ाइल नहीं मिली।"
@@ -394,13 +387,30 @@
         "instock_oneweek": "एक सप्ताह",
         "instock_onemonth": "एक महीना",
         "instock_hundredentries": "अंतिम 100 प्रविष्टियाँ",
-        "instock_note": "कितने समय तक पुरानी सूचियाँ या सूची आइटम कचरे में रखे जाने चाहिए?",
-        "confirm_cleartrash": "क्या कचरा खाली किया जाना चाहिए?<br /><br /><strong>चेतावनी:</strong> इस कार्य को वापस नहीं किया जा सकता!",
-        "confirm_cleartrash_ok": "कचरा खाली करें",
-        "confirm_cleartrash_cancel": "कचरा खाली न करें",
-        "confirm_clearitemstrash": "क्या सभी कचरे खाली किए जाने चाहिए?<br /><br /><strong>चेतावनी:</strong> इस कार्य को वापस नहीं किया जा सकता!",
-        "confirm_clearitemstrash_ok": "सभी कचरे खाली करें",
-        "confirm_clearitemstrash_cancel": "सभी कचरे खाली न करें"
+        "instock_note": "कितने समय तक पुरानी सूचियाँ या सूची आइटम कचरे में रखे जाने चाहिए?"
+    },
+    "page_settings_export": {
+        "page_title": "निर्यात करें",
+        "lists": "क्या आप अपनी सूचियाँ निर्यात करना चाहते हैं?",
+        "lists_toggle": "सूचियाँ निर्यात करें",
+        "trash": "क्या कचरे में पड़ी सूचियाँ और आइटम भी निर्यात किए जाएं?",
+        "trash_toggle": "कचरा निर्यात करें",
+        "settings": "आप सभी ऐप सेटिंग्स को भी निर्यात कर सकते हैं।",
+        "settings_toggle": "सेटिंग्स निर्यात करें",
+        "export_to_zip": "निर्यात करें",
+        "export_summary": "निम्नलिखित सामग्री निर्यात की जाएगी:",
+        "export_summary_lists": "सूचियाँ",
+        "export_summary_trash": "कचरा",
+        "export_summary_settings": "सेटिंग्स",
+        "export_summary_nothing": "निर्यात करने के लिए कुछ नहीं है।",
+        "export_cancel": "निर्यात रद्द करें",
+        "export_error": "निर्यात पूरा नहीं हो सका!",
+        "export_success": "निर्यात सफल रहा और संग्रह को <strong>DOCUMENTS</strong> में सहेजा गया।",
+        "export_success_share": "क्या आप संग्रह साझा करना चाहते हैं?",
+        "export_success_share_listago": "या आप संग्रह साझा करना चाहते हैं?",
+        "export_success_share_title": "सूची निर्यात",
+        "export_success_listago": "<strong>Listago</strong> में आयात करें",
+        "export_success_listago_error": "आयात विफल रहा!"
     },
     "page_appinfos": {
         "page_title": "ऐप जानकारी",

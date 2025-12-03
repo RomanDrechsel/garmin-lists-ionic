@@ -6,8 +6,13 @@ import { ListitemsTrashProvider } from "./listitems-trash-provider";
 import { ListsProvider } from "./lists-provider";
 
 export class TrashProvider extends ListsProvider {
-    protected override StoragePath = "trash";
+    public static override readonly StoragePath: string = "trash";
+
     private _maxEntryCount: number = -1;
+
+    public override get StoragePath(): string {
+        return TrashProvider.StoragePath;
+    }
 
     public constructor(backend: ListsBackendService, private ListitemsTrash: ListitemsTrashProvider, private _datasetChangedSubject: BehaviorSubject<List[] | undefined>) {
         super(backend);

@@ -12,6 +12,8 @@
     "select": "選擇",
     "share": "分享",
     "next": "下一步",
+    "back": "返回",
+    "done": "完成",
     "date": {
         "date_add": "",
         "today": "今天",
@@ -58,7 +60,6 @@
     },
     "service-lists": {
         "store_list_error": "無法儲存清單！",
-        "store_listitem_error": "無法儲存項目！",
         "delete_confirm": "確定要刪除清單 <strong>{{name}}</strong> 嗎？",
         "delete_confirm_plural": "確定要刪除這些清單嗎？",
         "delete_confirm_watch": "也在手錶上刪除清單",
@@ -69,8 +70,6 @@
         "delete_success_plural": "清單已被刪除。",
         "delete_item_confirm": "確定要刪除項目 <strong>{{name}}</strong> 嗎？",
         "delete_item_confirm_plural": "確定要刪除這些項目嗎？",
-        "delete_item_success": "項目已刪除。",
-        "delete_item_error": "無法刪除項目！",
         "empty_confirm": "確定要刪除清單 <strong>{{name}}</strong> 中所有未鎖定的項目嗎？",
         "empty_confirm_plural": "確定要刪除所有清單中未鎖定的項目嗎？",
         "empty_success": "所有清單項目已刪除。",
@@ -79,8 +78,6 @@
         "undo_warning": "<br /><br /><strong>警告：</strong> 此操作無法復原！",
         "erase_confirm": "確定要永久刪除清單 <strong>{{name}}</strong> 嗎？",
         "erase_confirm_plural": "確定要永久刪除這些清單嗎？",
-        "erase_success": "清單已永久刪除。",
-        "erase_error": "無法刪除清單！",
         "erase_item_confirm": "確定要永久刪除項目 <strong>{{name}}</strong> 嗎？",
         "erase_item_confirm_plural": "確定要永久刪除這些項目嗎？",
         "erase_item_success": "項目已永久刪除。",
@@ -165,7 +162,6 @@
     "comp-sharelog": {
         "title": "儲存日誌",
         "text": "您希望如何儲存日誌 <br /><strong>{{filename}}</strong><br />？",
-        "text_web": "日誌 <strong>{{filename}}</strong> 將儲存在您的電腦上。",
         "store": "儲存至 Documents",
         "share": "分享",
         "email": "透過電子郵件傳送給開發人員",
@@ -272,7 +268,6 @@
         "page_title": "我的設備",
         "known_devices": "已知設備",
         "install_app": "您需要先在手錶上安裝清單應用。<br /><strong>點擊此處</strong>前往 Garmin ConnectIQ 商店。",
-        "reload_btn": "重新加載設備",
         "toggle": "始終發送到此設備",
         "select_btn": "選擇設備",
         "device_state": {
@@ -302,7 +297,9 @@
         "trash": "垃圾桶",
         "trash_note": "垃圾桶使用設置",
         "transmission": "傳輸設置",
-        "transmission_note": "向手錶傳輸清單的設置"
+        "transmission_note": "向手錶傳輸清單的設置",
+        "export": "儲存",
+        "export_note": "儲存清單與設定，或匯出到 Listago"
     },
     "page_settings_logs": {
         "page_title": "日誌",
@@ -327,15 +324,11 @@
     },
     "page_settings_showlogs": {
         "page_title": "日誌",
-        "log_onemore": "再一個日誌",
-        "log_more": "{{count}} 更多日誌",
-        "log_empty": "無法加載日誌。",
         "btn_delete": "刪除日誌",
         "btn_save": "保存日誌",
         "confirm_delete": "確定要刪除日誌 <strong>{{filename}}</strong> 嗎？",
         "toast_deleted": "日誌已刪除。",
         "select_logs": "選擇日誌檔案:",
-        "logfile": "日誌檔案",
         "select_logday_title": "選擇日誌檔案的日期:",
         "no_log": "找不到日誌檔案！",
         "no_log_note": "在 {{date}} 沒有找到日誌檔案。"
@@ -394,13 +387,30 @@
         "instock_oneweek": "一週",
         "instock_onemonth": "一個月",
         "instock_hundredentries": "最後 100 條記錄",
-        "instock_note": "舊的清單或清單項目應在垃圾桶中保留多長時間？",
-        "confirm_cleartrash": "確定要清空垃圾桶嗎？<br /><br /><strong>警告:</strong> 此操作無法撤銷！",
-        "confirm_cleartrash_ok": "清空垃圾桶",
-        "confirm_cleartrash_cancel": "不要清空垃圾桶",
-        "confirm_clearitemstrash": "確定要清空所有垃圾桶嗎？<br /><br /><strong>警告:</strong> 此操作無法撤銷！",
-        "confirm_clearitemstrash_ok": "清空所有垃圾桶",
-        "confirm_clearitemstrash_cancel": "不要清空所有垃圾桶"
+        "instock_note": "舊的清單或清單項目應在垃圾桶中保留多長時間？"
+    },
+    "page_settings_export": {
+        "page_title": "匯出",
+        "lists": "你想要匯出你的清單嗎？",
+        "lists_toggle": "匯出清單",
+        "trash": "是否也要匯出回收桶中的清單與項目？",
+        "trash_toggle": "匯出回收桶",
+        "settings": "你也可以匯出所有應用程式設定。",
+        "settings_toggle": "匯出設定",
+        "export_to_zip": "匯出",
+        "export_summary": "以下內容將被匯出：",
+        "export_summary_lists": "清單",
+        "export_summary_trash": "回收桶",
+        "export_summary_settings": "設定",
+        "export_summary_nothing": "沒有可匯出的內容。",
+        "export_cancel": "取消匯出",
+        "export_error": "匯出失敗！",
+        "export_success": "匯出成功，壓縮檔已儲存至 <strong>DOCUMENTS</strong>。",
+        "export_success_share": "你想分享這個壓縮檔嗎？",
+        "export_success_share_listago": "或你想要分享這個壓縮檔嗎？",
+        "export_success_share_title": "清單匯出",
+        "export_success_listago": "匯入到 <strong>Listago</strong>",
+        "export_success_listago_error": "匯入失敗！"
     },
     "page_appinfos": {
         "page_title": "應用資訊",
