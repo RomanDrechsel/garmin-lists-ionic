@@ -190,6 +190,13 @@
 
                 ion-buttons {
                     justify-content: space-evenly;
+                    margin: 0 1em 1em 1em;
+                    display: flex;
+                    gap: 1em;
+
+                    ion-button {
+                        width: calc(50% - 1em);
+                    }
                 }
 
                 .listago {
@@ -202,10 +209,6 @@
                     ion-img {
                         width: 40%;
                         margin-inline: 5%;
-                    }
-
-                    .listago-text {
-                        font-size: 1.2em;
                     }
                 }
             }

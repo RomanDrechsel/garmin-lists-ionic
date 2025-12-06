@@ -2,9 +2,10 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectorRef, Component, inject, isDevMode, OnInit, ViewChild } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { App } from "@capacitor/app";
-import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonRouterOutlet, IonSplitPane, IonToggle, NavController, Platform } from "@ionic/angular/standalone";
+import { IonApp, IonContent, IonFooter, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonRouterOutlet, IonSplitPane, IonToggle, ModalController, NavController, Platform } from "@ionic/angular/standalone";
 import { TranslateModule } from "@ngx-translate/core";
 import { EMenuItemType, MenuItem, MenuitemFactory, MenuitemFactoryList } from "./classes/menu-items";
+import { ShowListagoHint } from "./components/listago/listago.component";
 import { AppService } from "./services/app/app.service";
 import { ConnectIQService } from "./services/connectiq/connect-iq.service";
 import { EPrefProperty, PreferencesService } from "./services/storage/preferences.service";
@@ -27,6 +28,7 @@ export class AppComponent implements OnInit {
     private readonly App = inject(AppService);
     private readonly NavController = inject(NavController);
     private readonly cdr = inject(ChangeDetectorRef);
+    private readonly ModalController = inject(ModalController);
 
     @ViewChild("router_outlet") private routerOutlet!: IonRouterOutlet;
 
@@ -66,6 +68,10 @@ export class AppComponent implements OnInit {
         this._useTrash = await this.Preferences.Get<boolean>(EPrefProperty.TrashLists, true);
         this._firstStart = await this.Preferences.Get<boolean>(EPrefProperty.FirstStart, true);
         this.setAppPages();
+
+        if (await this.Preferences.Get(EPrefProperty.ListagoHint, true)) {
+            await ShowListagoHint(this.ModalController);
+        }
     }
 
     public async onMenuItemClick(item: MenuItem) {

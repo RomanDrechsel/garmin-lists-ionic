@@ -62,11 +62,6 @@
                                 </ion-item>
                             </ion-list>
                         </ion-card>
-
-                        <ion-buttons>
-                            <ion-button (click)="exportToZip()" color="secondary" fill="outline" *ngIf="!ExportRunning"> {{'page_settings_export.export_to_zip'|translate}} </ion-button>
-                            <ion-button (click)="stopExport()" color="secondary" fill="outline" *ngIf="ExportRunning"> {{'cancel'|translate}} </ion-button>
-                        </ion-buttons>
                     </div>
                     <div *ngIf="!SomethingEnabled || !ExportItems.length">
                         <div class="text margin">{{'page_settings_export.export_summary_nothing'|translate}}</div>
@@ -75,9 +70,22 @@
                         </ion-buttons>
                     </div>
                 </div>
-                <div class="buttons left">
-                    <ion-button (click)="toSettings()">{{'back' | translate}}</ion-button>
-                </div>
+                @if (SomethingEnabled) {
+                <ion-buttons class="buttons multiple">
+                    <ion-button (click)="toSettings()" color="secondary" fill="solid">{{'back' | translate}}</ion-button>
+                    <ion-button (click)="exportToZip()" color="secondary" fill="outline" *ngIf="!ExportRunning"> {{'page_settings_export.export_to_zip'|translate}} </ion-button>
+                    <ion-button (click)="stopExport()" color="secondary" fill="outline" *ngIf="ExportRunning"> {{'cancel'|translate}} </ion-button>
+                </ion-buttons>
+                } @else if (!SomethingEnabled || !ExportItems.length) {
+                <ion-buttons class="buttons multiple">
+                    <ion-button (click)="toSettings()" color="secondary" fill="solid">{{'back' | translate}}</ion-button>
+                    <ion-button (click)="cancel()" color="secondary" fill="outline"> {{'page_settings_export.export_cancel'|translate}} </ion-button>
+                </ion-buttons>
+                } @else {
+                <ion-buttons class="buttons left">
+                    <ion-button (click)="toSettings()" color="secondary" fill="solid">{{'back' | translate}}</ion-button>
+                </ion-buttons>
+                }
             </ion-segment-content>
         </ion-segment-view>
         <div class="fixed-bottom">
@@ -104,13 +112,13 @@
         <div class="content">
             <div class="text" [innerHTML]="'page_settings_export.export_success' | translate"></div>
 
-            <div class="listago" (click)="Listago()" *ngIf="ListagoInstalled">
+            <div class="listago" (click)="Listago()" *ngIf="ListagoInstalled" [ngClass]="{highlight: HighlightListago}">
                 <ion-img src="/assets/img/listago.png"></ion-img>
-                <div class="listago-text" [innerHTML]="'page_settings_export.export_success_listago' | translate"></div>
+                <ion-button fill="outline">{{'page_settings_export.export_success_listago' | translate}}</ion-button>
             </div>
 
             <div class="listago" (click)="ListagoDev()" *ngIf="ListagoDevInstalled">
-                <div class="listago-text">Export to Listago-dev</div>
+                <ion-button fill="outline">Export to Listago-dev</ion-button>
             </div>
 
             <div class="text" [innerHTML]="'page_settings_export.export_success_share_listago' | translate" *ngIf="ListagoInstalled"></div>

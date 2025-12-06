@@ -32,6 +32,7 @@ export enum EPrefProperty {
     "OpenedList" = "LISTS_OpenedList",
     "IgnoreWatchOutdated" = "LISTS_IgnoreWatchOutdated",
     "AdmobBannerHeight" = "LISTS_AdmobBannerHeight",
+    "ListagoHint" = "LISTS_ListagoHint",
 }
 
 @Injectable({
@@ -83,7 +84,7 @@ export class PreferencesService {
     public async Export(): Promise<string> {
         const preferencesObject: { [key: string]: any } = {};
 
-        const ignore = ["FirstStart", "LastVersion", "DebugSimulator", "DebugApp", "OpenedList"];
+        const ignore = ["FirstStart", "LastVersion", "DebugSimulator", "DebugApp", "OpenedList", "ListagoHint"];
 
         for (const key in EPrefProperty) {
             if (EPrefProperty.hasOwnProperty(key) && ignore.indexOf(key) < 0) {

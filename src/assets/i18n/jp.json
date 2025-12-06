@@ -216,6 +216,15 @@
         "trash-item-delete": "リスト項目を完全に削除",
         "trash-items-delete": "{{num}} 個のリスト項目を完全に削除"
     },
+    "comp-listago": {
+        "txt1": "Listago が利用可能です！",
+        "txt2": "「Lists」アプリの代替として、新しいアプリ「Listago」を提供します。",
+        "txt3": "新しいアプリをダウンロードして、「Lists」の代わりに使用していただけると幸いです。",
+        "txt4": "「Lists」アプリの開発はまもなく終了します。",
+        "txt5": "Listago の外観や操作感はあまり変わらないので、新たに慣れる必要はありません。",
+        "txt6": "移行を簡単にするために、すべてのリストとアプリ設定を Listago にインポートできます。",
+        "toggle": "再表示しない"
+    },
     "page_firststart": {
         "welcome": "「列表」へようこそ",
         "language1": "アプリの言語を選択してください:",
@@ -288,6 +297,8 @@
         "language_hint": "このアプリケーションは人工知能を使って翻訳されています。エラーが発生した場合は、 <span class=\"no-wrap\">{{email}}</span> に連絡してください。",
         "translation_error_confirm": "翻訳エラーを報告しますか？",
         "translation_error_title": "日本語訳の誤り",
+        "listago": "Listago への移行",
+        "listago_note": "Listago へ移行し、すべてのリストとアプリ設定を引き継いでください",
         "animations": "アニメーション",
         "animations_note": "さまざまな処理をアニメーションで視覚的に表示しますか？",
         "logging": "ログ設定",
@@ -409,8 +420,19 @@
         "export_success_share": "アーカイブを共有しますか？",
         "export_success_share_listago": "またはアーカイブを共有しますか？",
         "export_success_share_title": "リストのエクスポート",
-        "export_success_listago": "<strong>Listago</strong> にインポート",
+        "export_success_listago": "Listago にインポート",
         "export_success_listago_error": "インポートに失敗しました！"
+    },
+    "page_settings_listago": {
+        "page_title": "Listago への移行",
+        "listago_download": "まず、<strong>Listago アプリ</strong> を Google Play からインストールしてください：",
+        "listago_button": "Google Play で Listago",
+        "listago_installed": "Listago アプリはすでにデバイスにインストールされています。データのエクスポートを続行できます。",
+        "export_txt1": "リストと設定をエクスポートするために、最初にアーカイブが作成され、Listago アプリで処理されます。",
+        "export_txt2": "エクスポートの最後に、アーカイブを直接 Listago アプリに送信できます。",
+        "export_txt3": "これによりアプリが開き、アーカイブがインポートされます。",
+        "export_txt4": "Listago アプリがすべてのリストと設定を正常にインポートしたら、Lists アプリをアンインストールできます。",
+        "export_btn": "エクスポート開始"
     },
     "page_appinfos": {
         "page_title": "アプリ情報",

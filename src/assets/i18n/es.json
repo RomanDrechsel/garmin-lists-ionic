@@ -216,6 +216,15 @@
         "trash-item-delete": "Eliminar elemento de la lista permanentemente",
         "trash-items-delete": "Eliminar {{num}} elementos de la lista permanentemente"
     },
+    "comp-listago": {
+        "txt1": "¡Listago está disponible!",
+        "txt2": "Como reemplazo de la app \"Listen\", pongo a disposición mi nueva app \"Listago\".",
+        "txt3": "Te pediría que descargues mi nueva app y la uses en lugar de \"Listen\".",
+        "txt4": "Pronto dejaré de desarrollar la app \"Listen\".",
+        "txt5": "No necesitas acostumbrarte de nuevo, el look-and-feel de Listago casi no cambia.",
+        "txt6": "Para facilitar la transición, puedes importar todas tus listas y configuraciones de la app a Listago.",
+        "toggle": "No mostrar de nuevo"
+    },
     "page_firststart": {
         "welcome": "Bienvenido a Listas",
         "language1": "Por favor, selecciona tu idioma preferido:",
@@ -288,6 +297,8 @@
         "language_hint": "La aplicación se ha traducido utilizando inteligencia artificial. Si se han producido errores, notifíquelos a <span class=\"no-wrap\">{{email}}</span>",
         "translation_error_confirm": "¿Quiere informarme de un error de traducción?",
         "translation_error_title": "Errores en la traducción al español",
+        "listago": "Migración a Listago",
+        "listago_note": "Realiza la migración a Listago y transfiere todas tus listas y configuraciones de la app",
         "animations": "Animaciones",
         "animations_note": "¿Se deben representar visualmente varios procesos de forma animada?",
         "logging": "Configuración de registro",
@@ -409,8 +420,19 @@
         "export_success_share": "¿Deseas compartir el archivo?",
         "export_success_share_listago": "¿O deseas compartir el archivo?",
         "export_success_share_title": "Exportación de listas",
-        "export_success_listago": "Importar en <strong>Listago</strong>",
+        "export_success_listago": "Importar en Listago",
         "export_success_listago_error": "¡Error al importar!"
+    },
+    "page_settings_listago": {
+        "page_title": "Migración a Listago",
+        "listago_download": "Primero, por favor instala la <strong>app Listago</strong> desde Google Play:",
+        "listago_button": "Listago en Google Play",
+        "listago_installed": "La app Listago ya está instalada en tu dispositivo. Ahora puedes continuar con la exportación de tus datos.",
+        "export_txt1": "Para exportar tus listas y configuraciones, primero se creará un archivo que luego será procesado por la app Listago.",
+        "export_txt2": "Al final de la exportación, puedes enviarlo directamente a la app Listago.",
+        "export_txt3": "Esto abrirá la app y se importará el archivo.",
+        "export_txt4": "Una vez que la app Listago haya importado correctamente todas tus listas y configuraciones, puedes desinstalar la app Listas.",
+        "export_btn": "Iniciar exportación"
     },
     "page_appinfos": {
         "page_title": "Información de la app",

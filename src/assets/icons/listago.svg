@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <title>Listago</title>
+  <path d="m152 51c-13.113 0-24 10.887-24 24a12 12 0 0 0 12 12 12 12 0 0 0 12-12 12 12 0 0 0 12 12 12 12 0 0 0 12-12c0-13.113-10.887-24-24-24zm80 0c-13.113 0-24 10.887-24 24a12 12 0 0 0 12 12 12 12 0 0 0 12-12 12 12 0 0 0 12 12 12 12 0 0 0 12-12c0-13.113-10.887-24-24-24zm80 0c-13.113 0-24 10.887-24 24a12 12 0 0 0 12 12 12 12 0 0 0 12-12 12 12 0 0 0 12 12 12 12 0 0 0 12-12c0-13.113-10.887-24-24-24zm-228 42c-13.088 0-24 10.912-24 24v12 36 252c0 19.736 16.264 36 36 36h258.53c11.455 5.1391 24.14 8 37.471 8 50.668 0 92-41.332 92-92 0-46.602-34.965-85.307-80-91.219v-112.78-36-12c0-13.088-10.912-24-24-24h-12-272-12zm12 24h272c6.8556 0 12 5.1444 12 12v36h-296v-36c0-6.8556 5.1444-12 12-12zm-12 72h296v88.781c-32.204 4.2271-59.258 25.223-72.061 53.885h-199.05a12 12 0 0 0-12 12 12 12 0 0 0 12 12h192.08c-0.63701 4.3549-0.9668 8.8072-0.9668 13.334 0 22.888 8.4346 43.871 22.354 60h-226.35c-6.8556 0-12-5.1444-12-12v-228zm24.889 30.666a12 12 0 0 0-12 12 12 12 0 0 0 12 12h240a12 12 0 0 0 12-12 12 12 0 0 0-12-12h-240zm0 56a12 12 0 0 0-12 12 12 12 0 0 0 12 12h192a12 12 0 0 0 12-12 12 12 0 0 0-12-12h-192zm283.11 25.334c37.698 0 68 30.302 68 68s-30.302 68-68 68-68-30.302-68-68 30.302-68 68-68zm39.52 32.01a12 12 0 0 0-8.3379 3.8516l-39.529 42.822-19.168-19.168a12 12 0 0 0-16.969 0 12 12 0 0 0 0 16.969l28 28a12.001 12.001 0 0 0 17.303-0.34571l48-52a12 12 0 0 0-0.67969-16.957 12 12 0 0 0-8.6191-3.1719z" stop-color="#000000" stroke-linejoin="round"/>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:date>2025-12-04</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Roman Drechsel</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Roman Drechsel</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>Roman Drechsel</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:source>https://roman-drechsel.de</dc:source>
+        <dc:title>Listago</dc:title>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/by-nc/4.0/"/>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/by-nc/4.0/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:requires rdf:resource="http://creativecommons.org/ns#Notice"/>
+        <cc:requires rdf:resource="http://creativecommons.org/ns#Attribution"/>
+        <cc:prohibits rdf:resource="http://creativecommons.org/ns#CommercialUse"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

@@ -1,0 +1,92 @@
+ion-content {
+    --padding-start: 1em;
+    --padding-end: 1em;
+
+    ion-segment-view {
+        height: calc(100% - 3.5em);
+
+        ion-segment-content {
+            text-align: center;
+
+            ion-button {
+                margin-block: 3em;
+                min-height: 50px;
+            }
+
+            .txt {
+                margin-bottom: 1em;
+                font-size: 1.3em;
+            }
+
+            .right {
+                text-align: right;
+            }
+
+            &#app {
+                text-align: center;
+
+                img {
+                    margin: 2em;
+                    max-height: 30%;
+                    width: auto;
+                }
+            }
+
+            &#export {
+                .icon {
+                    max-height: calc(30% + 2em);
+                    display: flex;
+                    justify-content: center;
+                    padding: 2em;
+                    margin: 1em 0;
+                    height: calc(30% + 2em);
+
+                    ion-icon {
+                        height: 100%;
+                        width: auto;
+                        aspect-ratio: 1/1;
+                        fill: var(--ion-color-medium);
+                    }
+                }
+
+                .screenshot-wrapper {
+                    .screenshot {
+                        height: 250px;
+                        float: right;
+                        padding: 0.5em;
+                        box-shadow: 0 2px 4px rgba(var(--color-shadow-rgb), 0.3);
+                        margin: 0 1em 1em 1em;
+
+                        img {
+                            height: 100%;
+                        }
+                    }
+
+                    .clearer {
+                        clear: both;
+                    }
+                }
+            }
+        }
+    }
+}
+ion-modal.screenshot-popup {
+    &::part(content) {
+        max-width: 90%;
+        max-height: 90%;
+        box-shadow: 0 0 24px rgba(var(--color-shadow-rgb), 0.6);
+        border-radius: 1em;
+    }
+
+    img {
+        height: 100%;
+        width: auto;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    ion-segment-button {
+        --color: var(--ion-color-medium);
+        --color-checked: var(--ion-color-primary-tint);
+    }
+}

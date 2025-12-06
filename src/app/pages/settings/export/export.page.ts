@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { ActivatedRoute } from "@angular/router";
 import { CapacitorException } from "@capacitor/core";
 import { Share } from "@capacitor/share";
 import { IonButton, IonButtons, IonCard, IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonProgressBar, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonText, IonToggle } from "@ionic/angular/standalone";
@@ -24,11 +25,14 @@ export class ExportPage extends PageBase {
     @ViewChild("segbtnSettings", { static: false, read: ElementRef }) private _segbtnSettings?: ElementRef;
     @ViewChild("segbtnFinish", { static: false, read: ElementRef }) private _segbtnFinish?: ElementRef;
 
+    private readonly Route = inject(ActivatedRoute);
+
     private _exportItems: Map<string, ExportItem>;
     private _exporter?: BackendExporter;
     private _exportArchive?: string;
     private _listagoInstalled: boolean = false;
     private _listagoDevInstalled: boolean = false;
+    private _highlightListago: boolean = false;
 
     public get ExportLists(): boolean {
         return this._exportItems.get("lists")?.status !== "disabled";
@@ -66,6 +70,10 @@ export class ExportPage extends PageBase {
         return this._listagoDevInstalled;
     }
 
+    public get HighlightListago(): boolean {
+        return this._highlightListago;
+    }
+
     constructor() {
         super();
         this._exportItems = new Map<string, ExportItem>([
@@ -79,6 +87,7 @@ export class ExportPage extends PageBase {
         await super.ionViewWillEnter();
         this._listagoInstalled = (await SysInfo.AppInstalled({ packageName: this.Config.ListagoApp })).installed;
         this._listagoDevInstalled = (await SysInfo.AppInstalled({ packageName: `${this.Config.ListagoApp}.dev`, silent: true })).installed;
+        this._highlightListago = this.Route.snapshot.queryParamMap.get("highlight_listago") != null;
     }
 
     public toLists() {

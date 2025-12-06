@@ -8,7 +8,7 @@
                     <div class="text welcome">{{'page_firststart.welcome'|translate}}</div>
                     <div class="text language1" [innerHTML]="'page_firststart.language1'|translate"></div>
 
-                    <ion-img class="language-icon" *ngIf="Locale.CurrentLanguage?.Icon" [src]="Locale.CurrentLanguage!.Icon" (click)="changeLanguage()"></ion-img>
+                    <ion-img class="language-icon" *ngIf="Locale.CurrentLanguage.Icon" [src]="Locale.CurrentLanguage!.Icon" (click)="changeLanguage()"></ion-img>
                     <ion-select class="select-language" interface="action-sheet" fill="outline" value="{{Locale.CurrentLanguage.locale}}" [okText]="'change'|translate" [cancelText]="'cancel'|translate" (ionChange)="onChangeLanguage($event)" #selLanguage>
                         <ion-select-option *ngFor="let details of Locale.AvailableTranslations" value="{{details.locale}}" (selected)="Locale.CurrentLanguage.locale == details.locale"> {{details.LocalizedString}} </ion-select-option>
                     </ion-select>

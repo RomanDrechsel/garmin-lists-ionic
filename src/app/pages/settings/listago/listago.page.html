@@ -1,0 +1,48 @@
+<app-main-toolbar back="/settings">{{'page_settings_listago.page_title'|translate}}</app-main-toolbar>
+
+<ion-content>
+    <ion-segment-view>
+        <ion-segment-content id="app">
+            <img src="/assets/img/listago.png" />
+            <div *ngIf="!ListagoInstalled" class="download">
+                <div [innerHTML]="'page_settings_listago.listago_download'|translate" class="txt"></div>
+                <ion-button (click)="googlePlay()">{{'page_settings_listago.listago_button'|translate}}</ion-button>
+            </div>
+            <div *ngIf="ListagoInstalled">
+                <div [innerHTML]="'page_settings_listago.listago_installed'|translate" class="txt"></div>
+                <ion-button (click)="nextExport()">{{'next'|translate}}</ion-button>
+            </div>
+        </ion-segment-content>
+        <ion-segment-content id="export">
+            <div class="icon">
+                <ion-icon src="/assets/icons/export.svg"></ion-icon>
+            </div>
+            <div [innerHTML]="'page_settings_listago.export_txt1'|translate" class="txt"></div>
+            <div class="screenshot-wrapper">
+                <div class="screenshot" (click)="screenshotPopup()" *ngIf="Screenshot"><img src="{{Screenshot}}" /></div>
+                <div [innerHTML]="'page_settings_listago.export_txt2'|translate" [ngClass]="{'txt': true, 'right': Screenshot}"></div>
+                <div [innerHTML]="'page_settings_listago.export_txt3'|translate" [ngClass]="{'txt': true, 'right': Screenshot}"></div>
+                <div class="clearer" *ngIf="Screenshot"></div>
+            </div>
+            <div [innerHTML]="'page_settings_listago.export_txt4'|translate" class="txt"></div>
+
+            <ion-button (click)="startExport()">{{'page_settings_listago.export_btn'|translate}}</ion-button>
+        </ion-segment-content>
+    </ion-segment-view>
+    <div class="fixed-bottom">
+        <ion-segment value="listago">
+            <ion-segment-button value="listago" content-id="app">
+                <ion-icon src="/assets/icons/listago.svg"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="export" content-id="export" #segbtnExport>
+                <ion-icon src="/assets/icons/export.svg"></ion-icon>
+            </ion-segment-button>
+        </ion-segment>
+    </div>
+</ion-content>
+
+<ion-modal class="screenshot-popup" [isOpen]="showScreenshotPopup" (willDismiss)="onScreenshotPopupDismiss()">
+    <ng-template>
+        <img src="{{Screenshot}}" (click)="closeScreenshotPopup()" />
+    </ng-template>
+</ion-modal>

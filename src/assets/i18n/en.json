@@ -216,6 +216,15 @@
         "trash-item-delete": "Permanently delete list item",
         "trash-items-delete": "Permanently delete {{num}} list items"
     },
+    "comp-listago": {
+        "txt1": "Listago is available!",
+        "txt2": "As a replacement for the \"Lists\" app, I am now offering my new app \"Listago\".",
+        "txt3": "I kindly ask you to download and use my new app instead of \"Lists\".",
+        "txt4": "I will soon stop further development for the \"Lists\" app.",
+        "txt5": "You don't need to get used to anything new, as the look and feel of Listago has not changed much.",
+        "txt6": "To make the transition easier, you can import all your lists and app settings into the Listago app.",
+        "toggle": "Do not show again"
+    },
     "page_firststart": {
         "welcome": "Welcome to Lists",
         "language1": "Please select your preferred language:",
@@ -288,6 +297,8 @@
         "language_hint": "English is not my native language. If you find any translation errors, please report them to <span class=\"no-wrap\">{{email}}</span>",
         "translation_error_confirm": "Would you like to report a translation error to me?",
         "translation_error_title": "Mistake in the english translation",
+        "listago": "Migration to Listago",
+        "listago_note": "Perform the migration to Listago and transfer all your lists and app settings",
         "animations": "Animations",
         "animations_note": "Should some visual effects be animated?",
         "logging": "Log settings",
@@ -409,8 +420,19 @@
         "export_success_share": "Do you want to share the archive?",
         "export_success_share_listago": "Or would you like to share the archive?",
         "export_success_share_title": "List Export",
-        "export_success_listago": "Import into <strong>Listago</strong>",
+        "export_success_listago": "Import into Listago",
         "export_success_listago_error": "Import failed!"
+    },
+    "page_settings_listago": {
+        "page_title": "Migration to Listago",
+        "listago_download": "First, please install the <strong>Listago app</strong> from Google Play:",
+        "listago_button": "Listago on Google Play",
+        "listago_installed": "The Listago App is already installed on your device. You can now proceed with exporting your data.",
+        "export_txt1": "For the export of your lists and settings, an archive will first be created, which will then be processed by the Listago app.",
+        "export_txt2": "At the end of the export, you can send it directly to the Listago app.",
+        "export_txt3": "This will open the app and import the archive.",
+        "export_txt4": "Once the Listago app has successfully taken over your lists and settings, you can uninstall the Lists app.",
+        "export_btn": "Start Export"
     },
     "page_appinfos": {
         "page_title": "App information",

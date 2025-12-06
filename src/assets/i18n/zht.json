@@ -216,6 +216,15 @@
         "trash-item-delete": "永久刪除清單項目",
         "trash-items-delete": "永久刪除 {{num}} 個清單項目"
     },
+    "comp-listago": {
+        "txt1": "Listago 可用！",
+        "txt2": "作為“Lists”應用的替代，我現在提供我的新應用“Listago”。",
+        "txt3": "請下載並使用我的新應用來取代“Lists”。",
+        "txt4": "我將很快停止對“Lists”應用的開發。",
+        "txt5": "無需適應新變化，Listago 的外觀和操作感幾乎沒有變化。",
+        "txt6": "為了簡化遷移，您可以將所有列表和應用設置導入到 Listago 應用中。",
+        "toggle": "不再顯示"
+    },
     "page_firststart": {
         "welcome": "歡迎使用列表",
         "language1": "請選擇您偏好的語言：",
@@ -288,6 +297,8 @@
         "language_hint": "本應用程式已使用人工智慧進行翻譯。如果發生錯誤，請向 <span class=\"no-wrap\">{{email}}</span> 報告。",
         "translation_error_confirm": "您要報告翻譯錯誤嗎？",
         "translation_error_title": "中文翻譯錯誤 (繁體)",
+        "listago": "遷移到 Listago",
+        "listago_note": "執行遷移到 Listago 並轉移所有列表和應用設置",
         "animations": "動畫",
         "animations_note": "是否應以動畫形式直觀呈現各種過程？",
         "logging": "日誌設置",
@@ -409,8 +420,19 @@
         "export_success_share": "你想分享這個壓縮檔嗎？",
         "export_success_share_listago": "或你想要分享這個壓縮檔嗎？",
         "export_success_share_title": "清單匯出",
-        "export_success_listago": "匯入到 <strong>Listago</strong>",
+        "export_success_listago": "匯入到 Listago",
         "export_success_listago_error": "匯入失敗！"
+    },
+    "page_settings_listago": {
+        "page_title": "遷移到 Listago",
+        "listago_download": "首先，請從 Google Play 安裝 <strong>Listago 應用</strong>：",
+        "listago_button": "Google Play 上的 Listago",
+        "listago_installed": "Listago 應用已安裝在您的設備上。您現在可以繼續導出數據。",
+        "export_txt1": "要導出您的列表和設置，首先會創建一個檔案，然後由 Listago 應用處理。",
+        "export_txt2": "導出結束後，您可以將其直接發送到 Listago 應用。",
+        "export_txt3": "這將打開應用並導入檔案。",
+        "export_txt4": "當 Listago 應用成功導入所有列表和設置後，您可以卸載 Lists 應用。",
+        "export_btn": "開始導出"
     },
     "page_appinfos": {
         "page_title": "應用資訊",

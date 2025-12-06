@@ -5,7 +5,7 @@
         <!-- app language -->
         <ion-item lines="none">
             <ion-select class="select-language" interface="action-sheet" [label]="'page_settings.language'|translate" label-placement="stacked" value="{{Locale.CurrentLanguage.locale}}" [okText]="'change'|translate" [cancelText]="'cancel'|translate" (ionChange)="onChangeLanguage($event)">
-                <ion-img *ngIf="Locale.CurrentLanguage?.Icon" slot="start" [src]="Locale.CurrentLanguage!.Icon"></ion-img>
+                <ion-img *ngIf="Locale.CurrentLanguage.Icon" slot="start" [src]="Locale.CurrentLanguage!.Icon"></ion-img>
                 <ion-select-option *ngFor="let details of Locale.AvailableTranslations" value="{{details.locale}}" (selected)="Locale.CurrentLanguage.locale == details.locale"> {{details.LocalizedString}} </ion-select-option>
             </ion-select>
         </ion-item>
@@ -14,6 +14,15 @@
         <ion-item lines="full" (click)="reportTranslationMistake()">
             <ion-note [innerHTML]="'page_settings.language_hint'|translate : { 'email': Email}"></ion-note>
             <ion-icon src="/assets/icons/info.svg" slot="end" class="info-icon"></ion-icon>
+        </ion-item>
+
+        <!-- Listago -->
+        <ion-item [button]="true" routerDirection="forward" [routerLink]="['/settings/listago']" lines="full">
+            <ion-label>
+                <div>{{'page_settings.listago'|translate}}</div>
+                <ion-note>{{'page_settings.listago_note'|translate}}</ion-note>
+            </ion-label>
+            <ion-icon slot="end" src="./assets/icons/chevron_forward.svg"></ion-icon>
         </ion-item>
 
         <!-- animations -->

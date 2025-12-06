@@ -65,6 +65,10 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/settings/export/export.page").then(m => m.ExportPage),
     },
     {
+        path: "settings/listago",
+        loadComponent: () => import("./pages/settings/listago/listago.page").then(m => m.ListagoPage),
+    },
+    {
         path: "appinfo",
         loadComponent: () => import("./pages/appinfos/appinfos.page").then(m => m.AppinfosPage),
     },

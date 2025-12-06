@@ -1,0 +1,20 @@
+<div class="listago-popup">
+    <div class="icon">
+        <img src="/assets/img/listago.png" />
+    </div>
+    <div class="text">
+        <div [innerHTML]="'comp-listago.txt1' | translate" class="txt1"></div>
+        <div [innerHTML]="'comp-listago.txt2' | translate"></div>
+        <div [innerHTML]="'comp-listago.txt3' | translate"></div>
+        <div [innerHTML]="'comp-listago.txt4' | translate" class="txt4"></div>
+        <div [innerHTML]="'comp-listago.txt5' | translate"></div>
+        <div [innerHTML]="'comp-listago.txt6' | translate"></div>
+    </div>
+    <div class="checkbox">
+        <ion-toggle labelPlacement="end" class="small" [checked]="HidePopup" (ionChange)="togglePopup($event.target.checked)">{{ "comp-listago.toggle" | translate }}</ion-toggle>
+    </div>
+    <div class="buttons multiple">
+        <ion-button fill="outline" (click)="googlePlay()">Listago auf Google Play</ion-button>
+        <ion-button (click)="startSwitch()">Umzug starten</ion-button>
+    </div>
+</div>

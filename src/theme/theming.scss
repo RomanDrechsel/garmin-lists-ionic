@@ -38,7 +38,16 @@ ion-button {
 
 .buttons {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
+    gap: 1em;
+
+    &.multiple {
+        justify-content: space-evenly;
+
+        ion-button {
+            flex-grow: 1;
+        }
+    }
 }
 
 ion-fab {
@@ -133,6 +142,22 @@ ion-toggle {
             margin-inline-end: 1em;
             margin-inline-start: 0.5em;
         }
+    }
+}
+
+ion-toggle.small {
+    font-size: 0.8em;
+    --handle-width: 1.3em;
+    --handle-height: 1.3em;
+    --handle-max-height: auto;
+
+    &::part(label) {
+        margin-inline-start: 0.5em;
+    }
+
+    &::part(track) {
+        width: 28px;
+        height: 10px;
     }
 }
 
