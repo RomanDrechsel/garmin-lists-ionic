@@ -205,6 +205,19 @@
                     align-items: center;
                     justify-content: space-evenly;
                     margin-bottom: 2em;
+                    padding: 1em;
+
+                    &.highlight {
+                        border-radius: 0.5em;
+                        animation-name: highlightAni;
+                        animation-duration: 2s;
+                        background-color: #e1fdcf;
+                        border: solid #94fd53 1px;
+
+                        ion-button {
+                            --background: var(--ion-background-color);
+                        }
+                    }
 
                     ion-img {
                         width: 40%;
@@ -222,6 +235,12 @@
             --background: var(--ion-color-primary-shade);
 
             .container.done {
+                .listago.highlight {
+                    background-color: #95ab8e;
+                    border: solid #203619 1px;
+                    animation-name: highlightAniDark;
+                }
+
                 ion-icon {
                     fill: var(--ion-color-success-tint);
                 }
@@ -251,5 +270,37 @@
             --padding-start: 2%;
             --padding-end: 2%;
         }
+    }
+}
+
+@keyframes highlightAni {
+    0%,
+    33%,
+    66%,
+    100% {
+        background-color: #e1fdcf;
+        border: solid #94fd53 1px;
+    }
+    16%,
+    50%,
+    82% {
+        background-color: transparent;
+        border: solid transparent 1px;
+    }
+}
+
+@keyframes highlightAniDark {
+    0%,
+    33%,
+    66%,
+    100% {
+        background-color: #95ab8e;
+        border: solid #203619 1px;
+    }
+    16%,
+    50%,
+    82% {
+        background-color: transparent;
+        border: solid transparent 1px;
     }
 }
