@@ -223,7 +223,7 @@
         "txt4": "我將很快停止對“Lists”應用的開發。",
         "txt5": "無需適應新變化，Listago 的外觀和操作感幾乎沒有變化。",
         "txt6": "為了簡化遷移，您可以將所有列表和應用設置導入到 Listago 應用中。",
-        "toggle": "不再顯示"
+        "toggle": "{{days}} 天內不再顯示"
     },
     "page_firststart": {
         "welcome": "歡迎使用列表",

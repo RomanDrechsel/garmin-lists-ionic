@@ -223,7 +223,7 @@
         "txt4": "Für die App \"Listen\" stelle ich die Weiterentwicklung demnächst ein.",
         "txt5": "Du musst dich nicht umgewöhnen, bei dem Look-and-Feel von Listago ändert sich nicht viel.",
         "txt6": "Um den Umstieg noch einfacher zu gestalten, kannst du alle deine Listen und App-Einstellungen in die Listago-App importieren.",
-        "toggle": "Nicht wieder anzeigen"
+        "toggle": "{{days}} Tage nicht wieder anzeigen"
     },
     "page_firststart": {
         "welcome": "Willkommen bei Listen",

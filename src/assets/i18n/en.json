@@ -223,7 +223,7 @@
         "txt4": "I will soon stop further development for the \"Lists\" app.",
         "txt5": "You don't need to get used to anything new, as the look and feel of Listago has not changed much.",
         "txt6": "To make the transition easier, you can import all your lists and app settings into the Listago app.",
-        "toggle": "Do not show again"
+        "toggle": "Do not show again for {{days}} days"
     },
     "page_firststart": {
         "welcome": "Welcome to Lists",

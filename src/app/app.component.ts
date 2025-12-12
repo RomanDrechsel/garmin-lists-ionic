@@ -69,7 +69,8 @@ export class AppComponent implements OnInit {
         this._firstStart = await this.Preferences.Get<boolean>(EPrefProperty.FirstStart, true);
         this.setAppPages();
 
-        if (await this.Preferences.Get(EPrefProperty.ListagoHint, true)) {
+        const hide_listago_popup = await this.Preferences.Get(EPrefProperty.ListagoHint, -1);
+        if (hide_listago_popup < 0 || hide_listago_popup < Date.now()) {
             await ShowListagoHint(this.ModalController);
         }
     }

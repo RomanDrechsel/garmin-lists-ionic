@@ -223,7 +223,7 @@
         "txt4": "Presto smetterò di sviluppare ulteriormente l'app \"Lists\".",
         "txt5": "Non devi abituarti a nulla di nuovo, l'aspetto e la sensazione di Listago sono rimasti quasi invariati.",
         "txt6": "Per rendere la transizione più semplice, puoi importare tutte le tue liste e impostazioni dell'app in Listago.",
-        "toggle": "Non mostrare più"
+        "toggle": "Non mostrare di nuovo per {{days}} giorni"
     },
     "page_firststart": {
         "welcome": "Benvenuto su Liste",

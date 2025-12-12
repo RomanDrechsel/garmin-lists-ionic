@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
@@ -45,32 +44,6 @@ public class SysInfoPlugin extends Plugin
         JSObject ret = new JSObject();
         ret.put("isNightMode", this._isNightMode);
         call.resolve(ret);
-    }
-
-    @PluginMethod
-    public void Logcat(PluginCall call)
-    {
-        String level = call.getString("level", "n");
-        String message = call.getString("message", null);
-        if (message != null && level != null)
-        {
-            switch (level)
-            {
-                case "d":
-                    Log.d(TAG, message);
-                    break;
-                case "i":
-                    Log.w(TAG, message);
-                    break;
-                case "e":
-                    Log.e(TAG, message);
-                    break;
-                case "n":
-                default:
-                    Log.i(TAG, message);
-                    break;
-            }
-        }
     }
 
     @PluginMethod

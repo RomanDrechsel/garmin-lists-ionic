@@ -17,16 +17,23 @@ export class ListagoComponent implements OnInit {
     private readonly _modalController = inject(ModalController);
     private _showPopup: boolean = false;
 
+    public readonly HideTimeDays = 30;
+
     public get HidePopup() {
         return !this._showPopup;
     }
 
     public async ngOnInit() {
-        this._showPopup = await this._preferences.Get(EPrefProperty.ListagoHint, true);
+        this._showPopup = (await this._preferences.Get(EPrefProperty.ListagoHint, -1)) > 0;
     }
 
     public async togglePopup(checked: boolean) {
-        await this._preferences.Set(EPrefProperty.ListagoHint, !checked);
+        if (checked) {
+            const ts = Date.now() + 1000 * 60 * 60 * 24 * this.HideTimeDays;
+            await this._preferences.Set(EPrefProperty.ListagoHint, ts);
+        } else {
+            await this._preferences.Remove(EPrefProperty.ListagoHint);
+        }
         this._showPopup = !checked;
     }
 

@@ -223,7 +223,7 @@
         "txt4": "Pronto dejaré de desarrollar la app \"Listen\".",
         "txt5": "No necesitas acostumbrarte de nuevo, el look-and-feel de Listago casi no cambia.",
         "txt6": "Para facilitar la transición, puedes importar todas tus listas y configuraciones de la app a Listago.",
-        "toggle": "No mostrar de nuevo"
+        "toggle": "No mostrar de nuevo durante {{days}} días"
     },
     "page_firststart": {
         "welcome": "Bienvenido a Listas",

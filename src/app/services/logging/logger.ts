@@ -21,10 +21,6 @@ export class Logger {
         Logger.Service.Error(message, ...obj);
     }
 
-    static ErrorNoLogcat(message: string, ...obj: any[]) {
-        Logger.Service.ErrorNoLogcat(message, ...obj);
-    }
-
     /**
      * log an important message
      * @param message message text
@@ -32,10 +28,6 @@ export class Logger {
      */
     static Important(message: string, ...obj: any[]) {
         Logger.Service.Important(message, ...obj);
-    }
-
-    static ImportantNoLogcat(message: string, ...obj: any[]) {
-        Logger.Service.ImportantNoLogcat(message, ...obj);
     }
 
     /**
@@ -47,10 +39,6 @@ export class Logger {
         Logger.Service.Notice(message, ...obj);
     }
 
-    static NoticeNoLogcat(message: string, ...obj: any[]) {
-        Logger.Service.NoticeNoLogcat(message, ...obj);
-    }
-
     /**
      * log an debug message
      * @param message message text
@@ -58,13 +46,5 @@ export class Logger {
      */
     static Debug(message: string, ...obj: any[]) {
         Logger.Service.Debug(message, ...obj);
-    }
-
-    static DebugNoLogcat(message: string, ...obj: any[]) {
-        Logger.Service.DebugNoLogcat(message, ...obj);
-    }
-
-    static Console(message: string, ...objs: any[]) {
-        Logger.Service.Console(message, ...objs);
     }
 }

@@ -11,7 +11,7 @@
         <div [innerHTML]="'comp-listago.txt6' | translate"></div>
     </div>
     <div class="checkbox">
-        <ion-toggle labelPlacement="end" class="small" [checked]="HidePopup" (ionChange)="togglePopup($event.target.checked)">{{ "comp-listago.toggle" | translate }}</ion-toggle>
+        <ion-toggle labelPlacement="end" class="small" [checked]="HidePopup" (ionChange)="togglePopup($event.target.checked)">{{ "comp-listago.toggle" | translate : { days: HideTimeDays } }}</ion-toggle>
     </div>
     <div class="buttons multiple">
         <ion-button fill="outline" (click)="googlePlay()">Listago auf Google Play</ion-button>

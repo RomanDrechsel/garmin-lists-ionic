@@ -10,16 +10,16 @@ export class PluginLogsListener extends ConnectIQListener<LogEventArgs> {
     protected async Callback(log: LogEventArgs): Promise<void> {
         switch (log.level) {
             case "debug":
-                Logger.DebugNoLogcat(`${log.tag}: ${log.message}`, log.obj);
+                Logger.Debug(`${log.tag}: ${log.message}`, log.obj);
                 break;
             case "notice":
-                Logger.NoticeNoLogcat(`${log.tag}: ${log.message}`, log.obj);
+                Logger.Notice(`${log.tag}: ${log.message}`, log.obj);
                 break;
             case "important":
-                Logger.ImportantNoLogcat(`${log.tag}: ${log.message}`, log.obj);
+                Logger.Important(`${log.tag}: ${log.message}`, log.obj);
                 break;
             case "error":
-                Logger.ErrorNoLogcat(`${log.tag}: ${log.message}`, log.obj);
+                Logger.Error(`${log.tag}: ${log.message}`, log.obj);
                 break;
         }
     }
