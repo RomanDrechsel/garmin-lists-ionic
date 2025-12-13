@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, inject, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { App } from "@capacitor/app";
 import { AppLauncher } from "@capacitor/app-launcher";
 import type { PluginListenerHandle } from "@capacitor/core";
@@ -22,6 +22,7 @@ export class ListagoPage extends PageBase {
     private readonly _navController = inject(NavController);
     private readonly _preferences = inject(PreferencesService);
     private readonly _locale = inject(LocalizationService);
+    private readonly _cdr = inject(ChangeDetectorRef);
     private _listagoInstalled = false;
     private _appResumeListener?: PluginListenerHandle;
     private _screenshot?: string = undefined;
@@ -46,6 +47,7 @@ export class ListagoPage extends PageBase {
         this._listagoInstalled = (await SysInfo.AppInstalled({ packageName: "de.romandrechsel.listago", silent: false })).installed;
         this._appResumeListener = await App.addListener("resume", async () => {
             this._listagoInstalled = (await SysInfo.AppInstalled({ packageName: "de.romandrechsel.listago", silent: false })).installed;
+            this._cdr.detectChanges();
         });
 
         this._preferences.onPrefChanged$.subscribe(pref => {
