@@ -24,7 +24,7 @@ export class ListagoComponent implements OnInit {
     }
 
     public async ngOnInit() {
-        this._showPopup = (await this._preferences.Get(EPrefProperty.ListagoHint, -1)) > 0;
+        this._showPopup = (await this._preferences.Get(EPrefProperty.ListagoHint, -1)) < 0;
     }
 
     public async togglePopup(checked: boolean) {
